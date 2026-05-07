@@ -19,7 +19,7 @@ export const contactSchema = z.object({
     .trim()
     .min(1, "Please add a message.")
     .max(600, "Please keep your message under 600 characters."),
-  // Honeypot — must be empty.
+  // Honeypot: must be empty.
   website: z
     .string()
     .max(0, "Detected automated submission.")

@@ -2,6 +2,8 @@
 
 import { useRevealOnScroll } from "@/app/_hooks/use-reveal-on-scroll";
 
+type AllowedTag = "div" | "section" | "article" | "li";
+
 export function RevealOnScroll({
   children,
   as: Tag = "div",
@@ -9,19 +11,21 @@ export function RevealOnScroll({
   delayMs = 0,
 }: {
   children: React.ReactNode;
-  as?: "div" | "section" | "article" | "li";
+  as?: AllowedTag;
   className?: string;
   delayMs?: number;
 }) {
-  const { ref, visible } = useRevealOnScroll<HTMLDivElement>();
+  const { ref, visible } = useRevealOnScroll<HTMLElement>();
   const style = delayMs ? { transitionDelay: `${delayMs}ms` } : undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const TagAny = Tag as any;
   return (
-    <Tag
-      ref={ref as React.RefObject<HTMLDivElement>}
+    <TagAny
+      ref={ref}
       style={style}
       className={`reveal ${visible ? "is-visible" : ""} ${className}`}
     >
       {children}
-    </Tag>
+    </TagAny>
   );
 }

@@ -26,8 +26,8 @@ const playfair = Playfair_Display({
 export const metadata: Metadata = {
   metadataBase: new URL("https://richfieldgroup.com.vn"),
   title: {
-    default: "Richfield Group — From Market Entry to Nationwide Distribution",
-    template: "%s — Richfield Group",
+    default: "Richfield Group: From Market Entry to Nationwide Distribution",
+    template: "%s | Richfield Group",
   },
   description:
     "Vietnam's largest FMCG distribution network. Bringing the world's most loved brands to over 180,000 retail outlets nationwide.",

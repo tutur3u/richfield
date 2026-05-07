@@ -40,9 +40,9 @@ export function WhatWeDo() {
               </p>
               <Link
                 href={p.href}
-                className="text-[11px] font-medium uppercase tracking-[0.32em] text-gold underline decoration-gold underline-offset-[6px] hover:text-gold/80"
+                className="inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.32em] text-gold underline decoration-gold underline-offset-[6px] hover:text-gold/80"
               >
-                Read more
+                Read more <span aria-hidden>→</span>
               </Link>
             </RevealOnScroll>
           ))}

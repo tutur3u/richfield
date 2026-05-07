@@ -4,12 +4,38 @@ import { useEffect, useRef, useState } from "react";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
 import { DisplayHeading } from "@/app/_components/primitives/display-heading";
 import { HairlineRule } from "@/app/_components/primitives/hairline-rule";
-import { Pin } from "@/app/_components/primitives/pin";
 
-const COUNTRIES = [
-  { code: "VN", label: "Vietnam", role: "HQ · HCMC", pin: { left: "70%", top: "55%" } },
-  { code: "MY", label: "Malaysia", role: "Origin · 1990s", pin: { left: "55%", top: "75%" } },
-  { code: "CN", label: "China", role: "Sourcing & Brands", pin: { left: "65%", top: "18%" } },
+type CountryNode = {
+  code: string;
+  label: string;
+  role: string;
+  /** Anchor for the typographic plate, % of container. */
+  anchor: { left: string; top: string };
+  align: "left" | "right";
+};
+
+const COUNTRIES: CountryNode[] = [
+  {
+    code: "CN",
+    label: "China",
+    role: "Sourcing & Brands",
+    anchor: { left: "62%", top: "16%" },
+    align: "right",
+  },
+  {
+    code: "VN",
+    label: "Vietnam",
+    role: "HQ · Ho Chi Minh City",
+    anchor: { left: "55%", top: "50%" },
+    align: "right",
+  },
+  {
+    code: "MY",
+    label: "Malaysia",
+    role: "Origin · 1990s",
+    anchor: { left: "30%", top: "82%" },
+    align: "left",
+  },
 ];
 
 export function FootprintMap() {
@@ -63,11 +89,10 @@ export function FootprintMap() {
           </ul>
         </div>
 
-        <div
+        <figure
           ref={mapRef}
-          aria-hidden={false}
+          aria-label="Diagram of Richfield's three operating countries: China, Vietnam, Malaysia"
           role="img"
-          aria-label="Map of Vietnam, Malaysia, and China showing Richfield's footprint"
           className="relative aspect-[16/11] w-full overflow-hidden rounded-sm bg-paper"
         >
           <svg
@@ -76,50 +101,113 @@ export function FootprintMap() {
             className="absolute inset-0 h-full w-full"
           >
             <defs>
-              <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-                <circle cx="2" cy="2" r="1" fill="currentColor" className="text-line" />
+              <pattern
+                id="dots"
+                x="0"
+                y="0"
+                width="28"
+                height="28"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle
+                  cx="2"
+                  cy="2"
+                  r="1.2"
+                  fill="currentColor"
+                  className="text-line"
+                />
               </pattern>
             </defs>
-            <rect width="1600" height="1100" fill="url(#dots)" />
-            <g className="text-green/55" fill="currentColor">
-              <path d="M1100 250 q 80 50 60 130 q -20 60 -100 80 q -80 0 -110 -90 z">
-                <title>China</title>
-              </path>
-              <path d="M1080 540 q 30 80 -10 160 q -30 80 30 140 q 60 60 0 120 q -60 60 -90 -10 q -50 -120 30 -270 q 0 -100 40 -140 z">
-                <title>Vietnam</title>
-              </path>
-              <path d="M820 800 q 40 30 80 0 q 60 30 60 100 q -100 60 -160 -10 q -40 -50 20 -90 z">
-                <title>Malaysia</title>
-              </path>
+            <rect width="1600" height="1100" fill="url(#dots)" opacity="0.7" />
+
+            {/* Connector arcs: CN → VN → MY */}
+            <path
+              d="M 990 220 Q 720 350 870 540"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeDasharray="3 8"
+              className="text-gold"
+            />
+            <path
+              d="M 870 540 Q 600 740 480 900"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeDasharray="3 8"
+              className="text-gold"
+            />
+
+            {/* Compass tick (lower-left) */}
+            <g className="text-muted" stroke="currentColor" strokeWidth="1">
+              <line x1="80" y1="980" x2="80" y2="940" />
+              <line x1="68" y1="970" x2="92" y2="970" />
             </g>
-            <path
-              d="M860 850 Q 1000 700 1080 580"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeDasharray="4 6"
-              className="text-gold"
-            />
-            <path
-              d="M1080 580 Q 1130 400 1130 280"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeDasharray="4 6"
-              className="text-gold"
-            />
-          </svg>
-          {COUNTRIES.map((c) => (
-            <span
-              key={c.code}
-              style={{ left: c.pin.left, top: c.pin.top }}
-              className={`absolute -translate-x-1/2 -translate-y-1/2 ${inView ? "" : "[&_.animate-ping]:hidden"}`}
+            <text
+              x="80"
+              y="1018"
+              textAnchor="middle"
+              className="fill-current text-muted"
+              style={{ fontSize: 22, letterSpacing: "0.32em" }}
             >
-              <Pin label={c.label} />
-            </span>
+              N
+            </text>
+          </svg>
+
+          {COUNTRIES.map((c, idx) => (
+            <FootprintNode
+              key={c.code}
+              country={c}
+              animate={inView}
+              delayMs={idx * 200}
+            />
           ))}
-        </div>
+        </figure>
       </div>
     </section>
+  );
+}
+
+function FootprintNode({
+  country,
+  animate,
+  delayMs,
+}: {
+  country: CountryNode;
+  animate: boolean;
+  delayMs: number;
+}) {
+  const isRight = country.align === "right";
+  return (
+    <div
+      style={{
+        left: country.anchor.left,
+        top: country.anchor.top,
+        transform: "translate(-50%, -50%)",
+      }}
+      className="absolute flex items-center gap-4"
+    >
+      <span className="relative inline-flex h-3 w-3">
+        <span
+          aria-hidden
+          style={{ animationDelay: `${delayMs}ms` }}
+          className={`absolute inset-0 rounded-full bg-gold/50 ${animate ? "motion-safe:animate-ping" : ""}`}
+        />
+        <span
+          aria-hidden
+          className="relative inline-flex h-full w-full rounded-full bg-gold ring-2 ring-paper"
+        />
+      </span>
+      <div
+        className={`flex flex-col gap-1 ${isRight ? "items-start" : "items-end"}`}
+      >
+        <span className="font-display text-[clamp(28px,3vw,40px)] italic leading-none text-ink">
+          {country.label}
+        </span>
+        <span className="text-[10px] uppercase tracking-[0.32em] text-muted">
+          {country.role}
+        </span>
+      </div>
+    </div>
   );
 }

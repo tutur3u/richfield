@@ -21,12 +21,16 @@ export function BrandCell({
 
   if (feature) {
     return (
-      <div className={`${wrapperBase} ${span} bg-paper`}>
-        <span className="font-display text-[clamp(28px,3vw,36px)] italic text-gold">
+      <div className={`${wrapperBase} ${span} relative bg-ink hover:bg-ink`}>
+        <span
+          aria-hidden
+          className="absolute left-1/2 top-6 h-px w-12 -translate-x-1/2 bg-gold"
+        />
+        <span className="font-display text-[clamp(32px,3.5vw,44px)] italic leading-none text-gold">
           {name}
         </span>
         {featureCaption ? (
-          <span className="text-[10px] uppercase tracking-[0.32em] text-muted">
+          <span className="text-[10px] uppercase tracking-[0.32em] text-paper/70">
             {featureCaption}
           </span>
         ) : null}

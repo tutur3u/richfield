@@ -15,7 +15,7 @@ export function RevealOnScroll({
   className?: string;
   delayMs?: number;
 }) {
-  const { ref, visible } = useRevealOnScroll<HTMLElement>();
+  const { ref, armed } = useRevealOnScroll<HTMLElement>();
   const style = delayMs ? { transitionDelay: `${delayMs}ms` } : undefined;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const TagAny = Tag as any;
@@ -23,7 +23,7 @@ export function RevealOnScroll({
     <TagAny
       ref={ref}
       style={style}
-      className={`reveal ${visible ? "is-visible" : ""} ${className}`}
+      className={`reveal ${armed ? "reveal--armed" : ""} ${className}`}
     >
       {children}
     </TagAny>

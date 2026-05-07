@@ -15,13 +15,15 @@ export function BrandCell({
   feature = false,
   featureCaption,
 }: Props) {
+  // Cells are not interactive at launch — no hover state, no cursor
+  // change. When client provides per-brand pages we'll wrap in <Link>.
   const wrapperBase =
-    "group flex flex-col items-center justify-center gap-3 bg-cream px-6 py-12 transition-colors duration-200 hover:bg-paper";
+    "flex flex-col items-center justify-center gap-3 bg-cream px-6 py-12";
   const span = feature ? "sm:col-span-2" : "";
 
   if (feature) {
     return (
-      <div className={`${wrapperBase} ${span} relative bg-ink hover:bg-ink`}>
+      <div className={`${wrapperBase} ${span} relative bg-ink`}>
         <span
           aria-hidden
           className="absolute left-1/2 top-6 h-px w-12 -translate-x-1/2 bg-gold"

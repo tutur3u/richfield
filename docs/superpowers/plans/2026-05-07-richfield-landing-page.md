@@ -2975,6 +2975,49 @@ git commit -m "feat(home): wire homepage with metadata + Organization JSON-LD"
 
 ---
 
+# Phase 5.5 — Design review gate
+
+After Phase 5 wires the homepage end to end, run a design review gate **before** any inner-page work begins. This is the moment to fix anything that's wrong about the editorial direction — Phase 6+ replicate homepage conventions, so problems compound if they leak through.
+
+## Task 5.5.1 — Impeccable design audit
+
+Invoke `impeccable critique app/(site)/page.tsx` (or the equivalent skill invocation in the active environment) against the live homepage at `localhost:3000`. The skill will:
+
+- Verify the design laws (color, theme, typography, layout, motion, copy, AI-slop test).
+- Score against absolute bans (no side-stripe borders, no gradient text, no glassmorphism by default, no hero-metric template, no identical card grids, no modal-as-first-thought).
+- Cross-check that the brand register is editorial throughout (not product-app patterns leaking in).
+- Audit color strategy (Committed: gold + green carrying 30-60% of surface).
+
+Apply every Critical and Important finding inline as a `fix(design):` commit. Defer Minor findings to MAINTENANCE.md unless they're trivially resolved on the spot.
+
+## Task 5.5.2 — UI/UX Pro Max review
+
+Invoke the `ui-ux-promax` skill (or equivalent) against the live homepage. Where impeccable focuses on craft/aesthetics, this pass focuses on user-experience integrity:
+
+- Information hierarchy (does the eye land where it should?).
+- Section transitions (do tonal shifts read as intentional rhythm or jarring jumps?).
+- Reading flow (lede length, body line-cap at 65-75ch, eyebrow-to-h2 spacing).
+- Mobile reading experience (390px viewport — is the hero readable, do the KPIs stack legibly, does the timeline horizontal-scroll feel intentional?).
+- A11y in practice: VoiceOver pass on the hero + footprint map + brand wall.
+- Scroll budget: top-to-bottom on a throttled 4G profile, motion behavior, reveal cascade timing.
+
+Apply findings inline. If a finding requires changes that break a primitive (e.g., spacing token shift), update the primitive and accept the cascade.
+
+## Task 5.5.3 — Approval gate
+
+After both critiques are addressed, **stop and present a summary to the user**:
+
+- What impeccable flagged and how it was resolved.
+- What ui-ux-promax flagged and how it was resolved.
+- Any remaining Open Items added to MAINTENANCE.md.
+- A pointer to the live `/` route at `localhost:3000`.
+
+The user reviews the homepage. If they approve, proceed to Phase 6. If they request changes, treat each as a `fix(design):` commit before unblocking Phase 6.
+
+This is the **last design checkpoint** before inner pages replicate the homepage conventions. Don't skip it.
+
+---
+
 # Phase 6 — Inner pages (production)
 
 Each inner page composes existing primitives and sections, with a `<PageHeader>` band on top and the `<SoftCtaCloser>` at the end. Add per-page `metadata`.

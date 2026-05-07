@@ -20,7 +20,7 @@ export function Hero() {
       <div className="relative hidden overflow-hidden lg:block">
         <span
           aria-hidden
-          className="absolute -left-32 top-1/3 h-[480px] w-[480px] rounded-full bg-gold/30 blur-3xl motion-safe:animate-[pulse_8s_ease-in-out_infinite]"
+          className="absolute -left-32 top-1/4 h-[520px] w-[520px] rounded-full bg-gold/30 blur-3xl motion-safe:animate-[pulse_8s_ease-in-out_infinite]"
         />
         <span
           aria-hidden
@@ -29,17 +29,46 @@ export function Hero() {
         <svg
           aria-hidden
           viewBox="0 0 600 800"
-          className="absolute inset-0 h-full w-full opacity-30"
+          className="absolute inset-0 h-full w-full"
         >
+          <defs>
+            <pattern
+              id="hero-dots"
+              x="0"
+              y="0"
+              width="22"
+              height="22"
+              patternUnits="userSpaceOnUse"
+            >
+              <circle cx="1.5" cy="1.5" r="1" fill="currentColor" className="text-gold/20" />
+            </pattern>
+          </defs>
+          <rect width="600" height="800" fill="url(#hero-dots)" />
           <path
-            d="M50 700 Q 200 400 550 100"
+            d="M50 720 Q 220 420 560 120"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.25"
+            strokeDasharray="2 8"
+            className="text-gold/70"
+          />
+          <path
+            d="M30 600 Q 220 540 420 380"
             fill="none"
             stroke="currentColor"
             strokeWidth="1"
-            strokeDasharray="2 8"
-            className="text-gold"
+            strokeDasharray="1 6"
+            className="text-gold/40"
           />
         </svg>
+        <div className="absolute left-10 top-10 flex flex-col gap-2">
+          <span className="font-display text-[80px] italic leading-none text-gold/80">
+            {site.founded}
+          </span>
+          <span className="text-[11px] uppercase tracking-[0.32em] text-gold">
+            Year of founding
+          </span>
+        </div>
         <span className="absolute bottom-10 left-10 text-[11px] uppercase tracking-[0.32em] text-gold">
           {site.countries.join(" · ")}
         </span>

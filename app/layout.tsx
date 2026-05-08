@@ -2,6 +2,7 @@ import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { RouteAnnouncerPatch } from "@/app/_components/route-announcer-patch";
 
 const geistSans = Geist({
   subsets: ["latin", "latin-ext"],
@@ -53,6 +54,7 @@ export default function RootLayout({
       <body className="min-h-dvh bg-cream text-ink antialiased">
         {children}
         <Analytics />
+        <RouteAnnouncerPatch />
       </body>
     </html>
   );

@@ -26,7 +26,7 @@ export function Hero() {
           aria-hidden
           className="absolute right-10 top-10 h-[260px] w-[260px] rounded-full bg-gold/20 blur-3xl motion-safe:animate-[pulse_10s_ease-in-out_infinite]"
         />
-        <svg
+        {/* <svg
           aria-hidden
           viewBox="0 0 600 800"
           className="absolute inset-0 h-full w-full"
@@ -60,15 +60,15 @@ export function Hero() {
             strokeDasharray="1 6"
             className="text-gold/40"
           />
-        </svg>
-        <div className="absolute left-10 top-10 flex flex-col gap-2">
+        </svg> */}
+        {/* <div className="absolute left-10 top-10 flex flex-col gap-2">
           <span className="font-display text-[80px] italic leading-none text-gold/80">
             {site.founded}
           </span>
           <span className="text-[11px] uppercase tracking-[0.32em] text-gold">
             Year of founding
           </span>
-        </div>
+        </div> */}
         <span className="absolute bottom-10 left-10 text-[11px] uppercase tracking-[0.32em] text-gold">
           {site.countries.join(" · ")}
         </span>

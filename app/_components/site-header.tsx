@@ -31,7 +31,15 @@ export function SiteHeader() {
     };
   }, [open]);
 
-  useEffect(() => setOpen(false), [pathname]);
+  // Close the drawer whenever the route changes. Using the
+  // pathname as a render-time signal rather than a synchronous
+  // setState in an effect, which keeps cascading-render warnings
+  // away.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
+    if (open) setOpen(false);
+  }
 
   const headerCls = transparent
     ? "absolute inset-x-0 top-0 z-30 bg-transparent"

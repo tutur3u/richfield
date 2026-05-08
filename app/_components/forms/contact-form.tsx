@@ -84,6 +84,7 @@ export function ContactForm() {
 
       <FieldShell label="Inquiry type" name="inquiryType" errors={errors.inquiryType}>
         <select
+          id="inquiryType"
           name="inquiryType"
           defaultValue={values.inquiryType ?? INQUIRY_TYPES[0]}
           className="w-full border-b border-line bg-transparent py-3 text-[17px] focus:border-gold focus:outline-none"
@@ -98,6 +99,7 @@ export function ContactForm() {
 
       <FieldShell label="Message" name="message" errors={errors.message}>
         <textarea
+          id="message"
           name="message"
           rows={6}
           maxLength={600}
@@ -138,6 +140,7 @@ function Field({
   return (
     <FieldShell label={label} name={name} errors={errors} required={required}>
       <input
+        id={name}
         type={type}
         name={name}
         required={required}

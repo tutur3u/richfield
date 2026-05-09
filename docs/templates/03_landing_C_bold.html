@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Richfield Group — Variant C · Bold Storytelling</title>
+<style>
+  :root{--gold:#D4A437;--red:#D63A2F;--blue:#003C7E;--green:#1F3A2C;--ink:#0E0E0E;--cream:#FFF8EB;--paper:#FFFFFF;--muted:#6B6B6B;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter','Helvetica Neue',Arial,sans-serif;background:var(--cream);color:var(--ink);line-height:1.55;overflow-x:hidden;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  .container{max-width:1380px;margin:0 auto;padding:0 32px;}
+  /* HEADER */
+  header.site{position:sticky;top:0;z-index:100;background:var(--cream);border-bottom:2px solid var(--ink);}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:80px;}
+  .logo{display:flex;align-items:center;gap:12px;font-weight:900;font-size:18px;letter-spacing:1px;}
+  .logo-mark{width:42px;height:42px;background:var(--ink);color:var(--gold);display:grid;place-items:center;font-family:Georgia,serif;font-style:italic;font-weight:900;font-size:20px;border-radius:50%;}
+  nav ul{display:flex;list-style:none;gap:30px;}
+  nav a{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+  nav a:hover{color:var(--red);}
+  .btn-cta{padding:12px 22px;background:var(--ink);color:var(--cream);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px;border-radius:999px;}
+  /* HERO — gigantic type */
+  .hero{padding:80px 0 40px;position:relative;}
+  .hero-tag{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:var(--gold);padding:8px 18px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+  .hero-tag .dot{width:8px;height:8px;background:var(--gold);border-radius:50%;animation:pulse 1.6s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+  .hero h1{font-family:'Archivo Black','Helvetica Neue',Arial,sans-serif;font-size:180px;line-height:.85;font-weight:900;letter-spacing:-6px;margin-top:30px;text-transform:uppercase;}
+  .hero h1 .l1{display:block;}
+  .hero h1 .l2{display:block;color:var(--red);}
+  .hero h1 .l3{display:block;font-family:Georgia,serif;font-style:italic;font-size:140px;font-weight:400;color:var(--ink);letter-spacing:-3px;text-transform:none;}
+  .hero h1 .l3 em{color:var(--gold);}
+  .hero-bottom{margin-top:50px;display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:40px;align-items:end;border-top:2px solid var(--ink);padding-top:30px;}
+  .hero-bottom p{font-size:18px;max-width:480px;}
+  .hero-bottom .cta{display:flex;gap:10px;}
+  .btn{padding:16px 28px;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:1px;border-radius:999px;display:inline-block;}
+  .btn-fill{background:var(--ink);color:var(--cream);}
+  .btn-out{border:2px solid var(--ink);color:var(--ink);}
+  .hero-stat .num{font-family:'Archivo Black',sans-serif;font-size:80px;line-height:1;color:var(--ink);}
+  .hero-stat .lbl{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  /* MARQUEE */
+  .marquee{margin-top:40px;background:var(--ink);color:var(--cream);padding:22px 0;overflow:hidden;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);}
+  .marquee-track{display:flex;gap:60px;white-space:nowrap;font-family:Georgia,serif;font-style:italic;font-size:32px;animation:scroll 30s linear infinite;}
+  .marquee-track span{display:inline-flex;align-items:center;gap:60px;}
+  .marquee-track span::after{content:"✦";color:var(--gold);}
+  @keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  /* SECTIONS */
+  section{padding:120px 0;}
+  .eyebrow{display:inline-block;background:var(--gold);color:var(--ink);padding:6px 14px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;}
+  h2{font-family:'Archivo Black',sans-serif;font-size:80px;line-height:.95;font-weight:900;letter-spacing:-3px;margin-top:18px;text-transform:uppercase;}
+  h2 em{font-family:Georgia,serif;font-style:italic;font-weight:400;color:var(--red);}
+  /* PRODUCTS HERO STRIP */
+  .products{background:var(--paper);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);}
+  .product-strip{margin-top:60px;display:grid;grid-template-columns:repeat(5,1fr);gap:20px;}
+  .product{aspect-ratio:3/4;border:2px solid var(--ink);border-radius:12px;display:flex;flex-direction:column;justify-content:flex-end;padding:24px;color:#fff;font-weight:800;text-transform:uppercase;letter-spacing:1px;font-size:14px;position:relative;overflow:hidden;}
+  .product::before{content:"";position:absolute;inset:0;z-index:0;}
+  .product .nm{position:relative;z-index:2;font-size:22px;font-family:Georgia,serif;font-style:italic;font-weight:400;text-transform:none;letter-spacing:0;}
+  .product .ctry{position:relative;z-index:2;font-size:11px;font-weight:600;opacity:.8;margin-top:4px;}
+  .p1{background:linear-gradient(180deg,#7CB342,#33691E);} /* Doublemint */
+  .p2{background:linear-gradient(180deg,#2962FF,#0039CB);} /* TCP */
+  .p3{background:linear-gradient(180deg,#E53935,#B71C1C);} /* Red Bull */
+  .p4{background:linear-gradient(180deg,#FFC107,#FF8F00);} /* BiC */
+  .p5{background:linear-gradient(180deg,#E91E63,#AD1457);} /* Glico/Pocky */
+  /* TIMELINE */
+  .journey{background:var(--cream);}
+  .timeline-bold{margin-top:60px;}
+  .tl-axis{height:6px;background:var(--ink);position:relative;}
+  .tl-pts{display:grid;grid-template-columns:repeat(5,1fr);margin-top:-12px;position:relative;}
+  .tl-pt{text-align:center;}
+  .tl-pt .marker{width:24px;height:24px;background:var(--gold);border:4px solid var(--ink);border-radius:50%;margin:0 auto;}
+  .tl-pt .yr{font-family:'Archivo Black',sans-serif;font-size:48px;margin-top:18px;letter-spacing:-2px;}
+  .tl-pt .ev{font-size:13px;font-weight:600;margin-top:6px;color:var(--muted);}
+  .tl-pt .flag{display:inline-block;margin-top:10px;padding:4px 10px;border-radius:999px;background:var(--ink);color:var(--cream);font-size:10px;letter-spacing:1px;font-weight:800;text-transform:uppercase;}
+  /* MAP CARD */
+  .map-bold{background:var(--green);color:var(--cream);border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);}
+  .map-bold h2{color:var(--cream);}
+  .map-bold h2 em{color:var(--gold);}
+  .map-bold .row{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-top:60px;}
+  .country-card{background:var(--cream);color:var(--ink);padding:28px;border-radius:18px;border:2px solid var(--ink);margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;}
+  .country-card h3{font-family:'Archivo Black',sans-serif;font-size:36px;letter-spacing:-1px;text-transform:uppercase;}
+  .country-card .role{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+  .country-card .yr{font-family:Georgia,serif;font-style:italic;font-size:32px;color:var(--red);}
+  .map-art{aspect-ratio:1/1;background:var(--cream);border-radius:24px;border:2px solid var(--ink);position:relative;overflow:hidden;}
+  /* BRANDS GIANT GRID */
+  .brands-bold{background:var(--paper);border-top:2px solid var(--ink);}
+  .grid-giant{margin-top:60px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .brand-tile{aspect-ratio:4/3;border:2px solid var(--ink);border-radius:18px;display:grid;place-items:center;text-align:center;padding:30px;font-family:Georgia,serif;font-style:italic;font-size:36px;background:var(--cream);transition:.2s;cursor:pointer;}
+  .brand-tile:hover{background:var(--gold);transform:translate(-3px,-3px);box-shadow:6px 6px 0 var(--ink);}
+  .brand-tile small{display:block;font-family:'Inter',sans-serif;font-style:normal;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:8px;}
+  /* CTA BANNER */
+  .cta-banner{background:var(--red);color:var(--cream);padding:120px 0;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink);text-align:center;}
+  .cta-banner h2{color:var(--cream);}
+  .cta-banner h2 em{color:var(--gold);}
+  /* FOOTER */
+  footer{background:var(--ink);color:var(--cream);padding:80px 0 30px;}
+  footer .grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;}
+  footer h4{color:var(--gold);font-size:11px;letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;font-weight:800;}
+  footer a{color:rgba(255,248,235,.7);font-size:14px;display:block;padding:5px 0;}
+  footer .end{margin-top:60px;padding-top:24px;border-top:1px solid #333;display:flex;justify-content:space-between;font-size:11px;color:var(--muted);letter-spacing:2px;font-weight:700;text-transform:uppercase;}
+  .badge-pin{position:fixed;bottom:20px;right:20px;background:var(--red);color:var(--cream);padding:10px 16px;font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;border-radius:999px;z-index:99;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="container nav">
+    <div class="logo">
+      <div class="logo-mark">R</div>
+      <span>RICHFIELD</span>
+    </div>
+    <nav>
+      <ul>
+        <li><a>About</a></li>
+        <li><a>Brands</a></li>
+        <li><a>Distribution</a></li>
+        <li><a>Logistics</a></li>
+        <li><a>Careers</a></li>
+      </ul>
+    </nav>
+    <a href="#" class="btn-cta">Get In Touch</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="hero-tag"><span class="dot"></span>Vietnam · Malaysia · China · Since 1994</span>
+    <h1>
+      <span class="l1">From market</span>
+      <span class="l2">entry to</span>
+      <span class="l3"><em>nationwide</em> distribution.</span>
+    </h1>
+    <div class="hero-bottom">
+      <p>Vietnam's largest FMCG distribution network. Three countries. Three generations. Over 600,000 retail outlets — and the world's most loved brands on every shelf.</p>
+      <div class="hero-stat"><div class="num">600K</div><div class="lbl">Retail Outlets</div></div>
+      <div class="cta">
+        <a href="#" class="btn btn-fill">Explore →</a>
+        <a href="#" class="btn btn-out">Brands</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Mars · USA</span><span>TCP · Thailand</span><span>BiC · France</span><span>Red Bull · Austria</span><span>Glico · Japan</span><span>Amos · China</span><span>NewChoice · Taiwan</span><span>WeiLong · China</span>
+    <span>Mars · USA</span><span>TCP · Thailand</span><span>BiC · France</span><span>Red Bull · Austria</span><span>Glico · Japan</span><span>Amos · China</span><span>NewChoice · Taiwan</span><span>WeiLong · China</span>
+  </div>
+</div>
+
+<section class="products">
+  <div class="container">
+    <span class="eyebrow">The Shelf</span>
+    <h2>Brands you <em>already</em> love.</h2>
+    <div class="product-strip">
+      <div class="product p1"><div class="nm">Doublemint</div><div class="ctry">Wrigley's · USA</div></div>
+      <div class="product p2"><div class="nm">TCP</div><div class="ctry">Thailand</div></div>
+      <div class="product p3"><div class="nm">Red Bull</div><div class="ctry">Austria</div></div>
+      <div class="product p4"><div class="nm">BiC</div><div class="ctry">France</div></div>
+      <div class="product p5"><div class="nm">Pocky</div><div class="ctry">Glico · Japan</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="journey">
+  <div class="container">
+    <span class="eyebrow">Our Journey</span>
+    <h2>30+ years.<br/><em>Five</em> milestones.</h2>
+    <div class="timeline-bold">
+      <div class="tl-axis"></div>
+      <div class="tl-pts">
+        <div class="tl-pt"><div class="marker"></div><div class="yr">1994</div><div class="ev">Wrigley's Doublemint</div><div class="flag">USA</div></div>
+        <div class="tl-pt"><div class="marker"></div><div class="yr">2016</div><div class="ev">TCP partnership</div><div class="flag">Thailand</div></div>
+        <div class="tl-pt"><div class="marker"></div><div class="yr">2018</div><div class="ev">BiC &amp; Red Bull</div><div class="flag">France</div></div>
+        <div class="tl-pt"><div class="marker"></div><div class="yr">2022</div><div class="ev">Dory Rich JV</div><div class="flag">Vietnam</div></div>
+        <div class="tl-pt"><div class="marker"></div><div class="yr">2026</div><div class="ev">Glico (Pocky)</div><div class="flag">Japan</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="map-bold">
+  <div class="container">
+    <span class="eyebrow">Our Footprint</span>
+    <h2>One <em>group</em>.<br/>Three countries.</h2>
+    <div class="row">
+      <div>
+        <div class="country-card">
+          <div><h3>Vietnam</h3><div class="role">HQ &middot; Distribution</div></div>
+          <div class="yr">'94</div>
+        </div>
+        <div class="country-card">
+          <div><h3>Malaysia</h3><div class="role">Origin &middot; Group</div></div>
+          <div class="yr">'90s</div>
+        </div>
+        <div class="country-card">
+          <div><h3>China</h3><div class="role">Sourcing &middot; Brands</div></div>
+          <div class="yr">'10s</div>
+        </div>
+      </div>
+      <div class="map-art">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+          <defs>
+            <pattern id="dotsC" x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1.4" fill="#1F3A2C" opacity=".3"/>
+            </pattern>
+          </defs>
+          <rect width="400" height="400" fill="url(#dotsC)"/>
+          <path d="M180 100 Q260 80 310 130 Q330 200 280 240 Q220 250 190 220 Q160 170 180 100 Z" fill="#1F3A2C" opacity=".7"/>
+          <path d="M260 250 Q280 250 290 270 Q300 300 280 320 Q260 320 250 300 Z" fill="#1F3A2C" opacity=".7"/>
+          <circle cx="270" cy="160" r="9" fill="#D4A437"/><text x="285" y="166" font-family="Inter" font-size="11" font-weight="800" fill="#0E0E0E">CHINA</text>
+          <circle cx="270" cy="220" r="9" fill="#D63A2F"/><text x="285" y="226" font-family="Inter" font-size="11" font-weight="800" fill="#0E0E0E">VIETNAM</text>
+          <circle cx="275" cy="290" r="9" fill="#D4A437"/><text x="290" y="296" font-family="Inter" font-size="11" font-weight="800" fill="#0E0E0E">MALAYSIA</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="brands-bold">
+  <div class="container">
+    <span class="eyebrow">Brand Portfolio</span>
+    <h2>The full <em>line-up</em>.</h2>
+    <div class="grid-giant">
+      <div class="brand-tile">Mars<small>USA</small></div>
+      <div class="brand-tile">TCP<small>Thailand</small></div>
+      <div class="brand-tile">BiC<small>France</small></div>
+      <div class="brand-tile">Red Bull<small>Austria</small></div>
+      <div class="brand-tile">Glico<small>Japan</small></div>
+      <div class="brand-tile">Amos<small>China</small></div>
+      <div class="brand-tile">NewChoice<small>Taiwan</small></div>
+      <div class="brand-tile">WeiLong<small>China</small></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-banner">
+  <div class="container">
+    <span class="eyebrow" style="background:var(--cream);">Partner With Us</span>
+    <h2>Want your brand on every<br/>shelf in <em>Vietnam</em>?</h2>
+    <a href="#" class="btn btn-fill" style="margin-top:30px;background:var(--ink);color:var(--cream);">Start a conversation →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="grid">
+      <div>
+        <div class="logo" style="color:var(--cream);"><div class="logo-mark">R</div><span>RICHFIELD</span></div>
+        <p style="margin-top:18px;color:rgba(255,248,235,.6);font-size:13px;max-width:280px;">From Market Entry to Nationwide Distribution. Vietnam · Malaysia · China.</p>
+      </div>
+      <div><h4>Explore</h4><a>About</a><a>Brands</a><a>Distribution</a><a>Careers</a></div>
+      <div><h4>Contact</h4><p style="font-size:13px;color:rgba(255,248,235,.6);line-height:1.7;">Richfield Worldwide JSC<br/>15A1 Nguyen Huu Tho<br/>Phuoc Kien, Nha Be, HCM<br/>(+028) 37840237</p></div>
+      <div><h4>Group</h4><a>Vietnam</a><a>Malaysia</a><a>China</a><a>Dory Rich JSC</a></div>
+    </div>
+    <div class="end"><span>© 2026 Richfield Worldwide JSC</span><span>richfieldgroup.com.vn</span></div>
+  </div>
+</footer>
+
+<div class="badge-pin">Variant C · Bold Storytelling</div>
+
+</body>
+</html>

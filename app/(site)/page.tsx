@@ -3,7 +3,7 @@ import { Hero } from "@/app/_components/sections/hero";
 import { WhatWeDo } from "@/app/_components/sections/what-we-do";
 import { FootprintMap } from "@/app/_components/sections/footprint-map";
 import { Timeline } from "@/app/_components/sections/timeline";
-import { BrandWall } from "@/app/_components/sections/brand-wall";
+import { BrandMarquee } from "@/app/_components/sections/brand-marquee";
 import { JvFeature } from "@/app/_components/sections/jv-feature";
 import { SoftCtaCloser } from "@/app/_components/sections/soft-cta-closer";
 import { homepageMilestones } from "@/content/en/milestones";
@@ -55,7 +55,7 @@ export default function HomePage() {
         eyebrow="Our journey"
         heading="A story of *partnerships* over thirty years."
       />
-      <BrandWall />
+      <BrandMarquee />
       <JvFeature variant="full" />
       <SoftCtaCloser />
     </>

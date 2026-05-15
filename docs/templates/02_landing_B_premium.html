@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Richfield Group — Variant B · Premium Corporate</title>
+<style>
+  :root{--gold:#C9A436;--gold-2:#E5C770;--ink:#0A0A0A;--charcoal:#171717;--paper:#FAFAFA;--muted:#7A7A7A;--line:#222;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Helvetica Neue',-apple-system,Arial,sans-serif;background:var(--ink);color:#fff;line-height:1.6;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  .container{max-width:1320px;margin:0 auto;padding:0 48px;}
+  /* HEADER */
+  header.site{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--line);}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:88px;}
+  .logo{display:flex;align-items:center;gap:14px;}
+  .logo-mark{width:44px;height:44px;background:transparent;border:1px solid var(--gold);color:var(--gold);display:grid;place-items:center;font-family:Georgia,serif;font-style:italic;font-weight:700;font-size:20px;}
+  .logo-text{font-family:'Helvetica Neue';letter-spacing:6px;font-size:13px;font-weight:600;}
+  nav ul{display:flex;list-style:none;gap:36px;}
+  nav a{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:rgba(255,255,255,.7);}
+  nav a:hover{color:var(--gold);}
+  .btn-cta{padding:12px 22px;border:1px solid var(--gold);color:var(--gold);font-size:11px;letter-spacing:2px;text-transform:uppercase;font-weight:600;}
+  .btn-cta:hover{background:var(--gold);color:var(--ink);}
+  /* HERO */
+  .hero{min-height:100vh;padding:160px 0 100px;position:relative;overflow:hidden;display:flex;align-items:center;}
+  .hero::before{
+    content:"";position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse at 70% 30%, rgba(201,164,54,.12) 0, transparent 50%),
+      radial-gradient(ellipse at 20% 80%, rgba(201,164,54,.08) 0, transparent 50%);
+  }
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+    background-size:80px 80px;
+    mask-image:radial-gradient(ellipse at center, black 0, transparent 75%);
+  }
+  .hero-inner{position:relative;z-index:2;}
+  .eyebrow{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:32px;display:flex;align-items:center;gap:14px;}
+  .eyebrow::before,.eyebrow::after{content:"";width:50px;height:1px;background:var(--gold);}
+  .eyebrow{justify-content:center;text-align:center;}
+  .hero h1{font-family:Georgia,'Times New Roman',serif;font-size:120px;line-height:.95;font-weight:300;text-align:center;letter-spacing:-3px;}
+  .hero h1 em{color:var(--gold);font-style:italic;font-weight:400;}
+  .hero p{margin:40px auto 0;text-align:center;max-width:620px;color:rgba(255,255,255,.6);font-size:18px;}
+  .hero .actions{margin-top:50px;display:flex;justify-content:center;gap:16px;}
+  .btn{padding:18px 36px;font-size:11px;letter-spacing:3px;text-transform:uppercase;font-weight:700;display:inline-block;}
+  .btn-gold{background:var(--gold);color:var(--ink);}
+  .btn-gold:hover{background:var(--gold-2);}
+  .btn-out{border:1px solid rgba(255,255,255,.3);color:#fff;}
+  /* SCROLL TICKER */
+  .ticker{margin-top:120px;padding:24px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;}
+  .ticker-row{display:flex;gap:80px;align-items:center;justify-content:space-around;font-size:13px;letter-spacing:4px;text-transform:uppercase;color:var(--muted);font-family:Georgia,serif;font-style:italic;}
+  .ticker-row span{color:var(--gold);font-style:normal;font-family:'Helvetica Neue';font-weight:600;}
+  /* STATS */
+  section{padding:140px 0;}
+  .stats{background:var(--charcoal);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+  .stat-cell{padding:60px 40px;border-right:1px solid var(--line);text-align:center;}
+  .stat-cell:last-child{border-right:none;}
+  .stat-cell .num{font-family:Georgia,serif;font-size:96px;font-weight:300;color:var(--gold);line-height:1;letter-spacing:-3px;}
+  .stat-cell .lbl{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:14px;}
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:120px;align-items:start;}
+  h2{font-family:Georgia,serif;font-size:64px;line-height:1.05;font-weight:300;letter-spacing:-1.5px;}
+  h2 em{color:var(--gold);font-style:italic;}
+  .about p{color:rgba(255,255,255,.7);font-size:17px;margin-top:24px;}
+  .pillars{margin-top:50px;}
+  .pillar{padding:24px 0;border-top:1px solid var(--line);display:grid;grid-template-columns:60px 1fr;gap:24px;align-items:start;}
+  .pillar:last-child{border-bottom:1px solid var(--line);}
+  .pillar .num{font-family:Georgia,serif;color:var(--gold);font-size:24px;font-style:italic;}
+  .pillar h4{font-size:18px;font-weight:600;margin-bottom:6px;}
+  .pillar p{font-size:14px;color:var(--muted);margin:0;}
+  /* BRAND WALL */
+  .wall{background:#000;}
+  .wall-grid{margin-top:80px;display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--line);border:1px solid var(--line);}
+  .wall-cell{aspect-ratio:1/1;background:var(--charcoal);display:grid;place-items:center;text-align:center;padding:20px;transition:.3s;cursor:pointer;}
+  .wall-cell:hover{background:var(--ink);}
+  .wall-cell:hover .nm{color:var(--gold);}
+  .wall-cell .nm{font-family:Georgia,serif;font-size:22px;color:#fff;font-weight:300;transition:.3s;}
+  .wall-cell .ctr{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:6px;}
+  /* JV */
+  .jv{background:linear-gradient(180deg,var(--ink),var(--charcoal));}
+  .jv-card{margin-top:60px;padding:80px;border:1px solid var(--gold);position:relative;}
+  .jv-card::before{content:"JV";position:absolute;top:-20px;left:40px;background:var(--ink);padding:0 14px;font-family:Georgia,serif;font-style:italic;color:var(--gold);font-size:24px;}
+  .jv-card .row{display:grid;grid-template-columns:2fr 1fr;gap:60px;align-items:center;}
+  .jv-card h3{font-family:Georgia,serif;font-size:42px;font-weight:300;}
+  .jv-card p{color:rgba(255,255,255,.7);font-size:16px;margin-top:18px;}
+  .jv-card .badge{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);}
+  /* CAREERS BANNER */
+  .careers{padding:160px 0;text-align:center;border-top:1px solid var(--line);}
+  .careers h2{font-size:80px;}
+  .careers p{margin:30px auto 40px;max-width:560px;color:rgba(255,255,255,.65);}
+  /* FOOTER */
+  footer{background:#000;border-top:1px solid var(--line);padding:80px 0 30px;}
+  footer .grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;}
+  footer h4{color:var(--gold);font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;}
+  footer a{color:rgba(255,255,255,.6);font-size:13px;display:block;padding:5px 0;}
+  footer .end{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:11px;color:var(--muted);letter-spacing:2px;}
+  .badge-pin{position:fixed;bottom:20px;right:20px;background:var(--gold);color:var(--ink);padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;z-index:99;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="container nav">
+    <div class="logo">
+      <div class="logo-mark">R</div>
+      <div class="logo-text">RICHFIELD&nbsp;&nbsp;GROUP</div>
+    </div>
+    <nav>
+      <ul>
+        <li><a>About</a></li>
+        <li><a>Distribution</a></li>
+        <li><a>Brands</a></li>
+        <li><a>Logistics</a></li>
+        <li><a>Careers</a></li>
+      </ul>
+    </nav>
+    <a href="#" class="btn-cta">Partner With Us</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="eyebrow">Vietnam · Malaysia · China</div>
+    <h1>From <em>market entry</em><br/>to nationwide distribution.</h1>
+    <p>For over thirty years, Richfield Group has built Vietnam's most trusted distribution platform — the partner of choice for the world's leading FMCG brands.</p>
+    <div class="actions">
+      <a href="#" class="btn btn-gold">Explore the group</a>
+      <a href="#" class="btn btn-out">Become a partner</a>
+    </div>
+    <div class="ticker">
+      <div class="ticker-row">
+        <div><span>Mars</span> · USA</div>
+        <div><span>TCP</span> · Thailand</div>
+        <div><span>BiC</span> · France</div>
+        <div><span>Red Bull</span> · Austria</div>
+        <div><span>Glico</span> · Japan</div>
+        <div><span>Amos</span> · China</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="stats-grid">
+    <div class="stat-cell"><div class="num">30+</div><div class="lbl">Years of Operation</div></div>
+    <div class="stat-cell"><div class="num">200+</div><div class="lbl">Sub-Distributors</div></div>
+    <div class="stat-cell"><div class="num">600K</div><div class="lbl">Retail Outlets</div></div>
+    <div class="stat-cell"><div class="num">1,000+</div><div class="lbl">Salesforce Nationwide</div></div>
+  </div>
+</section>
+
+<section class="about">
+  <div class="container">
+    <div class="about-grid">
+      <div>
+        <div class="eyebrow" style="justify-content:flex-start;">About Richfield</div>
+        <h2>Three countries.<br/>Three <em>generations</em>.<br/>One promise.</h2>
+        <p>Richfield Group began as a family business in Malaysia and has grown across three generations. Today we operate as one of the largest FMCG distributors in Vietnam — backed by an international group with deep local knowledge of every market we serve.</p>
+        <p>We don't just move product. We open markets, build category share, and protect brand equity for the partners who trust us.</p>
+      </div>
+      <div>
+        <div class="eyebrow" style="justify-content:flex-start;">What we do</div>
+        <div class="pillars">
+          <div class="pillar"><div class="num">01</div><div><h4>General Trade</h4><p>Nationwide coverage with over 1,000 salesmen across all provinces and cities.</p></div></div>
+          <div class="pillar"><div class="num">02</div><div><h4>Modern Trade</h4><p>Retailer partnerships with trade marketing — display and event support.</p></div></div>
+          <div class="pillar"><div class="num">03</div><div><h4>Warehouse &amp; Logistics</h4><p>End-to-end storage, handling and last-mile distribution capability.</p></div></div>
+          <div class="pillar"><div class="num">04</div><div><h4>Import / Export</h4><p>Customs declaration and full import support for international partners.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="wall">
+  <div class="container">
+    <div class="eyebrow" style="justify-content:flex-start;">The brand portfolio</div>
+    <h2>Trusted by the world's<br/>most <em>recognised</em> names.</h2>
+    <div class="wall-grid">
+      <div class="wall-cell"><div><div class="nm">Mars</div><div class="ctr">USA</div></div></div>
+      <div class="wall-cell"><div><div class="nm">M&amp;M's</div><div class="ctr">USA</div></div></div>
+      <div class="wall-cell"><div><div class="nm">Snickers</div><div class="ctr">USA</div></div></div>
+      <div class="wall-cell"><div><div class="nm">Doublemint</div><div class="ctr">USA</div></div></div>
+      <div class="wall-cell"><div><div class="nm">TCP</div><div class="ctr">Thailand</div></div></div>
+      <div class="wall-cell"><div><div class="nm">Red Bull</div><div class="ctr">Austria</div></div></div>
+      <div class="wall-cell"><div><div class="nm">BiC</div><div class="ctr">France</div></div></div>
+      <div class="wall-cell"><div><div class="nm">Glico</div><div class="ctr">Japan</div></div></div>
+      <div class="wall-cell"><div><div class="nm">Pocky</div><div class="ctr">Japan</div></div></div>
+      <div class="wall-cell"><div><div class="nm">Amos</div><div class="ctr">China</div></div></div>
+      <div class="wall-cell"><div><div class="nm">NewChoice</div><div class="ctr">Taiwan</div></div></div>
+      <div class="wall-cell"><div><div class="nm">WeiLong</div><div class="ctr">China</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="jv">
+  <div class="container">
+    <div class="eyebrow" style="justify-content:flex-start;">Joint Venture</div>
+    <h2>Dory Rich JSC.</h2>
+    <div class="jv-card">
+      <div class="row">
+        <div>
+          <div class="badge">Established 2022 · TCP Group × Richfield</div>
+          <h3 style="margin-top:14px;">A successful collaboration<br/>between two leading corporations.</h3>
+          <p>Dory Rich JSC pairs TCP Group's leadership in Thai energy-drink production with Richfield Group's nationwide FMCG distribution capability in Vietnam — bringing manufacturing, brand-building, and distribution under one roof.</p>
+        </div>
+        <div style="text-align:center;">
+          <div style="font-family:Georgia,serif;font-size:80px;color:var(--gold);font-style:italic;font-weight:300;line-height:1;">Dory<br/>Rich</div>
+          <a href="#" style="margin-top:24px;display:inline-block;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);border-bottom:1px solid var(--gold);padding-bottom:4px;">Visit doryrich.com.vn →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="careers">
+  <div class="container">
+    <div class="eyebrow">Careers</div>
+    <h2>A legacy of growth.<br/>A <em>future of opportunity</em>.</h2>
+    <p>Be part of a dynamic ecosystem, working alongside diverse partners and world-renowned brands.</p>
+    <a href="#" class="btn btn-gold">View open positions</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="grid">
+      <div>
+        <div class="logo"><div class="logo-mark">R</div><div class="logo-text">RICHFIELD&nbsp;&nbsp;GROUP</div></div>
+        <p style="margin-top:18px;color:var(--muted);font-size:13px;max-width:300px;">From Market Entry to Nationwide Distribution. Vietnam · Malaysia · China.</p>
+      </div>
+      <div><h4>Explore</h4><a>About</a><a>Brands</a><a>Distribution</a><a>Joint Ventures</a></div>
+      <div><h4>Contact</h4><p style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.7;">Richfield Worldwide JSC<br/>15A1 Nguyen Huu Tho<br/>Phuoc Kien, Nha Be, HCM<br/>(+028) 37840237</p></div>
+      <div><h4>Group</h4><a>Vietnam</a><a>Malaysia</a><a>China</a><a>Dory Rich JSC</a></div>
+    </div>
+    <div class="end"><span>© 2026 RICHFIELD WORLDWIDE JSC</span><span>RICHFIELDGROUP.COM.VN</span></div>
+  </div>
+</footer>
+
+<div class="badge-pin">Variant B · Premium Corporate</div>
+
+</body>
+</html>

@@ -1,3 +1,5 @@
+import { partnerLogos } from "./photography";
+
 export type Brand = {
   name: string;
   country: string;
@@ -10,7 +12,7 @@ export type Brand = {
   featureCaption?: string;
 };
 
-export const brands: Brand[] = [
+const brandDetails: Array<Omit<Brand, "logoSrc">> = [
   {
     name: "Mars · Wrigley",
     country: "USA",
@@ -19,15 +21,40 @@ export const brands: Brand[] = [
     featureCaption: "Founding partner · Since 1994",
     category: "Confectionery",
   },
-  { name: "TCP", country: "Thailand", year: 2014, logoSrc: "/photos/logos/tcp.webp", category: "Beverages" },
-  { name: "BiC", country: "France", year: 2018, logoSrc: "/photos/logos/bic.webp", category: "Stationery & Crafts" },
-  { name: "Red Bull", country: "Austria", logoSrc: "/photos/logos/red-bull.webp", category: "Beverages" },
-  { name: "Glico (Pocky)", country: "Japan", year: 2026, logoSrc: "/photos/logos/glico-pocky.webp", category: "Confectionery" },
-  { name: "AMOS", country: "China", year: 2022, logoSrc: "/photos/logos/amos.webp", category: "Stationery & Crafts" },
-  { name: "NewChoice", country: "Taiwan", year: 1999, logoSrc: "/photos/logos/newchoice.webp", category: "Confectionery" },
-  { name: "Warrior", country: "Thailand", logoSrc: "/photos/logos/warrior.webp", category: "Beverages" },
-  { name: "Wei Long", country: "China", logoSrc: "/photos/logos/weilong.webp", category: "Confectionery" },
+  { name: "TCP", country: "Thailand", year: 2014, category: "Beverages" },
+  {
+    name: "BiC",
+    country: "France",
+    year: 2018,
+    category: "Stationery & Crafts",
+  },
+  { name: "Red Bull", country: "Austria", category: "Beverages" },
+  {
+    name: "Glico (Pocky)",
+    country: "Japan",
+    year: 2026,
+    category: "Confectionery",
+  },
+  {
+    name: "AMOS",
+    country: "China",
+    year: 2022,
+    category: "Stationery & Crafts",
+  },
+  {
+    name: "NewChoice",
+    country: "Taiwan",
+    year: 1999,
+    category: "Confectionery",
+  },
+  { name: "Warrior", country: "Thailand", category: "Beverages" },
+  { name: "Wei Long", country: "China", category: "Confectionery" },
 ];
+
+export const brands: Brand[] = brandDetails.map((brand) => ({
+  ...brand,
+  logoSrc: partnerLogos[brand.name],
+}));
 
 export const homepageBrands = brands;
 

@@ -64,7 +64,12 @@ export default function AboutPage() {
           <div className="mx-auto w-full max-w-[1500px]">
             <RevealOnScroll className="flex max-w-[60ch] flex-col gap-7">
               <Eyebrow tone="gold">Our team</Eyebrow>
-              <DisplayHeading level={2} tone="white" className="max-w-[18ch]">
+              <DisplayHeading
+                id="about-team-heading"
+                level={2}
+                tone="white"
+                className="max-w-[18ch]"
+              >
                 The faces behind *thirty years* of partnership.
               </DisplayHeading>
               <p className="max-w-[52ch] text-[clamp(15px,1.4vw,17px)] leading-[1.55] text-paper/80">
@@ -124,7 +129,12 @@ export default function AboutPage() {
           <div className="mx-auto w-full max-w-[1500px]">
             <RevealOnScroll className="flex max-w-[60ch] flex-col gap-7">
               <Eyebrow tone="gold">Community impact</Eyebrow>
-              <DisplayHeading level={2} tone="white" className="max-w-[18ch]">
+              <DisplayHeading
+                id="about-community-heading"
+                level={2}
+                tone="white"
+                className="max-w-[18ch]"
+              >
                 Partnership *lived out* across decades.
               </DisplayHeading>
               <p className="max-w-[52ch] text-[clamp(15px,1.4vw,17px)] leading-[1.55] text-paper/80">

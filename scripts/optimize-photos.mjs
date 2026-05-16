@@ -7,8 +7,9 @@ import sharp from "sharp";
 import { mkdir, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const ROOT = path.resolve(new URL("..", import.meta.url).pathname);
+const ROOT = path.resolve(fileURLToPath(new URL("..", import.meta.url)));
 const SRC_PEOPLE = path.join(ROOT, "client-doc/Employees Photos");
 const SRC_ASSETS = path.join(ROOT, "client-doc/RF Website OneDrive May 15 2026");
 const OUT = path.join(ROOT, "public/photos");

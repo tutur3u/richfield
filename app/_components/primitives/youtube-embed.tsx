@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   videoId: string;
@@ -12,6 +12,12 @@ type Props = {
   posterQuality?: "maxres" | "hq";
   className?: string;
 };
+
+function getPosterSrc(videoId: string, quality: NonNullable<Props["posterQuality"]>) {
+  return `https://i.ytimg.com/vi/${videoId}/${
+    quality === "maxres" ? "maxresdefault" : "hqdefault"
+  }.jpg`;
+}
 
 /**
  * Lazy YouTube player — shows a poster + play button, swaps in the iframe
@@ -25,10 +31,13 @@ export function YouTubeEmbed({
   className = "",
 }: Props) {
   const [active, setActive] = useState(false);
+  const [posterSrc, setPosterSrc] = useState(() =>
+    getPosterSrc(videoId, posterQuality),
+  );
 
-  const poster = `https://i.ytimg.com/vi/${videoId}/${
-    posterQuality === "maxres" ? "maxresdefault" : "hqdefault"
-  }.jpg`;
+  useEffect(() => {
+    setPosterSrc(getPosterSrc(videoId, posterQuality));
+  }, [videoId, posterQuality]);
 
   return (
     <div
@@ -50,10 +59,15 @@ export function YouTubeEmbed({
           className="absolute inset-0 block h-full w-full cursor-pointer"
         >
           <Image
-            src={poster}
+            src={posterSrc}
             alt=""
             fill
             sizes="(min-width: 1024px) 80vw, 100vw"
+            onError={() => {
+              if (posterQuality === "maxres") {
+                setPosterSrc(getPosterSrc(videoId, "hq"));
+              }
+            }}
             className="object-cover [filter:saturate(0.92)_brightness(0.92)]"
           />
           <span

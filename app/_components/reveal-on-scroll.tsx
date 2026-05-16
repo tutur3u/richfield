@@ -2,7 +2,7 @@
 
 import { useRevealOnScroll } from "@/app/_hooks/use-reveal-on-scroll";
 
-type AllowedTag = "div" | "section" | "article" | "li";
+type AllowedTag = "div" | "section" | "article" | "li" | "figure" | "header";
 
 export function RevealOnScroll({
   children,

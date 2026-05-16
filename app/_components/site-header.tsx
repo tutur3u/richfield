@@ -41,8 +41,16 @@ export function SiteHeader() {
     if (open) setOpen(false);
   }
 
-  const headerCls = transparent
-    ? "absolute inset-x-0 top-0 z-30 bg-transparent"
+  // On home, stay `fixed` whether transparent or scrolled — toggling
+  // position (absolute → sticky) mid-scroll causes the header to scroll
+  // away with the hero and then "pop back in" once sticky kicks in.
+  // Elsewhere, `sticky` is fine (header takes layout space from the start).
+  const headerCls = isHome
+    ? `fixed inset-x-0 top-0 z-30 transition-colors duration-300 ${
+        transparent
+          ? "bg-transparent"
+          : "border-b border-line bg-cream/85 backdrop-blur-sm"
+      }`
     : "sticky inset-x-0 top-0 z-30 border-b border-line bg-cream/85 backdrop-blur-sm";
 
   const linkColor = transparent ? "text-paper" : "text-ink";

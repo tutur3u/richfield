@@ -9,7 +9,7 @@
   --color-muted: oklch(0.52 0.008 90);
   --color-line: oklch(0.84 0.025 90);
 
-  --font-display: var(--font-playfair);
+  --font-display: var(--font-fraunces);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
@@ -35,6 +35,36 @@ body {
   font-feature-settings: "ss01", "ss02";
 }
 
+/* Fraunces fine-tuning: dial down the SOFT axis for sharper, more
+   decisive glyphs (default is rounder), and bump opsz at display sizes
+   for the editorial-poster feel. Italic emphasis stays readable. */
+.font-display {
+  font-variation-settings: "SOFT" 20, "opsz" 96;
+}
+
+/* Continuous-scroll lanes for the brand marquee. Track is doubled, so
+   shifting by -50% loops seamlessly. */
+@keyframes marquee-left {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes marquee-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+.marquee-track {
+  animation-duration: var(--marquee-duration, 60s);
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  will-change: transform;
+}
+.marquee-track--left { animation-name: marquee-left; }
+.marquee-track--right { animation-name: marquee-right; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none !important; }
+}
+
 ::selection {
   background: var(--color-ink);
   color: var(--color-cream);
@@ -57,13 +87,13 @@ button:focus-visible {
    elements still outside the viewport at mount; the IntersectionObserver
    removes it once the element enters view. */
 .reveal {
-  transition: opacity 600ms var(--ease-out-expo), transform 600ms var(--ease-out-expo);
+  transition: opacity 800ms var(--ease-out-expo), transform 800ms var(--ease-out-expo);
   will-change: opacity, transform;
 }
 
 .reveal--armed {
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(28px);
 }
 
 @media (prefers-reduced-motion: reduce) {

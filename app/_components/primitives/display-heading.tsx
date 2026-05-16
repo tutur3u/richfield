@@ -30,6 +30,7 @@ function parseItalics(text: string): Array<{ text: string; italic: boolean }> {
 type Props = {
   level: Level;
   children: string;
+  id?: string;
   tone?: "ink" | "white" | "gold";
   className?: string;
   italicTone?: "gold" | "ink" | "white";
@@ -40,6 +41,7 @@ const toneClass = { ink: "text-ink", white: "text-paper", gold: "text-gold" };
 export function DisplayHeading({
   level,
   children,
+  id,
   tone = "ink",
   italicTone = "gold",
   className = "",
@@ -48,6 +50,7 @@ export function DisplayHeading({
   const segments = parseItalics(children);
   return (
     <Tag
+      id={id}
       className={`font-display font-normal ${sizeClass[level]} ${toneClass[tone]} ${className}`}
     >
       {segments.map((s, idx) =>

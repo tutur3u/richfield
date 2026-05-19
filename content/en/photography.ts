@@ -6,6 +6,41 @@ export type Photo = {
 };
 
 export const peoplePhotos = {
+  heroAerial: {
+    src: "/photos/people/selected-2026-05-03.webp",
+    alt: "Aerial drone view: the Richfield team spelling 'RICHFIELD' on the beach",
+    ratio: 16 / 9,
+  },
+  gala: {
+    src: "/photos/people/selected-2026-05-01.webp",
+    alt: "Richfield 30-year Gala Dinner — leadership lineup in front of the anniversary backdrop",
+    ratio: 3 / 2,
+  },
+  galaWide: {
+    src: "/photos/people/selected-2026-05-04.webp",
+    alt: "Richfield Group Gala Dinner — the full team on stage",
+    ratio: 3 / 2,
+  },
+  campusGroup: {
+    src: "/photos/people/selected-2026-05-05.webp",
+    alt: "Richfield team portrait in front of the modern campus",
+    ratio: 3 / 2,
+  },
+  teamBuilding: {
+    src: "/photos/people/selected-2026-05-02.webp",
+    alt: "Annual team-building event at the beach",
+    ratio: 3 / 2,
+  },
+  teamBuildingEnergy: {
+    src: "/photos/people/selected-2026-05-06.webp",
+    alt: "Team energy at the annual beach team-building",
+    ratio: 3 / 2,
+  },
+  teamConga: {
+    src: "/photos/people/selected-2026-05-07.webp",
+    alt: "The Richfield team in a conga line on the beach",
+    ratio: 3 / 2,
+  },
   groupCompany: {
     src: "/photos/people/group-company-1920.webp",
     alt: "The Richfield team gathered for the annual company portrait",
@@ -75,39 +110,54 @@ export type ProductPhoto = {
 };
 
 export const productPhotos: Record<string, ProductPhoto[]> = {
-  "Glico (Pocky)": [
-    { src: "/photos/products/glico-pocky-chocolate.webp", name: "Pocky Chocolate", alt: "Pocky Chocolate sticks" },
-    { src: "/photos/products/glico-pocky-strawberry.webp", name: "Pocky Strawberry", alt: "Pocky Strawberry sticks" },
-    { src: "/photos/products/glico-pocky-matcha.webp", name: "Pocky Matcha", alt: "Pocky Matcha sticks" },
-    { src: "/photos/products/glico-pocky-milk.webp", name: "Pocky Milk", alt: "Pocky Milk sticks" },
-  ],
-  "Red Bull": [
-    { src: "/photos/products/red-bull-classic.webp", name: "Red Bull Classic", alt: "Red Bull Classic energy drink" },
-    { src: "/photos/products/red-bull-blue.webp", name: "Red Bull Blue", alt: "Red Bull Blue bottle" },
-    { src: "/photos/products/warrior-grape-can.webp", name: "Warrior Grape", alt: "Warrior Grape energy drink can" },
-    { src: "/photos/products/warrior-strawberry.webp", name: "Warrior Strawberry", alt: "Warrior Strawberry bottle" },
-  ],
   "Mars · Wrigley": [
-    { src: "/photos/products/mars-mm.webp", name: "M&M's", alt: "M&M's candies" },
     { src: "/photos/products/mars-snickers.webp", name: "Snickers", alt: "Snickers chocolate bar" },
+    { src: "/photos/products/mars-m-m.webp", name: "M&M's", alt: "M&M's candies" },
     { src: "/photos/products/mars-doublemint.webp", name: "Doublemint", alt: "Doublemint chewing gum" },
     { src: "/photos/products/mars-cool-air.webp", name: "Cool Air", alt: "Cool Air mint gum" },
+    { src: "/photos/products/mars-mars-wrigley.webp", name: "Mars · Wrigley", alt: "Mars and Wrigley assortment" },
   ],
-  AMOS: [
-    { src: "/photos/products/amos-hero.webp", name: "AMOS Crayons", alt: "AMOS crayons set" },
-    { src: "/photos/products/amos-bunny.webp", name: "Bunny Edition", alt: "AMOS Bunny edition" },
-  ],
-  BiC: [
-    { src: "/photos/products/bic-lighter-1.webp", name: "BiC Lighter", alt: "BiC pocket lighter" },
-    { src: "/photos/products/bic-lighter-2.webp", name: "BiC Mini Lighter", alt: "BiC mini lighter" },
-    { src: "/photos/products/bic-shaver-1.webp", name: "BiC Easy Clic", alt: "BiC Easy Clic razor" },
-    { src: "/photos/products/bic-shaver-2.webp", name: "BiC Hybrid 3", alt: "BiC Hybrid 3-blade razor" },
+  "Glico (Pocky)": [
+    { src: "/photos/products/glico-pocky-pocky-chocolate.webp", name: "Pocky Chocolate", alt: "Pocky Chocolate sticks" },
+    { src: "/photos/products/glico-pocky-pocky-strawberry.webp", name: "Pocky Strawberry", alt: "Pocky Strawberry sticks" },
+    { src: "/photos/products/glico-pocky-pocky-matcha.webp", name: "Pocky Matcha", alt: "Pocky Matcha sticks" },
+    { src: "/photos/products/glico-pocky-pocky-milk.webp", name: "Pocky Milk", alt: "Pocky Milk sticks" },
+    { src: "/photos/products/glico-pocky-pocky-cookie.webp", name: "Pocky Cookie", alt: "Pocky Cookie sticks" },
+    { src: "/photos/products/glico-pocky-pocky-double-chocolate.webp", name: "Pocky Double Chocolate", alt: "Pocky Double Chocolate sticks" },
+    { src: "/photos/products/glico-pocky-pocky-passion-fruit.webp", name: "Pocky Passion Fruit", alt: "Pocky Passion Fruit sticks" },
+    { src: "/photos/products/glico-pocky-pocky-blueberry-yogurt.webp", name: "Pocky Blueberry Yogurt", alt: "Pocky Blueberry Yogurt sticks" },
   ],
   NewChoice: [
     { src: "/photos/products/newchoice-pink-bear.webp", name: "Bear Pink 750g", alt: "NewChoice Bear Pink tropical jelly" },
     { src: "/photos/products/newchoice-yellow-bear.webp", name: "Bear Yellow 750g", alt: "NewChoice Bear Yellow mixed-fruit jelly" },
-    { src: "/photos/products/newchoice-doraemon.webp", name: "Doraemon Jar", alt: "NewChoice Doraemon jelly jar" },
-    { src: "/photos/products/newchoice-fruit-jelly.webp", name: "Fruit Pudding", alt: "NewChoice fruit pudding cup" },
+    { src: "/photos/products/newchoice-rau-cau-gau-nau-750g-huong-vi-pudding-1579.webp", name: "Bear Brown 750g", alt: "NewChoice Bear Brown pudding jelly" },
+    { src: "/photos/products/newchoice-thach-rau-cau-doraemon-hu-7264.webp", name: "Doraemon Jar", alt: "NewChoice Doraemon jelly jar" },
+    { src: "/photos/products/newchoice-thach-new-choice-huong-vi-dua-hau-1957.webp", name: "Watermelon", alt: "NewChoice watermelon jelly" },
+    { src: "/photos/products/newchoice-fruit-jelly.webp", name: "Fruit Pudding Cup", alt: "NewChoice fruit pudding cup" },
+  ],
+  AMOS: [
+    { src: "/photos/products/amos-amos.webp", name: "AMOS Crayons", alt: "AMOS crayons set" },
+    { src: "/photos/products/amos-bunny.webp", name: "Bunny Edition", alt: "AMOS Bunny edition" },
+    { src: "/photos/products/amos-hero.webp", name: "AMOS Studio Pack", alt: "AMOS studio pack" },
+  ],
+  "Red Bull": [
+    { src: "/photos/products/red-bull-classic.webp", name: "Red Bull Classic", alt: "Red Bull Classic energy drink" },
+    { src: "/photos/products/red-bull-blue.webp", name: "Red Bull Blue", alt: "Red Bull Blue bottle" },
+    { src: "/photos/products/redbull-rb-extra.webp", name: "Red Bull Extra", alt: "Red Bull Extra energy drink" },
+  ],
+  Warrior: [
+    { src: "/photos/products/warrior-grape-can.webp", name: "Warrior Grape Can", alt: "Warrior Grape energy drink can" },
+    { src: "/photos/products/warrior-strawberry.webp", name: "Warrior Strawberry", alt: "Warrior Strawberry bottle" },
+    { src: "/photos/products/redbull-warrior-nho-chai.webp", name: "Warrior Grape Bottle", alt: "Warrior Grape bottle" },
+    { src: "/photos/products/redbull-warrior-dau-lon.webp", name: "Warrior Strawberry Can", alt: "Warrior Strawberry can" },
+  ],
+  BiC: [
+    { src: "/photos/products/bic-lighters-1.webp", name: "BiC Lighter", alt: "BiC pocket lighter" },
+    { src: "/photos/products/bic-lighters-2.webp", name: "BiC Mini Lighter", alt: "BiC mini lighter" },
+    { src: "/photos/products/bic-lighters-3.webp", name: "BiC J3 Slim", alt: "BiC J3 slim lighter" },
+    { src: "/photos/products/bic-shavers-1.webp", name: "BiC Easy Clic", alt: "BiC Easy Clic razor" },
+    { src: "/photos/products/bic-shavers-2.webp", name: "BiC Hybrid 3", alt: "BiC Hybrid 3-blade razor" },
+    { src: "/photos/products/bic-shavers-3.webp", name: "BiC Lady 2", alt: "BiC Lady 2-blade razor" },
   ],
 };
 
@@ -121,4 +171,6 @@ export const partnerLogos: Record<string, string> = {
   NewChoice: "/photos/logos/newchoice.webp",
   Warrior: "/photos/logos/warrior.webp",
   "Wei Long": "/photos/logos/weilong.webp",
+  Caretex: "/photos/logos/care.webp",
+  "Dory Rich": "/photos/logos/dory-rich.webp",
 };

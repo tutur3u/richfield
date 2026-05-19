@@ -4,6 +4,8 @@ import { PageHeader } from "@/app/_components/primitives/page-header";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
 import { HairlineRule } from "@/app/_components/primitives/hairline-rule";
 import { TintedPhoto } from "@/app/_components/primitives/tinted-photo";
+import { PhotoCarousel } from "@/app/_components/primitives/photo-carousel";
+import { DisplayHeading } from "@/app/_components/primitives/display-heading";
 import { FacebookIcon } from "@/app/_components/primitives/social-icons";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { SoftCtaCloser } from "@/app/_components/sections/soft-cta-closer";
@@ -58,7 +60,14 @@ export default function CareersPage() {
       <PageHeader
         eyebrow="Careers"
         heading="A legacy of growth. A future of *opportunity*."
-        tone="green"
+        lede="Workshops, openings, congresses, beaches — three decades of partnership told through the people who built it."
+        photo={[
+          peoplePhotos.gala,
+          peoplePhotos.teamBuilding,
+          peoplePhotos.teamBuildingEnergy,
+          peoplePhotos.happyTime,
+          peoplePhotos.celebration,
+        ]}
       />
 
       <section className="bg-cream px-6 py-[clamp(96px,11vw,140px)] sm:px-10">
@@ -101,12 +110,13 @@ export default function CareersPage() {
       >
         <RevealOnScroll className="mx-auto mb-[clamp(40px,5vw,72px)] flex max-w-[1500px] flex-col gap-4 px-6 sm:px-10">
           <Eyebrow tone="gold">Life at Richfield</Eyebrow>
-          <h2
+          <DisplayHeading
             id="life-at-richfield-heading"
-            className="max-w-[24ch] font-display text-[clamp(32px,4vw,56px)] leading-[1.1] text-ink"
+            level={2}
+            className="max-w-[24ch]"
           >
             The people behind the *network*.
-          </h2>
+          </DisplayHeading>
           <p className="max-w-[60ch] text-[17px] leading-[1.55] text-muted">
             Workshops, openings, celebrations, congresses. Three decades of
             partnerships, told in the moments that built them.
@@ -115,35 +125,55 @@ export default function CareersPage() {
 
         <div className="px-3 sm:px-6">
           <div className="mx-auto grid w-full max-w-[1500px] auto-rows-[44vw] grid-cols-2 gap-2 sm:auto-rows-[24vw] sm:grid-cols-3 sm:gap-3 lg:auto-rows-[18vw] lg:grid-cols-4">
-            {LIFE_TILES.map((tile, idx) => (
-              <RevealOnScroll
-                as="figure"
-                key={tile.caption}
-                delayMs={idx * 80}
-                className={`group relative overflow-hidden rounded-sm bg-ink ${
-                  idx === 0 ? "col-span-2 row-span-2" : ""
-                } ${tile.gridClass}`}
-              >
-                <TintedPhoto
-                  src={tile.photo.src}
-                  alt={tile.photo.alt}
-                  intensity="soft"
-                  fill
-                  sizes="(min-width: 1024px) 38vw, (min-width: 640px) 33vw, 50vw"
-                  className="absolute inset-0 h-full w-full"
-                  imgClassName="motion-safe:transition-transform motion-safe:duration-700 group-hover:scale-[1.05]"
-                />
-                <div
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/55 via-transparent to-transparent opacity-70 transition-opacity duration-300 group-hover:opacity-100"
-                />
-                <figcaption className="absolute inset-x-0 bottom-0 px-4 pb-4 text-[10px] uppercase tracking-[0.32em] text-paper sm:px-6 sm:pb-6 sm:text-[11px]">
-                  <span className="inline-block translate-y-1 opacity-90 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100">
-                    {tile.caption}
-                  </span>
-                </figcaption>
-              </RevealOnScroll>
-            ))}
+            {LIFE_TILES.map((tile, idx) => {
+              const isHero = idx === 0;
+              const heroRotation = [
+                peoplePhotos.groupCompany,
+                peoplePhotos.gala,
+                peoplePhotos.teamBuilding,
+                peoplePhotos.celebration,
+              ];
+              return (
+                <RevealOnScroll
+                  as="figure"
+                  key={tile.caption}
+                  delayMs={idx * 80}
+                  className={`group relative overflow-hidden rounded-sm bg-cream ${
+                    isHero ? "col-span-2 row-span-2" : ""
+                  } ${tile.gridClass}`}
+                >
+                  {isHero ? (
+                    <PhotoCarousel
+                      photos={heroRotation}
+                      fill
+                      sizes="(min-width: 1024px) 38vw, (min-width: 640px) 33vw, 50vw"
+                      className="absolute inset-0 h-full w-full"
+                      imgClassName="motion-safe:transition-transform motion-safe:duration-700 group-hover:scale-[1.05]"
+                    />
+                  ) : (
+                    <TintedPhoto
+                      src={tile.photo.src}
+                      alt={tile.photo.alt}
+                      tone="cream"
+                      intensity="soft"
+                      fill
+                      sizes="(min-width: 1024px) 19vw, (min-width: 640px) 33vw, 50vw"
+                      className="absolute inset-0 h-full w-full"
+                      imgClassName="motion-safe:transition-transform motion-safe:duration-700 group-hover:scale-[1.05]"
+                    />
+                  )}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,oklch(0.96_0.018_82/0.82)_0%,oklch(0.96_0.018_82/0.18)_45%,oklch(0.96_0.018_82/0)_70%)] opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+                  />
+                  <figcaption className="absolute inset-x-0 bottom-0 px-4 pb-4 text-[10px] uppercase tracking-[0.32em] text-ink sm:px-6 sm:pb-6 sm:text-[11px]">
+                    <span className="inline-block translate-y-1 opacity-90 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100">
+                      {tile.caption}
+                    </span>
+                  </figcaption>
+                </RevealOnScroll>
+              );
+            })}
           </div>
         </div>
 
@@ -171,12 +201,12 @@ export default function CareersPage() {
         </RevealOnScroll>
       </section>
 
-      <section className="bg-ink px-6 py-[clamp(96px,11vw,140px)] sm:px-10 text-paper">
+      <section className="bg-cream px-6 py-[clamp(96px,11vw,140px)] sm:px-10 text-ink">
         <RevealOnScroll className="mx-auto flex max-w-[1300px] flex-col gap-8">
           <Eyebrow tone="gold">Open positions</Eyebrow>
           {openPositions.length === 0 ? (
-            <div className="flex flex-col gap-4 border-t border-paper/15 py-8">
-              <p className="max-w-[60ch] text-[17px] leading-[1.55] text-paper/70">
+            <div className="flex flex-col gap-4 border-t border-line py-8">
+              <p className="max-w-[60ch] text-[17px] leading-[1.55] text-muted">
                 We're not actively recruiting right now. Reach out anyway; we'd
                 like to hear from people who fit our story.
               </p>
@@ -190,17 +220,17 @@ export default function CareersPage() {
           ) : (
             <table className="w-full border-collapse">
               <thead>
-                <tr className="text-left text-[11px] uppercase tracking-[0.16em] text-paper/60">
-                  <th className="border-b border-paper/15 py-4">Job title</th>
-                  <th className="border-b border-paper/15 py-4">Positions</th>
-                  <th className="border-b border-paper/15 py-4">Location</th>
-                  <th className="border-b border-paper/15 py-4">Deadline</th>
+                <tr className="text-left text-[11px] uppercase tracking-[0.16em] text-muted">
+                  <th className="border-b border-line py-4">Job title</th>
+                  <th className="border-b border-line py-4">Positions</th>
+                  <th className="border-b border-line py-4">Location</th>
+                  <th className="border-b border-line py-4">Deadline</th>
                 </tr>
               </thead>
               <tbody>
                 {openPositions.map((p) => (
-                  <tr key={p.title} className="text-[15px] text-paper/85">
-                    <td className="border-b border-paper/10 py-4">
+                  <tr key={p.title} className="text-[15px] text-ink">
+                    <td className="border-b border-line py-4">
                       {p.href ? (
                         <Link href={p.href} className="hover:text-gold">
                           {p.title}
@@ -209,9 +239,9 @@ export default function CareersPage() {
                         p.title
                       )}
                     </td>
-                    <td className="border-b border-paper/10 py-4">{p.positions}</td>
-                    <td className="border-b border-paper/10 py-4">{p.location}</td>
-                    <td className="border-b border-paper/10 py-4">{p.deadline}</td>
+                    <td className="border-b border-line py-4">{p.positions}</td>
+                    <td className="border-b border-line py-4">{p.location}</td>
+                    <td className="border-b border-line py-4">{p.deadline}</td>
                   </tr>
                 ))}
               </tbody>

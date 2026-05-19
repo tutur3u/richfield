@@ -1,13 +1,15 @@
 @import "tailwindcss";
 
 @theme {
-  --color-gold: oklch(0.65 0.115 80);
-  --color-ink: oklch(0.16 0.012 165);
-  --color-green: oklch(0.30 0.038 158);
-  --color-cream: oklch(0.94 0.022 85);
-  --color-paper: oklch(0.985 0.005 85);
-  --color-muted: oklch(0.52 0.008 90);
-  --color-line: oklch(0.84 0.025 90);
+  --color-gold: oklch(0.74 0.115 82);
+  --color-sunrise: oklch(0.84 0.13 88);
+  --color-green: oklch(0.51 0.135 148);
+  --color-forest: oklch(0.32 0.062 155);
+  --color-ink: oklch(0.22 0.015 158);
+  --color-paper: oklch(0.985 0.006 70);
+  --color-cream: oklch(0.96 0.018 82);
+  --color-muted: oklch(0.52 0.018 250);
+  --color-line: oklch(0.86 0.018 82);
 
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-geist-sans);
@@ -27,7 +29,7 @@ html {
 }
 
 body {
-  background: var(--color-cream);
+  background: var(--color-paper);
   color: var(--color-ink);
   font-family: var(--font-sans);
   font-size: 17px;
@@ -52,6 +54,49 @@ body {
   from { transform: translate3d(-50%, 0, 0); }
   to { transform: translate3d(0, 0, 0); }
 }
+
+.bg-paper-gradient {
+  background: linear-gradient(180deg, var(--color-paper) 0%, var(--color-cream) 100%);
+}
+.bg-cream-gradient {
+  background: linear-gradient(180deg, var(--color-cream) 0%, var(--color-paper) 100%);
+}
+
+/* Photo-overlay gradients. Mobile/tablet: vertical-only wash so stacked
+   content stays legible across the full width. lg+: horizontal split so the
+   photo can breathe on the empty rail. Reused by hero, PageHeader, and the
+   About body bands. */
+.photo-overlay-left,
+.photo-overlay-right {
+  background: linear-gradient(
+    180deg,
+    oklch(0.96 0.018 82 / 0.96) 0%,
+    oklch(0.96 0.018 82 / 0.94) 70%,
+    oklch(0.96 0.018 82 / 0.65) 100%
+  );
+}
+@media (min-width: 1024px) {
+  .photo-overlay-left {
+    background: linear-gradient(
+      90deg,
+      oklch(0.96 0.018 82 / 0.97) 0%,
+      oklch(0.96 0.018 82 / 0.93) 46%,
+      oklch(0.96 0.018 82 / 0.55) 60%,
+      oklch(0.96 0.018 82 / 0.18) 75%,
+      oklch(0.96 0.018 82 / 0) 90%
+    );
+  }
+  .photo-overlay-right {
+    background: linear-gradient(
+      270deg,
+      oklch(0.96 0.018 82 / 0.97) 0%,
+      oklch(0.96 0.018 82 / 0.93) 46%,
+      oklch(0.96 0.018 82 / 0.55) 60%,
+      oklch(0.96 0.018 82 / 0.18) 75%,
+      oklch(0.96 0.018 82 / 0) 90%
+    );
+  }
+}
 .marquee-track {
   animation-duration: var(--marquee-duration, 60s);
   animation-iteration-count: infinite;
@@ -66,8 +111,8 @@ body {
 }
 
 ::selection {
-  background: var(--color-ink);
-  color: var(--color-cream);
+  background: var(--color-green);
+  color: var(--color-paper);
 }
 
 :focus-visible {

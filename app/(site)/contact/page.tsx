@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ContactForm } from "@/app/_components/forms/contact-form";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
 import { DisplayHeading } from "@/app/_components/primitives/display-heading";
+import { TintedPhoto } from "@/app/_components/primitives/tinted-photo";
+import { peoplePhotos } from "@/content/en/photography";
 import {
   FacebookIcon,
   PhoneIcon,
@@ -60,7 +62,7 @@ const channels: Channel[] = [
     cta: "Open on Maps",
     external: true,
     Icon: MapPinIcon,
-    iconBg: "bg-ink",
+    iconBg: "bg-green",
     iconFg: "text-paper",
   },
   {
@@ -109,13 +111,27 @@ export default function ContactPage() {
 
       <section
         aria-label="Contact"
-        className="relative flex min-h-[100svh] flex-col bg-cream pb-[clamp(48px,6vw,80px)] pt-[clamp(112px,12vw,160px)]"
+        className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-cream pb-[clamp(48px,6vw,80px)] pt-[clamp(112px,12vw,160px)]"
       >
+        {/* Soft aerial behind the heading — fades out before the channel list */}
+        <TintedPhoto
+          src={peoplePhotos.heroAerial.src}
+          alt=""
+          tone="cream"
+          fill
+          sizes="100vw"
+          className="absolute inset-x-0 top-0 -z-20 h-[60svh]"
+          imgClassName="object-[center_35%]"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-x-0 top-0 -z-10 h-[60svh] bg-[linear-gradient(180deg,oklch(0.96_0.018_82/0.7)_0%,oklch(0.96_0.018_82/0.85)_55%,var(--color-cream)_100%)]"
+        />
         <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-[clamp(32px,4vw,56px)] px-6 sm:px-10">
           {/* Compact heading — fits above the fold with channels + form */}
           <RevealOnScroll className="flex max-w-[64ch] flex-col gap-4">
             <Eyebrow tone="gold">Contact</Eyebrow>
-            <DisplayHeading level={2} className="max-w-[18ch]">
+            <DisplayHeading level={1} className="max-w-[18ch]">
               Tell us about your *brand*.
             </DisplayHeading>
             <p className="max-w-[60ch] text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-muted">

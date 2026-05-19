@@ -4,7 +4,6 @@ import { WhatWeDo } from "@/app/_components/sections/what-we-do";
 import { FootprintMap } from "@/app/_components/sections/footprint-map";
 import { Timeline } from "@/app/_components/sections/timeline";
 import { BrandMarquee } from "@/app/_components/sections/brand-marquee";
-import { JvFeature } from "@/app/_components/sections/jv-feature";
 import { SoftCtaCloser } from "@/app/_components/sections/soft-cta-closer";
 import { homepageMilestones } from "@/content/en/milestones";
 import { site } from "@/content/en/site";
@@ -56,7 +55,6 @@ export default function HomePage() {
         heading="A story of *partnerships* over thirty years."
       />
       <BrandMarquee />
-      <JvFeature variant="full" />
       <SoftCtaCloser />
     </>
   );

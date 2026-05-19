@@ -20,13 +20,13 @@ export function Timeline({
   return (
     <section
       aria-labelledby="timeline-heading"
-      className="bg-ink px-6 py-[clamp(96px,11vw,140px)] sm:px-10"
+      className="bg-cream px-6 py-[clamp(96px,11vw,140px)] sm:px-10"
     >
       <div className="mx-auto flex max-w-[1300px] flex-col gap-16">
         <div className="flex flex-col gap-6">
           <Eyebrow tone="gold">{eyebrow}</Eyebrow>
           <div id="timeline-heading">
-            <DisplayHeading level={2} tone="white">
+            <DisplayHeading level={2} tone="ink">
               {heading}
             </DisplayHeading>
           </div>
@@ -35,7 +35,7 @@ export function Timeline({
         <div className="relative">
           <div
             aria-hidden
-            className="absolute left-0 right-0 top-[6px] h-px bg-paper/15"
+            className="absolute left-0 right-0 top-[6px] h-px bg-ink/15"
           />
           <ol
             className={`flex gap-10 overflow-x-auto pb-4 sm:grid sm:overflow-visible ${

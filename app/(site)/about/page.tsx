@@ -4,11 +4,14 @@ import { SectionHeading } from "@/app/_components/primitives/section-heading";
 import { HairlineRule } from "@/app/_components/primitives/hairline-rule";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
 import { DisplayHeading } from "@/app/_components/primitives/display-heading";
+import { NumberStack } from "@/app/_components/primitives/number-stack";
 import { TintedPhoto } from "@/app/_components/primitives/tinted-photo";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { Timeline } from "@/app/_components/sections/timeline";
 import { FootprintMap } from "@/app/_components/sections/footprint-map";
+import { JvFeature } from "@/app/_components/sections/jv-feature";
 import { SoftCtaCloser } from "@/app/_components/sections/soft-cta-closer";
+import { PhotoCarousel } from "@/app/_components/primitives/photo-carousel";
 import { milestones } from "@/content/en/milestones";
 import { peoplePhotos } from "@/content/en/photography";
 
@@ -39,40 +42,57 @@ export default function AboutPage() {
     <>
       <PageHeader
         eyebrow="About"
-        heading="Three countries. Three *generations*. One promise."
+        headingNode={
+          <NumberStack
+            tone="on-cream"
+            lines={[
+              { numeral: "3", label: "countries." },
+              { numeral: "3", label: "generations." },
+              { numeral: "1", label: "promise." },
+            ]}
+          />
+        }
         lede="Richfield Group is one of Vietnam's largest FMCG distributors. We've spent more than thirty years building a distribution network that reaches every province, supported by family-business values that started in Malaysia."
+        photo={[
+          peoplePhotos.gala,
+          peoplePhotos.galaWide,
+          peoplePhotos.campusGroup,
+          peoplePhotos.teamConga,
+        ]}
       />
 
       <section
         aria-labelledby="about-team-heading"
-        className="relative isolate overflow-hidden bg-ink text-paper"
+        className="relative isolate overflow-hidden bg-cream text-ink"
       >
-        <TintedPhoto
-          src={peoplePhotos.grandOpening.src}
-          alt={peoplePhotos.grandOpening.alt}
-          intensity="medium"
-          sizes="100vw"
+        <PhotoCarousel
+          photos={[
+            peoplePhotos.galaWide,
+            peoplePhotos.gala,
+            peoplePhotos.campusGroup,
+            peoplePhotos.teamBuilding,
+          ]}
           fill
-          className="absolute inset-0 -z-10 min-h-[70svh]"
-          imgClassName="object-[center_35%]"
+          sizes="100vw"
+          className="absolute inset-0 -z-20 min-h-[100svh]"
+          imgClassName="object-[center_45%]"
         />
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(18,24,21,0.92)_0%,rgba(18,24,21,0.75)_24%,rgba(18,24,21,0.4)_50%,rgba(18,24,21,0.1)_75%,rgba(18,24,21,0)_95%)]"
-        />
-        <div className="relative flex min-h-[70svh] flex-col justify-center px-6 py-[clamp(96px,12vw,160px)] sm:px-10">
+        {/* Mirrored cream wash — dense on the right where the content sits.
+            Mobile: vertical wash so stacked content stays legible. */}
+        <div aria-hidden className="photo-overlay-right absolute inset-0 -z-10" />
+        <div className="relative flex min-h-[100svh] flex-col justify-center px-6 py-[clamp(96px,12vw,160px)] sm:px-10">
           <div className="mx-auto w-full max-w-[1500px]">
-            <RevealOnScroll className="flex max-w-[60ch] flex-col gap-7">
+            <RevealOnScroll className="ml-auto flex max-w-[60ch] flex-col gap-7">
               <Eyebrow tone="gold">Our team</Eyebrow>
               <DisplayHeading
                 id="about-team-heading"
                 level={2}
-                tone="white"
+                tone="ink"
                 className="max-w-[18ch]"
               >
                 The faces behind *thirty years* of partnership.
               </DisplayHeading>
-              <p className="max-w-[52ch] text-[clamp(15px,1.4vw,17px)] leading-[1.55] text-paper/80">
+              <p className="max-w-[52ch] text-[clamp(15px,1.4vw,17px)] leading-[1.55] text-muted">
                 From the founding family in Malaysia to teammates across our
                 Vietnam offices and distribution centres — the network is the
                 people who run it.
@@ -110,34 +130,34 @@ export default function AboutPage() {
 
       <section
         aria-labelledby="about-community-heading"
-        className="relative isolate overflow-hidden bg-ink text-paper"
+        className="relative isolate overflow-hidden bg-cream text-ink"
       >
-        <TintedPhoto
-          src={peoplePhotos.unionCongress.src}
-          alt={peoplePhotos.unionCongress.alt}
-          intensity="medium"
-          sizes="100vw"
+        <PhotoCarousel
+          photos={[
+            peoplePhotos.teamConga,
+            peoplePhotos.teamBuildingEnergy,
+            peoplePhotos.happyTime,
+            peoplePhotos.celebration,
+          ]}
           fill
-          className="absolute inset-0 -z-10 min-h-[65svh]"
-          imgClassName="object-[right_center]"
+          sizes="100vw"
+          className="absolute inset-0 -z-20 min-h-[100svh]"
+          imgClassName="object-[center_60%]"
         />
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(18,24,21,0.92)_0%,rgba(18,24,21,0.75)_24%,rgba(18,24,21,0.4)_50%,rgba(18,24,21,0.1)_75%,rgba(18,24,21,0)_95%)]"
-        />
-        <div className="relative flex min-h-[65svh] flex-col justify-center px-6 py-[clamp(96px,12vw,160px)] sm:px-10">
+        <div aria-hidden className="photo-overlay-left absolute inset-0 -z-10" />
+        <div className="relative flex min-h-[100svh] flex-col justify-center px-6 py-[clamp(96px,12vw,160px)] sm:px-10">
           <div className="mx-auto w-full max-w-[1500px]">
             <RevealOnScroll className="flex max-w-[60ch] flex-col gap-7">
               <Eyebrow tone="gold">Community impact</Eyebrow>
               <DisplayHeading
                 id="about-community-heading"
                 level={2}
-                tone="white"
+                tone="ink"
                 className="max-w-[18ch]"
               >
                 Partnership *lived out* across decades.
               </DisplayHeading>
-              <p className="max-w-[52ch] text-[clamp(15px,1.4vw,17px)] leading-[1.55] text-paper/80">
+              <p className="max-w-[52ch] text-[clamp(15px,1.4vw,17px)] leading-[1.55] text-muted">
                 Annual Union Congress, training programmes, scholarships, and
                 long-running community partnerships — the long-term view that
                 anchors how we work.
@@ -155,6 +175,8 @@ export default function AboutPage() {
       />
 
       <FootprintMap />
+
+      <JvFeature variant="full" />
 
       <SoftCtaCloser />
     </>

@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useScrollPastThreshold } from "@/app/_hooks/use-scroll-state";
 import { useFocusTrap } from "@/app/_hooks/use-focus-trap";
 
@@ -21,8 +23,6 @@ export function SiteHeader() {
   const transparent = isHome && !scrolled;
 
   const [open, setOpen] = useState(false);
-  const drawerRef = useRef<HTMLDivElement>(null);
-  useFocusTrap(drawerRef, open, () => setOpen(false));
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -41,113 +41,245 @@ export function SiteHeader() {
     if (open) setOpen(false);
   }
 
-  // On home, stay `fixed` whether transparent or scrolled — toggling
-  // position (absolute → sticky) mid-scroll causes the header to scroll
-  // away with the hero and then "pop back in" once sticky kicks in.
-  // Elsewhere, `sticky` is fine (header takes layout space from the start).
+  // Green = the brand banner. Always fixed so it follows scroll on every
+  // route. On the home hero we ease from a soft green wash → fully opaque on
+  // scroll so the aerial photo can still breathe behind it for the first
+  // viewport; on inner pages it's solid green from frame one.
   const headerCls = isHome
     ? `fixed inset-x-0 top-0 z-30 transition-colors duration-300 ${
         transparent
-          ? "bg-transparent"
-          : "border-b border-line bg-cream/85 backdrop-blur-sm"
+          ? "bg-green/60 backdrop-blur-sm"
+          : "border-b border-green/40 bg-green/95 backdrop-blur-sm"
       }`
-    : "sticky inset-x-0 top-0 z-30 border-b border-line bg-cream/85 backdrop-blur-sm";
+    : "fixed inset-x-0 top-0 z-30 border-b border-green/40 bg-green/95 backdrop-blur-sm";
 
-  const linkColor = transparent ? "text-paper" : "text-ink";
+  const linkColor = "text-paper";
   const hoverColor = "hover:text-gold";
 
   return (
-    <header className={headerCls}>
-      <div className="mx-auto flex h-[72px] max-w-[1300px] items-center justify-between px-6 sm:h-[96px] sm:px-10">
-        <Link href="/" className="flex items-center gap-3" aria-label="Richfield Group home">
-          <span
-            aria-hidden
-            className={`flex h-10 w-10 items-center justify-center rounded-full border font-display italic ${
-              transparent ? "border-gold text-gold" : "border-gold text-gold"
-            }`}
+    <>
+      <header className={headerCls}>
+        <div className="mx-auto flex h-[68px] max-w-[1300px] items-center justify-between px-4 sm:h-[88px] sm:px-10">
+          <Link
+            href="/"
+            className="flex items-center gap-3"
+            aria-label="Richfield Group home"
           >
-            R
-          </span>
-          <span className={`hidden font-display text-[14px] tracking-[0.28em] sm:block ${linkColor}`}>
-            RICHFIELD GROUP
-          </span>
-        </Link>
+            <Image
+              src="/photos/logos/richfield.webp"
+              alt="Richfield Group"
+              width={88}
+              height={82}
+              priority
+              className="h-11 w-auto object-contain sm:h-16"
+            />
+          </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-10 lg:flex">
-          {NAV.map((item) => {
-            const active = pathname === item.href || pathname?.startsWith(item.href + "/");
+          <nav aria-label="Primary" className="hidden items-center gap-10 lg:flex">
+            {NAV.map((item) => {
+              const active = pathname === item.href || pathname?.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${linkColor} ${hoverColor} ${
+                    active ? "underline decoration-gold decoration-[1px] underline-offset-[6px]" : ""
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-3 sm:gap-4">
+            <span className="hidden sm:inline-flex">
+              <LangSwitcher tone="light" />
+            </span>
+            <button
+              type="button"
+              aria-expanded={open}
+              aria-controls="mobile-drawer"
+              aria-label={open ? "Close menu" : "Open menu"}
+              onClick={() => setOpen(true)}
+              className={`flex h-10 w-10 items-center justify-center lg:hidden ${linkColor} ${hoverColor} transition-colors`}
+            >
+              <BurgerIcon />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <MobileDrawer
+        open={open}
+        onClose={() => setOpen(false)}
+        pathname={pathname ?? "/"}
+      />
+    </>
+  );
+}
+
+function BurgerIcon() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    >
+      <line x1="3" y1="7" x2="21" y2="7" />
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="17" x2="14" y2="17" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    >
+      <line x1="6" y1="6" x2="18" y2="18" />
+      <line x1="18" y1="6" x2="6" y2="18" />
+    </svg>
+  );
+}
+
+function MobileDrawer({
+  open,
+  onClose,
+  pathname,
+}: {
+  open: boolean;
+  onClose: () => void;
+  pathname: string;
+}) {
+  const [mounted, setMounted] = useState(false);
+  const drawerRef = useRef<HTMLDivElement>(null);
+  useFocusTrap(drawerRef, open, onClose);
+
+  // Portal target — body — only available after mount.
+  useEffect(() => setMounted(true), []);
+
+  // Close on Escape.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <div
+      aria-hidden={!open}
+      className={`fixed inset-0 z-50 lg:hidden ${
+        open ? "pointer-events-auto" : "pointer-events-none"
+      }`}
+    >
+      {/* Backdrop */}
+      <button
+        type="button"
+        aria-label="Close menu"
+        tabIndex={open ? 0 : -1}
+        onClick={onClose}
+        className={`absolute inset-0 bg-ink/40 backdrop-blur-[2px] transition-opacity duration-300 ${
+          open ? "opacity-100" : "opacity-0"
+        }`}
+      />
+
+      {/* Drawer panel — slides in from the right */}
+      <div
+        id="mobile-drawer"
+        ref={drawerRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Site navigation"
+        className={`absolute right-0 top-0 flex h-[100svh] w-[min(92vw,420px)] flex-col bg-cream shadow-[0_24px_60px_-20px_oklch(0.32_0.062_155/0.4)] transition-transform duration-[350ms] ease-out-expo ${
+          open ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        {/* Drawer header — matches the site header rhythm */}
+        <div className="flex h-[68px] items-center justify-between border-b border-line px-5 sm:h-[88px] sm:px-7">
+          <Link
+            href="/"
+            onClick={onClose}
+            aria-label="Richfield Group home"
+            className="flex items-center"
+          >
+            <Image
+              src="/photos/logos/richfield.webp"
+              alt="Richfield Group"
+              width={64}
+              height={60}
+              className="h-10 w-auto object-contain sm:h-12"
+            />
+          </Link>
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={onClose}
+            className="flex h-10 w-10 items-center justify-center text-ink transition-colors hover:text-gold"
+          >
+            <CloseIcon />
+          </button>
+        </div>
+
+        {/* Nav list */}
+        <nav
+          aria-label="Primary mobile"
+          className="flex flex-1 flex-col gap-0 overflow-y-auto px-5 pt-6 sm:px-7"
+        >
+          {NAV.map((item, idx) => {
+            const active = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-[11px] font-medium uppercase tracking-[0.16em] transition-colors ${linkColor} ${hoverColor} ${
-                  active ? "underline decoration-gold decoration-[1px] underline-offset-[6px]" : ""
+                onClick={onClose}
+                className={`group flex items-baseline justify-between border-b border-line py-5 font-display text-[clamp(28px,6vw,40px)] tracking-[-0.01em] transition-colors ${
+                  active ? "text-gold" : "text-ink hover:text-gold"
                 }`}
+                style={{ transitionDelay: open ? `${idx * 30}ms` : "0ms" }}
               >
-                {item.label}
+                <span>{item.label}</span>
+                <span
+                  aria-hidden
+                  className={`ml-4 text-[12px] tracking-[0.24em] transition-transform duration-200 ${
+                    active ? "text-gold" : "text-muted group-hover:translate-x-1 group-hover:text-gold"
+                  }`}
+                >
+                  →
+                </span>
               </Link>
             );
           })}
         </nav>
 
-        <div className="flex items-center gap-4">
-          <LangSwitcher tone={transparent ? "light" : "dark"} />
-          <button
-            type="button"
-            aria-expanded={open}
-            aria-controls="mobile-drawer"
-            aria-label={open ? "Close menu" : "Open menu"}
-            onClick={() => setOpen((v) => !v)}
-            className={`flex h-10 w-10 items-center justify-center lg:hidden ${linkColor}`}
-          >
-            <span aria-hidden className="font-display text-2xl">
-              {open ? "×" : "≡"}
-            </span>
-          </button>
+        {/* Footer — language + tagline */}
+        <div className="flex flex-col gap-4 border-t border-line bg-paper/60 px-5 py-6 sm:px-7">
+          <LangSwitcher tone="dark" />
+          <p className="text-[11px] uppercase tracking-[0.28em] text-muted">
+            Vietnam · Malaysia · China
+          </p>
         </div>
       </div>
-
-      {open ? (
-        <div
-          id="mobile-drawer"
-          ref={drawerRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Site navigation"
-          className="fixed inset-0 z-40 flex flex-col bg-cream"
-        >
-          <div className="flex h-[72px] items-center justify-between px-6">
-            <span className="font-display text-[14px] tracking-[0.28em] text-ink">
-              RICHFIELD GROUP
-            </span>
-            <button
-              type="button"
-              aria-label="Close menu"
-              onClick={() => setOpen(false)}
-              className="flex h-10 w-10 items-center justify-center text-ink"
-            >
-              <span aria-hidden className="font-display text-3xl">
-                ×
-              </span>
-            </button>
-          </div>
-          <nav aria-label="Primary mobile" className="flex flex-1 flex-col gap-8 px-6 pt-8">
-            {NAV.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="font-display text-[clamp(28px,3vw,44px)] text-ink hover:text-gold"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-          <div className="px-6 pb-10">
-            <LangSwitcher tone="dark" />
-          </div>
-        </div>
-      ) : null}
-    </header>
+    </div>,
+    document.body,
   );
 }
 

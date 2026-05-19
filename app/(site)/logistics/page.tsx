@@ -32,6 +32,11 @@ export default function LogisticsPage() {
         eyebrow="Warehouse & Logistics"
         heading="End-to-end handling, north and *south*."
         lede="Two distribution centres cover Vietnam end to end. Ambient and cold storage, co-packing infrastructure, and vehicles serving every province."
+        photo={[
+          { src: "/photos/warehouse/warehouse-1.png", alt: "Long An distribution centre" },
+          { src: "/photos/warehouse/warehouse-2.png", alt: "Hanoi distribution centre" },
+          { src: "/photos/warehouse/co-packing.png", alt: "Richfield co-packing facility" },
+        ]}
       />
 
       <section className="bg-paper px-6 py-[clamp(72px,8vw,100px)] sm:px-10">
@@ -42,17 +47,17 @@ export default function LogisticsPage() {
 
       <section
         aria-labelledby="warehouse-tour-heading"
-        className="bg-ink pb-[clamp(80px,10vw,140px)] pt-[clamp(80px,10vw,140px)] text-paper"
+        className="bg-cream pb-[clamp(80px,10vw,140px)] pt-[clamp(80px,10vw,140px)] text-ink"
       >
         <RevealOnScroll className="mx-auto mb-[clamp(40px,5vw,72px)] flex max-w-[1500px] flex-col gap-4 px-6 sm:px-10">
           <Eyebrow tone="gold">Inside the operation</Eyebrow>
           <h2
             id="warehouse-tour-heading"
-            className="max-w-[24ch] font-display text-[clamp(32px,4vw,56px)] leading-[1.1]"
+            className="max-w-[24ch] font-display text-[clamp(32px,4vw,56px)] leading-[1.1] text-ink"
           >
             A walk through the *distribution centre*.
           </h2>
-          <p className="max-w-[60ch] text-[17px] leading-[1.55] text-paper/70">
+          <p className="max-w-[60ch] text-[17px] leading-[1.55] text-muted">
             Press play for a tour of our facilities — receiving, ambient and
             cold storage, picking lanes, and the trucks that move product to
             every province.

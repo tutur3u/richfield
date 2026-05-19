@@ -19,7 +19,7 @@ const groupItems = [
 export function SiteFooter() {
   const year = new Date().getFullYear();
   return (
-    <footer className="bg-ink text-paper">
+    <footer className="bg-forest text-paper">
       <div className="mx-auto grid max-w-[1300px] gap-12 px-6 pt-[90px] pb-12 sm:px-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr]">
         <div className="flex flex-col gap-6">
           <div className="flex items-center gap-3">

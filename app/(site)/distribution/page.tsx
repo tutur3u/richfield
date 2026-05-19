@@ -6,7 +6,9 @@ import { DisplayHeading } from "@/app/_components/primitives/display-heading";
 import { KpiStrip } from "@/app/_components/primitives/kpi-strip";
 import { SoftCta } from "@/app/_components/primitives/soft-cta";
 import { SoftCtaCloser } from "@/app/_components/sections/soft-cta-closer";
+import { RetailerWall } from "@/app/_components/sections/retailer-wall";
 import { gtFormats, mtFormats, importExportBody } from "@/content/en/capabilities";
+import { peoplePhotos } from "@/content/en/photography";
 
 export const dynamic = "force-static";
 
@@ -30,6 +32,11 @@ export default function DistributionPage() {
         eyebrow="Distribution"
         heading="From the warehouse floor to *every shelf*."
         lede="Nationwide reach through general trade and modern trade, anchored by import and export support that brings international brands into Vietnam."
+        photo={[
+          peoplePhotos.heroAerial,
+          peoplePhotos.groupCompany,
+          peoplePhotos.campusGroup,
+        ]}
       />
 
       <section className="bg-paper px-6 py-[clamp(72px,8vw,100px)] sm:px-10">
@@ -80,13 +87,6 @@ export default function DistributionPage() {
               trade-marketing display and event support.
             </p>
           </div>
-          <Image
-            src="/photos/distribution/mt.png"
-            alt="Modern trade chains we distribute to"
-            width={2000}
-            height={900}
-            className="h-auto w-full rounded-sm bg-paper"
-          />
           <ul className="flex flex-wrap gap-x-6 gap-y-2 text-[14px] uppercase tracking-[0.16em] text-muted">
             {mtFormats.map((f) => (
               <li key={f}>{f}</li>
@@ -94,6 +94,8 @@ export default function DistributionPage() {
           </ul>
         </div>
       </section>
+
+      <RetailerWall />
 
       <section className="bg-paper px-6 py-[clamp(72px,8vw,100px)] sm:px-10">
         <div className="mx-auto grid max-w-[1300px] gap-8 lg:grid-cols-2">

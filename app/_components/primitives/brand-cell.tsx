@@ -23,16 +23,16 @@ export function BrandCell({
 
   if (feature) {
     return (
-      <div className={`${wrapperBase} ${span} relative bg-ink`}>
+      <div className={`${wrapperBase} ${span} relative bg-green`}>
         <span
           aria-hidden
           className="absolute left-1/2 top-6 h-px w-12 -translate-x-1/2 bg-gold"
         />
-        <span className="font-display text-[clamp(32px,3.5vw,44px)] italic leading-none text-gold">
+        <span className="font-display text-[clamp(32px,3.5vw,44px)] leading-none text-paper">
           {name}
         </span>
         {featureCaption ? (
-          <span className="text-[10px] uppercase tracking-[0.32em] text-paper/70">
+          <span className="text-[10px] uppercase tracking-[0.32em] text-gold">
             {featureCaption}
           </span>
         ) : null}

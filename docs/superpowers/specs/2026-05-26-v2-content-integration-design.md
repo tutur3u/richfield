@@ -262,12 +262,14 @@ Where to use which:
 ### New files
 
 - `app/_components/v2/magazine-flow.tsx` — the `MagazineFlow` primitive + `MagazineFlowSection` wrapper
-- `app/_components/v2/spreads/what-we-do-spread.tsx`
-- `app/_components/v2/spreads/field-atlas-spread.tsx`
-- `app/_components/v2/spreads/directory-spread.tsx`
-- `app/_components/v2/spreads/joint-venture-spread.tsx`
-- `app/_components/v2/spreads/colophon-spread.tsx`
-- `app/_components/v2/spreads/product-marquee.tsx` — horizontal motion-safe ticker used by §04
+- `app/_components/v2/what-we-do-spread.tsx`
+- `app/_components/v2/field-atlas-spread.tsx`
+- `app/_components/v2/directory-spread.tsx`
+- `app/_components/v2/joint-venture-spread.tsx`
+- `app/_components/v2/colophon-spread.tsx`
+- `app/_components/v2/product-marquee.tsx` — horizontal motion-safe ticker used by §04
+
+(All new spreads live at the `app/_components/v2/` root, alongside the existing `cover-spread.tsx` and `lead-spread.tsx`.)
 
 ### Modified files
 

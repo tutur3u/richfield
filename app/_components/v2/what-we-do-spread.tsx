@@ -41,6 +41,7 @@ export function WhatWeDoSpread() {
             <h3 className="v2-display text-[clamp(1.4rem,2vw,1.9rem)] leading-tight tracking-[-0.02em]">
               {p.name}
             </h3>
+            <p className="v2-size-body max-w-[42ch] opacity-80">{p.longBody}</p>
             <p className="v2-mono v2-size-folio mt-auto pt-4 opacity-70">
               <span aria-hidden className="v2-rule-gold mr-3 inline-block w-6 align-middle" />
               {SIGNATURE_STATS[p.name]}

@@ -29,12 +29,17 @@ describe("<WhatWeDoSpread>", () => {
 
   it("renders the GT signature stat including 180,000 outlets", () => {
     render(<WhatWeDoSpread />);
-    expect(screen.getByText(/180,000 outlets/i)).toBeInTheDocument();
+    // The signature stat is a mono small-caps line. Scope to it so the body
+    // paragraph's "180,000 retail outlets" prose doesn't collide.
+    const matches = screen.getAllByText(/180,000 outlets/i);
+    expect(matches.length).toBeGreaterThanOrEqual(1);
+    const stat = matches.find((el) => el.textContent?.toUpperCase().includes("800+ SALESMEN"));
+    expect(stat).toBeDefined();
   });
 
   it("renders the Logistics signature stat naming both DCs", () => {
     render(<WhatWeDoSpread />);
-    expect(screen.getByText(/long an/i)).toBeInTheDocument();
-    expect(screen.getByText(/hanoi/i)).toBeInTheDocument();
+    const stat = screen.getByText(/TWO DCS · LONG AN · HANOI/i);
+    expect(stat).toBeInTheDocument();
   });
 });

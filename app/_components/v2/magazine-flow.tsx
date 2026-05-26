@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, isValidElement, useRef, useState, useEffect, type ReactNode } from "react";
+import { Children, isValidElement, useRef, useState, useEffect, type ReactNode, type ReactElement } from "react";
 import {
   motion,
   useScroll,
@@ -66,10 +66,11 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
   const sections: SectionMeta[] = Children.toArray(children)
     .filter(isValidElement)
     .map((child) => {
-      const props = (child as { props: Partial<MagazineFlowSectionProps> }).props;
+      const typedChild = child as ReactElement<MagazineFlowSectionProps>;
+      const { bg, textOnDark } = typedChild.props;
       return {
-        bg: props.bg ?? "oklch(0.96 0.018 82)",
-        textOnDark: props.textOnDark ?? false,
+        bg: bg ?? "oklch(0.96 0.018 82)",
+        textOnDark: textOnDark ?? false,
       };
     });
 
@@ -85,14 +86,16 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
       <div ref={ref} className="relative">
         {Children.map(children, (child) => {
           if (!isValidElement(child)) return child;
-          const props = (child as { props: { bg?: string } }).props;
+          const typedChild = child as ReactElement<MagazineFlowSectionProps>;
+          const { bg, textOnDark, children: sectionChildren, id } = typedChild.props;
           return (
             <section
-              data-bg={props.bg}
-              className={`relative ${(child as { props: { textOnDark?: boolean } }).props.textOnDark ? "text-cream" : "text-ink"}`}
-              style={{ background: props.bg }}
+              id={id}
+              data-bg={bg}
+              className={`relative ${textOnDark ? "text-cream" : "text-ink"}`}
+              style={{ background: bg }}
             >
-              {(child as { props: { children?: ReactNode } }).props.children}
+              {sectionChildren}
             </section>
           );
         })}
@@ -112,13 +115,15 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
       />
       {Children.map(children, (child) => {
         if (!isValidElement(child)) return child;
-        const childProps = (child as { props: { textOnDark?: boolean; children?: ReactNode } }).props;
+        const typedChild = child as ReactElement<MagazineFlowSectionProps>;
+        const { textOnDark, children: sectionChildren, id } = typedChild.props;
         return (
           <section
-            className={`relative ${childProps.textOnDark ? "text-cream" : "text-ink"}`}
+            id={id}
+            className={`relative ${textOnDark ? "text-cream" : "text-ink"}`}
             style={{ background: "transparent" }}
           >
-            {childProps.children}
+            {sectionChildren}
           </section>
         );
       })}

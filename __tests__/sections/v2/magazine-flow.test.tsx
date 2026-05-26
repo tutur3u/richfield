@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { MagazineFlow, MagazineFlowSection } from "@/app/_components/v2/magazine-flow";
 
@@ -22,6 +22,14 @@ function mockReducedMotion(matches: boolean) {
 }
 
 describe("<MagazineFlow>", () => {
+  afterEach(() => {
+    // Restore the original matchMedia stub between tests; otherwise the last mock leaks.
+    if ("matchMedia" in window) {
+      // @ts-expect-error -- intentional test cleanup
+      window.matchMedia = undefined;
+    }
+  });
+
   it("renders each section's children", () => {
     mockReducedMotion(false);
     render(

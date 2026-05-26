@@ -36,6 +36,7 @@ export function YouTubeEmbed({
   );
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing derived poster on input-prop change
     setPosterSrc(getPosterSrc(videoId, posterQuality));
   }, [videoId, posterQuality]);
 

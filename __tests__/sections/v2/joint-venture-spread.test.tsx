@@ -9,7 +9,7 @@ describe("<JointVentureSpread>", () => {
       screen.getByText(/story 05 · the joint venture/i),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/dory rich .{0,4}where distribution becomes manufacturing/i),
+      screen.getByText(/dory rich\.\s+where distribution becomes manufacturing/i),
     ).toBeInTheDocument();
   });
 

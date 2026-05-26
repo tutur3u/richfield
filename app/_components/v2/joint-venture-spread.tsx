@@ -22,7 +22,7 @@ export function JointVentureSpread() {
             STORY 05 · THE JOINT VENTURE
           </p>
           <h2 className="v2-italic v2-size-feature mb-8 max-w-[22ch] text-balance">
-            Dory Rich — Where distribution becomes manufacturing.
+            Dory Rich. Where distribution becomes manufacturing.
           </h2>
           <p className="v2-size-body max-w-[52ch] opacity-85">
             In 2024, Richfield and TCP formed Dory Rich JSC. A joint venture that brings manufacturing under the same umbrella that already carries the brands. One relationship, end to end.

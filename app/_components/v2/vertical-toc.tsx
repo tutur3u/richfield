@@ -1,27 +1,31 @@
 type TocEntry = {
-  /** Display number ("01", "02", ...) */
   no: string;
-  /** Anchor target on the same page */
   href: string;
-  /** Section title */
   label: string;
+  id: string;
 };
 
 const DEFAULT_TOC: TocEntry[] = [
-  { no: "01", href: "#lead",   label: "The lead" },
-  { no: "02", href: "#what",   label: "What we do" },
-  { no: "03", href: "#atlas",  label: "Field atlas" },
-  { no: "04", href: "#brands", label: "The directory" },
-  { no: "05", href: "#jv",     label: "Dory Rich" },
-  { no: "06", href: "#numbers",label: "By the numbers" },
+  { no: "01", id: "lead",     href: "#lead",     label: "The Lead" },
+  { no: "02", id: "what",     href: "#what",     label: "What We Do" },
+  { no: "03", id: "atlas",    href: "#atlas",    label: "Field Atlas" },
+  { no: "04", id: "brands",   href: "#brands",   label: "The Directory" },
+  { no: "05", id: "jv",       href: "#jv",       label: "Joint Venture" },
+  { no: "06", id: "colophon", href: "#colophon", label: "Colophon" },
 ];
 
 type Props = {
   entries?: TocEntry[];
   className?: string;
+  /** ID of the currently in-view section; matches a TocEntry.id. */
+  activeId?: string;
 };
 
-export function VerticalTOC({ entries = DEFAULT_TOC, className = "" }: Props) {
+export function VerticalTOC({
+  entries = DEFAULT_TOC,
+  className = "",
+  activeId,
+}: Props) {
   return (
     <nav
       aria-label="Issue contents"
@@ -30,17 +34,23 @@ export function VerticalTOC({ entries = DEFAULT_TOC, className = "" }: Props) {
       <span className="opacity-50">CONTENTS</span>
       <span aria-hidden className="v2-rule" />
       <ol className="flex flex-col gap-2">
-        {entries.map((e) => (
-          <li key={e.no} className="flex items-baseline gap-3">
-            <span className="opacity-50">{e.no}</span>
-            <a
-              href={e.href}
-              className="transition-opacity duration-200 hover:opacity-60 focus-visible:opacity-60"
-            >
-              {e.label}
-            </a>
-          </li>
-        ))}
+        {entries.map((e) => {
+          const isActive = activeId === e.id;
+          return (
+            <li key={e.no} className="flex items-baseline gap-3">
+              <span className="opacity-50">{e.no}</span>
+              <a
+                href={e.href}
+                aria-current={isActive ? "location" : undefined}
+                className={`transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-70 hover:opacity-100"}`}
+              >
+                <span className={isActive ? "border-b-2 border-gold-strong pb-1" : ""}>
+                  {e.label}
+                </span>
+              </a>
+            </li>
+          );
+        })}
       </ol>
     </nav>
   );

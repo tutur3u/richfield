@@ -23,11 +23,11 @@ describe("<FieldAtlasSpread>", () => {
   it("renders the three country labels with their headcounts", () => {
     render(<FieldAtlasSpread />);
     expect(screen.getAllByText("Vietnam").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Malaysia").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("China").length).toBeGreaterThan(0);
-    expect(screen.getByText("1,000+")).toBeInTheDocument();
-    expect(screen.getByText("150")).toBeInTheDocument();
-    expect(screen.getByText("50")).toBeInTheDocument();
+    expect(screen.getAllByText("Cambodia").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Myanmar").length).toBeGreaterThan(0);
+    expect(screen.getByText("1,820")).toBeInTheDocument();
+    expect(screen.getByText("151")).toBeInTheDocument();
+    expect(screen.getByText("75")).toBeInTheDocument();
   });
 
   it("notes 'and growing' next to Vietnam", () => {
@@ -42,6 +42,12 @@ describe("<FieldAtlasSpread>", () => {
         /vietnam, malaysia, and china together form one operating group/i,
       ),
     ).toBeNull();
+  });
+
+  it("does not surface stale country names from the earlier brief", () => {
+    render(<FieldAtlasSpread />);
+    expect(screen.queryByText("Malaysia")).toBeNull();
+    expect(screen.queryByText("China")).toBeNull();
   });
 
   it("renders a map figure with the three pins as <ul>/<li> for accessibility", () => {

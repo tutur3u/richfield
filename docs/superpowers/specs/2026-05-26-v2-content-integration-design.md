@@ -326,3 +326,114 @@ A reviewer scrolling /v2 after this work should be able to say:
 5. The cover masthead, Lead headline, "Three" emphasis in §03, category dividers in §04, and the **1994** in §06 each register as the gold-touched typographic statements they're meant to be.
 6. No Export anywhere. No italicized "South" anywhere. No text overlapping a photo gradient.
 7. Reduced-motion users see solid surfaces with hard cuts between sections — still legible, still chaptered.
+
+---
+
+## 10. Revision 2026-05-27 — Snap-paged morph + magazine fill
+
+After landing the initial implementation, three issues surfaced from review:
+
+1. The morph between sections was invisible — `MagazineFlow` interpolated the fixed bg correctly but the seam window was too narrow (~1.6% of total scroll) and three adjacent sections shared the same cream surface.
+2. Four sections (§02, §03, §05, §06) had no photography at all, reading as empty pages between the photographed ones.
+3. Internal layouts were all the same 12-col grid, so the page felt uniform rather than like distinct editorial pages.
+
+This revision addresses all three. The brief: **the page should read as six discrete editorial pages glued together by a momentary morph at each seam.** No long continuous scroll where the bg happens to dissolve mid-flow — six pages, six morphs.
+
+### 10.1 Snap-paged scroll model
+
+`MagazineFlow` adopts a snap behavior at every section top, in both directions:
+
+- Any wheel/touch input that crosses a section boundary parks the reader at the next (or previous) section's top. Even an aggressive flick locks at the next seam — it cannot skip past content.
+- Lenis (already mounted in `LenisProvider`) drives the snap. `MagazineFlow` reads section top offsets on mount + resize, and on each scroll-settle event (or low-velocity sample near a boundary) calls `lenis.scrollTo(sectionTop, { duration: 1.1, easing: ease-out-expo })` to commit the snap.
+- During the snap animation (≈1.1s), the fixed-bg color crossfades from the outgoing section's `bg` to the incoming section's `bg`. A thin gold-rule "sweep" overlay slides full-width across the seam line, and the outgoing edge gets a brief blur+darken (≤8px, ≤180ms) before the incoming top fades in. This is the morph.
+- Cover → §01 keeps its existing morph (already approved); the snap engages from §01 onward.
+- Reduced-motion: snap is disabled, sections behave as normal scroll, bg is solid per section, morph is a hard color cut.
+
+This makes scroll feel page-like (magazine-grade) while preserving the editorial richness of long sections in between.
+
+### 10.2 Surface palette — no adjacent duplicates
+
+Original: cream → ink → cream → cream → cream-gold → ink → cream (three adjacent cream sections, three invisible seams).
+
+Revised:
+
+| § | Section | Surface | Notes |
+|---|---|---|---|
+| 01 | The Lead | `cream` `oklch(0.96 0.018 82)` | warm eggshell |
+| 02 | What We Do | `ink` `oklch(0.22 0.015 158)` | dark spread |
+| 03 | Field Atlas | `paper` `oklch(0.985 0.006 70)` | slightly cooler than cream — distinct from §01 |
+| 04 | The Directory | `cream` with gold-rule emphasis | back to cream, but layout shift signals page change |
+| 05 | The Joint Venture | `ink` | dark spread, second time |
+| 06 | Colophon | `paper` | quiet close, distinct from §04 cream |
+
+No two adjacent sections share the same surface. Every seam has a visible bg morph.
+
+### 10.3 Photo plan — silent support
+
+Following the user direction *"images and content support each other, less is more"*: each "empty" section gets just enough photography to ground the writing, never decorative.
+
+| § | Section | Photos | Treatment |
+|---|---|---|---|
+| 01 | Lead | candid-1 (existing) | unchanged |
+| 02 | What We Do | warehouse-1, distribution/gt, distribution/mt — one per pillar | tight crop above each pillar card, FIG. 02·N caption beneath, duotone |
+| 03 | Field Atlas | one quiet inset (workshop-room or group-company) | small, beneath country list; grounds "deep local roots" |
+| 04 | Directory | logo strips + product marquees (existing) | unchanged |
+| 05 | JV | celebration or grand-opening | dominant column photo; Dory Rich logo+link becomes inset on the opposite column |
+| 06 | Colophon | group-company-1920 | full-bleed band above the "Established 1994" lockup |
+
+Map (§03) gets a proper SE-Asia outline SVG instead of the abstract dot pattern, so it reads as a real map at a glance. Pulse dots and gold dashed connector arcs stay.
+
+### 10.4 Internal structure variations
+
+Stop reusing the same 12-col grid every section. Quiet variations only — clean, not flashy:
+
+- **§01 Lead** — unchanged (drop cap + 7/5 split + stat card)
+- **§02 What We Do** — three photo-led cards (photo top, numeral, name, body, signature stat). Cards stack on mobile, 3-col on lg.
+- **§03 Field Atlas** — left rail (5-col) text + country list; right (7-col) real SE-Asia map. Inset photo below the country list, not overlapping the map.
+- **§04 Directory** — band stack (existing). One quiet full-bleed photo break between Beverages and Non-Food (using a candid or workshop photo) to break the rhythm without slowing the read.
+- **§05 JV** — photo dominant (7-col on lg) with the Dory Rich logo+link card as 5-col inset. Photo carries the editorial weight; logo card is supporting.
+- **§06 Colophon** — full-bleed group photo at the top, then centered display lockup ("Established / 1994.") beneath, then the existing 4-col contact dl.
+
+### 10.5 What stays the same
+
+- Typography scale, eyebrow system, drop cap in §01, gold tokens, mono folios.
+- Vertical TOC behavior.
+- Cover spread.
+- All content/strings (numbers, headlines, body copy) — content already matched the customer feedback in the initial implementation; this revision only adjusts visual treatment.
+- Reduced-motion fallback semantics (hard cuts, no animation).
+
+### 10.6 Files changed by this revision
+
+- `app/_components/v2/magazine-flow.tsx` — add Lenis snap, seam blur+sweep overlay
+- `app/v2/page.tsx` — update surface palette assignments for §03 (paper) and §06 (paper)
+- `app/_components/v2/what-we-do-spread.tsx` — add photo per card
+- `app/_components/v2/field-atlas-spread.tsx` — swap dot SVG for SE-Asia outline; add inset photo
+- `app/_components/v2/joint-venture-spread.tsx` — add dominant photo, reposition logo+link
+- `app/_components/v2/colophon-spread.tsx` — add full-bleed group photo
+- `app/_components/v2/directory-spread.tsx` — add one full-bleed photo break between bands
+- Tests updated alongside.
+
+### 10.7 Country correction — Myanmar / Vietnam / Cambodia
+
+After the revision plan was set, the customer sent their official footprint
+map. The actual three operating territories are **Vietnam · Cambodia ·
+Myanmar**, NOT the Vietnam / Malaysia / China combination from the earlier
+written brief. The brief was outdated.
+
+Per the customer map, headcounts are:
+
+- Vietnam — 1,820 (HQ, the largest)
+- Cambodia — 151
+- Myanmar — 75
+
+Files updated to reflect this:
+
+- `app/_components/v2/field-atlas-spread.tsx` — country list, halos, connector arcs, pin anchors, aria-label all reflect MM / VN / KH.
+- `app/_components/v2/cover-spread.tsx` — masthead eyebrow now reads `VIETNAM · CAMBODIA · MYANMAR · SINCE 1994`.
+- `app/_components/v2/colophon-spread.tsx` — colophon sub-line now reads `VIETNAM · CAMBODIA · MYANMAR · THIRTY YEARS`.
+- `__tests__/sections/v2/field-atlas-spread.test.tsx`, `colophon-spread.test.tsx`, `e2e/v2.spec.ts` — assertions updated to match.
+
+Not changed:
+
+- §01 Lead body keeps the heritage line *"Rooted in a Malaysian family business now in its third generation"* — this is about the family-business origin, distinct from where operations are today. Magazines routinely keep founding-story language separate from current-footprint language. If the customer wants the heritage line dropped or softened, that's a follow-up.
+- `content/en/site.ts` and `content/en/careers.ts` still contain `Vietnam · Malaysia · China` strings, but those feed the V1 site at `/(site)/*`, not `/v2`. Out of scope for this revision.

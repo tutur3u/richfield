@@ -120,7 +120,7 @@ export function CoverSpread() {
               {...enter(0.35)}
             >
               <span aria-hidden className="inline-block h-px w-8 bg-gold/80" />
-              VIETNAM · MALAYSIA · CHINA · SINCE 1994
+              VIETNAM · CAMBODIA · MYANMAR · SINCE 1994
             </motion.div>
 
             {/* Standfirst — italic Newsreader, three staggered lines. */}

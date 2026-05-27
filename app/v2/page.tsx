@@ -15,6 +15,9 @@ import { WhatWeDoSpread } from "@/app/_components/v2/what-we-do-spread";
 
 const CREAM = "oklch(0.96 0.018 82)";
 const INK = "oklch(0.22 0.015 158)";
+// Slightly cooler/lighter than CREAM. Visibly distinct at the seam morph
+// without breaking the warm editorial palette.
+const PAPER = "oklch(0.985 0.006 70)";
 
 export const metadata: Metadata = {
   title: "Richfield · Issue 30 · v2 preview",
@@ -43,7 +46,7 @@ export default function V2HomePage() {
           <MagazineFlowSection bg={INK} textOnDark>
             <WhatWeDoSpread />
           </MagazineFlowSection>
-          <MagazineFlowSection bg={CREAM}>
+          <MagazineFlowSection bg={PAPER}>
             <FieldAtlasSpread />
           </MagazineFlowSection>
           <MagazineFlowSection bg={CREAM}>
@@ -52,7 +55,7 @@ export default function V2HomePage() {
           <MagazineFlowSection bg={INK} textOnDark>
             <JointVentureSpread />
           </MagazineFlowSection>
-          <MagazineFlowSection bg={CREAM}>
+          <MagazineFlowSection bg={PAPER}>
             <ColophonSpread />
           </MagazineFlowSection>
         </MagazineFlow>

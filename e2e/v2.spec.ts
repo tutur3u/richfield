@@ -24,11 +24,11 @@ test("/v2 renders cover + all six sections", async ({ page }) => {
   // §03 Field Atlas
   await expect(page.getByText(/story 03 · the footprint/i)).toBeVisible();
   await expect(page.getByText("Vietnam").first()).toBeVisible();
-  await expect(page.getByText("Malaysia").first()).toBeVisible();
-  await expect(page.getByText("China").first()).toBeVisible();
-  await expect(page.getByText("1,000+").first()).toBeVisible();
-  await expect(page.getByText("150").first()).toBeVisible();
-  await expect(page.getByText("50").first()).toBeVisible();
+  await expect(page.getByText("Cambodia").first()).toBeVisible();
+  await expect(page.getByText("Myanmar").first()).toBeVisible();
+  await expect(page.getByText("1,820").first()).toBeVisible();
+  await expect(page.getByText("151").first()).toBeVisible();
+  await expect(page.getByText("75").first()).toBeVisible();
 
   // §04 The Directory
   await expect(page.getByText(/story 04 · the directory/i)).toBeVisible();

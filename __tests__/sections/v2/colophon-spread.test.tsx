@@ -14,7 +14,7 @@ describe("<ColophonSpread>", () => {
   it("renders the three-country sub-line", () => {
     render(<ColophonSpread />);
     expect(
-      screen.getByText(/vietnam · malaysia · china · thirty years/i),
+      screen.getByText(/vietnam · cambodia · myanmar · thirty years/i),
     ).toBeInTheDocument();
   });
 

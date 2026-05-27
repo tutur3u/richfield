@@ -54,8 +54,19 @@ export function LeadSpread() {
             </span>
             ichfield Worldwide JSC is one of Vietnam&apos;s largest FMCG distributors. One network reaching every province and city, carrying brands people love, doing the same thing well for thirty years.
           </p>
-          <p className="v2-size-body mt-5 max-w-[58ch] opacity-70">
-            Rooted in a Malaysian family business now in its third generation, Richfield has grown alongside Mars, Red Bull, BiC, Glico, AMOS, and Newchoice. Partners who chose us because the brands they make needed distribution that behaved like the brand itself.
+
+          <figure className="my-9 border-y border-current/15 py-7">
+            <blockquote className="v2-italic text-[clamp(1.6rem,2.4vw,2.2rem)] leading-[1.15] tracking-[-0.018em] text-balance">
+              &ldquo;Distribution that behaves like the brand itself.&rdquo;
+            </blockquote>
+            <figcaption className="v2-mono v2-size-folio mt-4 flex items-center gap-3 opacity-65">
+              <span aria-hidden className="v2-rule-gold inline-block w-6" />
+              ON WHAT PARTNERS LOOK FOR
+            </figcaption>
+          </figure>
+
+          <p className="v2-size-body max-w-[58ch] opacity-70">
+            Rooted in a Malaysian family business now in its third generation, Richfield has grown alongside Mars, Red Bull, BiC, Glico, AMOS, and Newchoice.
           </p>
 
           <div className="mt-10 rounded-sm border border-current/15 bg-current/[0.02] p-5">

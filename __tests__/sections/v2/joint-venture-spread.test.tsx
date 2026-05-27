@@ -30,8 +30,8 @@ describe("<JointVentureSpread>", () => {
 
   it("renders the Dory Rich logo", () => {
     render(<JointVentureSpread />);
-    expect(
-      screen.getByRole("img", { name: /dory rich/i }),
-    ).toBeInTheDocument();
+    // The figure photo also mentions Dory Rich in its alt text, so use exact
+    // alt match to pin to the logo specifically.
+    expect(screen.getByRole("img", { name: "Dory Rich" })).toBeInTheDocument();
   });
 });

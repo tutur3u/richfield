@@ -36,7 +36,7 @@ const toKebab = (s) =>
     .replace(/^-+|-+$/g, "")
     .toLowerCase();
 
-async function convert(srcPath, destPath, { maxWidth = 800, quality = 82 } = {}) {
+async function convert(srcPath, destPath, { maxWidth = 1400, quality = 86 } = {}) {
   if (existsSync(destPath)) return { skipped: true };
   const img = sharp(srcPath);
   const meta = await img.metadata();
@@ -80,7 +80,9 @@ for (const [folder, prefix] of Object.entries(PRODUCT_MAPPING)) {
     const { name } = parse(src);
     const slug = toKebab(name);
     const dest = join(outProducts, `${prefix}-${slug}.webp`);
-    const res = await convert(src, dest, { maxWidth: 800, quality: 82 });
+    // Product packshots can be displayed large in the §05 mosaic; keep enough
+    // resolution for retina (was 800px, which looked soft at box size).
+    const res = await convert(src, dest, { maxWidth: 1400, quality: 86 });
     if (res.skipped) continue;
     console.log(`  → ${prefix}-${slug}.webp`);
   }
@@ -101,7 +103,7 @@ if (existsSync(bicDir)) {
       // of each subcategory, more than enough for the SKU grid.
       if (idx > 4) break;
       const dest = join(outProducts, `bic-${sub.toLowerCase()}-${idx}.webp`);
-      const res = await convert(join(subDir, f), dest, { maxWidth: 800, quality: 82 });
+      const res = await convert(join(subDir, f), dest, { maxWidth: 1400, quality: 86 });
       if (res.skipped) continue;
       console.log(`  → bic-${sub.toLowerCase()}-${idx}.webp`);
     }

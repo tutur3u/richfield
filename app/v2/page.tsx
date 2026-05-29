@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ColophonSpread } from "@/app/_components/v2/colophon-spread";
 import { CoverSpread } from "@/app/_components/v2/cover-spread";
-import { DirectorySpread } from "@/app/_components/v2/directory-spread";
+import {
+  DirectoryCategoriesSpread,
+  DirectoryIntroSpread,
+} from "@/app/_components/v2/directory-spread";
 import { FieldAtlasSpread } from "@/app/_components/v2/field-atlas-spread";
 import { JointVentureSpread } from "@/app/_components/v2/joint-venture-spread";
 import { LeadSpread } from "@/app/_components/v2/lead-spread";
@@ -11,6 +14,7 @@ import {
   MagazineFlow,
   MagazineFlowSection,
 } from "@/app/_components/v2/magazine-flow";
+import { ScrollToggle } from "@/app/_components/v2/scroll-toggle";
 import { WhatWeDoSpread } from "@/app/_components/v2/what-we-do-spread";
 
 const CREAM = "oklch(0.96 0.018 82)";
@@ -18,6 +22,7 @@ const INK = "oklch(0.22 0.015 158)";
 // Slightly cooler/lighter than CREAM. Visibly distinct at the seam morph
 // without breaking the warm editorial palette.
 const PAPER = "oklch(0.985 0.006 70)";
+const WHITE = "oklch(1 0 0)";
 
 export const metadata: Metadata = {
   title: "Richfield · Issue 30 · v2 preview",
@@ -29,13 +34,14 @@ export const metadata: Metadata = {
 export default function V2HomePage() {
   return (
     <LenisProvider>
+      <ScrollToggle />
       <main className="bg-cream text-ink">
-        <Link
+        {/* <Link
           href="/"
           className="v2-mono v2-size-folio fixed left-4 top-4 z-50 rounded-full border border-cream/30 bg-ink/70 px-4 py-2 text-cream backdrop-blur-md transition-colors duration-200 hover:bg-ink/90"
         >
           ← V2 PREVIEW · BACK TO CURRENT
-        </Link>
+        </Link> */}
 
         <CoverSpread />
 
@@ -46,11 +52,14 @@ export default function V2HomePage() {
           <MagazineFlowSection bg={INK} textOnDark>
             <WhatWeDoSpread />
           </MagazineFlowSection>
-          <MagazineFlowSection bg={PAPER}>
+          <MagazineFlowSection bg={WHITE}>
             <FieldAtlasSpread />
           </MagazineFlowSection>
+          <MagazineFlowSection bg={PAPER}>
+            <DirectoryIntroSpread />
+          </MagazineFlowSection>
           <MagazineFlowSection bg={CREAM}>
-            <DirectorySpread />
+            <DirectoryCategoriesSpread />
           </MagazineFlowSection>
           <MagazineFlowSection bg={INK} textOnDark>
             <JointVentureSpread />

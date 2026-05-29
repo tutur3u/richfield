@@ -5,9 +5,15 @@ import { WhatWeDoSpread } from "@/app/_components/v2/what-we-do-spread";
 describe("<WhatWeDoSpread>", () => {
   it("renders the section eyebrow and italic headline", () => {
     render(<WhatWeDoSpread />);
-    expect(screen.getByText(/story 02 · what we do/i)).toBeInTheDocument();
+    // Eyebrow was simplified during polish — no leading "STORY 02" prefix.
+    expect(screen.getByText(/what we do/i)).toBeInTheDocument();
+    // Headline splits the emphasised word into an <em>, so match the heading's
+    // concatenated accessible name rather than a single text node.
     expect(
-      screen.getByText(/three ways we move brands to market/i),
+      screen.getByRole("heading", {
+        name: /three ways we move brands to markets/i,
+        level: 2,
+      }),
     ).toBeInTheDocument();
   });
 
@@ -20,11 +26,11 @@ describe("<WhatWeDoSpread>", () => {
     expect(screen.queryByText(/import & export/i)).toBeNull();
   });
 
-  it("renders 01 / 02 / 03 numerals", () => {
+  it("renders each capability's signature stat line", () => {
     render(<WhatWeDoSpread />);
-    expect(screen.getByText("01")).toBeInTheDocument();
-    expect(screen.getByText("02")).toBeInTheDocument();
-    expect(screen.getByText("03")).toBeInTheDocument();
+    expect(screen.getByText(/TWO DCS/i)).toBeInTheDocument();
+    expect(screen.getByText(/180,000 OUTLETS/i)).toBeInTheDocument();
+    expect(screen.getByText(/EVERY CHAIN IN VIETNAM/i)).toBeInTheDocument();
   });
 
   it("renders the GT signature stat including 180,000 outlets", () => {
@@ -39,7 +45,7 @@ describe("<WhatWeDoSpread>", () => {
 
   it("renders the Logistics signature stat naming both DCs", () => {
     render(<WhatWeDoSpread />);
-    const stat = screen.getByText(/TWO DCS · LONG AN · HANOI/i);
+    const stat = screen.getByText(/TWO DCS .{1,3} LONG AN .{1,3} HANOI/i);
     expect(stat).toBeInTheDocument();
   });
 });

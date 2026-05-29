@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { LeadPhotoCycle } from "@/app/_components/v2/lead-photo-cycle";
 
 type Stat = readonly [figure: string, label: string];
 
@@ -11,87 +11,83 @@ const STATS: readonly Stat[] = [
 
 export function LeadSpread() {
   return (
-    <div id="lead" className="v2-display mx-auto w-full max-w-[1500px] px-6 py-[clamp(64px,9vw,120px)] sm:px-10 lg:px-12">
-      <div className="v2-mono v2-size-folio mb-8 flex items-center gap-6 opacity-60">
-        <span>RICHFIELD WORLDWIDE JSC · ISSUE 30</span>
-        <span aria-hidden className="v2-rule flex-1" />
-        <span>PAGES 02—03 · STORY 01</span>
-      </div>
+    <section
+      id="lead"
+      className="v2-display relative flex min-h-[100svh] w-full flex-col lg:h-[100svh]"
+    >
+      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col justify-between px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
+        {/* Top folio */}
+        <header className="v2-mono v2-size-folio flex items-center gap-6 opacity-55">
+          <span>RICHFIELD WORLDWIDE JSC</span>
+          <span aria-hidden className="v2-rule flex-1" />
+        </header>
 
-      <p className="v2-mono v2-size-eyebrow mb-5 flex items-center gap-3 text-gold-strong">
-        <span aria-hidden className="inline-block h-px w-8 bg-gold-rule" />
-        STORY 01 · ABOUT THE GROUP
-      </p>
-      <h2 className="v2-italic v2-size-feature mb-12 max-w-[22ch] text-balance">
-        From market entry to nationwide distribution.
-      </h2>
-
-      <div className="grid grid-cols-12 gap-8 sm:gap-10 lg:gap-14">
-        <figure className="col-span-12 lg:col-span-7">
-          <div className="relative aspect-video w-full overflow-hidden lg:aspect-auto lg:h-[52svh]">
-            <Image
-              src="/photos/people/candid-1-1280.webp"
-              alt="Richfield Worldwide annual Town Hall. The whole company gathered on stage."
-              fill
-              sizes="(max-width: 1024px) 100vw, 58vw"
-              className="object-cover v2-photo-duotone"
-              style={{ objectPosition: "center 38%" }}
-            />
-          </div>
-          <figcaption className="v2-mono v2-size-folio mt-4 flex items-center gap-3 opacity-60">
-            <span aria-hidden className="v2-rule-gold inline-block w-8" />
-            FIG. 01 · ANNUAL TOWN HALL · 2026
-          </figcaption>
-        </figure>
-
-        <div className="col-span-12 lg:col-span-5 lg:pt-1">
-          <p className="v2-size-body max-w-[58ch] opacity-85">
-            <span
-              aria-hidden
-              className="v2-display float-left mr-3 mt-1 text-[5rem] font-light leading-[0.82] tracking-[-0.04em]"
-            >
-              R
-            </span>
-            ichfield Worldwide JSC is one of Vietnam&apos;s largest FMCG distributors. One network reaching every province and city, carrying brands people love, doing the same thing well for thirty years.
-          </p>
-
-          <figure className="my-9 border-y border-current/15 py-7">
-            <blockquote className="v2-italic text-[clamp(1.6rem,2.4vw,2.2rem)] leading-[1.15] tracking-[-0.018em] text-balance">
-              &ldquo;Distribution that behaves like the brand itself.&rdquo;
-            </blockquote>
-            <figcaption className="v2-mono v2-size-folio mt-4 flex items-center gap-3 opacity-65">
-              <span aria-hidden className="v2-rule-gold inline-block w-6" />
-              ON WHAT PARTNERS LOOK FOR
-            </figcaption>
-          </figure>
-
-          <p className="v2-size-body max-w-[58ch] opacity-70">
-            Rooted in a Malaysian family business now in its third generation, Richfield has grown alongside Mars, Red Bull, BiC, Glico, AMOS, and Newchoice.
-          </p>
-
-          <div className="mt-10 rounded-sm border border-current/15 bg-current/[0.02] p-5">
-            <p className="v2-mono v2-size-eyebrow mb-5 flex items-center gap-3 text-gold-strong">
-              <span aria-hidden className="inline-block h-px w-6 bg-gold-rule" />
-              BY THE NUMBERS · VIETNAM
-            </p>
-            <dl className="grid grid-cols-2 gap-x-6 gap-y-6 sm:grid-cols-4 sm:gap-x-4">
-              {STATS.map(([figure, label]) => (
-                <div key={label} className="border-t border-current/15 pt-3">
-                  <dt className="v2-display text-[clamp(1.8rem,2.6vw,2.4rem)] leading-none tracking-[-0.022em]">
-                    {figure}
-                  </dt>
-                  <dd className="v2-mono v2-size-folio mt-2 opacity-60">{label}</dd>
-                </div>
-              ))}
-            </dl>
+        {/* Body block — single flow. Photo floats top-right; eyebrow and
+            headline sit in the left column with a max-width so the photo's
+            edge never cuts the headline mid-word. Body paragraphs wrap
+            around the photo. */}
+        <div className="hyphens-auto" lang="en">
+          {/* Floated photo carousel — top-right of the body flow. */}
+          <div className="relative mb-[clamp(18px,2vw,32px)] aspect-[3/2] w-full lg:float-right lg:mb-[clamp(12px,1.2vw,20px)] lg:ml-[clamp(28px,3vw,52px)] lg:w-[50%]">
+            <LeadPhotoCycle />
           </div>
 
-          <p className="v2-mono v2-size-folio mt-9 opacity-55">
-            <span aria-hidden className="v2-rule-gold mr-3 inline-block w-6 align-middle" />
-            BY THE EDITORS · ISSUE 30 · MAY 2026
+          <p className="v2-mono v2-size-eyebrow mb-[clamp(10px,0.9vw,16px)] flex items-center gap-3 text-gold-strong">
+            <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
+            ABOUT THE GROUP
+          </p>
+
+          <h2 className="font-display mb-[clamp(20px,2vw,35px)] text-[clamp(2.6rem,5vw,4.5rem)] leading-[0.98] tracking-[-0.026em]">
+            From market entry to nationwide distribution.
+          </h2>
+
+          <p className="v2-dropcap v2-size-body text-justify opacity-90">
+            Richfield JSC Group is proud to be one of the largest FMCG
+            distributors in Vietnam. At present, our distribution network is
+            the largest distribution system in the country, covering all
+            provinces and cities nationwide with more than 200 sub-distributors
+            and nearly 600,000 retail outlets nationwide.
+          </p>
+
+          <p className="v2-size-body mt-[clamp(18px,1.8vw,28px)] text-justify opacity-85">
+            At Richfield, we go beyond focusing on production and business
+            performance, we are equally committed to our people and the
+            communities we serve. Through ongoing social and charitable
+            initiatives, we strive to make a meaningful impact beyond our
+            organization.
+          </p>
+
+          <p className="v2-size-body mt-[clamp(18px,1.8vw,28px)] text-justify opacity-80">
+            Driven by a passionate and dynamic team and strengthened by our
+            position as a leading brand with strong support from leading
+            brands such as Mars, Richfield has experienced steady growth over
+            the past 30+ years. We continue to build on this momentum,
+            maintaining consistent and sustainable development in the years
+            ahead.
           </p>
         </div>
+
+        {/* Stats band — clears the float, anchored at the bottom of the
+            section via justify-between on the parent */}
+        <div className="clear-both">
+          <p className="v2-mono v2-size-eyebrow mb-[clamp(14px,1.4vw,20px)] flex items-center gap-3 text-gold-strong">
+            <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
+            BY THE NUMBERS
+          </p>
+          <dl className="grid grid-cols-2 gap-x-[clamp(20px,2.4vw,40px)] gap-y-4 sm:grid-cols-4">
+            {STATS.map(([figure, label]) => (
+              <div key={label} className="flex flex-col gap-1.5">
+                <dt className="v2-display text-[clamp(1.7rem,2.2vw,2.1rem)] leading-none tracking-[-0.022em]">
+                  {figure}
+                </dt>
+                <dd className="v2-mono text-[10px] leading-snug tracking-[0.18em] opacity-55">
+                  {label}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }

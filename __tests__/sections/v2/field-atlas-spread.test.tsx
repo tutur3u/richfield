@@ -3,57 +3,63 @@ import { render, screen } from "@testing-library/react";
 import { FieldAtlasSpread } from "@/app/_components/v2/field-atlas-spread";
 
 describe("<FieldAtlasSpread>", () => {
-  it("renders the eyebrow and headline", () => {
+  it("renders the FOOTPRINT eyebrow", () => {
     render(<FieldAtlasSpread />);
-    expect(screen.getByText(/story 03 · the footprint/i)).toBeInTheDocument();
-    expect(screen.getByText(/international group/i)).toBeInTheDocument();
+    expect(screen.getByText(/^footprint$/i)).toBeInTheDocument();
   });
 
-  it("renders the word 'three' twice in the headline as <em> with gold accent class", () => {
+  it("renders the 'Three countries / generations / One promise' headline", () => {
     const { container } = render(<FieldAtlasSpread />);
-    const ems = Array.from(container.querySelectorAll("em")).filter(
-      (e) => e.textContent?.trim().toLowerCase() === "three",
+    const h2 = container.querySelector("h2");
+    expect(h2?.textContent).toMatch(
+      /three countries\.\s*three generations\.\s*one promise\./i,
     );
-    expect(ems).toHaveLength(2);
-    for (const em of ems) {
-      expect(em.className).toMatch(/gold/i);
-    }
   });
 
-  it("renders the three country labels with their headcounts", () => {
-    render(<FieldAtlasSpread />);
-    expect(screen.getAllByText("Vietnam").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Cambodia").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Myanmar").length).toBeGreaterThan(0);
-    expect(screen.getByText("1,820")).toBeInTheDocument();
-    expect(screen.getByText("151")).toBeInTheDocument();
-    expect(screen.getByText("75")).toBeInTheDocument();
+  it("emphasises 'generations' in italic gold", () => {
+    const { container } = render(<FieldAtlasSpread />);
+    const em = Array.from(container.querySelectorAll("em")).find(
+      (e) => e.textContent?.trim().toLowerCase() === "generations",
+    );
+    expect(em).toBeDefined();
+    expect(em?.className).toMatch(/gold/i);
   });
 
-  it("notes 'and growing' next to Vietnam", () => {
-    render(<FieldAtlasSpread />);
-    expect(screen.getByText(/and growing/i)).toBeInTheDocument();
-  });
-
-  it("does not render the deprecated 'Vietnam, Malaysia, and China together form one operating Group' sentence", () => {
-    render(<FieldAtlasSpread />);
+  it("renders the client body copy without an em dash", () => {
+    const { container } = render(<FieldAtlasSpread />);
     expect(
-      screen.queryByText(
-        /vietnam, malaysia, and china together form one operating group/i,
-      ),
-    ).toBeNull();
+      screen.getByText(/spans three countries and three generations/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/international scale with hands-on knowledge/i),
+    ).toBeInTheDocument();
+    // No em dash anywhere in the spread copy.
+    expect(container.textContent).not.toContain("—");
   });
 
-  it("does not surface stale country names from the earlier brief", () => {
+  it("renders the three group offices with their roles", () => {
     render(<FieldAtlasSpread />);
-    expect(screen.queryByText("Malaysia")).toBeNull();
-    expect(screen.queryByText("China")).toBeNull();
+    const offices = screen.getByRole("img", { name: /operating footprint/i });
+    expect(offices).toBeInTheDocument();
+    expect(screen.getByText("Vietnam")).toBeInTheDocument();
+    expect(screen.getByText("Malaysia")).toBeInTheDocument();
+    expect(screen.getByText("China")).toBeInTheDocument();
+    expect(screen.getByText(/HQ · HCMC/i)).toBeInTheDocument();
+    expect(screen.getByText(/origin · 1990s/i)).toBeInTheDocument();
+    expect(screen.getByText(/sourcing & brands/i)).toBeInTheDocument();
   });
 
-  it("renders a map figure with the three pins as <ul>/<li> for accessibility", () => {
+  it("renders the client footprint map with descriptive alt text", () => {
     render(<FieldAtlasSpread />);
-    const list = screen.getByRole("list", { name: /offices/i });
-    expect(list).toBeInTheDocument();
-    expect(list.querySelectorAll("li")).toHaveLength(3);
+    const map = screen.getByRole("img", { name: /operating footprint/i });
+    expect(map.getAttribute("alt")).toMatch(/china/i);
+    expect(map.getAttribute("alt")).toMatch(/vietnam/i);
+    expect(map.getAttribute("alt")).toMatch(/malaysia/i);
+  });
+
+  it("does not surface the old leading-bar STORY 03 eyebrow", () => {
+    render(<FieldAtlasSpread />);
+    expect(screen.queryByText(/story 03 .{0,3} the footprint/i)).toBeNull();
+    expect(screen.queryByText(/issue 30/i)).toBeNull();
   });
 });

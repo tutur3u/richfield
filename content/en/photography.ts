@@ -167,6 +167,7 @@ export const partnerLogos: Record<string, string> = {
   BiC: "/photos/logos/bic.webp",
   "Red Bull": "/photos/logos/red-bull.webp",
   "Glico (Pocky)": "/photos/logos/glico-pocky.webp",
+  Glico: "/photos/logos/glico.webp",
   AMOS: "/photos/logos/amos.webp",
   NewChoice: "/photos/logos/newchoice.webp",
   Warrior: "/photos/logos/warrior.webp",

@@ -11,7 +11,7 @@ import {
 } from "react";
 import { animate, motion, useMotionValue } from "motion/react";
 import Snap from "lenis/snap";
-import { useLenis } from "./lenis-provider";
+import { useLenis, useSmoothScroll } from "./lenis-provider";
 
 function useReducedMotion(): boolean {
   const [reduced, setReduced] = useState(() => {
@@ -69,9 +69,14 @@ const SNAP_DURATION_S = 1.1;
 
 export function MagazineFlow({ children }: MagazineFlowProps) {
   const reduce = useReducedMotion();
+  const { enabled: smoothScroll } = useSmoothScroll();
   const sectionEls = useRef<Array<HTMLElement | null>>([]);
   const lenis = useLenis();
   const [snapping, setSnapping] = useState(false);
+
+  // No Lenis means no snap/morph: fall back to native scroll with opaque
+  // section backgrounds. Triggered by reduced-motion or the ScrollToggle.
+  const nativeScroll = reduce || !smoothScroll;
 
   const sections: SectionMeta[] = Children.toArray(children)
     .filter(isValidElement)
@@ -153,7 +158,7 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lenis, reduce]);
 
-  if (reduce) {
+  if (nativeScroll) {
     return (
       <div className="relative">
         {Children.map(children, (child) => {

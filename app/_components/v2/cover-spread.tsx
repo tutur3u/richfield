@@ -58,7 +58,7 @@ export function CoverSpread() {
       onMouseLeave={onLeave}
       onFocus={onEnter}
       onBlur={onLeave}
-      className="v2-display relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-ink text-cream"
+      className="v2-display relative isolate z-10 flex min-h-[100svh] flex-col overflow-hidden bg-ink text-cream"
     >
       {/* Cover photograph carousel — crossfade between sequence entries.
           AnimatePresence keeps incoming + outgoing photos in the DOM long
@@ -119,12 +119,12 @@ export function CoverSpread() {
               className="v2-mono v2-size-eyebrow mb-6 flex items-center gap-3 text-gold"
               {...enter(0.35)}
             >
-              <span aria-hidden className="inline-block h-px w-8 bg-gold/80" />
+              <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
               VIETNAM · CAMBODIA · MYANMAR · SINCE 1994
             </motion.div>
 
             {/* Standfirst — italic Newsreader, three staggered lines. */}
-            <h1 className="v2-italic v2-size-standfirst max-w-[22ch] text-balance">
+            <h1 className="font-display v2-size-standfirst max-w-[22ch] text-balance">
               {STANDFIRST_LINES.map((line, i) => (
                 <motion.span
                   key={line}

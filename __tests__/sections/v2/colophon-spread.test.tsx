@@ -3,18 +3,21 @@ import { render, screen } from "@testing-library/react";
 import { ColophonSpread } from "@/app/_components/v2/colophon-spread";
 
 describe("<ColophonSpread>", () => {
-  it("renders 'Established' italic eyebrow and 1994 as the display climax", () => {
+  it("renders the 'Established' eyebrow and the 1994—2026 lockup", () => {
     render(<ColophonSpread />);
     expect(screen.getByText(/established/i)).toBeInTheDocument();
-    const climax = screen.getByText(/^1994\.?$/);
-    expect(climax).toBeInTheDocument();
-    expect(climax.className).toMatch(/v2-size-cover/);
+    // Lockup combines 1994 + 2026 in a single upright display element.
+    const lockup = screen.getByLabelText(/1994 to 2026/i);
+    expect(lockup).toBeInTheDocument();
+    expect(lockup.className).toMatch(/font-display/);
+    expect(lockup.textContent).toMatch(/1994/);
+    expect(lockup.textContent).toMatch(/2026/);
   });
 
   it("renders the three-country sub-line", () => {
     render(<ColophonSpread />);
     expect(
-      screen.getByText(/vietnam · cambodia · myanmar · thirty years/i),
+      screen.getByText(/vietnam .{1,3} cambodia .{1,3} myanmar/i),
     ).toBeInTheDocument();
   });
 
@@ -38,12 +41,8 @@ describe("<ColophonSpread>", () => {
     expect(fb).toHaveAttribute("href", "https://www.facebook.com/RichFieldGroup");
   });
 
-  it("renders the colophon footer rule", () => {
+  it("renders the 'next issue 2031' marker", () => {
     render(<ColophonSpread />);
-    expect(
-      screen.getByText(
-        /colophon · issue 30 — richfield worldwide jsc · 1994 — 2026 · next issue · 2031/i,
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/next issue .{1,3} 2031/i)).toBeInTheDocument();
   });
 });

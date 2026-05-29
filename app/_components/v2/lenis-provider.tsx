@@ -10,23 +10,46 @@ import Lenis from "lenis";
  * unmount. Respects `prefers-reduced-motion: reduce` by skipping the
  * Lenis lifecycle entirely (native scroll wins).
  *
- * Also exposes the Lenis instance through `LenisContext` so consumers
- * (e.g. MagazineCanvas registering snap targets) can reach it without a
- * global. Value is `null` until Lenis is initialized, and stays `null`
- * forever under reduced-motion — consumers must treat null as "no Lenis".
+ * The smooth-scroll engine can also be turned off at runtime via the
+ * `enabled` flag (driven by the on-page ScrollToggle). When off, Lenis is
+ * destroyed and the browser's native scroll takes over; scroll-triggered
+ * fade-ins keep working because they ride IntersectionObserver, not Lenis.
+ *
+ * Exposes the Lenis instance through `useLenis()` (null whenever Lenis is
+ * not running) and the toggle through `useSmoothScroll()`.
  */
 
-const LenisContext = createContext<Lenis | null>(null);
+type SmoothScrollContextValue = {
+  lenis: Lenis | null;
+  enabled: boolean;
+  setEnabled: (enabled: boolean) => void;
+};
+
+const SmoothScrollContext = createContext<SmoothScrollContextValue>({
+  lenis: null,
+  enabled: true,
+  setEnabled: () => {},
+});
 
 export function useLenis(): Lenis | null {
-  return useContext(LenisContext);
+  return useContext(SmoothScrollContext).lenis;
+}
+
+export function useSmoothScroll(): {
+  enabled: boolean;
+  setEnabled: (enabled: boolean) => void;
+} {
+  const { enabled, setEnabled } = useContext(SmoothScrollContext);
+  return { enabled, setEnabled };
 }
 
 export function LenisProvider({ children }: { children: React.ReactNode }) {
   const [lenis, setLenis] = useState<Lenis | null>(null);
+  const [enabled, setEnabled] = useState(true);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (!enabled) return;
     const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (mql.matches) return;
 
@@ -50,9 +73,11 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
       instance.destroy();
       setLenis(null);
     };
-  }, []);
+  }, [enabled]);
 
   return (
-    <LenisContext.Provider value={lenis}>{children}</LenisContext.Provider>
+    <SmoothScrollContext.Provider value={{ lenis, enabled, setEnabled }}>
+      {children}
+    </SmoothScrollContext.Provider>
   );
 }

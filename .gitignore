@@ -50,3 +50,4 @@ next-env.d.ts
 # script (scripts/optimize-photos.mjs). Only the optimized webp files
 # in public/photos/ ship with the build.
 /client-doc/
+.gstack/

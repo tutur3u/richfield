@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --color-gold: oklch(0.74 0.115 82);
+  --color-gold: oklch(0.72 0.16 78);
+  --color-gold-strong: oklch(0.62 0.14 75);
+  --color-gold-rule: oklch(0.58 0.15 75);
   --color-sunrise: oklch(0.84 0.13 88);
   --color-green: oklch(0.51 0.135 148);
   --color-forest: oklch(0.32 0.062 155);
@@ -157,5 +159,122 @@ button:focus-visible {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* -----------------------------------------------------------------------
+   v2 — Issue 30 · Worldwide (prototype, scoped to /v2)
+
+   Plain CSS (not wrapped in @layer components) so Tailwind v4's Lightning
+   CSS pipeline cannot purge them when the v2 templates use them as
+   class strings rather than @apply directives.
+   ----------------------------------------------------------------------- */
+
+.v2-surface-page    { background: var(--color-cream); color: var(--color-ink); }
+.v2-surface-spread  { background: var(--color-paper); color: var(--color-ink); }
+.v2-surface-feature { background: var(--color-ink);   color: var(--color-cream); }
+.v2-surface-gold    { background: var(--color-gold);  color: var(--color-ink); }
+
+.v2-display { font-family: var(--font-display-v2), ui-sans-serif, system-ui, sans-serif; }
+.v2-italic  { font-family: var(--font-italic-v2), Georgia, serif; font-weight: 400; }
+.v2-mono    { font-family: var(--font-geist-mono), ui-monospace, monospace; }
+
+.v2-size-cover      { font-size: clamp(4rem, 12vw, 11rem); line-height: 0.92; letter-spacing: -0.035em; }
+.v2-size-feature    { font-size: clamp(3rem, 7vw, 6rem);   line-height: 0.98; letter-spacing: -0.028em; }
+.v2-size-section    { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; }
+.v2-size-standfirst { font-size: clamp(2rem, 5vw, 4.5rem); line-height: 1.05; letter-spacing: -0.025em; }
+.v2-size-body       { font-size: clamp(16px, 1.1vw, 17px); line-height: 1.6; }
+.v2-size-folio      { font-size: clamp(11px, 0.9vw, 13px); letter-spacing: 0.18em; text-transform: uppercase; }
+.v2-size-eyebrow    { font-size: clamp(12px, 1vw, 14px);   letter-spacing: 0.22em; text-transform: uppercase; }
+
+.v2-photo-tint    { filter: saturate(0.96) contrast(1.02); }
+.v2-photo-duotone { filter: saturate(0.92) contrast(1.04) sepia(0.06); }
+
+.v2-rule       { height: 1px; background: currentColor; opacity: 0.18; }
+.v2-rule-gold  { height: 1px; background: var(--color-gold); opacity: 0.7; }
+
+/* Editorial drop cap. Float-left initial set in italic Newsreader at large
+   display size. Tightens against the body baseline. Apply to a <p> whose
+   first letter should anchor the column. */
+.v2-dropcap::first-letter {
+  font-family: var(--font-italic-v2), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  float: left;
+  font-size: clamp(4.4rem, 7.5vw, 6.8rem);
+  line-height: 0.78;
+  margin: 0.06em 0.18em -0.08em -0.04em;
+  color: var(--color-gold-strong);
+  letter-spacing: -0.02em;
+}
+
+/* Multi-column editorial body. */
+.v2-cols-2 {
+  column-count: 1;
+  column-gap: clamp(28px, 3vw, 56px);
+}
+.v2-cols-3 {
+  column-count: 1;
+  column-gap: clamp(24px, 2.4vw, 44px);
+}
+@media (min-width: 768px) {
+  .v2-cols-2 { column-count: 2; }
+}
+@media (min-width: 1024px) {
+  .v2-cols-3 { column-count: 3; }
+}
+.v2-cols-2 > * + *,
+.v2-cols-3 > * + * {
+  margin-top: 1em;
+}
+.v2-cols-2 > *,
+.v2-cols-3 > * {
+  break-inside: avoid;
+}
+
+/* Edge bleed: extend a child out beyond a centered `max-w-[1500px]` parent
+   to the viewport edges. Use sparingly for hero photos. */
+.v2-bleed-x {
+  width: 100vw;
+  margin-left: 50%;
+  transform: translateX(-50%);
+  max-width: none;
+}
+
+/* Hide native scrollbar for editorial scroll-snap rails. */
+.v2-scroll-rail {
+  scrollbar-width: none;
+}
+.v2-scroll-rail::-webkit-scrollbar { display: none; }
+
+/* Pillar focus-row — when any pillar is hovered, the hovered card floats
+   up while siblings quietly recede via opacity + desaturation. Single
+   exponential ease so the lift and the dim feel like one motion. */
+.v2-pillar-row > article {
+  transition:
+    opacity 700ms var(--ease-out-expo),
+    filter 700ms var(--ease-out-expo),
+    transform 700ms var(--ease-out-expo);
+  will-change: transform;
+}
+
+.v2-pillar-row:has(> article:hover) > article:not(:hover) {
+  opacity: 0.42;
+  filter: saturate(0.4);
+}
+
+.v2-pillar-row > article:hover {
+  transform: translateY(-10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-pillar-row > article,
+  .v2-pillar-row > article:hover {
+    transform: none;
+    transition: none;
+  }
+  .v2-pillar-row:has(> article:hover) > article:not(:hover) {
+    opacity: 1;
+    filter: none;
   }
 }

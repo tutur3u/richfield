@@ -40,7 +40,8 @@ const LOGOS = [
   { src: "Logos/Logo Warrior.png", slug: "warrior" },
   { src: "Logos/Weilong logo.png", slug: "weilong" },
   { src: "Logos/TCP logo.png", slug: "tcp" },
-  { src: "Logos/Care Logo.png", slug: "care" },
+  // care.webp is hand-processed (background removed) via strip-image-bg.mjs;
+  // don't regenerate it here or the flat-source logo would clobber it.
   { src: "Logos/Kinko Logo.png", slug: "kinko" },
 ];
 
@@ -132,7 +133,7 @@ async function run() {
       console.warn(`  MISSING: ${p.src}`);
       continue;
     }
-    await processPhoto({ srcPath, outDir: productsOut, slug: p.slug, widths: [600], fit: "inside" });
+    await processPhoto({ srcPath, outDir: productsOut, slug: p.slug, widths: [1400], fit: "inside" });
   }
 
   console.log("\n[logos]");

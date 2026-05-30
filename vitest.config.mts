@@ -4,10 +4,19 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     globals: true,
     include: ["__tests__/**/*.test.{ts,tsx}"],
+    // Force Vite to bundle motion through its own resolver so jsdom tests don't see two React copies (worktree's node_modules/react vs. hoisted motion's React).
+    server: {
+      deps: {
+        inline: ["framer-motion", "motion", "motion-dom", "motion-utils"],
+      },
+    },
   },
 });

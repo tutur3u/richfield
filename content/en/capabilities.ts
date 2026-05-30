@@ -20,7 +20,7 @@ export const pillars: Pillar[] = [
     number: "02",
     name: "Warehouse & Logistics",
     shortBody:
-      "Two distribution centres in Long An and Hanoi, ambient and cold storage, end-to-end handling.",
+      "End-to-end storage, handling, and last-mile distribution capabilities",
     longBody:
       "Two distribution centres in Long An and Hanoi cover the country end to end. Ambient and cold storage (18°C–25°C), co-packing infrastructure, and a network of vehicles serving every province.",
     href: "/logistics",
@@ -29,7 +29,7 @@ export const pillars: Pillar[] = [
     number: "03",
     name: "General Trade",
     shortBody:
-      "Nationwide coverage with 800+ salesmen across every province and city.",
+      "Nationwide coverage with 1000+ salesmen across provinces and cities.",
     longBody:
       "Nationwide coverage with 800+ salesmen across every province and city, supported by 300+ sub-distributors and a network of 180,000 retail outlets. Grocery, wholesaler, HORECA, wet market, independent pharmacy.",
     href: "/distribution#gt",
@@ -38,7 +38,7 @@ export const pillars: Pillar[] = [
     number: "04",
     name: "Modern Trade",
     shortBody:
-      "Retailer partnerships across every chain, with trade-marketing display and event support.",
+      "Retailer partnerships with trade-marketing - display and event support.",
     longBody:
       "Retailer partnerships across every chain in Vietnam, with trade-marketing display and event support. Super and Hyper, Convenience, Mini and Foodstore, Health and Beauty, Mom and Baby, Specialty.",
     href: "/distribution#mt",

@@ -74,11 +74,16 @@ const SWITCH_FRACTION = 0.15;
 // section. Tune against logged velocities — high enough that gentle reading
 // never snaps, low enough that a deliberate flick does.
 const HARD_VELOCITY = 1.2;
-// Once a snap fires it is "consumed": no further snap can trigger until the
-// user has essentially stopped scrolling (|velocity| falls below this). This
-// stops a single hard flick — whose momentum keeps emitting scroll events
-// after the snap lands — from chaining into a second snap, so one flick always
-// advances exactly one section.
+// A snap may only fire once the viewport is within this fraction of a viewport
+// height of the current section's natural end (its bottom resting against the
+// viewport bottom). Measured per section against that section's own bottom, so
+// it behaves identically regardless of how tall the section is.
+const END_ZONE_FRACTION = 0.1;
+// |velocity| below which the user is considered "settled". A snap only arms
+// after settling at the end, so the momentum that carried you down through the
+// section (and into the end zone) can't itself trigger a snap — you genuinely
+// stop at the end, then a fresh hard flick advances. Also prevents one flick's
+// momentum tail from chaining into a second snap.
 const REARM_VELOCITY = 0.05;
 
 export function MagazineFlow({ children }: MagazineFlowProps) {
@@ -154,21 +159,19 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
     // (handles deep-links to a #section anchor).
     syncBg(false, 1, sectionTops());
 
-    // Forward-only, hard-scroll snap. Never snaps upward and never snaps back
-    // to a section's start — you can freely stop anywhere (mid-section or at a
-    // section's end) to read. Only a deliberate downward flick, once the next
-    // section has entered the viewport (i.e. you're near the end of the current
-    // one), "page-turns" to the next section.
+    // Forward-only, hard-scroll snap, height-independent. You can freely stop
+    // anywhere (mid-section or at a section's end) to read. The snap only fires
+    // when you are at the current section's natural end AND have settled there
+    // AND then give a deliberate downward flick — so the momentum that carried
+    // you to the end never auto-advances you, and every section behaves the
+    // same regardless of its height. Never snaps upward or to a section start.
     let isSnapping = false;
-    // A snap is consumed when it fires and only re-arms once the user has
-    // essentially stopped scrolling, so the momentum tail of one hard flick
-    // can't chain into a second snap (one flick = one section).
-    let armed = true;
+    // Armed only after settling within the end zone. Leaving the end zone (i.e.
+    // scrolling back up into the body) disarms, so the travel-down momentum
+    // can't trigger a snap — you must come to rest at the end first.
+    let armed = false;
     const maybeSnapForward = (tops: number[]) => {
       if (isSnapping) return;
-      if (Math.abs(lenis.velocity) < REARM_VELOCITY) armed = true;
-      if (!armed) return;
-      if (lenis.velocity <= HARD_VELOCITY) return; // hard, downward scroll only
       const sy = window.scrollY;
       const vh = window.innerHeight;
       let cur = 0;
@@ -179,8 +182,22 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
       const nextIdx = cur + 1;
       if (nextIdx >= els.length) return; // nothing ahead to snap to
       const nextTop = tops[nextIdx];
-      if (nextTop > sy + vh) return; // next not in view yet -> mid-section, skip
-      armed = false; // consume; require a near-stop before the next snap
+      // Distance from the section's natural end (its bottom resting against the
+      // viewport bottom). <= 0 means we're at or past that rest point.
+      const gapToEnd = nextTop - (sy + vh);
+      if (gapToEnd > END_ZONE_FRACTION * vh) {
+        armed = false; // still in the section body — travelling disarms
+        return;
+      }
+      // In the end zone: arm once the user has settled here, then wait for a
+      // fresh hard flick before advancing.
+      if (Math.abs(lenis.velocity) < REARM_VELOCITY) {
+        armed = true;
+        return;
+      }
+      if (!armed) return; // haven't settled at the end yet
+      if (lenis.velocity <= HARD_VELOCITY) return; // need a hard downward flick
+      armed = false;
       isSnapping = true;
       setSnapping(true);
       lenis.scrollTo(nextTop, {

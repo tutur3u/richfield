@@ -7,9 +7,9 @@ export function ColophonSpread() {
       id="colophon"
       className="v2-display relative flex min-h-[100svh] w-full flex-col lg:h-[100svh]"
     >
-      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[clamp(28px,3vw,44px)] px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
         {/* Top folio */}
-        <header className="v2-mono v2-size-folio mb-[clamp(18px,2.4vw,32px)] flex items-center gap-6 opacity-55">
+        <header className="v2-mono v2-size-folio flex items-center gap-6 opacity-55">
           <span>RICHFIELD WORLDWIDE JSC</span>
           <span aria-hidden className="v2-rule flex-1" />
         </header>

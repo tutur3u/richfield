@@ -15,7 +15,7 @@ export function FieldAtlasSpread() {
       id="atlas"
       className="v2-display relative flex min-h-[100svh] w-full flex-col"
     >
-      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[clamp(20px,2.2vw,34px)] px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[clamp(28px,3vw,44px)] px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
         {/* Top folio — single line, matches STORY 01/02. */}
         <header className="v2-mono v2-size-folio flex items-center gap-6 opacity-55">
           <span>RICHFIELD WORLDWIDE JSC</span>

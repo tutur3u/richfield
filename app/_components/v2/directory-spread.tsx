@@ -21,14 +21,14 @@ export function DirectoryIntroSpread() {
       id="brands"
       className="v2-display relative flex min-h-[100svh] w-full flex-col lg:h-[100svh]"
     >
-      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[clamp(28px,3vw,44px)] px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
         <header className="v2-mono v2-size-folio flex items-center gap-6 opacity-55">
           <span>RICHFIELD WORLDWIDE JSC</span>
           <span aria-hidden className="v2-rule flex-1" />
         </header>
 
         {/* Content — one vertical rhythm, centred as a single group. */}
-        <div className="flex flex-1 flex-col justify-center gap-y-[clamp(22px,3vw,46px)]">
+        <div className="flex flex-1 flex-col justify-center gap-y-[clamp(28px,3vw,44px)]">
           {/* Headline block — full width. */}
           <div className="hyphens-auto" lang="en">
             <p className="v2-mono v2-size-eyebrow mb-[clamp(10px,0.9vw,16px)] flex items-center gap-3 text-gold-strong">
@@ -73,8 +73,8 @@ export function DirectoryCategoriesSpread() {
       id="brands-shelf"
       className="v2-display relative flex min-h-[100svh] w-full flex-col lg:h-[100svh]"
     >
-      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:min-h-0 lg:px-12">
-        <header className="v2-mono v2-size-folio mb-[clamp(12px,1.5vw,22px)] flex items-center gap-6 opacity-55">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[clamp(28px,3vw,44px)] px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:min-h-0 lg:px-12">
+        <header className="v2-mono v2-size-folio flex items-center gap-6 opacity-55">
           <span>RICHFIELD WORLDWIDE JSC</span>
           <span aria-hidden className="v2-rule flex-1" />
         </header>

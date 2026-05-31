@@ -70,21 +70,16 @@ const SNAP_DURATION_S = 1.1;
 // leave a section"; 1 = only once it has fully arrived. Applied symmetrically to
 // up and down so forward and backward feel the same.
 const SWITCH_FRACTION = 0.15;
-// |lenis.velocity| above which a downward flick snaps forward to the next
-// section. Tune against logged velocities — high enough that gentle reading
-// never snaps, low enough that a deliberate flick does.
-const HARD_VELOCITY = 1.2;
-// A snap may only fire once the viewport is within this fraction of a viewport
-// height of the current section's natural end (its bottom resting against the
-// viewport bottom). Measured per section against that section's own bottom, so
-// it behaves identically regardless of how tall the section is.
-const END_ZONE_FRACTION = 0.1;
-// |velocity| below which the user is considered "settled". A snap only arms
-// after settling at the end, so the momentum that carried you down through the
-// section (and into the end zone) can't itself trigger a snap — you genuinely
-// stop at the end, then a fresh hard flick advances. Also prevents one flick's
-// momentum tail from chaining into a second snap.
-const REARM_VELOCITY = 0.05;
+// Scroll behaves as a hard "wall" at each section's end: downward scroll is
+// clamped there every frame, so even a very hard fling physically stops at the
+// end of a section — it cannot carry through. The wall releases only on a
+// fresh, deliberate downward gesture.
+//
+// A new gesture is told apart from the dying momentum of the fling that hit the
+// wall by an idle gap: trackpad/mouse momentum events arrive continuously (tiny
+// gaps), whereas lifting and swiping again leaves a pause. A downward wheel
+// event with at least this gap since the previous one counts as a fresh push.
+const RELEASE_IDLE_MS = 180;
 
 export function MagazineFlow({ children }: MagazineFlowProps) {
   const reduce = useReducedMotion();
@@ -159,56 +154,80 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
     // (handles deep-links to a #section anchor).
     syncBg(false, 1, sectionTops());
 
-    // Forward-only, hard-scroll snap, height-independent. You can freely stop
-    // anywhere (mid-section or at a section's end) to read. The snap only fires
-    // when you are at the current section's natural end AND have settled there
-    // AND then give a deliberate downward flick — so the momentum that carried
-    // you to the end never auto-advances you, and every section behaves the
-    // same regardless of its height. Never snaps upward or to a section start.
-    let isSnapping = false;
-    // Armed only after settling within the end zone. Leaving the end zone (i.e.
-    // scrolling back up into the body) disarms, so the travel-down momentum
-    // can't trigger a snap — you must come to rest at the end first.
-    let armed = false;
-    const maybeSnapForward = (tops: number[]) => {
-      if (isSnapping) return;
-      const sy = window.scrollY;
-      const vh = window.innerHeight;
-      let cur = 0;
+    // The end of each section is a hard wall. `currentSection` is the section
+    // whose wall is currently in force; it advances ONLY on an explicit release
+    // (a fresh downward gesture), never via momentum. The wall for a section is
+    // the scroll position where its bottom rests against the viewport bottom
+    // (`tops[currentSection + 1] - vh`), measured against that section's own
+    // box, so a tall section and a one-viewport section behave identically: you
+    // can read down to the wall, but no fling carries past it.
+    let currentSection = 0;
+    let crossing = false; // true while a release animation is in flight
+    let lastWheelTs = 0;
+
+    // Recompute which section currently fills the viewport top, so scrolling
+    // back UP frees the walls behind you (you can revisit earlier sections).
+    const geomSection = (tops: number[], sy: number) => {
+      let g = 0;
       tops.forEach((top, i) => {
-        // 1px tolerance for sub-pixel jitter at the exact section top.
-        if (top <= sy + 1) cur = i;
+        if (top <= sy + 1) g = i;
       });
-      const nextIdx = cur + 1;
-      if (nextIdx >= els.length) return; // nothing ahead to snap to
-      const nextTop = tops[nextIdx];
-      // Distance from the section's natural end (its bottom resting against the
-      // viewport bottom). <= 0 means we're at or past that rest point.
-      const gapToEnd = nextTop - (sy + vh);
-      if (gapToEnd > END_ZONE_FRACTION * vh) {
-        armed = false; // still in the section body — travelling disarms
-        return;
+      return g;
+    };
+
+    // Hold the scroll at the current section's wall: any downward overshoot is
+    // snapped straight back, killing the fling's momentum so it stops dead at
+    // the end. Upward scrolling is never clamped.
+    const enforceWall = (tops: number[]) => {
+      if (crossing) return;
+      const vh = window.innerHeight;
+      const sy = lenis.scroll;
+      const g = geomSection(tops, sy);
+      if (g < currentSection) currentSection = g; // went back up — release walls
+      if (currentSection + 1 >= tops.length) return; // last section: no wall
+      const wall = tops[currentSection + 1] - vh;
+      if (sy > wall + 1) {
+        // immediate jump cancels the running momentum, so the fling stops dead
+        // at the wall instead of vibrating against it.
+        lenis.scrollTo(wall, { immediate: true, force: true });
       }
-      // In the end zone: arm once the user has settled here, then wait for a
-      // fresh hard flick before advancing.
-      if (Math.abs(lenis.velocity) < REARM_VELOCITY) {
-        armed = true;
-        return;
-      }
-      if (!armed) return; // haven't settled at the end yet
-      if (lenis.velocity <= HARD_VELOCITY) return; // need a hard downward flick
-      armed = false;
-      isSnapping = true;
+    };
+
+    // Release the wall and advance one section. Lands at the next section's
+    // top so a tall next section can again be read down to its own wall.
+    const releaseToNext = () => {
+      if (crossing) return;
+      const tops = sectionTops();
+      if (currentSection + 1 >= tops.length) return;
+      crossing = true;
       setSnapping(true);
-      lenis.scrollTo(nextTop, {
+      currentSection += 1;
+      lenis.scrollTo(tops[currentSection], {
         duration: SNAP_DURATION_S,
         easing: (t: number) => 1 - Math.pow(1 - t, 3),
         lock: true,
+        force: true,
         onComplete: () => {
-          isSnapping = false;
+          crossing = false;
           setSnapping(false);
         },
       });
+    };
+
+    // A fresh, deliberate downward gesture releases the wall. The dying
+    // momentum of the fling that hit the wall arrives as a continuous stream of
+    // wheel events (tiny gaps); a real new swipe follows a pause, so we require
+    // an idle gap since the previous wheel event.
+    const onWheel = (e: WheelEvent) => {
+      const now = performance.now();
+      const gap = now - lastWheelTs;
+      lastWheelTs = now;
+      if (crossing || e.deltaY <= 0 || gap < RELEASE_IDLE_MS) return;
+      const tops = sectionTops();
+      if (currentSection + 1 >= tops.length) return;
+      const wall = tops[currentSection + 1] - window.innerHeight;
+      // Only release when actually parked at the wall (i.e. at the section end).
+      if (lenis.scroll >= wall - 2) releaseToNext();
     };
 
     let lastScroll = window.scrollY;
@@ -218,12 +237,14 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
       lastScroll = sy;
       const tops = sectionTops();
       syncBg(true, dir, tops);
-      maybeSnapForward(tops);
+      enforceWall(tops);
     };
     lenis.on("scroll", onScroll);
+    window.addEventListener("wheel", onWheel, { passive: true });
 
     return () => {
       lenis.off("scroll", onScroll);
+      window.removeEventListener("wheel", onWheel);
     };
   // bg motion value and sections list are stable across renders for the same
   // children. Restricting deps to lenis/reduce avoids rebuilding the scroll

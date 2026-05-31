@@ -74,6 +74,12 @@ const SWITCH_FRACTION = 0.15;
 // section. Tune against logged velocities — high enough that gentle reading
 // never snaps, low enough that a deliberate flick does.
 const HARD_VELOCITY = 1.2;
+// Once a snap fires it is "consumed": no further snap can trigger until the
+// user has essentially stopped scrolling (|velocity| falls below this). This
+// stops a single hard flick — whose momentum keeps emitting scroll events
+// after the snap lands — from chaining into a second snap, so one flick always
+// advances exactly one section.
+const REARM_VELOCITY = 0.05;
 
 export function MagazineFlow({ children }: MagazineFlowProps) {
   const reduce = useReducedMotion();
@@ -154,8 +160,14 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
     // section has entered the viewport (i.e. you're near the end of the current
     // one), "page-turns" to the next section.
     let isSnapping = false;
+    // A snap is consumed when it fires and only re-arms once the user has
+    // essentially stopped scrolling, so the momentum tail of one hard flick
+    // can't chain into a second snap (one flick = one section).
+    let armed = true;
     const maybeSnapForward = (tops: number[]) => {
       if (isSnapping) return;
+      if (Math.abs(lenis.velocity) < REARM_VELOCITY) armed = true;
+      if (!armed) return;
       if (lenis.velocity <= HARD_VELOCITY) return; // hard, downward scroll only
       const sy = window.scrollY;
       const vh = window.innerHeight;
@@ -168,6 +180,7 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
       if (nextIdx >= els.length) return; // nothing ahead to snap to
       const nextTop = tops[nextIdx];
       if (nextTop > sy + vh) return; // next not in view yet -> mid-section, skip
+      armed = false; // consume; require a near-stop before the next snap
       isSnapping = true;
       setSnapping(true);
       lenis.scrollTo(nextTop, {

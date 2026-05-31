@@ -70,16 +70,10 @@ const SNAP_DURATION_S = 1.1;
 // leave a section"; 1 = only once it has fully arrived. Applied symmetrically to
 // up and down so forward and backward feel the same.
 const SWITCH_FRACTION = 0.15;
-// Scroll behaves as a hard "wall" at each section's end: downward scroll is
-// clamped there every frame, so even a very hard fling physically stops at the
-// end of a section — it cannot carry through. The wall releases only on a
-// fresh, deliberate downward gesture.
-//
-// A new gesture is told apart from the dying momentum of the fling that hit the
-// wall by an idle gap: trackpad/mouse momentum events arrive continuously (tiny
-// gaps), whereas lifting and swiping again leaves a pause. A downward wheel
-// event with at least this gap since the previous one counts as a fresh push.
-const RELEASE_IDLE_MS = 180;
+// |lenis.velocity| above which a downward flick snaps forward to the next
+// section. Tune against logged velocities — high enough that gentle reading
+// never snaps, low enough that a deliberate flick does.
+const HARD_VELOCITY = 1.2;
 
 export function MagazineFlow({ children }: MagazineFlowProps) {
   const reduce = useReducedMotion();
@@ -154,80 +148,37 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
     // (handles deep-links to a #section anchor).
     syncBg(false, 1, sectionTops());
 
-    // The end of each section is a hard wall. `currentSection` is the section
-    // whose wall is currently in force; it advances ONLY on an explicit release
-    // (a fresh downward gesture), never via momentum. The wall for a section is
-    // the scroll position where its bottom rests against the viewport bottom
-    // (`tops[currentSection + 1] - vh`), measured against that section's own
-    // box, so a tall section and a one-viewport section behave identically: you
-    // can read down to the wall, but no fling carries past it.
-    let currentSection = 0;
-    let crossing = false; // true while a release animation is in flight
-    let lastWheelTs = 0;
-
-    // Recompute which section currently fills the viewport top, so scrolling
-    // back UP frees the walls behind you (you can revisit earlier sections).
-    const geomSection = (tops: number[], sy: number) => {
-      let g = 0;
-      tops.forEach((top, i) => {
-        if (top <= sy + 1) g = i;
-      });
-      return g;
-    };
-
-    // Hold the scroll at the current section's wall: any downward overshoot is
-    // snapped straight back, killing the fling's momentum so it stops dead at
-    // the end. Upward scrolling is never clamped.
-    const enforceWall = (tops: number[]) => {
-      if (crossing) return;
+    // Forward-only, hard-scroll snap. Never snaps upward and never snaps back
+    // to a section's start — you can freely stop anywhere (mid-section or at a
+    // section's end) to read. Only a deliberate downward flick, once the next
+    // section has entered the viewport (i.e. you're near the end of the current
+    // one), "page-turns" to the next section.
+    let isSnapping = false;
+    const maybeSnapForward = (tops: number[]) => {
+      if (isSnapping) return;
+      if (lenis.velocity <= HARD_VELOCITY) return; // hard, downward scroll only
+      const sy = window.scrollY;
       const vh = window.innerHeight;
-      const sy = lenis.scroll;
-      const g = geomSection(tops, sy);
-      if (g < currentSection) currentSection = g; // went back up — release walls
-      if (currentSection + 1 >= tops.length) return; // last section: no wall
-      const wall = tops[currentSection + 1] - vh;
-      if (sy > wall + 1) {
-        // immediate jump cancels the running momentum, so the fling stops dead
-        // at the wall instead of vibrating against it.
-        lenis.scrollTo(wall, { immediate: true, force: true });
-      }
-    };
-
-    // Release the wall and advance one section. Lands at the next section's
-    // top so a tall next section can again be read down to its own wall.
-    const releaseToNext = () => {
-      if (crossing) return;
-      const tops = sectionTops();
-      if (currentSection + 1 >= tops.length) return;
-      crossing = true;
+      let cur = 0;
+      tops.forEach((top, i) => {
+        // 1px tolerance for sub-pixel jitter at the exact section top.
+        if (top <= sy + 1) cur = i;
+      });
+      const nextIdx = cur + 1;
+      if (nextIdx >= els.length) return; // nothing ahead to snap to
+      const nextTop = tops[nextIdx];
+      if (nextTop > sy + vh) return; // next not in view yet -> mid-section, skip
+      isSnapping = true;
       setSnapping(true);
-      currentSection += 1;
-      lenis.scrollTo(tops[currentSection], {
+      lenis.scrollTo(nextTop, {
         duration: SNAP_DURATION_S,
         easing: (t: number) => 1 - Math.pow(1 - t, 3),
         lock: true,
-        force: true,
         onComplete: () => {
-          crossing = false;
+          isSnapping = false;
           setSnapping(false);
         },
       });
-    };
-
-    // A fresh, deliberate downward gesture releases the wall. The dying
-    // momentum of the fling that hit the wall arrives as a continuous stream of
-    // wheel events (tiny gaps); a real new swipe follows a pause, so we require
-    // an idle gap since the previous wheel event.
-    const onWheel = (e: WheelEvent) => {
-      const now = performance.now();
-      const gap = now - lastWheelTs;
-      lastWheelTs = now;
-      if (crossing || e.deltaY <= 0 || gap < RELEASE_IDLE_MS) return;
-      const tops = sectionTops();
-      if (currentSection + 1 >= tops.length) return;
-      const wall = tops[currentSection + 1] - window.innerHeight;
-      // Only release when actually parked at the wall (i.e. at the section end).
-      if (lenis.scroll >= wall - 2) releaseToNext();
     };
 
     let lastScroll = window.scrollY;
@@ -237,14 +188,12 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
       lastScroll = sy;
       const tops = sectionTops();
       syncBg(true, dir, tops);
-      enforceWall(tops);
+      maybeSnapForward(tops);
     };
     lenis.on("scroll", onScroll);
-    window.addEventListener("wheel", onWheel, { passive: true });
 
     return () => {
       lenis.off("scroll", onScroll);
-      window.removeEventListener("wheel", onWheel);
     };
   // bg motion value and sections list are stable across renders for the same
   // children. Restricting deps to lenis/reduce avoids rebuilding the scroll

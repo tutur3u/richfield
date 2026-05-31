@@ -46,7 +46,7 @@ export function FieldAtlasSpread() {
               <span className="block">One promise.</span>
             </h2>
 
-            <p className="v2-size-body text-justify opacity-90">
+            <p className="v2-size-body text-left sm:text-justify opacity-90">
               The Richfield Group spans three countries and three generations of family leadership, combining international scale with hands-on knowledge of every market we serve.
             </p>
 

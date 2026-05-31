@@ -208,6 +208,15 @@ button:focus-visible {
   letter-spacing: -0.02em;
 }
 
+/* On phones the cap's floor (4.4rem) would lock it at ~70px against 16px body
+   text in a ~330px column — far too dominant. Scale it down and let it grow
+   with viewport width; at >=640px the rule above takes back over unchanged. */
+@media (max-width: 639px) {
+  .v2-dropcap::first-letter {
+    font-size: clamp(2.8rem, 13vw, 4rem);
+  }
+}
+
 /* Multi-column editorial body. */
 .v2-cols-2 {
   column-count: 1;

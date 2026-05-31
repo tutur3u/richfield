@@ -41,7 +41,7 @@ export function DirectoryIntroSpread() {
               <em className="italic text-gold-strong">recognized</em> brands
             </h2>
 
-            <p className="v2-size-body text-justify opacity-90">
+            <p className="v2-size-body text-left sm:text-justify opacity-90">
               From confectionery and beverages to personal care and stationery — Richfield carries the brands shoppers already reach for, in partnerships that often run for decades.
             </p>
           </div>

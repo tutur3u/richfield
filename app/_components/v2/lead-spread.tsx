@@ -41,7 +41,7 @@ export function LeadSpread() {
             From market entry to nationwide distribution.
           </h2>
 
-          <p className="v2-dropcap v2-size-body text-justify opacity-90">
+          <p className="v2-dropcap v2-size-body text-left sm:text-justify opacity-90">
             Richfield JSC Group is proud to be one of the largest FMCG
             distributors in Vietnam. At present, our distribution network is
             the largest distribution system in the country, covering all
@@ -49,7 +49,7 @@ export function LeadSpread() {
             and nearly 600,000 retail outlets nationwide.
           </p>
 
-          <p className="v2-size-body mt-[clamp(18px,1.8vw,28px)] text-justify opacity-85">
+          <p className="v2-size-body mt-[clamp(18px,1.8vw,28px)] text-left sm:text-justify opacity-85">
             At Richfield, we go beyond focusing on production and business
             performance, we are equally committed to our people and the
             communities we serve. Through ongoing social and charitable
@@ -57,7 +57,7 @@ export function LeadSpread() {
             organization.
           </p>
 
-          <p className="v2-size-body mt-[clamp(18px,1.8vw,28px)] text-justify opacity-80">
+          <p className="v2-size-body mt-[clamp(18px,1.8vw,28px)] text-left sm:text-justify opacity-80">
             Driven by a passionate and dynamic team and strengthened by our
             position as a leading brand with strong support from leading
             brands such as Mars, Richfield has experienced steady growth over

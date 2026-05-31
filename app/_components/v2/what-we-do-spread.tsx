@@ -77,7 +77,7 @@ export function WhatWeDoSpread() {
               Three ways we move brands to <em className="italic text-gold-strong">markets</em>.
             </h2>
 
-            <p className="v2-size-body text-justify opacity-90">
+            <p className="v2-size-body text-left sm:text-justify opacity-90">
               Richfield Group began as a family business in Malaysia and has
               grown across three generations. Today we operate as one of the
               largest FMCG distributors in Vietnam, backed by an international
@@ -109,7 +109,7 @@ export function WhatWeDoSpread() {
                   {meta.display}
                 </h3>
 
-                <p className="v2-size-body text-[clamp(15px,1.12vw,17px)] leading-[1.55] text-justify opacity-85">
+                <p className="v2-size-body text-[clamp(15px,1.12vw,17px)] leading-[1.55] text-left sm:text-justify opacity-85">
                   {p.shortBody}
                   {/* <span className="v2-italic opacity-70">{meta.formats}</span> */}
                 </p>

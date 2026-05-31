@@ -31,6 +31,30 @@ function useReducedMotion(): boolean {
   return reduced;
 }
 
+// Snapping is a pointer/wheel interaction. On touch devices Lenis leaves touch
+// on native scroll (so velocity is unreliable) and on small screens the
+// forward-snap fights the user, so we disable it there and let the page
+// free-scroll natively while the background crossfade keeps running. True =
+// coarse pointer (touch/stylus) OR a narrow viewport.
+const SNAP_MIN_WIDTH = 1024; // below this we treat it as small-screen
+function useNoSnap(): boolean {
+  const query = `(pointer: coarse), (max-width: ${SNAP_MIN_WIDTH - 1}px)`;
+  const [noSnap, setNoSnap] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia?.(query)?.matches ?? false;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia(query);
+    const handler = (e: MediaQueryListEvent) => setNoSnap(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, [query]);
+
+  return noSnap;
+}
+
 export type MagazineFlowSectionProps = {
   bg: string;
   textOnDark?: boolean;
@@ -83,6 +107,7 @@ const REARM_VELOCITY = 0.05;
 
 export function MagazineFlow({ children }: MagazineFlowProps) {
   const reduce = useReducedMotion();
+  const noSnap = useNoSnap();
   const { enabled: smoothScroll } = useSmoothScroll();
   const sectionEls = useRef<Array<HTMLElement | null>>([]);
   const lenis = useLenis();
@@ -165,6 +190,7 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
     // traverse a tall section) can't chain into a second snap and skip ahead.
     let armed = true;
     const maybeSnapForward = (tops: number[]) => {
+      if (noSnap) return; // touch / small screen: free native scroll, no snap
       if (isSnapping) return;
       if (Math.abs(lenis.velocity) < REARM_VELOCITY) armed = true;
       if (!armed) return;
@@ -209,10 +235,11 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
       lenis.off("scroll", onScroll);
     };
   // bg motion value and sections list are stable across renders for the same
-  // children. Restricting deps to lenis/reduce avoids rebuilding the scroll
-  // handler on every parent re-render.
+  // children. Restricting deps avoids rebuilding the scroll handler on every
+  // parent re-render; noSnap is included so crossing the touch/size breakpoint
+  // re-evaluates whether snapping is active.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lenis, reduce]);
+  }, [lenis, reduce, noSnap]);
 
   if (nativeScroll) {
     return (

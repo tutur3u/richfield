@@ -15,7 +15,7 @@ export function ScrollToggle() {
       aria-checked={enabled}
       aria-label="Smooth scrolling"
       onClick={() => setEnabled(!enabled)}
-      className="v2-mono v2-size-folio fixed right-4 top-4 z-50 inline-flex items-center gap-3 rounded-full border border-cream/25 bg-ink/70 px-4 py-2 text-cream backdrop-blur-md transition-colors duration-200 hover:border-gold/70 sm:right-6 sm:top-6"
+      className="v2-mono v2-size-folio fixed bottom-4 right-4 z-50 inline-flex items-center gap-3 rounded-full border border-cream/25 bg-ink/70 px-4 py-2 text-cream backdrop-blur-md transition-colors duration-200 hover:border-gold/70 sm:bottom-6 sm:right-6"
     >
       <span className="opacity-80">SMOOTH SCROLL</span>
       <span

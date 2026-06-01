@@ -1,16 +1,16 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent, within } from "@testing-library/react";
-import { DirectorySpread } from "@/app/_components/v2/directory-spread";
+import { PortfolioSpread } from "@/app/_components/v2/portfolio-spread";
 
-describe("<DirectorySpread>", () => {
+describe("<PortfolioSpread>", () => {
   it("renders the intro eyebrow and headline", () => {
-    render(<DirectorySpread />);
+    render(<PortfolioSpread />);
     expect(screen.getAllByText(/directory/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/recognized/i)).toBeInTheDocument();
   });
 
   it("renders the shelf headline and a category tablist", () => {
-    render(<DirectorySpread />);
+    render(<PortfolioSpread />);
     expect(screen.getByRole("heading", { name: /the full shelf/i })).toBeInTheDocument();
     const tablist = screen.getByRole("tablist", { name: /product categories/i });
     expect(within(tablist).getByRole("tab", { name: /^food/i })).toBeInTheDocument();
@@ -19,7 +19,7 @@ describe("<DirectorySpread>", () => {
   });
 
   it("shows Food by default with its brand roster and product mosaic", () => {
-    render(<DirectorySpread />);
+    render(<PortfolioSpread />);
     const roster = screen.getByRole("region", { name: /^food brands$/i });
     for (const name of ["Mars · Wrigley", "Glico", "NewChoice", "AMOS", "Wei Long"]) {
       expect(roster.querySelector(`img[alt="${name}"]`)).not.toBeNull();
@@ -29,7 +29,7 @@ describe("<DirectorySpread>", () => {
   });
 
   it("switches to Beverages and reveals Red Bull and Warrior", () => {
-    render(<DirectorySpread />);
+    render(<PortfolioSpread />);
     fireEvent.click(screen.getByRole("tab", { name: /beverages/i }));
     const roster = screen.getByRole("region", { name: /^beverages brands$/i });
     expect(roster.querySelector('img[alt="Red Bull"]')).not.toBeNull();
@@ -40,7 +40,7 @@ describe("<DirectorySpread>", () => {
   });
 
   it("switches to Non-Food and reveals BiC and Caretex", () => {
-    render(<DirectorySpread />);
+    render(<PortfolioSpread />);
     fireEvent.click(screen.getByRole("tab", { name: /non-food/i }));
     const roster = screen.getByRole("region", { name: /^non-food brands$/i });
     expect(roster.querySelector('img[alt="BiC"]')).not.toBeNull();
@@ -48,7 +48,7 @@ describe("<DirectorySpread>", () => {
   });
 
   it("does NOT render an Export band", () => {
-    render(<DirectorySpread />);
+    render(<PortfolioSpread />);
     expect(screen.queryByRole("heading", { name: /^export$/i })).toBeNull();
   });
 });

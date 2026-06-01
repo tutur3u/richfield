@@ -57,27 +57,24 @@ export function WhatWeDoSpread() {
   return (
     <section
       id="what"
-      className="v2-display relative flex min-h-[100svh] w-full flex-col"
+      className="v2-display relative flex w-full flex-col lg:min-h-[100svh]"
     >
-      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col justify-between px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
-        {/* Top folio */}
-        <header className="v2-mono v2-size-folio flex items-center gap-6 opacity-55">
-          <span>RICHFIELD WORLDWIDE JSC</span>
-          <span aria-hidden className="v2-rule flex-1" />
-        </header>
-
-        {/* Headline block — full width. */}
-          <div className="hyphens-auto" lang="en">
-            <p className="v2-mono v2-size-eyebrow mb-[clamp(10px,0.9vw,16px)] flex items-center gap-3 text-gold">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[var(--v2-flow)] px-6 pb-[clamp(24px,3.5vw,48px)] pt-[calc(var(--v2-runhead)+clamp(8px,1.5vw,20px))] sm:px-10 lg:px-12">
+        {/* Content sits as one compact group, vertically centered on desktop
+            (top-aligned on smaller screens). Every gap is one uniform rhythm. */}
+        <div className="flex flex-1 flex-col justify-start gap-y-[var(--v2-rhythm)] lg:justify-center">
+          {/* Headline block — full width. */}
+          <div className="flex flex-col gap-y-[var(--v2-rhythm)] hyphens-auto" lang="en">
+            <p className="v2-mono v2-size-eyebrow flex items-center gap-3 text-gold">
               <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
               WHAT WE DO
             </p>
 
-            <h2 className="font-display mb-[clamp(14px,1.4vw,22px)] text-[clamp(2.6rem,5vw,4.5rem)] leading-[0.98] tracking-[-0.026em] lg:whitespace-nowrap">
+            <h2 className="font-display v2-headline">
               Three ways we move brands to <em className="italic text-gold-strong">markets</em>.
             </h2>
 
-            <p className="v2-size-body text-justify opacity-90">
+            <p className="v2-size-body text-left sm:text-justify opacity-90">
               Richfield Group began as a family business in Malaysia and has
               grown across three generations. Today we operate as one of the
               largest FMCG distributors in Vietnam, backed by an international
@@ -109,7 +106,7 @@ export function WhatWeDoSpread() {
                   {meta.display}
                 </h3>
 
-                <p className="v2-size-body text-[clamp(15px,1.12vw,17px)] leading-[1.55] text-justify opacity-85">
+                <p className="v2-size-body text-left sm:text-justify opacity-90">
                   {p.shortBody}
                   {/* <span className="v2-italic opacity-70">{meta.formats}</span> */}
                 </p>
@@ -120,6 +117,7 @@ export function WhatWeDoSpread() {
               </article>
             );
           })}
+        </div>
         </div>
       </div>
     </section>

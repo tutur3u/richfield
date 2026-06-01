@@ -13,16 +13,13 @@ export function LeadSpread() {
   return (
     <section
       id="lead"
-      className="v2-display relative flex min-h-[100svh] w-full flex-col lg:h-[100svh]"
+      className="v2-display relative flex w-full flex-col lg:min-h-[100svh]"
     >
-      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col justify-between px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
-        {/* Top folio */}
-        <header className="v2-mono v2-size-folio flex items-center gap-6 opacity-55">
-          <span>RICHFIELD WORLDWIDE JSC</span>
-          <span aria-hidden className="v2-rule flex-1" />
-        </header>
-
-        {/* Body block — single flow. Photo floats top-right; eyebrow and
+      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[var(--v2-flow)] px-6 pb-[clamp(24px,3.5vw,48px)] pt-[calc(var(--v2-runhead)+clamp(8px,1.5vw,20px))] sm:px-10 lg:px-12">
+        {/* Body and stats as one compact group, vertically centered on desktop
+            (top-aligned below). Flow gap between the two subsections. */}
+        <div className="flex flex-1 flex-col justify-start gap-y-[var(--v2-flow)] lg:justify-center">
+          {/* Body block — single flow. Photo floats top-right; eyebrow and
             headline sit in the left column with a max-width so the photo's
             edge never cuts the headline mid-word. Body paragraphs wrap
             around the photo. */}
@@ -32,16 +29,16 @@ export function LeadSpread() {
             <LeadPhotoCycle />
           </div>
 
-          <p className="v2-mono v2-size-eyebrow mb-[clamp(10px,0.9vw,16px)] flex items-center gap-3 text-gold-strong">
+          <p className="v2-mono v2-size-eyebrow mb-[var(--v2-rhythm)] flex items-center gap-3 text-gold-strong">
             <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
             ABOUT THE GROUP
           </p>
 
-          <h2 className="font-display mb-[clamp(20px,2vw,35px)] text-[clamp(2.6rem,5vw,4.5rem)] leading-[0.98] tracking-[-0.026em]">
+          <h2 className="font-display v2-headline mb-[var(--v2-rhythm)]">
             From market entry to nationwide distribution.
           </h2>
 
-          <p className="v2-dropcap v2-size-body text-justify opacity-90">
+          <p className="v2-dropcap v2-size-body text-left sm:text-justify opacity-90">
             Richfield JSC Group is proud to be one of the largest FMCG
             distributors in Vietnam. At present, our distribution network is
             the largest distribution system in the country, covering all
@@ -49,7 +46,7 @@ export function LeadSpread() {
             and nearly 600,000 retail outlets nationwide.
           </p>
 
-          <p className="v2-size-body mt-[clamp(18px,1.8vw,28px)] text-justify opacity-85">
+          <p className="v2-size-body mt-[var(--v2-rhythm)] text-left sm:text-justify opacity-90">
             At Richfield, we go beyond focusing on production and business
             performance, we are equally committed to our people and the
             communities we serve. Through ongoing social and charitable
@@ -57,7 +54,7 @@ export function LeadSpread() {
             organization.
           </p>
 
-          <p className="v2-size-body mt-[clamp(18px,1.8vw,28px)] text-justify opacity-80">
+          <p className="v2-size-body mt-[var(--v2-rhythm)] text-left sm:text-justify opacity-90">
             Driven by a passionate and dynamic team and strengthened by our
             position as a leading brand with strong support from leading
             brands such as Mars, Richfield has experienced steady growth over
@@ -67,10 +64,9 @@ export function LeadSpread() {
           </p>
         </div>
 
-        {/* Stats band — clears the float, anchored at the bottom of the
-            section via justify-between on the parent */}
-        <div className="clear-both">
-          <p className="v2-mono v2-size-eyebrow mb-[clamp(14px,1.4vw,20px)] flex items-center gap-3 text-gold-strong">
+        {/* Stats band — clears the float; eyebrow + figures share one rhythm. */}
+        <div className="clear-both flex flex-col gap-y-[var(--v2-rhythm)]">
+          <p className="v2-mono v2-size-eyebrow flex items-center gap-3 text-gold-strong">
             <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
             BY THE NUMBERS
           </p>
@@ -86,6 +82,7 @@ export function LeadSpread() {
               </div>
             ))}
           </dl>
+        </div>
         </div>
       </div>
     </section>

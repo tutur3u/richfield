@@ -10,7 +10,6 @@ import {
   type ReactNode,
 } from "react";
 import { animate, motion, useMotionValue } from "motion/react";
-import Snap from "lenis/snap";
 import { useLenis, useSmoothScroll } from "./lenis-provider";
 
 function useReducedMotion(): boolean {
@@ -30,6 +29,30 @@ function useReducedMotion(): boolean {
   }, []);
 
   return reduced;
+}
+
+// Snapping is a pointer/wheel interaction. On touch devices Lenis leaves touch
+// on native scroll (so velocity is unreliable) and on small screens the
+// forward-snap fights the user, so we disable it there and let the page
+// free-scroll natively while the background crossfade keeps running. True =
+// coarse pointer (touch/stylus) OR a narrow viewport.
+const SNAP_MIN_WIDTH = 1024; // below this we treat it as small-screen
+function useNoSnap(): boolean {
+  const query = `(pointer: coarse), (max-width: ${SNAP_MIN_WIDTH - 1}px)`;
+  const [noSnap, setNoSnap] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia?.(query)?.matches ?? false;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia(query);
+    const handler = (e: MediaQueryListEvent) => setNoSnap(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, [query]);
+
+  return noSnap;
 }
 
 export type MagazineFlowSectionProps = {
@@ -66,9 +89,25 @@ type MagazineFlowProps = {
 
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 const SNAP_DURATION_S = 1.1;
+// How early the global background flips, measured as the fraction of a viewport
+// the destination section covers before the switch. Small = "the moment we
+// leave a section"; 1 = only once it has fully arrived. Applied symmetrically to
+// up and down so forward and backward feel the same.
+const SWITCH_FRACTION = 0.15;
+// |lenis.velocity| above which a downward flick snaps forward to the next
+// section. Tune against logged velocities — high enough that gentle reading
+// never snaps, low enough that a deliberate flick does.
+const HARD_VELOCITY = 1.2;
+// After a snap fires it is "consumed" and won't fire again until the scroll has
+// essentially stopped (|velocity| below this). Without it, a hard scroll
+// through a tall section (e.g. section 1) carries enough leftover momentum to
+// re-trigger the snap immediately and skip the next section. One flick now
+// advances exactly one section.
+const REARM_VELOCITY = 0.05;
 
 export function MagazineFlow({ children }: MagazineFlowProps) {
   const reduce = useReducedMotion();
+  const noSnap = useNoSnap();
   const { enabled: smoothScroll } = useSmoothScroll();
   const sectionEls = useRef<Array<HTMLElement | null>>([]);
   const lenis = useLenis();
@@ -101,23 +140,29 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
     );
     if (els.length === 0) return;
 
+    const sectionTops = () =>
+      els.map((el) => el.getBoundingClientRect().top + window.scrollY);
+
     let currentIndex = -1;
 
-    // Active section = the most recent section whose top has been passed.
-    // Reading inside a section keeps bg locked; crossing a seam flips it.
-    const activeSectionIndex = () => {
+    // Active section drives the global background. We flip it the moment we
+    // *leave* a section, symmetric for both directions: going down the next
+    // section takes over as it enters from the bottom; going up the previous
+    // one takes over as it enters from the top. SWITCH_FRACTION sets how far
+    // into the seam that happens (small = early "leave", 1 = old "arrive").
+    const activeSectionIndex = (dir: number, tops: number[]) => {
       const sy = window.scrollY;
+      const vh = window.innerHeight;
+      const offset = dir >= 0 ? vh * (1 - SWITCH_FRACTION) : vh * SWITCH_FRACTION;
       let best = 0;
-      els.forEach((el, i) => {
-        const top = el.getBoundingClientRect().top + window.scrollY;
-        // 1px tolerance for sub-pixel jitter at the exact section top.
-        if (top <= sy + 1) best = i;
+      tops.forEach((top, i) => {
+        if (top <= sy + offset) best = i;
       });
       return best;
     };
 
-    const syncBg = (animated: boolean) => {
-      const next = activeSectionIndex();
+    const syncBg = (animated: boolean, dir: number, tops: number[]) => {
+      const next = activeSectionIndex(dir, tops);
       if (next === currentIndex) return;
       currentIndex = next;
       if (animated) {
@@ -130,33 +175,71 @@ export function MagazineFlow({ children }: MagazineFlowProps) {
       }
     };
 
-    // Initialise immediately so first-paint bg matches whatever section the
-    // user is looking at (handles deep-links to a #section anchor).
-    syncBg(false);
+    // Initialise immediately so first paint matches the section in view
+    // (handles deep-links to a #section anchor).
+    syncBg(false, 1, sectionTops());
 
-    const onScroll = () => syncBg(true);
+    // Forward-only, hard-scroll snap. Never snaps upward and never snaps back
+    // to a section's start — you can freely stop anywhere (mid-section or at a
+    // section's end) to read. Only a deliberate downward flick, once the next
+    // section has entered the viewport (i.e. you're near the end of the current
+    // one), "page-turns" to the next section.
+    let isSnapping = false;
+    // A snap is consumed when it fires and only re-arms once the scroll has
+    // essentially stopped, so the leftover momentum of a hard scroll (needed to
+    // traverse a tall section) can't chain into a second snap and skip ahead.
+    let armed = true;
+    const maybeSnapForward = (tops: number[]) => {
+      if (noSnap) return; // touch / small screen: free native scroll, no snap
+      if (isSnapping) return;
+      if (Math.abs(lenis.velocity) < REARM_VELOCITY) armed = true;
+      if (!armed) return;
+      if (lenis.velocity <= HARD_VELOCITY) return; // hard, downward scroll only
+      const sy = window.scrollY;
+      const vh = window.innerHeight;
+      let cur = 0;
+      tops.forEach((top, i) => {
+        // 1px tolerance for sub-pixel jitter at the exact section top.
+        if (top <= sy + 1) cur = i;
+      });
+      const nextIdx = cur + 1;
+      if (nextIdx >= els.length) return; // nothing ahead to snap to
+      const nextTop = tops[nextIdx];
+      if (nextTop > sy + vh) return; // next not in view yet -> mid-section, skip
+      armed = false; // consume; require a near-stop before the next snap
+      isSnapping = true;
+      setSnapping(true);
+      lenis.scrollTo(nextTop, {
+        duration: SNAP_DURATION_S,
+        easing: (t: number) => 1 - Math.pow(1 - t, 3),
+        lock: true,
+        onComplete: () => {
+          isSnapping = false;
+          setSnapping(false);
+        },
+      });
+    };
+
+    let lastScroll = window.scrollY;
+    const onScroll = () => {
+      const sy = window.scrollY;
+      const dir = sy >= lastScroll ? 1 : -1;
+      lastScroll = sy;
+      const tops = sectionTops();
+      syncBg(true, dir, tops);
+      maybeSnapForward(tops);
+    };
     lenis.on("scroll", onScroll);
 
-    const snap = new Snap(lenis, {
-      type: "mandatory",
-      duration: SNAP_DURATION_S,
-      easing: (t: number) => 1 - Math.pow(1 - t, 3),
-      onSnapStart: () => setSnapping(true),
-      onSnapComplete: () => setSnapping(false),
-    });
-
-    const removers = els.map((el) => snap.addElement(el, { align: ["start"] }));
-
     return () => {
-      removers.forEach((remove) => remove());
-      snap.destroy();
       lenis.off("scroll", onScroll);
     };
-  // bg motion value and sections list are stable across renders for the
-  // same children. Restricting deps to lenis/reduce avoids rebuilding the
-  // snap instance on every parent re-render.
+  // bg motion value and sections list are stable across renders for the same
+  // children. Restricting deps avoids rebuilding the scroll handler on every
+  // parent re-render; noSnap is included so crossing the touch/size breakpoint
+  // re-evaluates whether snapping is active.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lenis, reduce]);
+  }, [lenis, reduce, noSnap]);
 
   if (nativeScroll) {
     return (

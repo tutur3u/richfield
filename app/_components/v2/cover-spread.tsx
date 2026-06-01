@@ -10,12 +10,9 @@ import { VerticalTOC } from "@/app/_components/v2/vertical-toc";
 const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 const ADVANCE_MS = 7000;
 
-/** Editorial standfirst — one of the few pieces of copy on the cover. */
-const STANDFIRST_LINES = [
-  "We carry what people love,",
-  "country by country,",
-  "for thirty years.",
-] as const;
+/** Supporting standfirst copy beneath the cover headline. */
+const COVER_SUBHEAD =
+  "One of Vietnam's largest FMCG distribution networks. Bringing the world's most loved brands to over 180,000 retail outlets nationwide.";
 
 export function CoverSpread() {
   const reduce = useReducedMotion();
@@ -112,33 +109,39 @@ export function CoverSpread() {
       {/* Bottom block — standfirst (left), TOC (right, lg+ only),
           pagination dots (bottom-right, all viewports). */}
       <div className="relative z-10 mx-auto w-full max-w-[1500px] px-6 pb-12 sm:px-10 sm:pb-14 lg:pb-20">
-        <div className="grid grid-cols-12 gap-10">
+        <div className="grid grid-cols-12 gap-x-4 gap-y-10 lg:gap-10">
           <div className="col-span-12 lg:col-span-9">
             {/* Eyebrow */}
             <motion.div
-              className="v2-mono v2-size-eyebrow mb-6 flex items-center gap-3 text-gold"
+              className="v2-mono v2-size-eyebrow mb-[var(--v2-rhythm)] flex items-center gap-3 text-gold"
               {...enter(0.35)}
             >
               <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
-              VIETNAM · CAMBODIA · MYANMAR · SINCE 1994
+              VIETNAM · CHINA · MALAYSIA
             </motion.div>
 
-            {/* Standfirst — italic Newsreader, three staggered lines. */}
-            <h1 className="font-display v2-size-standfirst max-w-[22ch] text-balance">
-              {STANDFIRST_LINES.map((line, i) => (
-                <motion.span
-                  key={line}
-                  className="block"
-                  {...enter(0.55 + i * 0.18)}
-                >
-                  {line}
-                </motion.span>
-              ))}
+            {/* Cover headline — confident display serif with one gold-italic
+                accent word; tight tracking reads as a magazine cover line. */}
+            <h1 className="font-display v2-size-standfirst max-w-full text-balance lg:max-w-[20ch]">
+              <motion.span className="block" {...enter(0.55)}>
+                From market entry
+              </motion.span>
+              <motion.span className="block" {...enter(0.73)}>
+                to <em className="italic text-gold">nationwide</em> distribution.
+              </motion.span>
             </h1>
+
+            {/* Supporting standfirst — the scale, in plain language. */}
+            <motion.p
+              className="mt-[var(--v2-rhythm)] max-w-full text-[clamp(17px,1.4vw,22px)] leading-relaxed text-cream/90 [text-shadow:0_1px_4px_rgb(0_0_0_/_0.6)] lg:max-w-[46ch]"
+              {...enter(0.95)}
+            >
+              {COVER_SUBHEAD}
+            </motion.p>
 
             {/* Caption — crossfades with the photo. Live region so AT
                 announces the new caption when the cover advances. */}
-            <div className="mt-10 min-h-[2lh]" aria-live="polite">
+            {/* <div className="mt-10 min-h-[2lh]" aria-live="polite">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.figcaption
                   key={portrait.src}
@@ -152,7 +155,7 @@ export function CoverSpread() {
                   {portrait.caption}
                 </motion.figcaption>
               </AnimatePresence>
-            </div>
+            </div> */}
           </div>
 
           {/* Vertical TOC — desktop only. */}

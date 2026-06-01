@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { FieldAtlasSpread } from "@/app/_components/v2/field-atlas-spread";
+import { FootPrintSpread } from "@/app/_components/v2/footprint-spread";
 
-describe("<FieldAtlasSpread>", () => {
+describe("<FootPrintSpread>", () => {
   it("renders the FOOTPRINT eyebrow", () => {
-    render(<FieldAtlasSpread />);
+    render(<FootPrintSpread />);
     expect(screen.getByText(/^footprint$/i)).toBeInTheDocument();
   });
 
   it("renders the 'Three countries / generations / One promise' headline", () => {
-    const { container } = render(<FieldAtlasSpread />);
+    const { container } = render(<FootPrintSpread />);
     const h2 = container.querySelector("h2");
     expect(h2?.textContent).toMatch(
       /three countries\.\s*three generations\.\s*one promise\./i,
@@ -17,7 +17,7 @@ describe("<FieldAtlasSpread>", () => {
   });
 
   it("emphasises 'generations' in italic gold", () => {
-    const { container } = render(<FieldAtlasSpread />);
+    const { container } = render(<FootPrintSpread />);
     const em = Array.from(container.querySelectorAll("em")).find(
       (e) => e.textContent?.trim().toLowerCase() === "generations",
     );
@@ -26,7 +26,7 @@ describe("<FieldAtlasSpread>", () => {
   });
 
   it("renders the client body copy without an em dash", () => {
-    const { container } = render(<FieldAtlasSpread />);
+    const { container } = render(<FootPrintSpread />);
     expect(
       screen.getByText(/spans three countries and three generations/i),
     ).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe("<FieldAtlasSpread>", () => {
   });
 
   it("renders the three group offices with their roles", () => {
-    render(<FieldAtlasSpread />);
+    render(<FootPrintSpread />);
     const offices = screen.getByRole("img", { name: /operating footprint/i });
     expect(offices).toBeInTheDocument();
     expect(screen.getByText("Vietnam")).toBeInTheDocument();
@@ -50,7 +50,7 @@ describe("<FieldAtlasSpread>", () => {
   });
 
   it("renders the client footprint map with descriptive alt text", () => {
-    render(<FieldAtlasSpread />);
+    render(<FootPrintSpread />);
     const map = screen.getByRole("img", { name: /operating footprint/i });
     expect(map.getAttribute("alt")).toMatch(/china/i);
     expect(map.getAttribute("alt")).toMatch(/vietnam/i);
@@ -58,7 +58,7 @@ describe("<FieldAtlasSpread>", () => {
   });
 
   it("does not surface the old leading-bar STORY 03 eyebrow", () => {
-    render(<FieldAtlasSpread />);
+    render(<FootPrintSpread />);
     expect(screen.queryByText(/story 03 .{0,3} the footprint/i)).toBeNull();
     expect(screen.queryByText(/issue 30/i)).toBeNull();
   });

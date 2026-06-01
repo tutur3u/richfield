@@ -18,6 +18,15 @@
   --font-mono: var(--font-geist-mono);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Editorial rhythm tokens — single source of truth for the recurring
+     vertical gaps inside every /v2 spread. Defined here (not a standalone
+     :root block) so Tailwind v4 reliably emits them; spreads reference them
+     via arbitrary values (e.g. mb-[var(--v2-rhythm)]). */
+  --v2-rhythm:  clamp(18px, 1.8vw, 28px);  /* uniform gap WITHIN a subsection: eyebrow->title->paragraph->image */
+  --v2-flow:    clamp(28px, 3vw, 48px);    /* a bit larger: between subsections, and folio -> content */
+  --v2-col-gap: clamp(24px, 3vw, 64px);    /* 12-col spread grid gutter */
+  --v2-runhead: clamp(72px, 8vh, 92px);    /* sticky running-head bar height; spreads pad their top by this so snapped content clears it */
 }
 
 :root {
@@ -182,10 +191,15 @@ button:focus-visible {
 .v2-size-cover      { font-size: clamp(4rem, 12vw, 11rem); line-height: 0.92; letter-spacing: -0.035em; }
 .v2-size-feature    { font-size: clamp(3rem, 7vw, 6rem);   line-height: 0.98; letter-spacing: -0.028em; }
 .v2-size-section    { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; }
-.v2-size-standfirst { font-size: clamp(2rem, 5vw, 4.5rem); line-height: 1.05; letter-spacing: -0.025em; }
+.v2-size-standfirst { font-size: clamp(2.4rem, 6vw, 5.5rem); line-height: 1.04; letter-spacing: -0.026em; }
 .v2-size-body       { font-size: clamp(16px, 1.1vw, 17px); line-height: 1.6; }
 .v2-size-folio      { font-size: clamp(11px, 0.9vw, 13px); letter-spacing: 0.18em; text-transform: uppercase; }
 .v2-size-eyebrow    { font-size: clamp(12px, 1vw, 14px);   letter-spacing: 0.22em; text-transform: uppercase; }
+
+/* Shared H2 opener scale (DESIGN.md §3 Headline/Feature). One scale across
+   every spread; pair with `font-display` (Fraunces) on the element. Color and
+   the one gold-italic emphasis word stay inline per spread. */
+.v2-headline { font-size: clamp(3.5rem, 4vw, 4.5rem); line-height: 0.98; letter-spacing: -0.026em; }
 
 .v2-photo-tint    { filter: saturate(0.96) contrast(1.02); }
 .v2-photo-duotone { filter: saturate(0.92) contrast(1.04) sepia(0.06); }
@@ -287,3 +301,4 @@ button:focus-visible {
     filter: none;
   }
 }
+

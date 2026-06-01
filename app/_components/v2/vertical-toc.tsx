@@ -6,10 +6,10 @@ type TocEntry = {
 };
 
 const DEFAULT_TOC: TocEntry[] = [
-  { no: "01", id: "lead",     href: "#lead",     label: "The Lead" },
+  { no: "01", id: "lead",     href: "#about",     label: "About Us" },
   { no: "02", id: "what",     href: "#what",     label: "What We Do" },
-  { no: "03", id: "atlas",    href: "#atlas",    label: "Field Atlas" },
-  { no: "04", id: "brands",   href: "#brands",   label: "The Directory" },
+  { no: "03", id: "footprint",    href: "#footprint",    label: "Footprint" },
+  { no: "04", id: "portfolio",   href: "#portfolio",   label: "Portfolio" },
   { no: "05", id: "jv",       href: "#jv",       label: "Joint Venture" },
   { no: "06", id: "colophon", href: "#colophon", label: "Colophon" },
 ];

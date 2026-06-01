@@ -5,20 +5,14 @@ export function ColophonSpread() {
   return (
     <section
       id="colophon"
-      className="v2-display relative flex min-h-[100svh] w-full flex-col lg:h-[100svh]"
+      className="v2-display relative flex w-full flex-col lg:min-h-[100svh]"
     >
-      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[clamp(28px,3vw,44px)] px-6 py-[clamp(24px,3.5vw,48px)] sm:px-10 lg:px-12">
-        {/* Top folio */}
-        <header className="v2-mono v2-size-folio flex items-center gap-6 opacity-55">
-          <span>RICHFIELD WORLDWIDE JSC</span>
-          <span aria-hidden className="v2-rule flex-1" />
-        </header>
-
+      <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col px-6 pb-[clamp(24px,3.5vw,48px)] pt-[calc(var(--v2-runhead)+clamp(8px,1.5vw,20px))] sm:px-10 lg:px-12">
         {/* Body grid: lockup + editor + contact + photo, fills viewport */}
-        <div className="grid flex-1 grid-cols-12 gap-x-[clamp(24px,3vw,56px)] gap-y-8">
+        <div className="grid flex-1 grid-cols-12 gap-x-[var(--v2-col-gap)] gap-y-8">
           {/* Left: huge 1994—2026 lockup */}
           <div className="col-span-12 flex flex-col lg:col-span-7">
-            <p className="v2-mono v2-size-eyebrow mb-3 flex items-center gap-3 text-gold-strong">
+            <p className="v2-mono v2-size-eyebrow mb-[var(--v2-rhythm)] flex items-center gap-3 text-gold-strong">
               <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
               ESTABLISHED — THIRTY YEARS ON
             </p>
@@ -49,11 +43,11 @@ export function ColophonSpread() {
           {/* Right: editor's note + contact */}
           <div className="col-span-12 flex flex-col gap-6 lg:col-span-5">
             <div>
-              <p className="v2-mono v2-size-eyebrow mb-3 flex items-center gap-3 text-gold-strong">
+              <p className="v2-mono v2-size-eyebrow mb-[var(--v2-rhythm)] flex items-center gap-3 text-gold-strong">
                 <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
                 EDITOR&apos;S NOTE
               </p>
-              <p className="v2-size-body max-w-[40ch] opacity-85">
+              <p className="v2-size-body max-w-[40ch] opacity-90">
                 Thirty years on, the work is the same. A pallet, a route, a
                 shelf. The brands change, the country grows, the network keeps
                 turning. Issue 30 closes here — the next opens in 2031.
@@ -89,7 +83,7 @@ export function ColophonSpread() {
               </div>
               <div>
                 <dt className="v2-mono v2-size-folio opacity-55">EMAIL</dt>
-                <dd className="v2-size-body mt-1">
+                <dd className="v2-size-body mt-1 [overflow-wrap:anywhere]">
                   <a className="hover:opacity-70" href={`mailto:${site.email}`}>
                     {site.email}
                   </a>

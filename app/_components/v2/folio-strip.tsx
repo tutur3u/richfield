@@ -1,22 +1,21 @@
-import { site } from "@/content/en/site";
+import Image from "next/image";
 
 type Props = {
-  /** Issue stamp text, e.g. "ISSUE 30 · 1994 — 2026" */
-  issue?: string;
   className?: string;
 };
 
-export function FolioStrip({
-  issue = `ISSUE 30  ·  ${site.founded} — 2026`,
-  className = "",
-}: Props) {
+export function FolioStrip({ className = "" }: Props) {
   return (
-    <div
-      className={`v2-mono v2-size-folio flex w-full items-center justify-between gap-6 [text-shadow:0_1px_2px_rgb(0_0_0_/_0.35)] ${className}`}
-    >
-      <span className="whitespace-nowrap">{site.legalName.toUpperCase()}</span>
-      <span aria-hidden className="v2-rule-gold hidden flex-1 md:block [text-shadow:none]" />
-      <span className="whitespace-nowrap text-right">{issue}</span>
+    <div className={`flex w-full items-center gap-6 ${className}`}>
+      <Image
+        src="/photos/logos/richfield.webp"
+        alt="Richfield Group"
+        width={120}
+        height={110}
+        priority
+        className="h-[clamp(46px,4.4vw,56px)] w-auto shrink-0 object-contain [filter:drop-shadow(0_2px_6px_rgb(0_0_0_/_0.55))]"
+      />
+      <span aria-hidden className="v2-rule-gold hidden flex-1 md:block" />
     </div>
   );
 }

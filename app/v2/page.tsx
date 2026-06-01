@@ -3,13 +3,14 @@ import Link from "next/link";
 import { ColophonSpread } from "@/app/_components/v2/colophon-spread";
 import { CoverSpread } from "@/app/_components/v2/cover-spread";
 import {
-  DirectoryCategoriesSpread,
-  DirectoryIntroSpread,
-} from "@/app/_components/v2/directory-spread";
-import { FieldAtlasSpread } from "@/app/_components/v2/field-atlas-spread";
+  PortfolioCategoriesSpread,
+  PortfolioIntroSpread,
+} from "@/app/_components/v2/portfolio-spread";
+import { FootPrintSpread } from "@/app/_components/v2/footprint-spread";
 import { JointVentureSpread } from "@/app/_components/v2/joint-venture-spread";
 import { LeadSpread } from "@/app/_components/v2/lead-spread";
 import { LenisProvider } from "@/app/_components/v2/lenis-provider";
+import { RunningHead } from "@/app/_components/v2/running-head";
 import {
   MagazineFlow,
   MagazineFlowSection,
@@ -35,6 +36,7 @@ export default function V2HomePage() {
   return (
     <LenisProvider>
       <ScrollToggle />
+      <RunningHead />
       <main className="bg-cream text-ink">
         {/* <Link
           href="/"
@@ -53,13 +55,13 @@ export default function V2HomePage() {
             <WhatWeDoSpread />
           </MagazineFlowSection>
           <MagazineFlowSection bg={WHITE}>
-            <FieldAtlasSpread />
+            <FootPrintSpread />
           </MagazineFlowSection>
           <MagazineFlowSection bg={PAPER}>
-            <DirectoryIntroSpread />
+            <PortfolioIntroSpread />
           </MagazineFlowSection>
           <MagazineFlowSection bg={CREAM}>
-            <DirectoryCategoriesSpread />
+            <PortfolioCategoriesSpread />
           </MagazineFlowSection>
           <MagazineFlowSection bg={INK} textOnDark>
             <JointVentureSpread />

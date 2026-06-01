@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { FieldAtlasSpread } from "@/app/_components/v2/field-atlas-spread";
+import { FieldAtlasSpread } from "@/app/_components/v2/footprint-spread";
 
 describe("<FieldAtlasSpread>", () => {
   it("renders the FOOTPRINT eyebrow", () => {

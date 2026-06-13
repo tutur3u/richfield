@@ -47,10 +47,10 @@ function StatFigure({
   Icon?: Icon;
 }) {
   // The first/last cells bleed to the viewport edges so their hover wash runs
-  // full width; the rest are bounded by the hairline dividers. Cell padding
-  // (not the <dl>) carries the height, so the wash fills wave-to-wave.
+  // full width. Cell padding (not the <dl>) carries the height, so the wash
+  // fills wave-to-wave.
   return (
-    <div className="group flex flex-col justify-center gap-2 overflow-hidden border-l border-line/70 py-[clamp(32px,4.5vw,48px)] pl-[clamp(16px,2vw,32px)] pr-[clamp(12px,1.6vw,24px)] transition-colors duration-300 ease-out hover:bg-[oklch(0.90_0.035_82)] [&:nth-child(odd)]:border-l-0 lg:py-[clamp(52px,6vw,80px)] lg:[&:nth-child(3)]:border-l lg:[&:first-child]:-ml-[calc(max((100vw-1500px)/2,0px)+48px)] lg:[&:first-child]:pl-[calc(max((100vw-1500px)/2,0px)+48px+clamp(16px,2vw,32px))] lg:[&:last-child]:-mr-[calc(max((100vw-1500px)/2,0px)+48px)] lg:[&:last-child]:pr-[calc(max((100vw-1500px)/2,0px)+48px+clamp(12px,1.6vw,24px))]">
+    <div className="group flex flex-col justify-center gap-2 overflow-hidden py-[clamp(32px,4.5vw,48px)] pl-[clamp(16px,2vw,32px)] pr-[clamp(12px,1.6vw,24px)] transition-colors duration-300 ease-out hover:bg-[oklch(0.90_0.035_82)] lg:py-[clamp(52px,6vw,80px)] lg:[&:first-child]:-ml-[calc(max((100vw-1500px)/2,0px)+48px)] lg:[&:first-child]:pl-[calc(max((100vw-1500px)/2,0px)+48px+clamp(16px,2vw,32px))] lg:[&:last-child]:-mr-[calc(max((100vw-1500px)/2,0px)+48px)] lg:[&:last-child]:pr-[calc(max((100vw-1500px)/2,0px)+48px+clamp(12px,1.6vw,24px))]">
       <div className="relative isolate flex flex-col gap-2">
         {Icon ? (
           <Icon

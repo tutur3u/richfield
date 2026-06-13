@@ -1,5 +1,4 @@
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
-import { Caption } from "@/app/_components/magazine/primitives/caption";
 import {
   PhotoCycle,
   type CyclePhoto,
@@ -85,7 +84,6 @@ export function GroupOverviewSpread() {
                 label="Richfield distribution network gallery"
               />
             </div>
-            <Caption>From the distribution centre to the shelf</Caption>
           </figure>
         </div>
       </div>

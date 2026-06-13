@@ -321,3 +321,51 @@ button:focus-visible {
   }
 }
 
+/* -----------------------------------------------------------------------
+   "Issue Index" motion (Who We Are). A staggered page-load entrance for
+   the opener, then per ledger entry: a hairline that draws itself in, a
+   giant numeral that drifts on scroll behind the company body, and the
+   spotlight dim handled inline with Tailwind groups. Transform/opacity
+   only. The reduce block above neutralises every keyframe + transition,
+   and the numeral drift is gated to no-preference, so reduced-motion
+   users get the static layout. The reveal hook never arms under reduce,
+   so .v2-draw-rule stays fully drawn there too.
+   ----------------------------------------------------------------------- */
+
+/* Page-load entrance: rise + fade. Stagger via inline animation-delay.
+   `both` holds the resolved state so there's no settle-back flash. */
+@keyframes v2-enter {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: none; }
+}
+.v2-enter {
+  animation: v2-enter 800ms var(--ease-out-expo) both;
+  will-change: opacity, transform;
+}
+
+/* Self-drawing hairline — sweeps in from the left on the same trigger as
+   .reveal (armed = undrawn). Pair with a .reveal ancestor + origin-left. */
+.v2-draw-rule {
+  transition: transform 900ms var(--ease-out-expo);
+}
+.reveal--armed .v2-draw-rule {
+  transform: scaleX(0);
+}
+
+/* Giant ledger numeral drifts vertically across its scroll-through — a slow
+   parallax behind the company body. CSS-only; where view() timelines aren't
+   supported the numeral simply sits still (still a clean watermark). */
+@keyframes v2-numeral-rise {
+  from { transform: translateY(9%); }
+  to   { transform: translateY(-9%); }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .v2-numeral-drift {
+      animation: v2-numeral-rise linear both;
+      animation-timeline: view();
+      animation-range: entry exit;
+    }
+  }
+}
+

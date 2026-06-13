@@ -7,6 +7,8 @@ export type Organization = {
   href: string;
   linkLabel: string;
   external?: boolean;
+  /** Company mark, shown as a lockup above the name. Omit for a name-only entry. */
+  logo?: string;
 };
 
 export const whoWeAreIntro =
@@ -19,6 +21,7 @@ export const organizations: Organization[] = [
     body: "Our core distribution company. Covering all provinces via general trade, modern trade, B2B, and e-commerce — with 180,000+ retail points nationwide.",
     href: "/distribution",
     linkLabel: "Distribution channels",
+    logo: "/photos/logos/richfield.webp",
   },
   {
     name: "Richfield Foods JSC",
@@ -34,5 +37,6 @@ export const organizations: Organization[] = [
     href: "https://doryrich.com.vn",
     linkLabel: "Visit Dory Rich",
     external: true,
+    logo: "/photos/logos/dory-rich.webp",
   },
 ];

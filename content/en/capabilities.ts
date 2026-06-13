@@ -9,15 +9,6 @@ export type Pillar = {
 export const pillars: Pillar[] = [
   {
     number: "01",
-    name: "Import / Export",
-    shortBody:
-      "Customs declaration and full import support for international partners.",
-    longBody:
-      "Customs declaration and full import support for international partners. From documentation to bonded-warehouse handling, we manage the path from port to distribution centre, on schedules that protect retailer commitments.",
-    href: "/distribution#import-export",
-  },
-  {
-    number: "02",
     name: "Warehouse & Logistics",
     shortBody:
       "End-to-end storage, handling, and last-mile distribution capabilities",
@@ -26,21 +17,21 @@ export const pillars: Pillar[] = [
     href: "/logistics",
   },
   {
-    number: "03",
+    number: "02",
     name: "General Trade",
     shortBody:
-      "Nationwide coverage with 1000+ salesmen across provinces and cities.",
+      "Our largest channel — 300+ sub-distributors across every province.",
     longBody:
-      "Nationwide coverage with 800+ salesmen across every province and city, supported by 300+ sub-distributors and a network of 180,000 retail outlets. Grocery, wholesaler, HORECA, wet market, independent pharmacy.",
+      "Our largest channel. 300+ sub-distributors reaching traditional retail points across all provinces — markets, grocery stores, and specialty shops. Traditional trade has been our foundation since 1994.",
     href: "/distribution#gt",
   },
   {
-    number: "04",
+    number: "03",
     name: "Modern Trade",
     shortBody:
-      "Retailer partnerships with trade-marketing - display and event support.",
+      "40+ modern trade & e-commerce partners, with trade-marketing support.",
     longBody:
-      "Retailer partnerships across every chain in Vietnam, with trade-marketing display and event support. Super and Hyper, Convenience, Mini and Foodstore, Health and Beauty, Mom and Baby, Specialty.",
+      "40+ modern trade and e-commerce partners including supermarket chains and convenience stores, supported by trade-marketing display and event activation. Super and Hyper, Convenience, Mini and Foodstore, Health and Beauty, Mom and Baby, Specialty.",
     href: "/distribution#mt",
   },
 ];

@@ -3,12 +3,11 @@ import { site } from "@/content/en/site";
 
 const ROUTES = [
   "/",
-  "/about",
-  "/what-we-do",
-  "/distribution",
-  "/logistics",
-  "/products",
+  "/about/our-story",
+  "/about/who-we-are",
   "/brands",
+  "/logistics",
+  "/distribution",
   "/careers",
   "/contact",
 ];

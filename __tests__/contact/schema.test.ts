@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { contactSchema, INQUIRY_TYPES } from "@/app/(site)/contact/schema";
+import { contactSchema, INQUIRY_TYPES } from "@/app/contact/schema";
 
 describe("contactSchema", () => {
   it("rejects empty name", () => {

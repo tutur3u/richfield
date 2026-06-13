@@ -1,4 +1,5 @@
 import { partnerLogos } from "./photography";
+import type { Milestone } from "./milestones";
 
 export type BrandCategory = "Food" | "Beverages" | "Non-Food";
 
@@ -32,30 +33,22 @@ const brandDetails: Array<Omit<Brand, "logoSrc">> = [
       "Our founding partner. Wrigley's was our first imported brand the year the US trade embargo lifted.",
   },
   {
-    name: "TCP",
-    country: "Thailand",
-    year: 2014,
-    category: "Beverages",
-    accent: "bg-[oklch(0.78_0.18_30/0.16)]",
-    story:
-      "Warrior and Red Bull anchor the energy and lifestyle category in Vietnam.",
-  },
-  {
     name: "BiC",
     country: "France",
     year: 2018,
     category: "Non-Food",
     accent: "bg-[oklch(0.55_0.12_258/0.14)]",
     story:
-      "Stationery, lighters, and shavers — the everyday-consumer lineup with global reach.",
+      "Shavers and lighters extend Richfield's reach into everyday personal care and lifestyle essentials.",
   },
   {
     name: "Red Bull",
-    country: "Austria",
+    country: "Thailand",
+    year: 2016,
     category: "Beverages",
     accent: "bg-[oklch(0.62_0.22_28/0.16)]",
     story:
-      "The original wings-giving energy drink. Across Vietnam's convenience and modern trade.",
+      "Warrior and Red Bull bring energy drinks into the portfolio — two of the fastest-growing beverage brands in Vietnam.",
   },
   {
     name: "Glico (Pocky)",
@@ -73,7 +66,7 @@ const brandDetails: Array<Omit<Brand, "logoSrc">> = [
     category: "Food",
     accent: "bg-[oklch(0.78_0.13_215/0.14)]",
     story:
-      "Bubble-gum specialist. Distinctive packs, kid-favourite flavours, fast-moving shelf turn.",
+      "AMOS brings beloved Asian confectionery into the portfolio, deepening our snack and treat offering.",
   },
   {
     name: "NewChoice",
@@ -117,6 +110,19 @@ export const brands: Brand[] = brandDetails.map((brand) => ({
 
 export const homepageBrands = brands;
 
+// Brand-collaboration timeline — when each partnership began, oldest first.
+// Only brands with a known start year appear; mapped to the milestone shape so
+// the /brands page can reuse <JourneyTimeline />.
+export const brandTimeline: Milestone[] = brands
+  .filter((b): b is Brand & { year: number } => typeof b.year === "number")
+  .sort((a, b) => a.year - b.year)
+  .map((b) => ({
+    year: b.year,
+    brand: b.name,
+    country: b.country,
+    body: b.story ?? "",
+  }));
+
 export const featuredPartners: Array<{
   name: string;
   logoKey: string;
@@ -133,12 +139,12 @@ export const featuredPartners: Array<{
       "Our founding partner. Wrigley's was our first imported brand the year the US trade embargo lifted.",
   },
   {
-    name: "TCP",
-    logoKey: "TCP",
+    name: "Red Bull",
+    logoKey: "Red Bull",
     country: "Thailand",
-    year: 2014,
+    year: 2016,
     story:
-      "Warrior and Red Bull anchor the energy and lifestyle category in Vietnam.",
+      "Warrior and Red Bull bring energy drinks into the portfolio — two of the fastest-growing beverage brands in Vietnam.",
   },
   {
     name: "Glico",

@@ -15,18 +15,23 @@
 
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  /* Editorial rhythm tokens — single source of truth for the recurring
-     vertical gaps inside every /v2 spread. Defined here (not a standalone
-     :root block) so Tailwind v4 reliably emits them; spreads reference them
-     via arbitrary values (e.g. mb-[var(--v2-rhythm)]). */
-  --v2-rhythm:  clamp(18px, 1.8vw, 28px);  /* uniform gap WITHIN a subsection: eyebrow->title->paragraph->image */
-  --v2-flow:    clamp(28px, 3vw, 48px);    /* a bit larger: between subsections, and folio -> content */
+  /* Editorial rhythm tokens — the single source of truth for vertical spacing.
+     Every gap on the site resolves to ONE of these, by hierarchy level, so the
+     rhythm is uniform everywhere. Spreads reference them via arbitrary values
+     (e.g. gap-y-[var(--v2-rhythm)]); the <Spread> wrapper owns the section band.
+       element  → eyebrow → title → paragraph → image, inside one block
+       flow     → between blocks within a spread
+       section  → the top+bottom band every spread breathes by (uniform)
+       col-gap  → the 12-col grid gutter
+     There is intentionally no per-section custom padding: one band, everywhere. */
+  --v2-rhythm:  clamp(18px, 1.8vw, 28px);  /* element gap */
+  --v2-flow:    clamp(28px, 3vw, 48px);    /* subsection gap */
+  --v2-section: clamp(44px, 5vw, 80px);    /* uniform section band (Spread py) */
   --v2-col-gap: clamp(24px, 3vw, 64px);    /* 12-col spread grid gutter */
-  --v2-runhead: clamp(72px, 8vh, 92px);    /* sticky running-head bar height; spreads pad their top by this so snapped content clears it */
+  --v2-runhead: clamp(72px, 8vh, 92px);    /* fixed running-head height; only the header + scroll-padding use it — spreads do NOT add it to their padding (that double-paid clearance was the old redundant air) */
 }
 
 :root {
@@ -37,6 +42,16 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  /* Anchor jumps clear the fixed running-head bar. */
+  scroll-padding-top: var(--v2-runhead);
+}
+
+/* Native smooth scrolling for anchor jumps (Lenis was removed). Gated so the
+   reduced-motion block below — which forces scroll-behavior: auto — wins. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -184,22 +199,26 @@ button:focus-visible {
 .v2-surface-feature { background: var(--color-ink);   color: var(--color-cream); }
 .v2-surface-gold    { background: var(--color-gold);  color: var(--color-ink); }
 
-.v2-display { font-family: var(--font-display-v2), ui-sans-serif, system-ui, sans-serif; }
-.v2-italic  { font-family: var(--font-italic-v2), Georgia, serif; font-weight: 400; }
-.v2-mono    { font-family: var(--font-geist-mono), ui-monospace, monospace; }
+/* Two type voices only. .v2-display sets the spread's base sans (Geist);
+   headings opt into the serif with `font-display` (Fraunces). .v2-mono keeps
+   the small-caps label treatment (uppercase + tracking from the size classes)
+   but in the sans, not a monospace. .v2-italic is Fraunces' own italic. */
+.v2-display { font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif; }
+.v2-italic  { font-family: var(--font-display), Georgia, serif; font-style: italic; font-weight: 400; }
+.v2-mono    { font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif; }
 
 .v2-size-cover      { font-size: clamp(4rem, 12vw, 11rem); line-height: 0.92; letter-spacing: -0.035em; }
 .v2-size-feature    { font-size: clamp(3rem, 7vw, 6rem);   line-height: 0.98; letter-spacing: -0.028em; }
 .v2-size-section    { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; }
-.v2-size-standfirst { font-size: clamp(2.4rem, 6vw, 5.5rem); line-height: 1.04; letter-spacing: -0.026em; }
-.v2-size-body       { font-size: clamp(16px, 1.1vw, 17px); line-height: 1.6; }
+.v2-size-standfirst { font-size: clamp(2.4rem, 4.6vw, 5rem); line-height: 1.04; letter-spacing: -0.026em; }
+.v2-size-body       { font-size: clamp(17px, 1.3vw, 20px); line-height: 1.62; }
 .v2-size-folio      { font-size: clamp(11px, 0.9vw, 13px); letter-spacing: 0.18em; text-transform: uppercase; }
 .v2-size-eyebrow    { font-size: clamp(12px, 1vw, 14px);   letter-spacing: 0.22em; text-transform: uppercase; }
 
 /* Shared H2 opener scale (DESIGN.md §3 Headline/Feature). One scale across
    every spread; pair with `font-display` (Fraunces) on the element. Color and
    the one gold-italic emphasis word stay inline per spread. */
-.v2-headline { font-size: clamp(3.5rem, 4vw, 4.5rem); line-height: 0.98; letter-spacing: -0.026em; }
+.v2-headline { font-size: clamp(3.75rem, 6vw, 5.5rem); line-height: 0.98; letter-spacing: -0.026em; }
 
 .v2-photo-tint    { filter: saturate(0.96) contrast(1.02); }
 .v2-photo-duotone { filter: saturate(0.92) contrast(1.04) sepia(0.06); }
@@ -207,11 +226,11 @@ button:focus-visible {
 .v2-rule       { height: 1px; background: currentColor; opacity: 0.18; }
 .v2-rule-gold  { height: 1px; background: var(--color-gold); opacity: 0.7; }
 
-/* Editorial drop cap. Float-left initial set in italic Newsreader at large
+/* Editorial drop cap. Float-left initial set in italic Fraunces at large
    display size. Tightens against the body baseline. Apply to a <p> whose
    first letter should anchor the column. */
 .v2-dropcap::first-letter {
-  font-family: var(--font-italic-v2), Georgia, serif;
+  font-family: var(--font-display), Georgia, serif;
   font-style: italic;
   font-weight: 400;
   float: left;

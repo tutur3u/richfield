@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
-import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
+import { LogisticsHero } from "@/app/_components/magazine/spreads/logistics-hero";
 import { YouTubeEmbed } from "@/app/_components/primitives/youtube-embed";
-import { warehouseHubs, logisticsIntro } from "@/content/en/hubs";
+import { warehouseHubs } from "@/content/en/hubs";
 
 export const dynamic = "force-static";
 
@@ -25,23 +25,7 @@ export default function LogisticsPage() {
     <>
       <RunningHead />
       <main className="bg-cream text-ink">
-        {/* Intro */}
-        <section className="v2-display relative flex w-full flex-col bg-cream">
-          <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-y-[var(--v2-rhythm)] px-6 pb-[var(--v2-section)] pt-[calc(var(--v2-runhead)+var(--v2-section))] sm:px-10 lg:px-12">
-            <Eyebrow>WAREHOUSE &amp; LOGISTICS</Eyebrow>
-            <h1 className="font-display v2-headline max-w-[18ch]">
-              End-to-end handling, north and{" "}
-              <em className="italic text-gold-strong">south</em>.
-            </h1>
-            <p className="v2-size-body max-w-[60ch] opacity-90">
-              Operated by Richfield Foods, two strategically located hubs serve
-              the full length of the country. {logisticsIntro}
-            </p>
-            <p className="v2-mono v2-size-folio opacity-55">
-              TWO HUBS · AMBIENT + COLD (18–25°C) · CO-PACKING
-            </p>
-          </div>
-        </section>
+        <LogisticsHero />
 
         {/* Facility tour */}
         <section className="v2-display relative flex w-full flex-col bg-paper">

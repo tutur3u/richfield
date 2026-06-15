@@ -65,7 +65,7 @@ export function BrandsHeroSpread() {
   return (
     <section
       id="brands"
-      className="v2-display relative isolate flex w-full flex-col overflow-hidden lg:min-h-[78svh]"
+      className="v2-display relative isolate flex w-full flex-col overflow-hidden"
     >
       {/* Moving logo lanes — full bleed, vertically centered behind the type. */}
       <div
@@ -92,7 +92,7 @@ export function BrandsHeroSpread() {
         className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(0deg,var(--color-cream)_0%,transparent_100%)]"
       />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-[1500px] flex-1 flex-col justify-center px-6 py-[var(--v2-section)] sm:px-10 lg:px-12">
+      <div className="relative z-10 mx-auto flex w-full max-w-[1500px] flex-col px-6 pt-[calc(var(--v2-section)/2)] pb-[var(--v2-section)] sm:px-10 lg:px-12">
         <div className="flex max-w-full flex-col gap-y-[var(--v2-rhythm)] lg:max-w-[48%]">
           <Eyebrow>OUR BRANDS</Eyebrow>
 

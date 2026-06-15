@@ -26,15 +26,15 @@ export default function BrandsPage() {
           head
           className="flex flex-col gap-y-[var(--v2-flow)]"
         >
-          <div className="flex max-w-[60ch] flex-col gap-y-[var(--v2-rhythm)] hyphens-auto" lang="en">
+          <div className="flex w-full flex-col gap-y-[var(--v2-rhythm)] hyphens-auto" lang="en">
             <Eyebrow>OUR BRANDS</Eyebrow>
             <h1 className="font-display v2-headline">
               Trusted by the world&rsquo;s most{" "}
               <em className="italic text-gold-strong">loved</em> brands.
             </h1>
-            <p className="v2-size-body opacity-90">
+            <p className="v2-size-body w-full opacity-90">
               100+ products across confectionery, beverages, personal care, and
-              more — Richfield carries the brands shoppers already reach for, in
+              more. Richfield carries the brands shoppers already reach for, in
               partnerships that often run for decades.
             </p>
           </div>

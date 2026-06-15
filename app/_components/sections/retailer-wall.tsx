@@ -1,8 +1,9 @@
 import Image from "next/image";
+import { Spread } from "@/app/_components/magazine/primitives/spread";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
 import { DisplayHeading } from "@/app/_components/primitives/display-heading";
 
-type Retailer = { name: string; src: string };
+type Retailer = { name: string; src: string; unoptimized?: boolean };
 
 const CONVENIENCE: Retailer[] = [
   { name: "7-Eleven", src: "/photos/retailers/7-eleven-logo-svg.webp" },
@@ -60,7 +61,13 @@ const SPECIALTY: Retailer[] = [
   { name: "Kohnan", src: "/photos/retailers/logo-kohnan.webp" },
 ];
 
+const ECOMMERCE: Retailer[] = [
+  { name: "Shopee", src: "/photos/retailers/shopee.svg", unoptimized: true },
+  { name: "TikTok Shop", src: "/photos/retailers/tiktok.webp" },
+];
+
 const CHANNELS: Array<{ label: string; items: Retailer[] }> = [
+  { label: "E-commerce", items: ECOMMERCE },
   { label: "Convenience", items: CONVENIENCE },
   { label: "Supermarket & Hypermarket", items: SUPERMARKET },
   { label: "Health & Beauty", items: HEALTH_BEAUTY },
@@ -69,22 +76,18 @@ const CHANNELS: Array<{ label: string; items: Retailer[] }> = [
 
 export function RetailerWall() {
   return (
-    <section
-      aria-labelledby="retailer-wall-heading"
-      className="bg-paper px-6 py-[clamp(96px,11vw,140px)] sm:px-10"
-    >
-      <div className="mx-auto flex max-w-[1300px] flex-col gap-12">
-        <div className="flex flex-col gap-6">
-          <Eyebrow tone="gold">Where to find us</Eyebrow>
+    <Spread id="mt" bg="paper">
+      <div className="flex flex-col gap-[var(--v2-flow)]">
+        <div className="flex flex-col gap-[var(--v2-rhythm)]">
+          <Eyebrow tone="gold">02 / 02 · Modern Trade</Eyebrow>
           <div id="retailer-wall-heading">
             <DisplayHeading level={2} className="max-w-[22ch]">
-              Our brands sit on the shelves of *every major* chain.
+              Modern *Trade*.
             </DisplayHeading>
           </div>
-          <p className="max-w-[60ch] text-[17px] leading-[1.55] text-muted">
-            Modern-trade partnerships across convenience, supermarket, pharmacy,
-            and specialty retail — the doorway from our warehouses to shoppers
-            nationwide.
+          <p className="font-display w-full text-[clamp(1.5rem,2.8vw,2.6rem)] leading-[1.18] tracking-[-0.01em] text-ink/90">
+            40+ modern trade and e-commerce partners including supermarket chains
+            and convenience stores.
           </p>
         </div>
 
@@ -105,6 +108,7 @@ export function RetailerWall() {
                       alt={`${r.name} logo`}
                       width={200}
                       height={88}
+                      unoptimized={r.unoptimized}
                       sizes="(min-width: 1024px) 180px, (min-width: 640px) 22vw, 40vw"
                       className="max-h-[72px] w-auto object-contain transition-transform duration-500 motion-safe:group-hover:scale-[1.04]"
                     />
@@ -115,6 +119,6 @@ export function RetailerWall() {
           ))}
         </div>
       </div>
-    </section>
+    </Spread>
   );
 }

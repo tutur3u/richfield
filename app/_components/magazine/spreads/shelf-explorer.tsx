@@ -90,18 +90,11 @@ function rowSpanFor(heightPx: number): number {
 
 function BannerTile({
   banner,
-  metrics,
+  style,
 }: {
   banner: ShelfBanner;
-  metrics: Metrics;
+  style: CSSProperties;
 }) {
-  const colSpan = spanFor(banner.weight, metrics.cols);
-  const w = tileWidth(colSpan, metrics.colWidth);
-  const rowSpan = rowSpanFor(w / banner.ratio);
-  const style: CSSProperties = {
-    gridColumn: `span ${colSpan}`,
-    gridRow: `span ${rowSpan}`,
-  };
   return (
     <figure className="group relative overflow-hidden" style={style}>
       <Image
@@ -117,40 +110,22 @@ function BannerTile({
 
 function PackshotTile({
   packshot,
-  metrics,
+  style,
 }: {
   packshot: ShelfPackshot;
-  metrics: Metrics;
+  style: CSSProperties;
 }) {
-  const colSpan = spanFor("box", metrics.cols);
-  const w = tileWidth(colSpan, metrics.colWidth);
-  const rowSpan = rowSpanFor(w); // square box
-  const style: CSSProperties = {
-    gridColumn: `span ${colSpan}`,
-    gridRow: `span ${rowSpan}`,
-  };
   return (
     <figure
-      className="group relative overflow-hidden border border-current/12 transition-[transform,border-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-gold/55"
-      style={{
-        ...style,
-        background: "color-mix(in oklch, currentColor 3.5%, transparent)",
-      }}
+      className="group relative overflow-hidden bg-white border border-current/12 transition-[transform,border-color] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-1 hover:border-gold/55"
+      style={style}
     >
       <Image
         src={packshot.src}
         alt={packshot.alt}
         fill
         sizes="(min-width:1024px) 22vw, (min-width:640px) 30vw, 45vw"
-        className="object-contain p-[clamp(8px,1vw,18px)] pb-[clamp(20px,2vw,34px)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3"
-        style={{
-          background:
-            "linear-gradient(to top, color-mix(in oklch, currentColor 6%, transparent) 0%, transparent 100%)",
-        }}
+        className="object-contain p-[clamp(8px,1vw,16px)] transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
       />
       <figcaption className="v2-mono v2-size-folio absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 px-3 py-2 opacity-75">
         <span className="truncate">{packshot.name}</span>
@@ -160,7 +135,7 @@ function PackshotTile({
   );
 }
 
-// Interleave banners and packshots so the dense grid mixes the two treatments
+// Interleave banners and packshots so the grid mixes the two treatments
 // rather than clustering all banners then all boxes.
 type Tile =
   | { type: "banner"; data: ShelfBanner }
@@ -181,6 +156,79 @@ function interleave(category: ShelfCategory): Tile[] {
   return out;
 }
 
+// Lay the tiles out by hand instead of leaning on CSS `dense` flow, which
+// leaves a ragged bottom (one lane runs far longer than the others). Each tile
+// drops into the shortest lane (or shortest adjacent lane pair, for a 2-lane
+// banner), so every column ends at roughly the same height and the chapter
+// closes cleanly. Returns explicit grid-row / grid-column placement per tile.
+type Placed = {
+  tile: Tile;
+  col: number;
+  colSpan: number;
+  row: number;
+  rowSpan: number;
+};
+
+function packTiles(tiles: Tile[], metrics: Metrics): Placed[] {
+  const { cols, colWidth } = metrics;
+  const laneCols = spanFor("box", cols); // columns per lane
+  const lanes = Math.max(1, Math.floor(cols / laneCols));
+  const laneRow = new Array<number>(lanes).fill(1); // next free row, 1-indexed
+  const lastInLane = new Array<number>(lanes).fill(-1); // placed[] index of each lane's tail
+  const placed: Placed[] = [];
+
+  tiles.forEach((tile) => {
+    const colSpan =
+      tile.type === "banner" ? spanFor(tile.data.weight, cols) : laneCols;
+    const w = tileWidth(colSpan, colWidth);
+    const heightPx = tile.type === "banner" ? w / tile.data.ratio : w; // box = square
+    const rowSpan = rowSpanFor(heightPx);
+    const laneSpan = Math.max(1, Math.round(colSpan / laneCols));
+
+    // Pick the lane (or adjacent lane window) whose current bottom is highest up.
+    let bestLane = 0;
+    let bestRow = Infinity;
+    for (let i = 0; i + laneSpan <= lanes; i++) {
+      let bottom = 0;
+      for (let j = i; j < i + laneSpan; j++) bottom = Math.max(bottom, laneRow[j]);
+      if (bottom < bestRow) {
+        bestRow = bottom;
+        bestLane = i;
+      }
+    }
+    const idx = placed.length;
+    for (let j = bestLane; j < bestLane + laneSpan; j++) {
+      laneRow[j] = bestRow + rowSpan;
+      lastInLane[j] = idx;
+    }
+
+    placed.push({
+      tile,
+      col: bestLane * laneCols + 1,
+      colSpan,
+      row: bestRow,
+      rowSpan,
+    });
+  });
+
+  // Close the bottom flat: stretch each short lane's tail tile down to the
+  // common bottom, so no lane leaves a ragged hole. A tile that tails two lanes
+  // (a spanning banner) is grown once, by the larger deficit.
+  const maxRow = Math.max(...laneRow);
+  const grow = new Map<number, number>();
+  for (let l = 0; l < lanes; l++) {
+    const idx = lastInLane[l];
+    const deficit = maxRow - laneRow[l];
+    if (idx >= 0 && deficit > 0)
+      grow.set(idx, Math.max(grow.get(idx) ?? 0, deficit));
+  }
+  grow.forEach((add, idx) => {
+    placed[idx].rowSpan += add;
+  });
+
+  return placed;
+}
+
 // --- Explorer ---------------------------------------------------------------
 
 export function ShelfExplorer() {
@@ -188,7 +236,7 @@ export function ShelfExplorer() {
   const baseId = useId();
   const [gridRef, metrics] = useGridMetrics();
   const category = shelfCategories[active];
-  const tiles = interleave(category);
+  const placed = packTiles(interleave(category), metrics);
 
   return (
     <div className="flex flex-col">
@@ -196,7 +244,7 @@ export function ShelfExplorer() {
           sharing one baseline. */}
       <div className="flex shrink-0 flex-col gap-x-10 gap-y-4 border-b border-current/12 pb-[clamp(8px,1vw,14px)] lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <Eyebrow className="mb-[clamp(4px,0.5vw,8px)]">THE FULL SHELF</Eyebrow>
+          <Eyebrow className="mb-[clamp(4px,0.5vw,8px)]">PORTFOLIO</Eyebrow>
           <h2 className="font-display v2-size-standfirst">
             Every brand on the shelf.
           </h2>
@@ -286,8 +334,8 @@ export function ShelfExplorer() {
           </div>
         </div>
 
-        {/* The mosaic — a dense, native-aspect masonry that grows with the
-            page (banners + packshots interleaved, packed by measured columns). */}
+        {/* The mosaic — a native-aspect masonry, lane-balanced so the bottom
+            closes evenly (banners + packshots interleaved, placed by packTiles). */}
         <div className="relative">
           <div
             ref={gridRef}
@@ -297,17 +345,20 @@ export function ShelfExplorer() {
             style={{
               gridTemplateColumns: `repeat(${metrics.cols}, minmax(0, 1fr))`,
               gridAutoRows: `${ROW_UNIT}px`,
-              gridAutoFlow: "row dense",
               gap: `${GAP}px`,
             }}
           >
-            {tiles.map((tile) =>
-              tile.type === "banner" ? (
-                <BannerTile key={tile.data.src} banner={tile.data} metrics={metrics} />
+            {placed.map(({ tile, col, colSpan, row, rowSpan }) => {
+              const style: CSSProperties = {
+                gridColumn: `${col} / span ${colSpan}`,
+                gridRow: `${row} / span ${rowSpan}`,
+              };
+              return tile.type === "banner" ? (
+                <BannerTile key={tile.data.src} banner={tile.data} style={style} />
               ) : (
-                <PackshotTile key={tile.data.src} packshot={tile.data} metrics={metrics} />
-              ),
-            )}
+                <PackshotTile key={tile.data.src} packshot={tile.data} style={style} />
+              );
+            })}
           </div>
         </div>
       </div>

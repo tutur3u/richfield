@@ -36,7 +36,7 @@ const NAV: NavItem[] = [
     label: "Brands",
     children: [
       { label: "Our Brands", href: "/brands" },
-      { label: "The Full Shelf", href: "/brands#shelf" },
+      { label: "Portfolio", href: "/brands#shelf" },
     ],
   },
   { label: "Careers", href: "/careers" },

@@ -105,6 +105,10 @@ export const shelfCategories: ShelfCategory[] = [
       { src: `${P}/bic-shaver-1.webp`, brand: "BiC", name: "Easy Clic", alt: "BiC Easy Clic razor and refill" },
       { src: `${P}/bic-shaver-2.webp`, brand: "BiC", name: "Hybrid 3", alt: "BiC Hybrid 3-blade razor" },
       { src: `${P}/bic-shavers-2.webp`, brand: "BiC", name: "Lady 2", alt: "BiC Lady 2-blade razors" },
+      { src: `${P}/care-latex/bao-cao-su-bcs-sieu-mong-tron-carelatex-care-22-co-gai-huong-nuoc-hoa-paris-1.webp`, brand: "Caretex", name: "Care 22", alt: "Caretex Care 22 thin condoms — Paris fragrance", feature: true },
+      { src: `${P}/care-latex/bao-cao-su-bcs-sieu-mong-tron-carelatex-care-48-co-gai-huong-dau-1.webp`, brand: "Caretex", name: "Care 48", alt: "Caretex Care 48 thin condoms — strawberry scent" },
+      { src: `${P}/care-latex/bao-cao-su-bcs-sieu-mong-tron-carelatex-care-50-co-gai-huong-dua-rung-nhiet-doi-1.webp`, brand: "Caretex", name: "Care 50", alt: "Caretex Care 50 thin condoms — tropical coconut scent" },
+      { src: `${P}/care-latex/bao-cao-su-bcs-sieu-mong-tron-keo-dai-thoi-gian-quan-he-carelatex-care-46-co-gai-huong-ba-ha-1.webp`, brand: "Caretex", name: "Care 46", alt: "Caretex Care 46 long-lasting condoms — mint scent" },
     ],
   },
 ];

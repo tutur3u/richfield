@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { ContactForm } from "@/app/_components/forms/contact-form";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
 import { DisplayHeading } from "@/app/_components/primitives/display-heading";
-import { TintedPhoto } from "@/app/_components/primitives/tinted-photo";
-import { peoplePhotos } from "@/content/en/photography";
 import {
   FacebookIcon,
   PhoneIcon,
@@ -116,30 +115,31 @@ export default function ContactPage() {
         aria-label="Contact"
         className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-cream pb-[var(--v2-section)] pt-[calc(var(--v2-runhead)+var(--v2-section))]"
       >
-        {/* Soft aerial behind the heading — fades out before the channel list */}
-        <TintedPhoto
-          src={peoplePhotos.heroAerial.src}
-          alt=""
-          tone="cream"
-          fill
-          sizes="100vw"
-          className="absolute inset-x-0 top-0 -z-20 h-[60svh]"
-          imgClassName="object-[center_35%]"
-        />
+        {/* The brand name, spelled by the team on the beach: a cutout masthead
+            behind the heading, sitting in the top band. */}
         <div
           aria-hidden
-          className="absolute inset-x-0 top-0 -z-10 h-[60svh] bg-[linear-gradient(180deg,oklch(0.96_0.018_82/0.7)_0%,oklch(0.96_0.018_82/0.85)_55%,var(--color-cream)_100%)]"
-        />
+          className="absolute inset-x-0 top-0 -z-20 h-[42svh]"
+        >
+          <Image
+            src="/photos/RF Website/Employee Pictures/RF 30 year/Richfield-Beach-Bg-Removed.webp"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-contain object-top opacity-90"
+          />
+        </div>
         <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-[clamp(32px,4vw,56px)] px-6 sm:px-10">
-          {/* Compact heading — fits above the fold with channels + form */}
-          <RevealOnScroll className="flex max-w-[64ch] flex-col gap-4">
+          {/* Compact heading — spans full width (nothing on the right). */}
+          <RevealOnScroll className="flex w-full flex-col gap-4">
             <Eyebrow tone="gold">Contact</Eyebrow>
-            <DisplayHeading level={1} className="max-w-[18ch]">
+            <DisplayHeading level={1} className="w-full">
               Tell us about your *brand*.
             </DisplayHeading>
-            <p className="max-w-[60ch] text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-muted">
+            <p className="w-full text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-muted">
               Brand owner exploring Vietnam, partner considering a joint
-              venture, or journalist on deadline — we'll write back within
+              venture, or journalist on deadline: we&apos;ll write back within
               two business days.
             </p>
           </RevealOnScroll>

@@ -10,7 +10,11 @@ export function JointVentureSpread() {
   const doryLogo = partnerLogos["Dory Rich"];
   const tcpLogo = partnerLogos.TCP;
   return (
-    <Spread id="jv" bg="paper">
+    <Spread
+      id="jv"
+      bg="transparent"
+      surfaceClass="bg-[linear-gradient(180deg,oklch(1_0_0)_0,oklch(1_0_0)_calc(100%-140px),oklch(1_0_0_/_0)_100%)]"
+    >
       {/* Section eyebrow + masthead title */}
       <Eyebrow tone="gold" className="mb-[var(--v2-rhythm)]">
         JOINT VENTURE

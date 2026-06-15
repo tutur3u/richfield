@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <>
       <RunningHead />
-      <main className="bg-cream text-ink">
+      <main className="text-ink bg-[linear-gradient(180deg,oklch(0.965_0.016_82)_0%,oklch(0.952_0.026_85)_38%,oklch(0.968_0.014_81)_62%,oklch(0.952_0.026_85)_84%,oklch(0.963_0.018_82)_100%)]">
         <CoverSpread />
 
         <MagazineFlow>

@@ -15,13 +15,16 @@ import type { ReactNode } from "react";
 // previous one — used to fuse the spreads of a single movement.
 // ---------------------------------------------------------------------------
 
-type Surface = "cream" | "white" | "paper" | "ink";
+type Surface = "cream" | "white" | "paper" | "ink" | "transparent";
 
 const SURFACE: Record<Surface, string> = {
   cream: "bg-cream text-ink",
   white: "bg-white text-ink",
   paper: "bg-paper text-ink",
   ink: "bg-ink text-cream",
+  // No fill: the spread inherits whatever is behind it (the page gradient), so
+  // it morphs across spreads instead of stamping a flat plate.
+  transparent: "text-ink",
 };
 
 type SpreadProps = {
@@ -37,6 +40,9 @@ type SpreadProps = {
   head?: boolean;
   /** Extra classes on the inner frame (e.g. an asymmetric max-w or alignment). */
   className?: string;
+  /** Extra classes on the full-bleed <section> itself (e.g. a surface gradient
+      that fades into the page so the spread morphs instead of stamping a plate). */
+  surfaceClass?: string;
 };
 
 export function Spread({
@@ -47,6 +53,7 @@ export function Spread({
   flush = false,
   head = false,
   className = "",
+  surfaceClass = "",
 }: SpreadProps) {
   const topPad = flush
     ? "pt-0"
@@ -55,13 +62,13 @@ export function Spread({
       : "pt-[calc(var(--v2-section)/2)]";
   if (bleed) {
     return (
-      <section id={id} className={`v2-display relative w-full ${SURFACE[bg]}`}>
+      <section id={id} className={`v2-display relative w-full ${SURFACE[bg]} ${surfaceClass}`}>
         {children}
       </section>
     );
   }
   return (
-    <section id={id} className={`v2-display relative w-full ${SURFACE[bg]}`}>
+    <section id={id} className={`v2-display relative w-full ${SURFACE[bg]} ${surfaceClass}`}>
       <div
         className={`mx-auto w-full max-w-[1500px] px-6 pb-[calc(var(--v2-section))] sm:px-10 lg:px-12 ${topPad} ${className}`}
       >

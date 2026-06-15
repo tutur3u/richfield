@@ -5,6 +5,7 @@ import {
   Storefront,
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
+import { WavyBand } from "@/app/_components/sections/wavy-band";
 import { groupStats } from "@/content/en/stats";
 
 // One premium line-icon per headline figure, in the same order as groupStats:
@@ -15,27 +16,6 @@ const STAT_ICONS: readonly Icon[] = [
   Handshake,
   Storefront,
 ];
-
-// A gentle organic wave drawn along an edge of the beige panel. The top copy
-// is filled white (the page above), the bottom copy is flipped and filled paper
-// (the next chapter) — so each curve is the seam, with no third-colour band.
-const WAVE_PATH =
-  "M0,24 C120,38 240,38 360,24 C480,10 600,10 720,24 C840,38 960,38 1080,24 C1200,10 1320,10 1440,24 L1440,0 L0,0 Z";
-
-function Wave({ edge }: { edge: "top" | "bottom" }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 1440 40"
-      preserveAspectRatio="none"
-      className={`absolute inset-x-0 z-[2] h-[clamp(24px,4vw,48px)] w-full ${
-        edge === "top" ? "top-0 fill-white" : "bottom-0 -scale-y-100 fill-paper"
-      }`}
-    >
-      <path d={WAVE_PATH} />
-    </svg>
-  );
-}
 
 function StatFigure({
   figure,
@@ -71,14 +51,14 @@ function StatFigure({
 }
 
 /**
- * The headline figures, on a full-bleed beige panel the page waves into on both
- * edges. Giant gold numerals sit over a faint icon watermark; hovering a figure
+ * The headline figures, on a full-bleed beige `WavyBand` whose curvy edges clip
+ * to reveal the page gradient (so the wave never depends on the surface behind
+ * it). Giant gold numerals sit over a faint icon watermark; hovering a figure
  * washes its whole column (wave-to-wave) in a bolder beige.
  */
 export function GroupStatsPanel() {
   return (
-    <div className="v2-bleed-x relative overflow-hidden bg-cream">
-      <Wave edge="top" />
+    <WavyBand>
       <dl className="relative z-[1] mx-auto grid max-w-[1500px] grid-cols-2 px-6 sm:px-10 lg:grid-cols-4 lg:px-12">
         {groupStats.map(([figure, label], i) => (
           <StatFigure
@@ -89,7 +69,6 @@ export function GroupStatsPanel() {
           />
         ))}
       </dl>
-      <Wave edge="bottom" />
-    </div>
+    </WavyBand>
   );
 }

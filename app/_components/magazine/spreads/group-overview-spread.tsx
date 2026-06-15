@@ -43,7 +43,7 @@ export function GroupOverviewSpread() {
   return (
     <Spread
       id="group"
-      bg="white"
+      bg="transparent"
       className="flex flex-col gap-y-[var(--v2-flow)] !pb-0"
     >
       {/* Chapter open — a feature statement that breaks the grid (leaves a
@@ -65,13 +65,13 @@ export function GroupOverviewSpread() {
           className="col-span-12 flex max-w-[52ch] flex-col gap-y-[var(--v2-rhythm)] hyphens-auto lg:col-span-5"
           lang="en"
         >
-          <p className="v2-dropcap v2-size-body opacity-90 sm:text-justify">
+          <p className="v2-dropcap v2-size-body text-justify opacity-90">
             {groupIntro[0]}
           </p>
-          <p className="v2-size-body opacity-90 sm:text-justify">
+          <p className="v2-size-body text-justify opacity-90">
             {groupIntro[1]}
           </p>
-          <p className="v2-size-body opacity-90 sm:text-justify">
+          <p className="v2-size-body text-justify opacity-90">
             {groupIntro[2]}
           </p>
         </div>

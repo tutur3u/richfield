@@ -11,7 +11,7 @@ import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
  * viewport height so it stays the hero without overflowing. The
  * client-supplied footprint map carries its own labels and headcounts, so
  * this is a plain motion-island image: a one-time scroll-triggered scale +
- * fade. Aspect ratio is locked to the source (560 x 484) so nothing crops.
+ * fade. Aspect ratio is locked to the source (1210 x 1300) so nothing crops.
  */
 export function AtlasMap() {
   const reduce = useReducedMotion();
@@ -24,9 +24,9 @@ export function AtlasMap() {
       transition={{ duration: reduce ? 0 : 1.2, ease: EASE_OUT_EXPO }}
       className="flex flex-col gap-[clamp(10px,1vw,16px)]"
     >
-      <div className="relative ml-auto aspect-[1153/1148] w-full max-w-[calc(86svh*1153/1148)]">
+      <div className="relative ml-auto aspect-[1210/1300] w-full max-w-[calc(86svh*1210/1300)]">
         <Image
-          src="/photos/map/headcount-map.webp"
+          src="/photos/map/footprint.webp"
           alt="Richfield operating footprint across China (50, sourcing and brands), Vietnam (1,000+ at headquarters and growing), and Malaysia (150, origin in the 1990s)."
           fill
           sizes="(max-width: 1024px) 100vw, 58vw"

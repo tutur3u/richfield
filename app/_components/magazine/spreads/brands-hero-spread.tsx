@@ -65,7 +65,7 @@ export function BrandsHeroSpread() {
   return (
     <section
       id="brands"
-      className="v2-display relative isolate flex w-full flex-col overflow-hidden bg-cream lg:min-h-[78svh]"
+      className="v2-display relative isolate flex w-full flex-col overflow-hidden lg:min-h-[78svh]"
     >
       {/* Moving logo lanes — full bleed, vertically centered behind the type. */}
       <div
@@ -101,7 +101,7 @@ export function BrandsHeroSpread() {
             <em className="italic text-gold-strong">loved</em> brands.
           </h2>
 
-          <p className="v2-size-body max-w-[46ch] text-left opacity-90 sm:text-justify">
+          <p className="v2-size-body max-w-[46ch] text-justify opacity-90">
             100+ products across confectionery, beverages, personal care, and
             more — Richfield carries the brands shoppers already reach for, in
             partnerships that often run for decades.

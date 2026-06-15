@@ -3,12 +3,17 @@ import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 
 export function FootPrintSpread() {
   return (
-    <Spread id="atlas" bg="white">
+    <Spread
+      id="atlas"
+      bg="transparent"
+      surfaceClass="bg-[linear-gradient(180deg,oklch(1_0_0_/_0)_0,oklch(1_0_0)_140px,oklch(1_0_0)_100%)]"
+    >
 
-      {/* White plate: the map's own white ground dissolves into the page so it
-          reads as a full-bleed figure, not a card. The headline hangs top-left
-          over a ghost "3" (the real figure — three countries, three
-          generations). */}
+      {/* White ground for the map. It fades into the page gradient only at the
+          top (morphing down from what-we-do) and stays white to the bottom, so
+          it meets the white joint-venture spread below edge-to-edge with no
+          beige gap between them. The headline hangs top-left over a ghost "3"
+          (three countries, three generations). */}
       <div className="grid grid-cols-12 items-center gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-flow)]">
         <div className="relative col-span-12 hyphens-auto lg:col-span-4" lang="en">
 
@@ -23,7 +28,7 @@ export function FootPrintSpread() {
               <span className="block">1 promise.</span>
             </h2>
 
-            <p className="v2-size-body text-left opacity-90 sm:text-justify">
+            <p className="v2-size-body text-justify opacity-90">
               The Richfield Group spans three countries and three generations of
               family leadership, combining international scale with hands-on
               knowledge of every market we serve.

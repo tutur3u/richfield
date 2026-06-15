@@ -136,9 +136,9 @@ export const productPhotos: Record<string, ProductPhoto[]> = {
     { src: "/photos/products/newchoice-fruit-jelly.webp", name: "Fruit Pudding Cup", alt: "NewChoice fruit pudding cup" },
   ],
   AMOS: [
-    { src: "/photos/products/amos-amos.webp", name: "AMOS Crayons", alt: "AMOS crayons set" },
-    { src: "/photos/products/amos-bunny.webp", name: "Bunny Edition", alt: "AMOS Bunny edition" },
-    { src: "/photos/products/amos-hero.webp", name: "AMOS Studio Pack", alt: "AMOS studio pack" },
+    { src: "/photos/products/amos/amos-amos.webp", name: "AMOS Crayons", alt: "AMOS crayons set" },
+    { src: "/photos/products/amos/amos-bunny.webp", name: "Bunny Edition", alt: "AMOS Bunny edition" },
+    { src: "/photos/products/amos/amos-hero.webp", name: "AMOS Studio Pack", alt: "AMOS studio pack" },
   ],
   "Red Bull": [
     { src: "/photos/products/red-bull-classic.webp", name: "Red Bull Classic", alt: "Red Bull Classic energy drink" },

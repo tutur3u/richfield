@@ -51,3 +51,4 @@ next-env.d.ts
 # in public/photos/ ship with the build.
 /client-doc/
 .gstack/
+.worktrees/

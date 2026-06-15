@@ -49,12 +49,12 @@ export const shelfCategories: ShelfCategory[] = [
     descriptor: "Confectionery, snacks, and stationery treats.",
     brands: ["Mars · Wrigley", "Glico", "NewChoice", "AMOS", "Wei Long"],
     banners: [
-      { src: `${P}/amos-bunny.webp`, brand: "AMOS", ratio: 3.11, weight: "hero", alt: "AMOS Peelitz gummy candy — spring campaign" },
+      { src: `${P}/amos/amos-bunny.webp`, brand: "AMOS", ratio: 3.11, weight: "hero", alt: "AMOS Peelitz gummy candy — spring campaign" },
       { src: `${P}/mars-m-m.webp`, brand: "M&M's", ratio: 1.43, weight: "wide", alt: "M&M's movie-night campaign" },
       { src: `${P}/mars-cool-air.webp`, brand: "Cool Air", ratio: 1.01, weight: "feature", alt: "Wrigley Cool Air gum campaign" },
       { src: `${P}/mars-snickers.webp`, brand: "Snickers", ratio: 1.68, weight: "wide", alt: "Snickers almond dark-chocolate campaign" },
       { src: `${P}/mars-doublemint.webp`, brand: "Doublemint", ratio: 1.40, weight: "wide", alt: "Wrigley Doublemint gum campaign" },
-      { src: `${P}/amos-hero.webp`, brand: "AMOS", ratio: 1.78, weight: "wide", alt: "AMOS — A Moment of Smile campaign" },
+      { src: `${P}/amos/amos-hero.webp`, brand: "AMOS", ratio: 1.78, weight: "wide", alt: "AMOS — A Moment of Smile campaign" },
     ],
     packshots: [
       { src: `${P}/glico-pocky-pocky-chocolate.webp`, brand: "Glico", name: "Pocky Chocolate", alt: "Pocky Chocolate sticks", feature: true },
@@ -105,6 +105,10 @@ export const shelfCategories: ShelfCategory[] = [
       { src: `${P}/bic-shaver-1.webp`, brand: "BiC", name: "Easy Clic", alt: "BiC Easy Clic razor and refill" },
       { src: `${P}/bic-shaver-2.webp`, brand: "BiC", name: "Hybrid 3", alt: "BiC Hybrid 3-blade razor" },
       { src: `${P}/bic-shavers-2.webp`, brand: "BiC", name: "Lady 2", alt: "BiC Lady 2-blade razors" },
+      { src: `${P}/care-latex/bao-cao-su-bcs-sieu-mong-tron-carelatex-care-22-co-gai-huong-nuoc-hoa-paris-1.webp`, brand: "Caretex", name: "Care 22", alt: "Caretex Care 22 thin condoms — Paris fragrance", feature: true },
+      { src: `${P}/care-latex/bao-cao-su-bcs-sieu-mong-tron-carelatex-care-48-co-gai-huong-dau-1.webp`, brand: "Caretex", name: "Care 48", alt: "Caretex Care 48 thin condoms — strawberry scent" },
+      { src: `${P}/care-latex/bao-cao-su-bcs-sieu-mong-tron-carelatex-care-50-co-gai-huong-dua-rung-nhiet-doi-1.webp`, brand: "Caretex", name: "Care 50", alt: "Caretex Care 50 thin condoms — tropical coconut scent" },
+      { src: `${P}/care-latex/bao-cao-su-bcs-sieu-mong-tron-keo-dai-thoi-gian-quan-he-carelatex-care-46-co-gai-huong-ba-ha-1.webp`, brand: "Caretex", name: "Care 46", alt: "Caretex Care 46 long-lasting condoms — mint scent" },
     ],
   },
 ];

@@ -1,51 +1,26 @@
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import {
-  Geist,
-  Geist_Mono,
-  Fraunces,
-  Schibsted_Grotesk,
-  Newsreader,
-} from "next/font/google";
+import { Geist, Fraunces } from "next/font/google";
 import "./globals.css";
 import { RouteAnnouncerPatch } from "@/app/_components/route-announcer-patch";
+import { SiteFooter } from "@/app/_components/magazine/chrome/site-footer";
 
+// The whole site runs on two type voices only (Anthropic-style):
+//   • Fraunces — the editorial serif, for every heading/title + italic accents.
+//   • Geist    — the sans, for all body copy, eyebrows, folios, and UI labels.
 const geistSans = Geist({
   subsets: ["latin", "latin-ext"],
   variable: "--font-geist-sans",
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
-  display: "swap",
-});
-
-// Fraunces: same editorial serif energy as Playfair, but with cleaner,
-// less ornamental italic glyphs so emphasized words stay readable.
+// Fraunces: editorial serif with clean, readable italic glyphs for the
+// emphasized words, pull-quotes, and drop caps.
 const fraunces = Fraunces({
   subsets: ["latin", "latin-ext"],
   variable: "--font-fraunces",
   style: ["normal", "italic"],
   axes: ["SOFT", "opsz"],
-  display: "swap",
-});
-
-// v2 — magazine-grade grotesque for display sizing across the cover and
-// spread headings. Referenced from globals.css via --font-display-v2.
-const schibsted = Schibsted_Grotesk({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-display-v2",
-  display: "swap",
-});
-
-// v2 — italic accent only. Used large for standfirsts and pull-quotes,
-// never inline. Referenced from globals.css via --font-italic-v2.
-const newsreader = Newsreader({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-italic-v2",
-  style: ["italic"],
   display: "swap",
 });
 
@@ -74,10 +49,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${schibsted.variable} ${newsreader.variable}`}
+      className={`${geistSans.variable} ${fraunces.variable}`}
     >
       <body className="min-h-dvh bg-cream text-ink antialiased">
         {children}
+        <SiteFooter />
         <Analytics />
         <RouteAnnouncerPatch />
       </body>

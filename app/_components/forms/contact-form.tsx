@@ -1,8 +1,9 @@
 "use client";
 
 import { useActionState, useId, useState } from "react";
-import { submitContact, type ContactState } from "@/app/(site)/contact/actions";
-import { INQUIRY_TYPES } from "@/app/(site)/contact/schema";
+import { submitContact, type ContactState } from "@/app/contact/actions";
+import { INQUIRY_TYPES } from "@/app/contact/schema";
+import { CTA_BOX } from "@/app/_components/magazine/primitives/cta-link";
 
 const initial: ContactState = { status: "idle" };
 
@@ -112,9 +113,15 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={pending}
-        className="self-start text-[11px] font-medium uppercase tracking-[0.32em] text-gold underline decoration-gold underline-offset-[6px] disabled:opacity-50"
+        className={`${CTA_BOX} self-start disabled:opacity-50`}
       >
-        {pending ? "Sending…" : "Send message →"}
+        {pending ? "Sending…" : "Send message"}
+        <span
+          aria-hidden
+          className="transition-transform duration-300 ease-out motion-safe:group-hover:translate-x-1"
+        >
+          →
+        </span>
       </button>
     </form>
   );

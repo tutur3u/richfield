@@ -7,55 +7,46 @@ export type Milestone = {
   aboutOnly?: boolean;
 };
 
+// The company timeline as set out in the final content doc — six milestones
+// from the founding partnership to the 30-year mark. `brand` doubles as the
+// logo key where a milestone has a mark; company milestones leave it as
+// "Group" and simply show no logo.
 export const milestones: Milestone[] = [
-  {
-    year: 1992,
-    brand: "Group",
-    country: "Cambodia & Vietnam",
-    body: "Richfield first ventures across the border, importing Wrigley's into Cambodia and Vietnam ahead of the trade embargo lifting.",
-    aboutOnly: true,
-  },
   {
     year: 1994,
     brand: "Mars",
     country: "USA",
-    body: "Wrigley's becomes our first imported brand the year the US trade embargo lifts.",
+    body: "Mars Wrigley Vietnam selected Richfield as its distributor — the partnership that began everything.",
   },
   {
     year: 1999,
-    brand: "NewChoice",
-    country: "Taiwan",
-    body: "First Taiwanese partner; the snack category joins the portfolio.",
+    brand: "Group",
+    country: "Vietnam",
+    body: "Bill Chua takes leadership from founder Chua Eng Siang.",
   },
   {
-    year: 2014,
-    brand: "TCP",
+    year: 2006,
+    brand: "Group",
+    country: "Vietnam",
+    body: "Formally incorporated as Richfield Worldwide JSC.",
+  },
+  {
+    year: 2010,
+    brand: "Group",
+    country: "Vietnam",
+    body: "Richfield Foods JSC established in Long An.",
+  },
+  {
+    year: 2016,
+    brand: "Warrior",
     country: "Thailand",
-    body: "Warrior and Red Bull bring the energy and lifestyle category.",
-  },
-  {
-    year: 2018,
-    brand: "BiC",
-    country: "France",
-    body: "Stationery and lighters expand the everyday-consumer footprint.",
-  },
-  {
-    year: 2022,
-    brand: "AMOS",
-    country: "China",
-    body: "Art supplies and creative materials enter the lineup.",
+    body: "Became distributor of Warrior Energy Drink (TCP Group, Thailand).",
   },
   {
     year: 2024,
     brand: "Dory Rich JSC",
     country: "Vietnam",
-    body: "Joint venture with TCP Group brings manufacturing and distribution under one roof.",
-  },
-  {
-    year: 2026,
-    brand: "Glico",
-    country: "Japan",
-    body: "Pocky and confectionery; the latest international partnership.",
+    body: "Northern Distribution Center launched; Dory Rich JSC founded.",
   },
 ];
 

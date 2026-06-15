@@ -10,6 +10,8 @@ type Props = {
   caption?: string;
   /** Poster intensity — 'maxres' for hero use, 'hq' as a fallback. */
   posterQuality?: "maxres" | "hq";
+  /** Custom poster image; overrides the YouTube thumbnail when set. */
+  poster?: string;
   className?: string;
 };
 
@@ -28,17 +30,18 @@ export function YouTubeEmbed({
   title,
   caption,
   posterQuality = "maxres",
+  poster,
   className = "",
 }: Props) {
   const [active, setActive] = useState(false);
   const [posterSrc, setPosterSrc] = useState(() =>
-    getPosterSrc(videoId, posterQuality),
+    poster ?? getPosterSrc(videoId, posterQuality),
   );
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing derived poster on input-prop change
-    setPosterSrc(getPosterSrc(videoId, posterQuality));
-  }, [videoId, posterQuality]);
+    setPosterSrc(poster ?? getPosterSrc(videoId, posterQuality));
+  }, [videoId, posterQuality, poster]);
 
   return (
     <div
@@ -65,7 +68,7 @@ export function YouTubeEmbed({
             fill
             sizes="(min-width: 1024px) 80vw, 100vw"
             onError={() => {
-              if (posterQuality === "maxres") {
+              if (!poster && posterQuality === "maxres") {
                 setPosterSrc(getPosterSrc(videoId, "hq"));
               }
             }}

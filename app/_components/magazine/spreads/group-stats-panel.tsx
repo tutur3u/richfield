@@ -1,0 +1,74 @@
+import {
+  ChartLineUp,
+  UsersThree,
+  Handshake,
+  Storefront,
+} from "@phosphor-icons/react/dist/ssr";
+import type { Icon } from "@phosphor-icons/react";
+import { WavyBand } from "@/app/_components/sections/wavy-band";
+import { groupStats } from "@/content/en/stats";
+
+// One premium line-icon per headline figure, in the same order as groupStats:
+// steady growth, the workforce, the distributor network, the retail footprint.
+const STAT_ICONS: readonly Icon[] = [
+  ChartLineUp,
+  UsersThree,
+  Handshake,
+  Storefront,
+];
+
+function StatFigure({
+  figure,
+  label,
+  Icon,
+}: {
+  figure: string;
+  label: string;
+  Icon?: Icon;
+}) {
+  // The first/last cells bleed to the viewport edges so their hover wash runs
+  // full width. Cell padding (not the <dl>) carries the height, so the wash
+  // fills wave-to-wave.
+  return (
+    <div className="group flex flex-col justify-center gap-2 overflow-hidden py-[clamp(32px,4.5vw,48px)] pl-[clamp(16px,2vw,32px)] pr-[clamp(12px,1.6vw,24px)] transition-colors duration-300 ease-out hover:bg-[oklch(0.90_0.035_82)] lg:py-[clamp(52px,6vw,80px)] lg:[&:first-child]:-ml-[calc(max((100vw-1500px)/2,0px)+48px)] lg:[&:first-child]:pl-[calc(max((100vw-1500px)/2,0px)+48px+clamp(16px,2vw,32px))] lg:[&:last-child]:-mr-[calc(max((100vw-1500px)/2,0px)+48px)] lg:[&:last-child]:pr-[calc(max((100vw-1500px)/2,0px)+48px+clamp(12px,1.6vw,24px))]">
+      <div className="relative isolate flex flex-col gap-2">
+        {Icon ? (
+          <Icon
+            aria-hidden
+            weight="light"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 -translate-x-1/2 -translate-y-1/2 text-[clamp(5.5rem,10vw,10rem)] text-gold-strong opacity-[0.05]"
+          />
+        ) : null}
+        <dt className="font-display origin-left bg-[linear-gradient(165deg,var(--color-gold)_0%,var(--color-gold-rule)_95%)] bg-clip-text text-[clamp(2rem,4.3vw,4rem)] leading-[0.9] tracking-[-0.02em] text-transparent transition-transform duration-300 ease-out group-hover:scale-[1.04]">
+          {figure}
+        </dt>
+        <dd className="v2-size-body opacity-80 transition-opacity duration-300 ease-out group-hover:opacity-100">
+          {label}
+        </dd>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The headline figures, on a full-bleed beige `WavyBand` whose curvy edges clip
+ * to reveal the page gradient (so the wave never depends on the surface behind
+ * it). Giant gold numerals sit over a faint icon watermark; hovering a figure
+ * washes its whole column (wave-to-wave) in a bolder beige.
+ */
+export function GroupStatsPanel() {
+  return (
+    <WavyBand>
+      <dl className="relative z-[1] mx-auto grid max-w-[1500px] grid-cols-2 px-6 sm:px-10 lg:grid-cols-4 lg:px-12">
+        {groupStats.map(([figure, label], i) => (
+          <StatFigure
+            key={label}
+            figure={figure}
+            label={label}
+            Icon={STAT_ICONS[i]}
+          />
+        ))}
+      </dl>
+    </WavyBand>
+  );
+}

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { ContactForm } from "@/app/_components/forms/contact-form";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
@@ -113,26 +112,26 @@ export default function ContactPage() {
 
       <section
         aria-label="Contact"
-        className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-cream pb-[var(--v2-section)] pt-[calc(var(--v2-runhead)+var(--v2-section))]"
+        className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-cream pb-[var(--v2-section)] pt-[calc(var(--v2-runhead)+var(--v2-section)/2)]"
       >
-        {/* The brand name, spelled by the team on the beach: a cutout masthead
-            behind the heading, sitting in the top band. */}
+        {/* The beach, pinned to the viewport so it holds still behind the
+            content as the page scrolls. background-attachment:fixed confines it
+            to this section's box, so it stops where the contact section ends
+            rather than bleeding under the footer. */}
         <div
           aria-hidden
-          className="absolute inset-x-0 top-0 -z-20 h-[42svh]"
-        >
-          <Image
-            src="/photos/RF Website/Employee Pictures/RF 30 year/Richfield-Beach-Bg-Removed.webp"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-contain object-top opacity-90"
-          />
-        </div>
-        <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-[clamp(32px,4vw,56px)] px-6 sm:px-10">
+          className="pointer-events-none absolute inset-0 -z-10 bg-[url('/photos/contact-bg.webp')] bg-contain bg-fixed bg-center bg-no-repeat opacity-[0.12]"
+        />
+        {/* RICHFIELD spelled by the team, big and centred and pinned to the
+            viewport (bg-fixed) just like the beach, so the two hold together and
+            stay put as the page scrolls, stopping at the section's end. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-[5] bg-[url('/photos/contact-richfield.webp')] bg-[length:min(92vw,1200px)_auto] bg-fixed bg-center bg-no-repeat opacity-[0.55]"
+        />
+        <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[var(--v2-flow)] px-6 sm:px-10 lg:px-12">
           {/* Compact heading — spans full width (nothing on the right). */}
-          <RevealOnScroll className="flex w-full flex-col gap-4">
+          <RevealOnScroll className="flex w-full flex-col gap-y-[var(--v2-rhythm)]">
             <Eyebrow tone="gold">Contact</Eyebrow>
             <DisplayHeading level={1} className="w-full">
               Tell us about your *brand*.
@@ -144,9 +143,9 @@ export default function ContactPage() {
             </p>
           </RevealOnScroll>
 
-          <div className="grid flex-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:gap-16">
+          <div className="grid flex-1 gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-flow)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
             {/* Channels — icon-coded for instant differentiation */}
-            <RevealOnScroll className="flex flex-col gap-5">
+            <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]">
               <Eyebrow tone="gold">Channels</Eyebrow>
               <ul className="flex flex-col gap-3">
                 {channels.map((c, idx) => (
@@ -189,7 +188,7 @@ export default function ContactPage() {
             </RevealOnScroll>
 
             {/* Form */}
-            <RevealOnScroll className="flex flex-col gap-5" delayMs={120}>
+            <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]" delayMs={120}>
               <Eyebrow tone="gold">Send a message</Eyebrow>
               <div className="rounded-sm border border-line bg-paper p-6 sm:p-8">
                 <ContactForm />

@@ -8,6 +8,7 @@ import {
 import type { Icon } from "@phosphor-icons/react";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
+import { WavyBand } from "@/app/_components/sections/wavy-band";
 import { coreValues, lifeAtRichfieldIntro } from "@/content/en/values";
 
 // One line-icon per value, in coreValues order: respect, integrity,
@@ -21,37 +22,17 @@ const VALUE_ICONS: readonly Icon[] = [
   Smiley,
 ];
 
-// The same organic seam the group-stats ribbon waves on, here filled with the
-// surrounding cream so the beige band reads as a tinted ribbon inside the
-// cream section.
-const WAVE_PATH =
-  "M0,24 C120,38 240,38 360,24 C480,10 600,10 720,24 C840,38 960,38 1080,24 C1200,10 1320,10 1440,24 L1440,0 L0,0 Z";
-
-function Wave({ edge }: { edge: "top" | "bottom" }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 1440 40"
-      preserveAspectRatio="none"
-      className={`absolute inset-x-0 z-[2] h-[clamp(20px,3.5vw,40px)] w-full fill-cream ${
-        edge === "top" ? "top-0" : "bottom-0 -scale-y-100"
-      }`}
-    >
-      <path d={WAVE_PATH} />
-    </svg>
-  );
-}
-
 /**
  * "Life at Richfield" — the chapter opener (standfirst + lede) over the five
- * core values, set in the home-page STATS-RIBBON UI crossed with the
- * thumb-index foldout: a full-bleed beige band with a wavy cream seam, a faint
- * gold value-icon watermark behind each headword. At rest each panel shows only
- * its Vietnamese word and English gloss (compact). Hover or focus springs that
- * panel open (flex-grow), washes its column a deeper beige, and discloses the
- * meaning, while the siblings recede. First and last cells bleed to the
- * viewport edges so the wash runs the full width. Below lg the panels relax
- * into a plain stacked list with every meaning visible.
+ * core values, set as a full-bleed thumb-index foldout on a self-contained
+ * `WavyBand` (a beige band whose wavy edges feather into the page gradient, so
+ * it blends without a rectangular seam), with a faint gold value-icon watermark
+ * behind each headword. At rest each panel shows only its English word
+ * (compact). Hover or focus springs that panel open (flex-grow), washes its
+ * column a deeper beige, and discloses the meaning, while the siblings recede.
+ * First and last cells bleed to the viewport edges so the wash runs the full
+ * width. Below lg the panels relax into a plain stacked list with every meaning
+ * visible.
  *
  * All effects are flex-grow / grid-rows / opacity; the globals.css reduce block
  * collapses each transition to an instant state change with the layout intact,
@@ -59,23 +40,22 @@ function Wave({ edge }: { edge: "top" | "bottom" }) {
  */
 export function LifeValues() {
   return (
-    <section className="v2-display bg-cream pt-[var(--v2-section)]">
+    <section className="v2-display pt-[var(--v2-section)]">
       <div className="flex flex-col gap-y-[var(--v2-flow)]">
         <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-y-[var(--v2-flow)] px-6 sm:px-10 lg:px-12">
-          <RevealOnScroll className="flex max-w-[68ch] flex-col gap-y-[var(--v2-rhythm)]">
+          <RevealOnScroll className="flex w-full flex-col gap-y-[var(--v2-rhythm)]">
             <Eyebrow>LIFE AT RICHFIELD</Eyebrow>
-            <h2 className="font-display v2-size-standfirst max-w-[20ch]">
+            <h2 className="font-display v2-size-standfirst w-full text-balance">
               People are valued as{" "}
               <em className="italic text-gold-strong">partners</em>.
             </h2>
-            <p className="v2-size-body opacity-90">{lifeAtRichfieldIntro}</p>
+            <p className="v2-size-body w-full text-justify opacity-90">{lifeAtRichfieldIntro}</p>
           </RevealOnScroll>
 
           <Eyebrow>CORE VALUES</Eyebrow>
         </div>
 
-        <div className="v2-bleed-x relative overflow-hidden bg-[oklch(0.93_0.032_82)]">
-          <Wave edge="top" />
+        <WavyBand>
           <ul className="group/index relative z-[1] mx-auto flex max-w-[1500px] flex-col px-6 sm:px-10 lg:h-[clamp(240px,24vw,300px)] lg:flex-row lg:px-12">
             {coreValues.map((v, i) => {
               const Icon = VALUE_ICONS[i];
@@ -112,8 +92,7 @@ export function LifeValues() {
               );
             })}
           </ul>
-          <Wave edge="bottom" />
-        </div>
+        </WavyBand>
       </div>
     </section>
   );

@@ -3,13 +3,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
-import { PageHeader } from "@/app/_components/primitives/page-header";
-import { TintedPhoto } from "@/app/_components/primitives/tinted-photo";
+import { CareersHero } from "@/app/_components/magazine/spreads/careers-hero";
+import { LifeValues } from "@/app/_components/sections/life-values";
 import { PhotoCarousel } from "@/app/_components/primitives/photo-carousel";
 import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
 import { YouTubeEmbed } from "@/app/_components/primitives/youtube-embed";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
-import { coreValues, lifeAtRichfieldIntro, benefits, benefitsIntro } from "@/content/en/values";
+import { benefits, benefitsIntro } from "@/content/en/values";
 import { leaders, peopleFirstIntro } from "@/content/en/leadership";
 import { testimonials } from "@/content/en/testimonials";
 import { communityIntro, communityPrograms } from "@/content/en/community";
@@ -39,104 +39,60 @@ export default function CareersPage() {
     <>
       <RunningHead />
       <main className="bg-cream text-ink">
-        <PageHeader
-          eyebrow="Careers"
-          heading="A place where *people stay*."
-          lede="Workshops, openings, celebrations, congresses, beaches — three decades of partnership, told through the people who built it."
-          photo={[
-            peoplePhotos.gala,
-            peoplePhotos.teamBuilding,
-            peoplePhotos.teamBuildingEnergy,
-            peoplePhotos.happyTime,
-            peoplePhotos.celebration,
-          ]}
-        />
+        <CareersHero />
 
-        {/* Life at Richfield — intro + core values */}
-        <section className="v2-display bg-cream px-6 py-[var(--v2-section)] sm:px-10 lg:px-12">
-          <div className="mx-auto flex max-w-[1500px] flex-col gap-y-[var(--v2-flow)]">
-            <RevealOnScroll className="flex max-w-[68ch] flex-col gap-y-[var(--v2-rhythm)]">
-              <Eyebrow>LIFE AT RICHFIELD</Eyebrow>
-              <h2 className="font-display v2-size-standfirst max-w-[20ch]">
-                People are valued as <em className="italic text-gold-strong">partners</em>.
-              </h2>
-              <p className="v2-size-body opacity-90">{lifeAtRichfieldIntro}</p>
-            </RevealOnScroll>
+        {/* Life at Richfield — intro + core values (thumb-index foldout) */}
+        <LifeValues />
 
-            <div>
-              <Eyebrow>CORE VALUES</Eyebrow>
-              <ul className="mt-[var(--v2-rhythm)] flex flex-col">
-                {coreValues.map((v) => (
-                  <li
-                    key={v.vi}
-                    className="grid grid-cols-1 gap-x-[var(--v2-col-gap)] gap-y-1 border-t border-current/15 py-5 lg:grid-cols-[18ch_1fr] lg:items-baseline"
-                  >
-                    <p className="font-display text-[clamp(1.4rem,2vw,1.8rem)] leading-[1.1] tracking-[-0.015em]">
-                      {v.vi}
-                      <span className="v2-mono v2-size-folio ml-3 align-middle text-gold-strong">
-                        {v.en}
-                      </span>
-                    </p>
-                    <p className="v2-size-body opacity-90">{v.meaning}</p>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        {/* Life photo grid */}
-        <section aria-label="Life at Richfield" className="bg-cream pb-[var(--v2-section)]">
-          <div className="px-3 sm:px-6">
-            <div className="mx-auto grid w-full max-w-[1500px] auto-rows-[44vw] grid-cols-2 gap-2 sm:auto-rows-[24vw] sm:grid-cols-3 sm:gap-3 lg:auto-rows-[18vw] lg:grid-cols-4">
-              {LIFE_TILES.map((tile, idx) => {
-                const isHero = idx === 0;
-                const heroRotation = [
-                  peoplePhotos.groupCompany,
-                  peoplePhotos.gala,
-                  peoplePhotos.teamBuilding,
-                  peoplePhotos.celebration,
-                ];
-                return (
-                  <RevealOnScroll
-                    as="figure"
-                    key={tile.caption}
-                    delayMs={idx * 80}
-                    className={`group relative overflow-hidden rounded-sm bg-cream ${isHero ? "col-span-2 row-span-2" : ""} ${tile.gridClass}`}
-                  >
-                    {isHero ? (
-                      <PhotoCarousel
-                        photos={heroRotation}
-                        fill
-                        sizes="(min-width: 1024px) 38vw, (min-width: 640px) 33vw, 50vw"
-                        className="absolute inset-0 h-full w-full"
-                        imgClassName="motion-safe:transition-transform motion-safe:duration-700 group-hover:scale-[1.05]"
-                      />
-                    ) : (
-                      <TintedPhoto
-                        src={tile.photo.src}
-                        alt={tile.photo.alt}
-                        tone="cream"
-                        intensity="soft"
-                        fill
-                        sizes="(min-width: 1024px) 19vw, (min-width: 640px) 33vw, 50vw"
-                        className="absolute inset-0 h-full w-full"
-                        imgClassName="motion-safe:transition-transform motion-safe:duration-700 group-hover:scale-[1.05]"
-                      />
-                    )}
-                    <div
-                      aria-hidden
-                      className="pointer-events-none absolute inset-0 bg-[linear-gradient(0deg,oklch(0.96_0.018_82/0.82)_0%,oklch(0.96_0.018_82/0.18)_45%,oklch(0.96_0.018_82/0)_70%)] opacity-90 transition-opacity duration-300 group-hover:opacity-100"
+        {/* Life photo grid — full-bleed mosaic on ink, photos uncovered. */}
+        <section aria-label="Life at Richfield" className="bg-ink py-2 text-cream sm:py-3">
+          <div className="grid w-full auto-rows-[44vw] grid-cols-2 gap-2 sm:auto-rows-[24vw] sm:grid-cols-3 sm:gap-3 lg:auto-rows-[18vw] lg:grid-cols-4">
+            {LIFE_TILES.map((tile, idx) => {
+              const isHero = idx === 0;
+              const heroRotation = [
+                peoplePhotos.groupCompany,
+                peoplePhotos.gala,
+                peoplePhotos.teamBuilding,
+                peoplePhotos.celebration,
+              ];
+              return (
+                <RevealOnScroll
+                  as="figure"
+                  key={tile.caption}
+                  delayMs={idx * 80}
+                  className={`group relative overflow-hidden bg-ink ${isHero ? "col-span-2 row-span-2" : ""} ${tile.gridClass}`}
+                >
+                  {isHero ? (
+                    <PhotoCarousel
+                      photos={heroRotation}
+                      fill
+                      sizes="(min-width: 1024px) 50vw, (min-width: 640px) 33vw, 50vw"
+                      className="absolute inset-0 h-full w-full"
+                      imgClassName="motion-safe:transition-transform motion-safe:duration-700 group-hover:scale-[1.05]"
                     />
-                    <figcaption className="absolute inset-x-0 bottom-0 px-4 pb-4 text-[10px] uppercase tracking-[0.32em] text-ink sm:px-6 sm:pb-6 sm:text-[11px]">
-                      <span className="inline-block translate-y-1 opacity-90 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                        {tile.caption}
-                      </span>
-                    </figcaption>
-                  </RevealOnScroll>
-                );
-              })}
-            </div>
+                  ) : (
+                    <Image
+                      src={tile.photo.src}
+                      alt={tile.photo.alt}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                      className="absolute inset-0 h-full w-full object-cover v2-photo-duotone motion-safe:transition-transform motion-safe:duration-700 group-hover:scale-[1.05]"
+                    />
+                  )}
+                  {/* No light wash: just a soft ink foot so the caption stays
+                      legible over the photo. */}
+                  <div
+                    aria-hidden
+                    className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-[linear-gradient(0deg,oklch(0.22_0.015_158/0.7)_0%,oklch(0.22_0.015_158/0)_100%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+                  />
+                  <figcaption className="absolute inset-x-0 bottom-0 px-4 pb-4 text-[10px] uppercase tracking-[0.32em] text-cream [text-shadow:0_1px_4px_oklch(0.22_0.015_158/0.8)] sm:px-6 sm:pb-6 sm:text-[11px]">
+                    <span className="inline-block translate-y-1 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                      {tile.caption}
+                    </span>
+                  </figcaption>
+                </RevealOnScroll>
+              );
+            })}
           </div>
         </section>
 

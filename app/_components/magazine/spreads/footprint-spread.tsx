@@ -6,7 +6,7 @@ export function FootPrintSpread() {
     <Spread
       id="atlas"
       bg="transparent"
-      surfaceClass="bg-[linear-gradient(180deg,oklch(1_0_0_/_0)_0,oklch(1_0_0)_140px,oklch(1_0_0)_100%)]"
+      surfaceClass="v2-plate-fade-top"
     >
 
       {/* White ground for the map. It fades into the page gradient only at the

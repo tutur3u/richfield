@@ -13,7 +13,7 @@ export function JointVentureSpread() {
     <Spread
       id="jv"
       bg="transparent"
-      surfaceClass="bg-[linear-gradient(180deg,oklch(1_0_0)_0,oklch(1_0_0)_calc(100%-140px),oklch(1_0_0_/_0)_100%)]"
+      surfaceClass="v2-plate-fade-bottom"
     >
       {/* Section eyebrow + masthead title */}
       <Eyebrow tone="gold" className="mb-[var(--v2-rhythm)]">

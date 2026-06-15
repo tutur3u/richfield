@@ -28,7 +28,7 @@ export default function CareersPage() {
   return (
     <>
       <RunningHead />
-      <main className="text-ink bg-[linear-gradient(180deg,oklch(0.96_0.018_82)_0%,oklch(0.975_0.014_80)_14%,oklch(0.99_0.005_70)_32%,oklch(0.94_0.04_86)_55%,oklch(0.99_0.005_70)_76%,oklch(0.96_0.018_82)_100%)]">
+      <main className="v2-bg-morph text-ink">
         <CareersHero />
 
         {/* Life at Richfield — intro + core values (thumb-index foldout) */}

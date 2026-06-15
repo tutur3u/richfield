@@ -15,7 +15,10 @@ const MASK = `${WAVE_TOP}, linear-gradient(#000, #000), ${WAVE_BOT}`;
 const WH = "clamp(20px, 3.2vw, 44px)";
 const SIZE = `100% ${WH}, 100% calc(100% - ${WH} - ${WH}), 100% ${WH}`;
 
-const maskStyle: CSSProperties = {
+const bandStyle: CSSProperties = {
+  // Translucent so the page morph shows through and the band never reads as a
+  // static opaque interruption.
+  backgroundColor: "oklch(0.84 0.055 82 / 0.5)",
   WebkitMaskImage: MASK,
   maskImage: MASK,
   WebkitMaskPosition: "top, center, bottom",
@@ -27,27 +30,15 @@ const maskStyle: CSSProperties = {
 };
 
 /**
- * A full-bleed band whose top and bottom edges are crisp, curvy organic waves.
- * The mask clips the band, its fill, and any per-column hover wash to the wave
- * silhouette, so the cut edges reveal the page background behind them. Nothing
- * here paints the page background, so a morphing gradient keeps working
- * underneath and the waves never depend on the surface they sit on. `fill` sets
- * the band colour.
+ * A full-bleed beige band whose top and bottom edges are crisp, curvy organic
+ * waves. The mask clips the band, its fill, and any per-column hover wash to the
+ * wave silhouette, so the cut edges reveal the page background behind them.
+ * Nothing here paints the page background, so a morphing gradient keeps working
+ * underneath and the waves never depend on the surface they sit on.
  */
-export function WavyBand({
-  children,
-  className = "",
-  fill = "oklch(0.84 0.055 82 / 0.5)",
-}: {
-  children: ReactNode;
-  className?: string;
-  fill?: string;
-}) {
+export function WavyBand({ children }: { children: ReactNode }) {
   return (
-    <div
-      className={`v2-bleed-x relative overflow-hidden ${className}`}
-      style={{ ...maskStyle, backgroundColor: fill }}
-    >
+    <div className="v2-bleed-x relative overflow-hidden" style={bandStyle}>
       {children}
     </div>
   );

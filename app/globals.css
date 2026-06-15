@@ -295,6 +295,23 @@ button:focus-visible {
 }
 .v2-scroll-rail::-webkit-scrollbar { display: none; }
 
+/* The page surface morph: one gentle warm gradient a page's <main> wears so the
+   transparent spreads blend into each other instead of stamping flat plates.
+   Single source of truth shared by every morphing page. */
+.v2-bg-morph {
+  background-image: linear-gradient(180deg, oklch(0.965 0.016 82) 0%, oklch(0.952 0.026 85) 38%, oklch(0.968 0.014 81) 62%, oklch(0.952 0.026 85) 84%, oklch(0.963 0.018 82) 100%);
+}
+
+/* White plate that dissolves into the page morph at one edge (so a spread reads
+   as a bright figure but still morphs into its neighbour). `-top` feathers the
+   top edge, `-bottom` the bottom; their solid edge meets a sibling plate cleanly. */
+.v2-plate-fade-top {
+  background-image: linear-gradient(180deg, oklch(1 0 0 / 0) 0, oklch(1 0 0) 140px, oklch(1 0 0) 100%);
+}
+.v2-plate-fade-bottom {
+  background-image: linear-gradient(180deg, oklch(1 0 0) 0, oklch(1 0 0) calc(100% - 140px), oklch(1 0 0 / 0) 100%);
+}
+
 /* Pillar focus-row — when any pillar is hovered, the hovered card floats
    up while siblings quietly recede via opacity + desaturation. Single
    exponential ease so the lift and the dim feel like one motion. */

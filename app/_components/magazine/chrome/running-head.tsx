@@ -36,7 +36,7 @@ const NAV: NavItem[] = [
     label: "Brands",
     children: [
       { label: "Our Brands", href: "/brands" },
-      { label: "Portfolio", href: "/brands#shelf" },
+      { label: "Portfolio", href: "/brands#portfolio" },
     ],
   },
   { label: "Careers", href: "/careers" },

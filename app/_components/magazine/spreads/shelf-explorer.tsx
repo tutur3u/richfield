@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import {
+  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -238,6 +239,26 @@ export function ShelfExplorer() {
   const category = shelfCategories[active];
   const placed = packTiles(interleave(category), metrics);
 
+  // Persist the active category in the URL (?category=…) so a reload or a
+  // shared link restores the same tab. Read once on mount; write on change.
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("category");
+    const i = shelfCategories.findIndex((c) => c.id === id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restoring tab from URL
+    if (i >= 0) setActive(i);
+  }, []);
+
+  const selectCategory = (i: number) => {
+    setActive(i);
+    const params = new URLSearchParams(window.location.search);
+    params.set("category", shelfCategories[i].id);
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}?${params}${window.location.hash}`,
+    );
+  };
+
   return (
     <div className="flex flex-col">
       {/* Masthead row — headline left, the "all brands" category filter right,
@@ -265,7 +286,7 @@ export function ShelfExplorer() {
                 aria-selected={selected}
                 aria-controls={`${baseId}-panel`}
                 tabIndex={selected ? 0 : -1}
-                onClick={() => setActive(i)}
+                onClick={() => selectCategory(i)}
                 className="group relative flex items-baseline gap-1.5 pb-[clamp(6px,0.7vw,12px)] outline-none"
               >
                 <span

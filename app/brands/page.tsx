@@ -45,8 +45,8 @@ export default function BrandsPage() {
           </div>
         </Spread>
 
-        {/* The full shelf — every product, by category. */}
-        <Spread id="shelf" bg="white">
+        {/* The portfolio — every product, by category. */}
+        <Spread id="portfolio" bg="white">
           <ShelfExplorer />
         </Spread>
 

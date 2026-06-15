@@ -57,7 +57,7 @@ const filteredPillars = pillars.filter((p) =>
 
 export function WhatWeDoSpread() {
   return (
-    <Spread id="what" bg="paper" className="flex flex-col gap-y-[var(--v2-flow)]">
+    <Spread id="what" bg="transparent" className="flex flex-col gap-y-[var(--v2-flow)]">
       {/* Headline block — hangs left with a wide right gutter. */}
       <div className="flex flex-col gap-y-[var(--v2-rhythm)] hyphens-auto" lang="en">
         <Eyebrow tone="gold">WHAT WE DO</Eyebrow>
@@ -100,7 +100,7 @@ export function WhatWeDoSpread() {
                   <span aria-hidden className="text-gold-strong opacity-0 transition-[translate,opacity] duration-300 group-hover:translate-x-1 group-hover:opacity-100">→</span>
                 </h3>
 
-                <p className="v2-size-body text-left sm:text-justify opacity-90">
+                <p className="v2-size-body text-justify opacity-90">
                   {p.shortBody}
                   {/* <span className="v2-italic opacity-70">{meta.formats}</span> */}
                 </p>

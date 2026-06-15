@@ -85,13 +85,13 @@ export function RetailerWall() {
               Modern *Trade*.
             </DisplayHeading>
           </div>
-          <p className="font-display w-full text-[clamp(1.5rem,2.8vw,2.6rem)] leading-[1.18] tracking-[-0.01em] text-ink/90">
+          <p className="v2-size-body text-justify opacity-90">
             40+ modern trade and e-commerce partners including supermarket chains
             and convenience stores.
           </p>
         </div>
 
-        <div className="flex flex-col gap-[clamp(56px,7vw,96px)]">
+        <div className="flex flex-col gap-y-[var(--v2-flow)]">
           {CHANNELS.map((channel) => (
             <div key={channel.label} className="flex flex-col gap-6">
               <span className="text-[11px] font-medium uppercase tracking-[0.32em] text-green">

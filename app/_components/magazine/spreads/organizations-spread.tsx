@@ -44,7 +44,7 @@ export function OrganizationsSpread({ head = false }: { head?: boolean }) {
           </h1>
         </div>
         <p
-          className="v2-enter col-span-12 self-end text-left v2-size-body opacity-90 sm:text-justify lg:col-span-6 lg:col-start-7"
+          className="v2-enter col-span-12 self-end v2-size-body text-justify opacity-90 lg:col-span-6 lg:col-start-7"
           style={{ animationDelay: "180ms" }}
         >
           {whoWeAreIntro}

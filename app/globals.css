@@ -44,6 +44,12 @@ html {
   text-rendering: optimizeLegibility;
   /* Anchor jumps clear the fixed running-head bar. */
   scroll-padding-top: var(--v2-runhead);
+  /* Full-bleed elements use width:100vw, which includes the scrollbar width and
+     would otherwise push the whole page a few px horizontally. Clip that on the
+     cross axis. `clip` (where supported) avoids creating a scroll container and
+     preserves sticky/fixed; `hidden` is the fallback for older engines. */
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 /* Native smooth scrolling for anchor jumps (Lenis was removed). Gated so the

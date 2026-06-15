@@ -38,7 +38,7 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
               </h1>
             </div>
 
-            <p className="v2-dropcap v2-size-body text-left opacity-90 max-lg:order-3 sm:text-justify">
+            <p className="v2-dropcap v2-size-body text-justify opacity-90 max-lg:order-3">
               {ourStoryIntro}
             </p>
           </div>
@@ -78,7 +78,7 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
             {founder.bio.map((para, i) => (
               <p
                 key={i}
-                className={`v2-size-body text-left sm:text-justify opacity-90 ${i === 0 ? "v2-dropcap" : "mt-[var(--v2-rhythm)]"}`}
+                className={`v2-size-body text-justify opacity-90 ${i === 0 ? "v2-dropcap" : "mt-[var(--v2-rhythm)]"}`}
               >
                 {para}
               </p>

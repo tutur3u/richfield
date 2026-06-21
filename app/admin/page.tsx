@@ -18,8 +18,6 @@ import {
   getRichfieldAdminSessionReadState,
   getRichfieldAdminStudio,
 } from "@/lib/richfield-admin-api";
-import { getRichfieldStorageAnalytics } from "@/lib/richfield-admin-storage";
-import { getRichfieldStorageFiles } from "@/lib/richfield-storage-files";
 
 export const dynamic = "force-dynamic";
 
@@ -76,11 +74,7 @@ async function AuthenticatedAdminDashboard({
 }: {
   session: AuthenticatedRichfieldAdminSession;
 }) {
-  const [studio, storageAnalytics, storageFiles] = await Promise.all([
-    getRichfieldAdminStudio(session.accessToken).catch(() => emptyStudio()),
-    getRichfieldStorageAnalytics(session.accessToken),
-    getRichfieldStorageFiles(session.accessToken),
-  ]);
+  const studio = await getRichfieldAdminStudio(session.accessToken).catch(() => emptyStudio());
 
   return (
     <RichfieldAdminDashboard
@@ -98,8 +92,14 @@ async function AuthenticatedAdminDashboard({
       membersHref={buildRichfieldWorkspaceUrl({ targetKey: "members" })}
       sessionExpiresAt={session.expiresAt}
       sessionRefreshEarlySeconds={session.refreshEarlySeconds}
-      storageAnalytics={storageAnalytics}
-      storageFiles={storageFiles}
+      storageAnalytics={{
+        message: "Storage details load when you open Storage.",
+        status: "unavailable",
+      }}
+      storageFiles={{
+        message: "Files load when you open Storage.",
+        status: "unavailable",
+      }}
       userEmail={session.user.email}
     />
   );

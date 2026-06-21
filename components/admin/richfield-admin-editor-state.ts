@@ -10,6 +10,7 @@ export type RichfieldAdminEditorDraft = {
   brand: string;
   category: string;
   country: string;
+  credit: string;
   cta: string;
   deadline: string;
   email: string;
@@ -25,7 +26,9 @@ export type RichfieldAdminEditorDraft = {
   name: string;
   objectPosition: string;
   pageSection: string;
+  placement: string;
   positions: string;
+  productName: string;
   ratio: string;
   receivedAt: string;
   removeImage: boolean;
@@ -36,6 +39,7 @@ export type RichfieldAdminEditorDraft = {
   submissionStatus: string;
   subtitle: string;
   summary: string;
+  shelfWeight: string;
   title: string;
   usageTags: string;
   year: string;
@@ -56,6 +60,7 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "brand",
   "category",
   "country",
+  "credit",
   "cta",
   "deadline",
   "email",
@@ -71,7 +76,9 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "name",
   "objectPosition",
   "pageSection",
+  "placement",
   "positions",
+  "productName",
   "ratio",
   "receivedAt",
   "removeImage",
@@ -82,6 +89,7 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "submissionStatus",
   "subtitle",
   "summary",
+  "shelfWeight",
   "title",
   "usageTags",
   "year",
@@ -222,10 +230,7 @@ export function getRichfieldEditorSteps({
   }
 
   if (
-    collectionKey !== "milestones" &&
-    collectionKey !== "contact-channels" &&
-    collectionKey !== "contact-submissions" &&
-    collectionKey !== "jobs"
+    collectionKey === "image-library"
   ) {
     steps.push("image");
   }

@@ -35,6 +35,7 @@ export type RichfieldAdminContentItem = {
   category: string;
   collectionKey: RichfieldAdminCollectionKey;
   country: string;
+  credit: string;
   cta: string;
   deadline: string;
   email: string;
@@ -54,7 +55,9 @@ export type RichfieldAdminContentItem = {
   name: string;
   objectPosition: string;
   pageSection: string;
+  placement: string;
   positions: string;
+  productName: string;
   ratio: string;
   receivedAt: string;
   role: string;
@@ -64,6 +67,7 @@ export type RichfieldAdminContentItem = {
   submissionStatus: string;
   subtitle: string;
   summary: string;
+  shelfWeight: string;
   title: string;
   usageTags: string;
   year: string;
@@ -77,6 +81,7 @@ export type RichfieldContentMutationInput = {
   category: string;
   collectionKey: RichfieldAdminCollectionKey;
   country: string;
+  credit: string;
   cta: string;
   deadline: string;
   email: string;
@@ -93,7 +98,9 @@ export type RichfieldContentMutationInput = {
   name: string;
   objectPosition: string;
   pageSection: string;
+  placement: string;
   positions: string;
+  productName: string;
   ratio: string;
   receivedAt: string;
   removeImage: boolean;
@@ -104,6 +111,7 @@ export type RichfieldContentMutationInput = {
   submissionStatus: string;
   subtitle: string;
   summary: string;
+  shelfWeight: string;
   title: string;
   usageTags: string;
   year: string;
@@ -307,6 +315,7 @@ export function readRichfieldAdminContent(
         category: readString(profileData, "category") ?? readString(entry, "subtitle") ?? "",
         collectionKey,
         country: readString(profileData, "country") ?? readString(entry, "subtitle") ?? "",
+        credit: readString(profileData, "credit") ?? readString(profileData, "country") ?? "",
         cta: readString(profileData, "cta") ?? "",
         deadline: readString(profileData, "deadline") ?? "",
         email: readString(profileData, "email") ?? "",
@@ -326,7 +335,9 @@ export function readRichfieldAdminContent(
         name: readString(profileData, "name") ?? "",
         objectPosition: readString(profileData, "objectPosition") ?? "",
         pageSection: readString(profileData, "pageSection") ?? "",
+        placement: readString(profileData, "placement") ?? readString(profileData, "usage") ?? "",
         positions: readNumber(profileData, "positions") !== null ? String(readNumber(profileData, "positions")) : "",
+        productName: readString(profileData, "productName") ?? "",
         ratio: readNumber(profileData, "ratio") !== null ? String(readNumber(profileData, "ratio")) : "",
         receivedAt: readString(profileData, "receivedAt") ?? "",
         role: readString(profileData, "role") ?? readString(entry, "subtitle") ?? "",
@@ -336,6 +347,7 @@ export function readRichfieldAdminContent(
         submissionStatus: readString(profileData, "submissionStatus") ?? "",
         subtitle: readString(entry, "subtitle") ?? "",
         summary: readString(entry, "summary") ?? "",
+        shelfWeight: readString(profileData, "shelfWeight") ?? "",
         title: readString(entry, "title") ?? "Untitled",
         usageTags: Array.isArray(profileData.usageTags)
           ? profileData.usageTags.filter((item) => typeof item === "string").join(", ")
@@ -401,6 +413,7 @@ export function parseRichfieldContentFormData(
       category: String(formData.get("category") ?? "").trim(),
       collectionKey,
       country: String(formData.get("country") ?? "").trim(),
+      credit: String(formData.get("credit") ?? "").trim(),
       cta: String(formData.get("cta") ?? "").trim(),
       deadline: String(formData.get("deadline") ?? "").trim(),
       email: String(formData.get("email") ?? "").trim(),
@@ -417,7 +430,9 @@ export function parseRichfieldContentFormData(
       name: String(formData.get("name") ?? "").trim(),
       objectPosition: String(formData.get("objectPosition") ?? "").trim(),
       pageSection: String(formData.get("pageSection") ?? "").trim(),
+      placement: String(formData.get("placement") ?? "").trim(),
       positions: String(formData.get("positions") ?? "").trim(),
+      productName: String(formData.get("productName") ?? "").trim(),
       ratio: String(formData.get("ratio") ?? "").trim(),
       receivedAt: String(formData.get("receivedAt") ?? "").trim(),
       removeImage: formData.get("removeImage") === "true" || formData.get("removeImage") === "on",
@@ -428,6 +443,7 @@ export function parseRichfieldContentFormData(
       submissionStatus: String(formData.get("submissionStatus") ?? "").trim(),
       subtitle: String(formData.get("subtitle") ?? "").trim(),
       summary: String(formData.get("summary") ?? "").trim(),
+      shelfWeight: String(formData.get("shelfWeight") ?? "").trim(),
       title,
       usageTags: String(formData.get("usageTags") ?? "").trim(),
       year: Number.isFinite(parsedYear) ? String(parsedYear) : "",

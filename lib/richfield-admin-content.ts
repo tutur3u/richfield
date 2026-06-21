@@ -214,10 +214,16 @@ function buildProfileData(input: RichfieldContentMutationInput) {
 
   if (input.collectionKey === "image-library") {
     return {
-      credit: input.country || null,
+      brand: input.brand || null,
+      category: input.category || null,
+      credit: input.credit || input.country || null,
+      feature: input.feature,
       objectPosition: input.objectPosition || null,
       pageSection: input.pageSection || "shared",
+      placement: input.placement || null,
+      productName: input.productName || null,
       ratio: parseNumber(input.ratio),
+      shelfWeight: input.shelfWeight || null,
       sortOrder: parseNumber(input.sortOrder),
       usageTags: parseStringList(input.usageTags),
     };

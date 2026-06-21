@@ -17,6 +17,7 @@ const baseDraft: RichfieldAdminEditorDraft = {
   brand: "Mars · Wrigley",
   category: "Food",
   country: "USA",
+  credit: "",
   cta: "",
   deadline: "",
   email: "",
@@ -32,7 +33,9 @@ const baseDraft: RichfieldAdminEditorDraft = {
   name: "",
   objectPosition: "",
   pageSection: "",
+  placement: "",
   positions: "",
+  productName: "",
   ratio: "",
   receivedAt: "",
   removeImage: false,
@@ -43,6 +46,7 @@ const baseDraft: RichfieldAdminEditorDraft = {
   submissionStatus: "",
   subtitle: "Food",
   summary: "Our founding partner.",
+  shelfWeight: "",
   title: "Mars · Wrigley",
   usageTags: "",
   year: "1994",
@@ -98,10 +102,10 @@ describe("Richfield admin editor state", () => {
   test("uses focused steps for each content type", () => {
     expect(
       getRichfieldEditorSteps({ collectionKey: "leadership", hasItem: true }),
-    ).toEqual(["basics", "details", "writing", "image", "danger"]);
+    ).toEqual(["basics", "details", "writing", "danger"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "brands", hasItem: true }),
-    ).toEqual(["basics", "details", "image", "danger"]);
+    ).toEqual(["basics", "details", "danger"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "milestones", hasItem: true }),
     ).toEqual(["basics", "details", "danger"]);
@@ -110,7 +114,7 @@ describe("Richfield admin editor state", () => {
     ).toEqual(["basics", "details"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "contact-page", hasItem: true }),
-    ).toEqual(["basics", "details", "writing", "image", "danger"]);
+    ).toEqual(["basics", "details", "writing", "danger"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "contact-submissions", hasItem: true }),
     ).toEqual(["basics", "details", "writing", "danger"]);

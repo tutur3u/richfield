@@ -18,6 +18,14 @@ import type {
   RichfieldStorageFileItem,
   RichfieldStorageFilesState,
 } from "@/lib/richfield-storage-files";
+import {
+  getRichfieldGalleryPlacement,
+  getRichfieldGalleryPlacementLabel,
+  richfieldGalleryPages,
+  richfieldGalleryPlacements,
+  richfieldGalleryShelfWeightOptions,
+} from "@/lib/richfield-gallery";
+import { RichfieldGalleryPanel } from "./RichfieldGalleryPanel";
 import { RichfieldAdminSyncPanel } from "./RichfieldAdminSyncPanel";
 import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
 import {
@@ -68,6 +76,7 @@ type MembersResponse = {
 
 type EditorTarget = {
   collectionKey: RichfieldAdminCollectionKey;
+  initialDraft?: Partial<Draft>;
   itemId: string | null;
 };
 
@@ -90,7 +99,7 @@ const tabLabels: Array<{ id: AdminTab; label: string }> = [
   { id: "contact-channels", label: RICHFIELD_ADMIN_COPY.tabs.contactChannels },
   { id: "contact-submissions", label: RICHFIELD_ADMIN_COPY.tabs.contactSubmissions },
   { id: "jobs", label: RICHFIELD_ADMIN_COPY.tabs.jobs },
-  { id: "image-library", label: RICHFIELD_ADMIN_COPY.tabs.images },
+  { id: "image-library", label: RICHFIELD_ADMIN_COPY.tabs.gallery },
   { id: "publish", label: RICHFIELD_ADMIN_COPY.tabs.publish },
   { id: "storage", label: RICHFIELD_ADMIN_COPY.tabs.storage },
   { id: "members", label: RICHFIELD_ADMIN_COPY.tabs.members },
@@ -152,7 +161,7 @@ const sectionCopy: Record<
   },
   "image-library": {
     empty: RICHFIELD_ADMIN_COPY.empty.images,
-    listTitle: "Images",
+    listTitle: "Gallery",
     newLabel: RICHFIELD_ADMIN_COPY.actions.newImage,
     singular: "image",
   },
@@ -178,17 +187,11 @@ const contactKindOptions = [
   { label: "Facebook", value: "facebook" },
 ];
 
-const pageSectionOptions = [
-  { label: "Home", value: "home" },
-  { label: "About", value: "about" },
-  { label: "Brands", value: "brands" },
-  { label: "Careers", value: "careers" },
-  { label: "Contact", value: "contact" },
-  { label: "Distribution", value: "distribution" },
-  { label: "Logistics", value: "logistics" },
-  { label: "Footer / Navigation", value: "footer-navigation" },
-  { label: "Shared", value: "shared" },
-];
+const pageSectionOptions = richfieldGalleryPages;
+const placementOptions = richfieldGalleryPlacements.map((placement) => ({
+  label: placement.label,
+  value: placement.value,
+}));
 
 function getInitials(email: string | null) {
   if (!email) return "R";
@@ -542,6 +545,17 @@ function StoragePanel({
       setBusy(false);
     }
   };
+
+  useEffect(() => {
+    if (
+      analyticsState.status === "unavailable" &&
+      filesState.status === "unavailable"
+    ) {
+      void refreshStorage("");
+    }
+    // StoragePanel only mounts when the Storage tab opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const runStorageMutation = async (
     request: Promise<Response>,
@@ -907,6 +921,7 @@ function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     brand: item?.brand ?? "",
     category: item?.category ?? "",
     country: item?.country ?? "",
+    credit: item?.credit ?? "",
     cta: item?.cta ?? "",
     deadline: item?.deadline ?? "",
     email: item?.email ?? "",
@@ -922,7 +937,9 @@ function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     name: item?.name ?? "",
     objectPosition: item?.objectPosition ?? "",
     pageSection: item?.pageSection ?? "",
+    placement: item?.placement ?? "",
     positions: item?.positions ?? "",
+    productName: item?.productName ?? "",
     ratio: item?.ratio ?? "",
     receivedAt: item?.receivedAt ?? "",
     removeImage: false,
@@ -933,10 +950,18 @@ function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     submissionStatus: item?.submissionStatus ?? "",
     subtitle: item?.subtitle ?? "",
     summary: item?.summary ?? "",
+    shelfWeight: item?.shelfWeight ?? "",
     title: item?.title ?? "",
     usageTags: item?.usageTags ?? "",
     year: item?.year ?? "",
   };
+}
+
+function draftWithPreset(
+  item: RichfieldAdminContentItem | null,
+  preset?: Partial<Draft>,
+) {
+  return { ...draftFromItem(item), ...preset };
 }
 
 function readFriendlyError(payload: MutationResponse, fallback: string) {
@@ -953,17 +978,14 @@ function contentItemMetaLabel(
   if (collectionKey === "contact-channels") return item.kind || "Channel";
   if (collectionKey === "contact-submissions") return item.email || "Message";
   if (collectionKey === "jobs") return item.location || "Job";
-  if (collectionKey === "image-library") return item.pageSection || "Image";
+  if (collectionKey === "image-library") {
+    return `${item.pageSection || "Gallery"} · ${getRichfieldGalleryPlacementLabel(item.placement)}`;
+  }
   return item.country || "Milestone";
 }
 
 function collectionSupportsImage(collectionKey: RichfieldAdminCollectionKey) {
-  return (
-    collectionKey !== "milestones" &&
-    collectionKey !== "contact-channels" &&
-    collectionKey !== "contact-submissions" &&
-    collectionKey !== "jobs"
-  );
+  return collectionKey === "image-library";
 }
 
 function ContentCardCover({ item }: { item: RichfieldAdminContentItem }) {
@@ -1010,7 +1032,7 @@ function EditorCoverSummary({
         : "No cover yet";
 
   return (
-    <aside className="grid min-w-0 gap-2 border border-[rgba(184,112,81,0.32)] bg-white/50 p-3">
+    <aside className="grid min-w-0 gap-2 border border-[rgba(184,112,81,0.38)] bg-white p-3">
       <span
         className={`relative block min-h-36 overflow-hidden border border-[rgba(184,112,81,0.28)] bg-[rgba(239,207,178,0.55)] bg-cover bg-center ${
           hasVisibleCover ? "" : "grid place-items-center"
@@ -1083,9 +1105,9 @@ function TextField<TName extends keyof Draft>({
         {label}
       </span>
       <input
-        className={`min-h-11 w-full min-w-0 border bg-white/78 px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] ${
+        className={`min-h-11 w-full min-w-0 border bg-white px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] ${
           error ? "border-red-400" : "border-[rgba(184,112,81,0.42)]"
-        } disabled:cursor-not-allowed disabled:bg-white/45 disabled:text-[var(--ink-soft)]`}
+        } disabled:cursor-not-allowed disabled:bg-[var(--parchment)] disabled:text-[var(--ink-soft)]`}
         disabled={disabled}
         name={name}
         onChange={(event) => onChange(name, event.currentTarget.value)}
@@ -1119,7 +1141,7 @@ function NumberField<TName extends keyof Draft>({
         {label}
       </span>
       <input
-        className="min-h-11 w-full min-w-0 border border-[rgba(184,112,81,0.42)] bg-white/78 px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] disabled:cursor-not-allowed disabled:bg-white/45 disabled:text-[var(--ink-soft)]"
+        className="min-h-11 w-full min-w-0 border border-[rgba(184,112,81,0.48)] bg-white px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] disabled:cursor-not-allowed disabled:bg-[var(--parchment)] disabled:text-[var(--ink-soft)]"
         disabled={disabled}
         inputMode="numeric"
         name={name}
@@ -1160,7 +1182,7 @@ function SelectField<TName extends keyof Draft>({
         {label}
       </span>
       <select
-        className="min-h-11 w-full min-w-0 border border-[rgba(184,112,81,0.42)] bg-white/78 px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] disabled:cursor-not-allowed disabled:bg-white/45 disabled:text-[var(--ink-soft)]"
+        className="min-h-11 w-full min-w-0 border border-[rgba(184,112,81,0.48)] bg-white px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] disabled:cursor-not-allowed disabled:bg-[var(--parchment)] disabled:text-[var(--ink-soft)]"
         disabled={disabled}
         name={name}
         onChange={(event) => onChange(name, event.currentTarget.value)}
@@ -1201,7 +1223,7 @@ function TextAreaField<TName extends keyof Draft>({
         {label}
       </span>
       <textarea
-        className="min-h-28 w-full min-w-0 resize-y border border-[rgba(184,112,81,0.42)] bg-white/78 px-3 py-3 text-sm leading-6 text-[var(--ink)] outline-none transition focus:border-[var(--gold)] disabled:cursor-not-allowed disabled:bg-white/45 disabled:text-[var(--ink-soft)]"
+        className="min-h-28 w-full min-w-0 resize-y border border-[rgba(184,112,81,0.48)] bg-white px-3 py-3 text-sm leading-6 text-[var(--ink)] outline-none transition focus:border-[var(--gold)] disabled:cursor-not-allowed disabled:bg-[var(--parchment)] disabled:text-[var(--ink-soft)]"
         disabled={disabled}
         name={name}
         onChange={(event) => onChange(name, event.currentTarget.value)}
@@ -1475,6 +1497,7 @@ function ContentList({
 
 function ContentForm({
   collectionKey,
+  initialDraft,
   item,
   onClose,
   onCloseRequest,
@@ -1484,6 +1507,7 @@ function ContentForm({
   onSaved,
 }: {
   collectionKey: RichfieldAdminCollectionKey;
+  initialDraft?: Partial<Draft>;
   item: RichfieldAdminContentItem | null;
   onClose: () => void;
   onCloseRequest: () => void;
@@ -1500,7 +1524,7 @@ function ContentForm({
     null,
   );
   const effectiveItem = savedItem ?? item;
-  const [draft, setDraft] = useState(() => draftFromItem(item));
+  const [draft, setDraft] = useState(() => draftWithPreset(item, initialDraft));
   const [slugTouched, setSlugTouched] = useState(Boolean(item));
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileLabel, setImageFileLabel] = useState("");
@@ -1529,7 +1553,7 @@ function ContentForm({
   const isFirstStep = visibleStepIndex === 0;
   const isLastStep = visibleStepIndex === editorSteps.length - 1;
   const sectionSurfaceClass =
-    "grid gap-4 border border-[rgba(184,112,81,0.28)] bg-white/42 p-4 sm:p-5";
+    "grid gap-4 border border-[rgba(184,112,81,0.42)] bg-white p-4 shadow-[0_12px_34px_rgba(82,40,37,0.08)] sm:p-5";
   const isDirty = hasRichfieldEditorDirtyChanges({
     draft,
     hasPendingImageFile: Boolean(imageFile),
@@ -1542,6 +1566,20 @@ function ContentForm({
         slug: effectiveItem.slug,
       })
     : null;
+  const galleryPlacement = getRichfieldGalleryPlacement(draft.placement);
+  const galleryPlacementNeedsProductFields = Boolean(
+    galleryPlacement?.productFields ||
+      draft.placement === "brand-logo" ||
+      draft.placement === "shared-logo" ||
+      draft.placement === "organization-logo" ||
+      draft.placement === "joint-venture-logo",
+  );
+  const galleryPlacementNeedsCategory = Boolean(
+    galleryPlacement?.categoryRequired ||
+      draft.placement === "shelf-banner" ||
+      draft.placement === "shelf-product",
+  );
+  const galleryPlacementNeedsWeight = draft.placement === "shelf-banner";
 
   useEffect(() => {
     onBusyChange(isBusy);
@@ -1562,6 +1600,19 @@ function ContentForm({
         !effectiveItem
       ) {
         next.slug = slugifyRichfieldContent(value);
+      }
+
+      return next;
+    });
+  };
+
+  const updateGalleryPage = (name: keyof Draft, value: string) => {
+    setDraft((current) => {
+      const next = { ...current, [name]: value };
+      const placement = getRichfieldGalleryPlacement(current.placement);
+
+      if (placement && placement.pageSection !== value) {
+        next.placement = "";
       }
 
       return next;
@@ -1775,7 +1826,7 @@ function ContentForm({
               className={`grid min-h-16 min-w-0 border px-3 py-2 text-left transition disabled:cursor-not-allowed disabled:opacity-55 ${
                 isActive
                   ? "border-[var(--gold)] bg-[var(--navy)] text-[var(--parchment)]"
-                  : "border-[rgba(184,112,81,0.34)] bg-white/52 text-[var(--ink)] hover:border-[var(--copper)]"
+                  : "border-[rgba(184,112,81,0.38)] bg-white text-[var(--ink)] hover:border-[var(--copper)]"
               }`}
               disabled={isBusy}
               key={step}
@@ -1814,11 +1865,11 @@ function ContentForm({
                 {RICHFIELD_ADMIN_COPY.editor.visibility}
               </span>
               <select
-                className={`min-h-11 w-full min-w-0 border bg-white/78 px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] ${
+                className={`min-h-11 w-full min-w-0 border bg-white px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] ${
                   fieldErrors.status
                     ? "border-red-400"
                     : "border-[rgba(184,112,81,0.42)]"
-                } disabled:cursor-not-allowed disabled:bg-white/45 disabled:text-[var(--ink-soft)]`}
+                } disabled:cursor-not-allowed disabled:bg-[var(--parchment)] disabled:text-[var(--ink-soft)]`}
                 disabled={isBusy}
                 onChange={(event) =>
                   updateDraft("status", event.currentTarget.value)
@@ -2065,21 +2116,70 @@ function ContentForm({
             <div className="grid gap-4 md:grid-cols-2">
               <SelectField
                 disabled={isBusy}
-                label="Page section"
+                label="Page"
                 name="pageSection"
-                onChange={updateDraft}
+                onChange={updateGalleryPage}
                 options={pageSectionOptions}
-                placeholder="Choose a section"
+                placeholder="Choose a page"
                 value={draft.pageSection}
               />
-              <TextField
+              <SelectField
                 disabled={isBusy}
-                label="Usage tags"
-                name="usageTags"
+                label="Placement"
+                name="placement"
                 onChange={updateDraft}
-                placeholder="hero, gallery, people"
-                value={draft.usageTags}
+                options={
+                  draft.pageSection
+                    ? placementOptions.filter(
+                        (option) =>
+                          getRichfieldGalleryPlacement(option.value)?.pageSection ===
+                          draft.pageSection,
+                      )
+                    : placementOptions
+                }
+                placeholder="Choose where this appears"
+                value={draft.placement}
               />
+              {galleryPlacementNeedsCategory ? (
+                <SelectField
+                  disabled={isBusy}
+                  label="Product category"
+                  name="category"
+                  onChange={updateDraft}
+                  options={categoryOptions}
+                  placeholder="Choose a category"
+                  value={draft.category}
+                />
+              ) : null}
+              {galleryPlacementNeedsProductFields ? (
+                <TextField
+                  disabled={isBusy}
+                  label="Brand"
+                  name="brand"
+                  onChange={updateDraft}
+                  value={draft.brand}
+                />
+              ) : null}
+              {galleryPlacementNeedsProductFields ? (
+                <TextField
+                  disabled={isBusy}
+                  label="Product name"
+                  name="productName"
+                  onChange={updateDraft}
+                  value={draft.productName}
+                />
+              ) : null}
+              {galleryPlacementNeedsWeight ? (
+                <SelectField
+                  disabled={isBusy}
+                  label="Shelf banner size"
+                  name="shelfWeight"
+                  onChange={updateDraft}
+                  options={richfieldGalleryShelfWeightOptions}
+                  placeholder="Choose a banner size"
+                  value={draft.shelfWeight}
+                />
+              ) : null}
               <TextField
                 disabled={isBusy}
                 label="Object position"
@@ -2105,9 +2205,17 @@ function ContentForm({
               <TextField
                 disabled={isBusy}
                 label="Credit"
-                name="country"
+                name="credit"
                 onChange={updateDraft}
-                value={draft.country}
+                value={draft.credit}
+              />
+              <TextField
+                disabled={isBusy}
+                label="Usage tags"
+                name="usageTags"
+                onChange={updateDraft}
+                placeholder="Optional: hero, gallery, people"
+                value={draft.usageTags}
               />
             </div>
           ) : null}
@@ -2212,7 +2320,7 @@ function ContentForm({
             </p>
           </div>
           <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
-            <div className="relative min-h-48 overflow-hidden border border-[rgba(184,112,81,0.42)] bg-white/58">
+            <div className="relative min-h-48 overflow-hidden border border-[rgba(184,112,81,0.42)] bg-white">
               {effectiveItem?.imageUrl && !draft.removeImage ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -2240,7 +2348,7 @@ function ContentForm({
                 </span>
                 <input
                   accept="image/*"
-                  className="min-h-11 w-full min-w-0 max-w-full border border-[rgba(184,112,81,0.42)] bg-white/78 px-3 py-2 text-sm text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-white/45 disabled:text-[var(--ink-soft)]"
+                  className="min-h-11 w-full min-w-0 max-w-full border border-[rgba(184,112,81,0.48)] bg-white px-3 py-2 text-sm text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--parchment)] disabled:text-[var(--ink-soft)]"
                   disabled={isBusy}
                   name="imageFile"
                   onChange={updateImageFile}
@@ -2258,7 +2366,7 @@ function ContentForm({
                 ) : null}
               </label>
               {effectiveItem?.imageAssetId ? (
-                <label className="flex items-center gap-3 border border-[rgba(184,112,81,0.32)] bg-white/58 px-3 py-3 text-sm text-[var(--ink)]">
+                <label className="flex items-center gap-3 border border-[rgba(184,112,81,0.38)] bg-white px-3 py-3 text-sm text-[var(--ink)]">
                   <input
                     checked={draft.removeImage}
                     className="size-4 accent-[var(--clay)]"
@@ -2403,11 +2511,13 @@ export function RichfieldAdminDashboard({
     };
   }, [editorTarget]);
 
-  const refreshContent = async () => {
+  const refreshContent = async (
+    collectionKeys: RichfieldAdminCollectionKey[] = contentTabs,
+  ) => {
     const nextContent = { ...content };
 
     await Promise.all(
-      contentTabs.map(async (collectionKey) => {
+      collectionKeys.map(async (collectionKey) => {
         const response = await adminFetch(`/api/admin/content/${collectionKey}`, {
           cache: "no-store",
         });
@@ -2425,7 +2535,7 @@ export function RichfieldAdminDashboard({
     setSelectedIds((current) => {
       const next = { ...current };
 
-      for (const collectionKey of contentTabs) {
+      for (const collectionKey of collectionKeys) {
         const selectedId = next[collectionKey];
         if (
           !selectedId ||
@@ -2472,6 +2582,31 @@ export function RichfieldAdminDashboard({
   const renderContentTab = (collectionKey: RichfieldAdminCollectionKey) => {
     const items = content[collectionKey];
     const selectedId = selectedIds[collectionKey];
+
+    if (collectionKey === "image-library") {
+      return (
+        <section className="grid min-w-0 gap-6">
+          <RichfieldGalleryPanel
+            items={items}
+            onNew={(preset) => {
+              setSelectedIds((current) => ({
+                ...current,
+                [collectionKey]: null,
+              }));
+              openEditor({ collectionKey, initialDraft: preset, itemId: null });
+            }}
+            onSelect={(id) => {
+              setSelectedIds((current) => ({
+                ...current,
+                [collectionKey]: id,
+              }));
+              openEditor({ collectionKey, itemId: id });
+            }}
+            selectedId={selectedId}
+          />
+        </section>
+      );
+    }
 
     return (
       <section className="grid min-w-0 gap-6">
@@ -2561,7 +2696,7 @@ export function RichfieldAdminDashboard({
 
         {editorTarget ? (
           <div
-            className="fixed inset-0 z-50 grid overscroll-contain bg-[rgba(12,31,52,0.58)] px-3 py-4 backdrop-blur-sm sm:px-6"
+            className="fixed inset-0 z-50 grid overscroll-contain bg-[rgba(12,31,52,0.72)] px-3 py-4 backdrop-blur-sm sm:px-6"
             onMouseDown={(event) => {
               if (event.target === event.currentTarget) {
                 requestCloseEditor();
@@ -2572,13 +2707,14 @@ export function RichfieldAdminDashboard({
             <section
               aria-label={`${editorTarget.itemId ? "Edit" : "Create"} ${sectionCopy[editorTarget.collectionKey].singular}`}
               aria-modal="true"
-              className="parchment-card mx-auto grid max-h-[calc(100vh-2rem)] w-full max-w-5xl min-w-0 overscroll-contain self-center overflow-y-auto p-4 shadow-[0_28px_90px_rgba(12,31,52,0.38)] sm:p-5"
+              className="mx-auto grid max-h-[calc(100vh-2rem)] w-full max-w-5xl min-w-0 overscroll-contain border border-[rgba(184,112,81,0.42)] bg-[var(--parchment)] self-center overflow-y-auto p-4 shadow-[0_28px_90px_rgba(12,31,52,0.44)] sm:p-5"
               role="dialog"
             >
               <ContentForm
                 collectionKey={editorTarget.collectionKey}
+                initialDraft={editorTarget.initialDraft}
                 item={editorItem}
-                key={`${editorTarget.collectionKey}-${editorTarget.itemId ?? "new"}`}
+                key={`${editorTarget.collectionKey}-${editorTarget.itemId ?? "new"}-${editorTarget.initialDraft?.pageSection ?? ""}-${editorTarget.initialDraft?.placement ?? ""}`}
                 onBusyChange={setEditorBusy}
                 onClose={closeEditor}
                 onCloseRequest={requestCloseEditor}
@@ -2613,7 +2749,7 @@ export function RichfieldAdminDashboard({
               >
                 <section
                   aria-modal="true"
-                  className="parchment-card w-full max-w-md p-5 shadow-[0_24px_80px_rgba(12,31,52,0.34)]"
+                  className="w-full max-w-md border border-[rgba(184,112,81,0.42)] bg-[var(--parchment)] p-5 shadow-[0_24px_80px_rgba(12,31,52,0.42)]"
                   role="alertdialog"
                 >
                   <p className="script-label">
@@ -2652,7 +2788,7 @@ export function RichfieldAdminDashboard({
         {activeTab === "storage" ? (
           <StoragePanel
             driveHref={driveHref}
-            onResourcesChanged={refreshContent}
+            onResourcesChanged={() => refreshContent(["image-library"])}
             storageAnalytics={storageAnalytics}
             storageFiles={storageFiles}
           />

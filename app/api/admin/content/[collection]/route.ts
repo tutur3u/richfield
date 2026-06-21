@@ -1,7 +1,6 @@
 import {
   createRichfieldExternalProjectsClient,
   getRichfieldAdminSession,
-  setupRichfieldAdminStudio,
 } from "@/lib/richfield-admin-api";
 import { createRichfieldContentItem, refreshRichfieldAdminContent } from "@/lib/richfield-admin-content";
 import { createRichfieldContentMutationStream } from "@/lib/richfield-admin-content-stream";
@@ -40,10 +39,14 @@ export async function GET(
   }
 
   try {
-    await setupRichfieldAdminStudio(session.accessToken);
-    return NextResponse.json({
-      items: await refreshRichfieldAdminContent(session.accessToken, collectionKey),
-    });
+    const startedAt = performance.now();
+    const items = await refreshRichfieldAdminContent(session.accessToken, collectionKey);
+    const response = NextResponse.json({ items });
+    response.headers.set(
+      "Server-Timing",
+      `richfield-content-refresh;dur=${Math.max(0, performance.now() - startedAt).toFixed(1)}`,
+    );
+    return response;
   } catch (error) {
     return NextResponse.json({ error: readErrorMessage(error) }, { status: 500 });
   }

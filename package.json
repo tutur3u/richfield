@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_EXTRA_CA_CERTS=$HOME/.portless/ca.pem next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -21,6 +21,7 @@
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-photo-album": "^3.6.0",
+    "sonner": "^2.0.7",
     "tuturuuu": "^0.4.3",
     "zod": "^4.4.3"
   },

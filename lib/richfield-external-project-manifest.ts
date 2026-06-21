@@ -2,7 +2,8 @@ import { brands, type Brand } from "@/content/en/brands";
 import { openPositions, type OpenPosition } from "@/content/en/careers";
 import { leaders, type Leader } from "@/content/en/leadership";
 import { milestones, type Milestone } from "@/content/en/milestones";
-import { peoplePhotos, productPhotos, partnerLogos } from "@/content/en/photography";
+import { peoplePhotos, partnerLogos } from "@/content/en/photography";
+import { shelfCategories } from "@/content/en/shelf";
 import { site } from "@/content/en/site";
 
 export type RichfieldSyncField = {
@@ -170,6 +171,22 @@ const imageLibraryFields = [
       "footer-navigation",
       "shared",
     ],
+    type: "string",
+  },
+  { key: "placement", label: "Placement", type: "string" },
+  { key: "brand", label: "Brand", type: "string" },
+  {
+    key: "category",
+    label: "Category",
+    options: ["Food", "Beverages", "Non-Food"],
+    type: "string",
+  },
+  { key: "productName", label: "Product name", type: "string" },
+  { key: "feature", label: "Featured tile", type: "boolean" },
+  {
+    key: "shelfWeight",
+    label: "Shelf banner size",
+    options: ["hero", "wide", "feature"],
     type: "string",
   },
   { key: "usageTags", label: "Usage tags", type: "string-array" },
@@ -455,8 +472,14 @@ function jobEntry(job: OpenPosition, index: number) {
 
 type ImageLibrarySeed = {
   alt: string;
+  brand?: string;
+  category?: string;
+  feature?: boolean;
   pageSection: string;
+  placement: string;
+  productName?: string;
   ratio?: number;
+  shelfWeight?: string;
   slug: string;
   sortOrder: number;
   src: string;
@@ -468,6 +491,7 @@ const curatedImageSeeds: ImageLibrarySeed[] = [
   ...Object.entries(peoplePhotos).map(([key, photo], index) => ({
     alt: photo.alt,
     pageSection: key.startsWith("hero") ? "home" : "careers",
+    placement: key.startsWith("hero") ? "cover-portrait" : "gallery-image",
     ratio: photo.ratio,
     slug: slugify(`people-${key}`),
     sortOrder: index * 10,
@@ -477,27 +501,51 @@ const curatedImageSeeds: ImageLibrarySeed[] = [
   })),
   ...Object.entries(partnerLogos).map(([name, src], index) => ({
     alt: `${name} logo`,
+    brand: name,
     pageSection: "brands",
+    placement: "brand-logo",
     slug: slugify(`logo-${name}`),
     sortOrder: 1000 + index * 10,
     src,
     title: `${name} logo`,
     usageTags: ["logo", "brand"],
   })),
-  ...Object.entries(productPhotos).flatMap(([brandName, photos], brandIndex) =>
-    photos.map((photo, index) => ({
-      alt: photo.alt,
-      pageSection: "brands",
-      slug: slugify(`product-${brandName}-${photo.name}`),
-      sortOrder: 2000 + brandIndex * 100 + index * 10,
-      src: photo.src,
-      title: photo.name,
-      usageTags: ["product", brandName],
-    })),
+  ...shelfCategories.flatMap((category, categoryIndex) =>
+    [
+      ...category.banners.map((banner, index) => ({
+        alt: banner.alt,
+        brand: banner.brand,
+        category: category.label,
+        pageSection: "brands",
+        placement: "shelf-banner",
+        ratio: banner.ratio,
+        shelfWeight: banner.weight,
+        slug: slugify(`shelf-banner-${category.id}-${banner.brand}-${index}`),
+        sortOrder: 2000 + categoryIndex * 1000 + index * 10,
+        src: banner.src,
+        title: `${banner.brand} banner`,
+        usageTags: ["shelf", "banner", category.id, banner.brand],
+      })),
+      ...category.packshots.map((photo, index) => ({
+        alt: photo.alt,
+        brand: photo.brand,
+        category: category.label,
+        feature: photo.feature ?? false,
+        pageSection: "brands",
+        placement: "shelf-product",
+        productName: photo.name,
+        slug: slugify(`shelf-product-${category.id}-${photo.brand}-${photo.name}`),
+        sortOrder: 2400 + categoryIndex * 1000 + index * 10,
+        src: photo.src,
+        title: photo.name,
+        usageTags: ["shelf", "product", category.id, photo.brand],
+      })),
+    ],
   ),
   {
     alt: "Richfield team spelling the company name on the beach",
     pageSection: "contact",
+    placement: "contact-hero",
     ratio: 16 / 9,
     slug: "contact-richfield",
     sortOrder: 3000,
@@ -508,6 +556,7 @@ const curatedImageSeeds: ImageLibrarySeed[] = [
   {
     alt: "Richfield contact background",
     pageSection: "contact",
+    placement: "contact-background",
     ratio: 16 / 9,
     slug: "contact-background",
     sortOrder: 3010,
@@ -531,9 +580,15 @@ function imageLibraryEntry(seed: ImageLibrarySeed) {
     collectionSlug: "image-library",
     profileData: {
       credit: null,
+      brand: seed.brand ?? null,
+      category: seed.category ?? null,
+      feature: seed.feature ?? false,
       objectPosition: "center",
       pageSection: seed.pageSection,
+      placement: seed.placement,
+      productName: seed.productName ?? null,
       ratio: seed.ratio ?? null,
+      shelfWeight: seed.shelfWeight ?? null,
       sortOrder: seed.sortOrder,
       usageTags: seed.usageTags,
     },

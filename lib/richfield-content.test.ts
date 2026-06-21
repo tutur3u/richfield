@@ -392,6 +392,124 @@ describe("Richfield public content", () => {
     expect(DEFAULT_RICHFIELD_CONTENT.homepageMilestones).toBe(homepageMilestones);
   });
 
+  test("builds the brand shelf from Gallery entries by category and placement", () => {
+    const content = buildRichfieldContent(
+      {
+        adapter: "richfield",
+        canonicalProjectId: "richfield",
+        generatedAt: new Date("2026-06-19").toISOString(),
+        loadingData: null,
+        profileData: {},
+        workspaceId: "workspace-1",
+        collections: [
+          {
+            collection_type: "image-library",
+            config: null,
+            description: null,
+            id: "collection-image-library",
+            slug: "image-library",
+            title: "Gallery",
+            entries: [
+              {
+                assets: [
+                  {
+                    alt_text: "Published food banner",
+                    assetUrl: "/storage/richfield/food-banner.webp",
+                    asset_type: "image",
+                    block_id: null,
+                    entry_id: "image-banner",
+                    id: "asset-image-banner",
+                    metadata: {},
+                    sort_order: 0,
+                    source_url: null,
+                    storage_path: null,
+                  },
+                ],
+                blocks: [],
+                id: "image-banner",
+                metadata: {},
+                profile_data: {
+                  brand: "Published Food",
+                  category: "Food",
+                  pageSection: "brands",
+                  placement: "shelf-banner",
+                  ratio: 2,
+                  shelfWeight: "hero",
+                  sortOrder: 1,
+                },
+                published_at: null,
+                slug: "published-food-banner",
+                status: "published",
+                subtitle: "brands",
+                summary: "Published food banner",
+                title: "Published Food banner",
+              },
+              {
+                assets: [
+                  {
+                    alt_text: "Published food product",
+                    assetUrl: "/storage/richfield/food-product.webp",
+                    asset_type: "image",
+                    block_id: null,
+                    entry_id: "image-product",
+                    id: "asset-image-product",
+                    metadata: {},
+                    sort_order: 0,
+                    source_url: null,
+                    storage_path: null,
+                  },
+                ],
+                blocks: [],
+                id: "image-product",
+                metadata: {},
+                profile_data: {
+                  brand: "Published Food",
+                  category: "Food",
+                  feature: true,
+                  pageSection: "brands",
+                  placement: "shelf-product",
+                  productName: "Published Snack",
+                  sortOrder: 2,
+                },
+                published_at: null,
+                slug: "published-food-product",
+                status: "published",
+                subtitle: "brands",
+                summary: "Published food product",
+                title: "Published Snack",
+              },
+            ],
+          },
+        ],
+      },
+      { apiBaseUrl: "https://platform.example.com/api/v1" },
+    );
+
+    expect(content.shelfCategories[0]).toEqual(
+      expect.objectContaining({
+        label: "Food",
+        brands: ["Published Food"],
+        banners: [
+          expect.objectContaining({
+            brand: "Published Food",
+            src: "https://platform.example.com/storage/richfield/food-banner.webp",
+            weight: "hero",
+          }),
+        ],
+        packshots: [
+          expect.objectContaining({
+            brand: "Published Food",
+            feature: true,
+            name: "Published Snack",
+            src: "https://platform.example.com/storage/richfield/food-product.webp",
+          }),
+        ],
+      }),
+    );
+    expect(content.shelfCategories[1]?.label).toBe("Beverages");
+    expect(content.shelfCategories[1]?.packshots.length).toBeGreaterThan(0);
+  });
+
   test("keeps public Richfield source images as local next/image paths", () => {
     const content = buildRichfieldContent(
       {

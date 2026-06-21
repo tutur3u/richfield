@@ -18,6 +18,11 @@ import {
   type Milestone,
 } from "@/content/en/milestones";
 import { peoplePhotos } from "@/content/en/photography";
+import {
+  shelfCategories,
+  type BannerWeight,
+  type ShelfCategory,
+} from "@/content/en/shelf";
 import { site } from "@/content/en/site";
 
 type JsonObject = Record<string, unknown>;
@@ -91,6 +96,7 @@ export type RichfieldContent = {
   peopleFirstIntro: string;
   milestones: Milestone[];
   homepageMilestones: Milestone[];
+  shelfCategories: ShelfCategory[];
 };
 
 export type RichfieldContactPage = {
@@ -116,7 +122,13 @@ export type RichfieldImageLibraryItem = {
   credit: string | null;
   objectPosition: string | null;
   pageSection: string;
+  placement: string | null;
+  brand: string | null;
+  category: string | null;
+  feature: boolean;
+  productName: string | null;
   ratio: number | null;
+  shelfWeight: string | null;
   sortOrder: number;
   src: string;
   title: string;
@@ -130,7 +142,13 @@ const DEFAULT_CONTACT_PAGE: RichfieldContactPage = {
     credit: null,
     objectPosition: "center",
     pageSection: "contact",
+    placement: "contact-hero",
+    brand: null,
+    category: null,
+    feature: false,
+    productName: null,
     ratio: 16 / 9,
+    shelfWeight: null,
     slug: "contact-richfield",
     sortOrder: 0,
     src: "/photos/contact-richfield.webp",
@@ -192,7 +210,13 @@ const DEFAULT_IMAGE_LIBRARY: RichfieldImageLibraryItem[] = Object.entries(people
     credit: null,
     objectPosition: "center",
     pageSection: slug.startsWith("hero") ? "home" : "careers",
+    placement: slug.startsWith("hero") ? "cover-portrait" : "gallery-image",
+    brand: null,
+    category: null,
+    feature: false,
+    productName: null,
     ratio: photo.ratio,
+    shelfWeight: null,
     slug,
     sortOrder: index * 10,
     src: photo.src,
@@ -212,6 +236,7 @@ export const DEFAULT_RICHFIELD_CONTENT: RichfieldContent = {
   leaders,
   openPositions,
   peopleFirstIntro,
+  shelfCategories,
   milestones,
   homepageMilestones,
 };
@@ -329,18 +354,36 @@ function isBrandCategory(value: string | null): value is BrandCategory {
   return Boolean(value && ["Food", "Beverages", "Non-Food"].includes(value));
 }
 
-function buildBrands(delivery: RichfieldDeliveryPayload, apiBaseUrl: string) {
+function findBrandLogo(images: RichfieldImageLibraryItem[], brandName: string) {
+  const normalized = brandName.trim().toLowerCase();
+  return (
+    images.find(
+      (image) =>
+        image.placement === "brand-logo" &&
+        (image.brand?.trim().toLowerCase() === normalized ||
+          image.title.trim().toLowerCase() === `${normalized} logo` ||
+          image.title.trim().toLowerCase() === normalized),
+    ) ?? null
+  );
+}
+
+function buildBrands(
+  delivery: RichfieldDeliveryPayload,
+  apiBaseUrl: string,
+  images: RichfieldImageLibraryItem[],
+) {
   const mapped = getPublishedEntries(delivery, "brands").map<Brand>((entry, index) => {
     const profileData = asRecord(entry.profile_data);
     const fallback = brands[index % brands.length] ?? brands[0]!;
     const category = asString(profileData.category);
     const year = asNumber(profileData.year);
+    const galleryLogo = findBrandLogo(images, entry.title) ?? findBrandLogo(images, fallback.name);
 
     return {
       name: entry.title,
       country: asString(profileData.country) ?? fallback.country,
       year: year ?? fallback.year,
-      logoSrc: getImageUrl(entry, apiBaseUrl) ?? fallback.logoSrc,
+      logoSrc: galleryLogo?.src ?? getImageUrl(entry, apiBaseUrl) ?? fallback.logoSrc,
       category: isBrandCategory(category) ? category : fallback.category,
       accent: asString(profileData.accent) ?? fallback.accent,
       story: entry.summary ?? fallback.story,
@@ -352,7 +395,12 @@ function buildBrands(delivery: RichfieldDeliveryPayload, apiBaseUrl: string) {
     };
   });
 
-  return mapped.length > 0 ? mapped : brands;
+  return mapped.length > 0
+    ? mapped
+    : brands.map((brand) => ({
+        ...brand,
+        logoSrc: findBrandLogo(images, brand.name)?.src ?? brand.logoSrc,
+      }));
 }
 
 function buildLeaders(delivery: RichfieldDeliveryPayload, apiBaseUrl: string) {
@@ -403,10 +451,16 @@ function buildImageLibrary(delivery: RichfieldDeliveryPayload, apiBaseUrl: strin
 
       return {
         alt: getLeadImage(entry)?.alt_text ?? entry.summary ?? entry.title,
+        brand: asString(profileData.brand),
+        category: asString(profileData.category),
         credit: asString(profileData.credit),
+        feature: profileData.feature === true,
         objectPosition: asString(profileData.objectPosition),
         pageSection: asString(profileData.pageSection) ?? "shared",
+        placement: asString(profileData.placement),
+        productName: asString(profileData.productName),
         ratio: asNumber(profileData.ratio),
+        shelfWeight: asString(profileData.shelfWeight),
         slug: entry.slug,
         sortOrder: asNumber(profileData.sortOrder) ?? 0,
         src: imageUrl,
@@ -419,6 +473,57 @@ function buildImageLibrary(delivery: RichfieldDeliveryPayload, apiBaseUrl: strin
   return mapped.length > 0
     ? mapped.sort((left, right) => left.sortOrder - right.sortOrder)
     : DEFAULT_IMAGE_LIBRARY;
+}
+
+function isShelfWeight(value: string | null): value is BannerWeight {
+  return value === "hero" || value === "wide" || value === "feature";
+}
+
+function buildShelfCategoriesFromImages(images: RichfieldImageLibraryItem[]) {
+  const brandImages = images.filter((image) => image.pageSection === "brands");
+
+  return shelfCategories.map<ShelfCategory>((fallbackCategory) => {
+    const categoryImages = brandImages.filter(
+      (image) => image.category === fallbackCategory.label,
+    );
+    const banners = categoryImages
+      .filter((image) => image.placement === "shelf-banner")
+      .map((image) => ({
+        alt: image.alt,
+        brand: image.brand ?? image.title,
+        ratio: image.ratio ?? 16 / 9,
+        src: image.src,
+        weight: isShelfWeight(image.shelfWeight) ? image.shelfWeight : "wide",
+      }));
+    const packshots = categoryImages
+      .filter((image) => image.placement === "shelf-product")
+      .map((image) => ({
+        alt: image.alt,
+        brand: image.brand ?? image.title,
+        feature: image.feature || undefined,
+        name: image.productName ?? image.title,
+        src: image.src,
+      }));
+
+    if (banners.length === 0 && packshots.length === 0) {
+      return fallbackCategory;
+    }
+
+    const brandsFromImages = [
+      ...new Set(
+        [...banners.map((item) => item.brand), ...packshots.map((item) => item.brand)]
+          .map((brand) => brand.trim())
+          .filter(Boolean),
+      ),
+    ];
+
+    return {
+      ...fallbackCategory,
+      banners,
+      brands: brandsFromImages.length > 0 ? brandsFromImages : fallbackCategory.brands,
+      packshots,
+    };
+  });
 }
 
 function findImageBySlug(images: RichfieldImageLibraryItem[], slug: string | null) {
@@ -447,7 +552,13 @@ function buildContactPage(
           credit: null,
           objectPosition: "center",
           pageSection: "contact",
+          placement: "contact-hero",
+          brand: null,
+          category: null,
+          feature: false,
+          productName: null,
           ratio: 16 / 9,
+          shelfWeight: null,
           slug: entry.slug,
           sortOrder: 0,
           src: entryImage,
@@ -538,9 +649,9 @@ export function buildRichfieldContent(
     return DEFAULT_RICHFIELD_CONTENT;
   }
 
-  const nextBrands = buildBrands(delivery, apiBaseUrl);
-  const nextMilestones = buildMilestones(delivery);
   const nextImageLibrary = buildImageLibrary(delivery, apiBaseUrl);
+  const nextBrands = buildBrands(delivery, apiBaseUrl, nextImageLibrary);
+  const nextMilestones = buildMilestones(delivery);
 
   return {
     ...DEFAULT_RICHFIELD_CONTENT,
@@ -554,5 +665,6 @@ export function buildRichfieldContent(
     milestones: nextMilestones,
     homepageMilestones: nextMilestones.filter((m) => !m.aboutOnly),
     openPositions: buildOpenPositions(delivery),
+    shelfCategories: buildShelfCategoriesFromImages(nextImageLibrary),
   };
 }

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 };
 
 export default async function BrandsPage() {
-  const { brandTimeline } = await getRichfieldContent();
+  const { brandTimeline, shelfCategories } = await getRichfieldContent();
 
   return (
     <>
@@ -49,7 +49,7 @@ export default async function BrandsPage() {
 
         {/* The portfolio — every product, by category. */}
         <Spread id="portfolio" bg="white">
-          <ShelfExplorer />
+          <ShelfExplorer categories={shelfCategories} />
         </Spread>
 
       </main>

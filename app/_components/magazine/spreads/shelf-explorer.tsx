@@ -232,18 +232,22 @@ function packTiles(tiles: Tile[], metrics: Metrics): Placed[] {
 
 // --- Explorer ---------------------------------------------------------------
 
-export function ShelfExplorer() {
+export function ShelfExplorer({
+  categories = shelfCategories,
+}: {
+  categories?: ShelfCategory[];
+}) {
   const [active, setActive] = useState(0);
   const baseId = useId();
   const [gridRef, metrics] = useGridMetrics();
-  const category = shelfCategories[active];
+  const category = categories[active] ?? categories[0] ?? shelfCategories[0];
   const placed = packTiles(interleave(category), metrics);
 
   // Persist the active category in the URL (?category=…) so a reload or a
   // shared link restores the same tab. Read once on mount; write on change.
   useEffect(() => {
     const id = new URLSearchParams(window.location.search).get("category");
-    const i = shelfCategories.findIndex((c) => c.id === id);
+    const i = categories.findIndex((c) => c.id === id);
     // eslint-disable-next-line react-hooks/set-state-in-effect -- restoring tab from URL
     if (i >= 0) setActive(i);
   }, []);
@@ -251,7 +255,7 @@ export function ShelfExplorer() {
   const selectCategory = (i: number) => {
     setActive(i);
     const params = new URLSearchParams(window.location.search);
-    params.set("category", shelfCategories[i].id);
+    params.set("category", categories[i].id);
     window.history.replaceState(
       null,
       "",
@@ -276,7 +280,7 @@ export function ShelfExplorer() {
           aria-label="Product categories"
           className="flex flex-wrap items-end gap-x-[clamp(18px,2.4vw,40px)] gap-y-2"
         >
-          {shelfCategories.map((cat, i) => {
+          {categories.map((cat, i) => {
             const selected = i === active;
             return (
               <button

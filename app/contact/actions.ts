@@ -2,6 +2,12 @@
 
 import { contactSchema } from "./schema";
 import { site } from "@/content/en/site";
+import {
+  getOptionalRichfieldWorkspaceId,
+  getRichfieldApiBaseUrl,
+  getRichfieldAppId,
+  getRichfieldAppSecret,
+} from "@/lib/richfield-config";
 
 export type ContactState =
   | { status: "idle" }
@@ -48,21 +54,106 @@ export async function submitContact(
   const { name, company, country, email, inquiryType, message } = parsed.data;
   const inbox = process.env.RICHFIELD_LEAD_INBOX ?? FALLBACK_INBOX;
 
+  let savedSubmissionId: string | null = null;
+
   try {
-    await deliverLead({ name, company, country, email, inquiryType, message, inbox });
+    savedSubmissionId = await saveContactSubmission({
+      company,
+      country,
+      email,
+      inquiryType,
+      message,
+      name,
+    });
   } catch {
     return {
       status: "error",
       errors: {
         _form: [
-          `We couldn't send your message. Try email at ${site.email}.`,
+          `We couldn't save your message. Try email at ${site.email}.`,
         ],
       },
       values: parsed.data as unknown as Record<string, string>,
     };
   }
 
+  try {
+    await deliverLead({ name, company, country, email, inquiryType, message, inbox });
+    if (savedSubmissionId) {
+      await updateContactSubmissionEmailStatus(savedSubmissionId, "sent");
+    }
+  } catch {
+    if (savedSubmissionId) {
+      await updateContactSubmissionEmailStatus(savedSubmissionId, "failed");
+    }
+  }
+
   return { status: "ok" };
+}
+
+function getSubmissionEndpoint(path = "") {
+  const workspaceId = getOptionalRichfieldWorkspaceId();
+
+  if (!workspaceId) {
+    throw new Error("Missing Richfield workspace id");
+  }
+
+  return `${getRichfieldApiBaseUrl().replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
+    workspaceId,
+  )}/external-projects/submissions${path}`;
+}
+
+async function saveContactSubmission(input: {
+  company: string;
+  country: string;
+  email: string;
+  inquiryType: string;
+  message: string;
+  name: string;
+}) {
+  const response = await fetch(getSubmissionEndpoint(), {
+    body: JSON.stringify({
+      ...input,
+      appId: getRichfieldAppId(),
+      appSecret: getRichfieldAppSecret(),
+      receivedAt: new Date().toISOString(),
+    }),
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Submission save failed with status ${response.status}`);
+  }
+
+  const payload = (await response.json().catch(() => null)) as {
+    entry?: { id?: unknown };
+  } | null;
+
+  return typeof payload?.entry?.id === "string" ? payload.entry.id : null;
+}
+
+async function updateContactSubmissionEmailStatus(
+  entryId: string,
+  emailNotificationStatus: "failed" | "sent",
+) {
+  await fetch(getSubmissionEndpoint(`/${encodeURIComponent(entryId)}`), {
+    body: JSON.stringify({
+      appId: getRichfieldAppId(),
+      appSecret: getRichfieldAppSecret(),
+      emailNotificationStatus,
+    }),
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+  }).catch(() => null);
 }
 
 async function deliverLead(input: {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { LeadSpread } from "@/app/_components/magazine/spreads/lead-spread";
 import { TimelineSpread } from "@/app/_components/magazine/spreads/timeline-spread";
+import { getRichfieldContent } from "@/lib/richfield-delivery";
 
 export const dynamic = "force-static";
 
@@ -15,13 +16,15 @@ export const metadata: Metadata = {
 // Our Story — one cream movement: the narrative lead (which now folds the
 // founder profile into its flow) and the timeline. The lead opens the page
 // (head clears the running-head); the timeline sits flush beneath it.
-export default function OurStoryPage() {
+export default async function OurStoryPage() {
+  const { milestones } = await getRichfieldContent();
+
   return (
     <>
       <RunningHead />
       <main className="bg-cream text-ink">
         <LeadSpread head />
-        <TimelineSpread />
+        <TimelineSpread milestones={milestones} />
       </main>
     </>
   );

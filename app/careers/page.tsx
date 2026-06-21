@@ -10,10 +10,10 @@ import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
 import { YouTubeEmbed } from "@/app/_components/primitives/youtube-embed";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { benefits, benefitsIntro } from "@/content/en/values";
-import { leaders, peopleFirstIntro } from "@/content/en/leadership";
+import { peopleFirstIntro } from "@/content/en/leadership";
+import { getRichfieldContent } from "@/lib/richfield-delivery";
 import { testimonials } from "@/content/en/testimonials";
 import { communityIntro, communityPrograms } from "@/content/en/community";
-import { openPositions } from "@/content/en/careers";
 
 export const dynamic = "force-static";
 
@@ -24,18 +24,30 @@ export const metadata: Metadata = {
   alternates: { canonical: "/careers" },
 };
 
-export default function CareersPage() {
+export default async function CareersPage() {
+  const { imageLibrary, leaders, openPositions } = await getRichfieldContent();
+  const careerHeroImages = imageLibrary.filter(
+    (image) =>
+      image.pageSection === "careers" &&
+      (image.usageTags.includes("hero") || image.usageTags.includes("people")),
+  );
+  const careerGalleryImages = imageLibrary.filter(
+    (image) =>
+      image.pageSection === "careers" &&
+      (image.usageTags.includes("gallery") || image.usageTags.includes("people")),
+  );
+
   return (
     <>
       <RunningHead />
       <main className="v2-bg-morph text-ink">
-        <CareersHero />
+        <CareersHero photos={careerHeroImages} />
 
         {/* Life at Richfield — intro + core values (thumb-index foldout) */}
         <LifeValues />
 
         {/* Life at Richfield — the year in pictures, divided by event. */}
-        <LifeGallery />
+        <LifeGallery images={careerGalleryImages} />
 
         {/* Why Richfield — people-first leadership */}
         <section className="v2-display px-6 py-[var(--v2-section)] sm:px-10 lg:px-12">

@@ -31,6 +31,7 @@ export type OpenPosition = {
   location: string;
   deadline: string;
   href?: string;
+  summary?: string;
 };
 
 export const openPositions: OpenPosition[] = [];

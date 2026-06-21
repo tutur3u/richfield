@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
 import { peoplePhotos } from "@/content/en/photography";
+import type { RichfieldImageLibraryItem } from "@/lib/richfield-content";
 
 const ADVANCE_MS = 7000;
 
@@ -35,20 +36,32 @@ const HERO_SEQUENCE: HeroPhoto[] = [
  * rises in on first paint. Auto-advance pauses on hover/focus and is disabled
  * under reduced motion.
  */
-export function CareersHero() {
+export function CareersHero({
+  photos,
+}: {
+  photos?: RichfieldImageLibraryItem[];
+}) {
   const reduce = useReducedMotion();
+  const sequence =
+    photos && photos.length > 0
+      ? photos.map((item) => ({
+          alt: item.alt,
+          objectPosition: item.objectPosition ?? undefined,
+          src: item.src,
+        }))
+      : HERO_SEQUENCE;
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (reduce || paused) return;
     const id = setInterval(() => {
-      setIndex((i) => (i + 1) % HERO_SEQUENCE.length);
+      setIndex((i) => (i + 1) % sequence.length);
     }, ADVANCE_MS);
     return () => clearInterval(id);
-  }, [reduce, paused]);
+  }, [reduce, paused, sequence.length]);
 
-  const photo = HERO_SEQUENCE[index];
+  const photo = sequence[index % sequence.length];
 
   const enter = (delay: number) =>
     reduce

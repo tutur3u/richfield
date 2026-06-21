@@ -10,6 +10,7 @@ import {
   MapPinIcon,
 } from "@/app/_components/primitives/social-icons";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
+import { getRichfieldContent } from "@/lib/richfield-delivery";
 import { site } from "@/content/en/site";
 
 export const metadata: Metadata = {
@@ -40,65 +41,37 @@ const localBusinessJsonLd = {
   },
 };
 
-type Channel = {
-  label: string;
-  primary: string;
-  secondary?: string;
-  href: string;
-  cta: string;
-  external?: boolean;
-  Icon: typeof FacebookIcon;
-  iconBg: string;
-  iconFg: string;
-};
-
-const channels: Channel[] = [
-  {
-    label: "Office",
-    primary: site.address.line1,
-    secondary: site.address.line2,
-    href: `https://www.google.com/maps?q=${encodeURIComponent(site.address.full)}`,
-    cta: "Open on Maps",
-    external: true,
-    Icon: MapPinIcon,
-    iconBg: "bg-green",
-    iconFg: "text-paper",
-  },
-  {
-    label: "Hotline",
-    primary: site.phones.hotline,
-    secondary: site.phones.office,
-    href: `tel:${site.phones.hotlineTel}`,
-    cta: "Call hotline",
-    Icon: PhoneIcon,
-    iconBg: "bg-gold",
-    iconFg: "text-ink",
-  },
-  {
-    label: "Email",
-    primary: site.email,
-    secondary: "Partnerships team",
-    href: `mailto:${site.email}`,
-    cta: "Write us",
+const channelIconByKind = {
+  email: {
     Icon: EmailIcon,
     iconBg: "bg-cream",
     iconFg: "text-ink",
   },
-  {
-    label: "Facebook",
-    primary: "RichField Group",
-    secondary: "Daily updates",
-    href: site.socials.facebook,
-    cta: "Visit page",
-    external: true,
+  facebook: {
     Icon: FacebookIcon,
     iconBg: "bg-[#1877F2]",
     iconFg: "text-white",
   },
-];
+  office: {
+    Icon: MapPinIcon,
+    iconBg: "bg-green",
+    iconFg: "text-paper",
+  },
+  phone: {
+    Icon: PhoneIcon,
+    iconBg: "bg-gold",
+    iconFg: "text-ink",
+  },
+} as const;
 
-export default function ContactPage() {
-  const mapQuery = encodeURIComponent(site.address.full);
+function getChannelIcon(kind: string) {
+  return channelIconByKind[kind as keyof typeof channelIconByKind] ?? channelIconByKind.email;
+}
+
+export default async function ContactPage() {
+  const { contactChannels, contactPage } = await getRichfieldContent();
+  const mapQuery = encodeURIComponent(contactPage.mapQuery);
+  const backgroundImage = contactPage.backgroundImage?.src ?? "/photos/contact-richfield.webp";
   return (
     <>
       <script
@@ -128,18 +101,17 @@ export default function ContactPage() {
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 -z-[5] bg-[url('/photos/contact-richfield.webp')] bg-[length:min(92vw,1200px)_auto] bg-fixed bg-center bg-no-repeat opacity-[0.55]"
+          style={{ backgroundImage: `url(${JSON.stringify(backgroundImage)})` }}
         />
         <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[var(--v2-flow)] px-6 sm:px-10 lg:px-12">
           {/* Compact heading — spans full width (nothing on the right). */}
           <RevealOnScroll className="flex w-full flex-col gap-y-[var(--v2-rhythm)]">
             <Eyebrow tone="gold">Contact</Eyebrow>
             <DisplayHeading level={1} className="w-full">
-              Tell us about your *brand*.
+              {contactPage.headline}
             </DisplayHeading>
             <p className="w-full text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-muted">
-              Brand owner exploring Vietnam, partner considering a joint
-              venture, or journalist on deadline: we&apos;ll write back within
-              two business days.
+              {contactPage.intro}
             </p>
           </RevealOnScroll>
 
@@ -148,7 +120,10 @@ export default function ContactPage() {
             <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]">
               <Eyebrow tone="gold">Channels</Eyebrow>
               <ul className="flex flex-col gap-3">
-                {channels.map((c, idx) => (
+                {contactChannels.map((c, idx) => {
+                  const { Icon, iconBg, iconFg } = getChannelIcon(c.kind);
+
+                  return (
                   <RevealOnScroll as="li" key={c.label} delayMs={idx * 70}>
                     <a
                       href={c.href}
@@ -157,9 +132,9 @@ export default function ContactPage() {
                       className="group flex items-center gap-4 rounded-sm border border-line bg-paper p-4 transition-colors duration-200 hover:border-gold hover:bg-paper/80 sm:p-5"
                     >
                       <span
-                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-sm ${c.iconBg} ${c.iconFg}`}
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-sm ${iconBg} ${iconFg}`}
                       >
-                        <c.Icon className="h-5 w-5" />
+                        <Icon className="h-5 w-5" />
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                         <span className="text-[10px] uppercase tracking-[0.28em] text-muted">
@@ -183,7 +158,8 @@ export default function ContactPage() {
                       <span className="sr-only">{c.cta}</span>
                     </a>
                   </RevealOnScroll>
-                ))}
+                );
+                })}
               </ul>
             </RevealOnScroll>
 

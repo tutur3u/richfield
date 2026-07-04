@@ -9,11 +9,7 @@ import {
   readRichfieldAdminContent,
   type RichfieldAdminStudioPayload,
 } from "@/lib/richfield-admin-content-model";
-import {
-  buildRichfieldDriveUrl,
-  buildRichfieldWorkspaceUrl,
-  resolveRichfieldAdminTargetKey,
-} from "@/lib/richfield-config";
+import { resolveRichfieldAdminTargetKey } from "@/lib/richfield-config";
 import {
   getRichfieldAdminSessionReadState,
   getRichfieldAdminStudio,
@@ -88,19 +84,8 @@ async function AuthenticatedAdminDashboard({
         leadership: readRichfieldAdminContent(studio, "leadership"),
         milestones: readRichfieldAdminContent(studio, "milestones"),
       }}
-      driveHref={buildRichfieldDriveUrl()}
-      membersHref={buildRichfieldWorkspaceUrl({ targetKey: "members" })}
       sessionExpiresAt={session.expiresAt}
       sessionRefreshEarlySeconds={session.refreshEarlySeconds}
-      storageAnalytics={{
-        message: "Storage details load when you open Storage.",
-        status: "unavailable",
-      }}
-      storageFiles={{
-        message: "Files load when you open Storage.",
-        status: "unavailable",
-      }}
-      userEmail={session.user.email}
     />
   );
 }

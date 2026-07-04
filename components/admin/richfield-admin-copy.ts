@@ -139,7 +139,7 @@ export const RICHFIELD_ADMIN_COPY = {
     brands: "Brands",
     contactChannels: "Channels",
     contactPage: "Contact",
-    contactSubmissions: "Inbox",
+    contactSubmissions: "Contact",
     gallery: "Gallery",
     images: "Gallery",
     jobs: "Jobs",

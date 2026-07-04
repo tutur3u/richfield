@@ -36,6 +36,24 @@
 
 :root {
   color-scheme: light;
+
+  /* Admin dashboard editorial palette.
+     The /admin UI (RichfieldAdminDashboard, gallery panel, edit dialog) is
+     authored against these token names. They are intentionally separate from
+     the site's Tailwind `--color-*` theme tokens above. Without these
+     definitions every `var(--parchment)` / `var(--navy)` reference resolves to
+     nothing — backgrounds fall transparent and accents disappear. Values match
+     the literal rgba() accents already used across the admin components so the
+     surface, borders, and accents stay internally consistent. */
+  --navy: #0c1f34;
+  --ink: #241f1a;
+  --ink-soft: #6f6557;
+  --parchment: #f6efe1;
+  --clay: #b87051;
+  --copper: #a85f3f;
+  --copper-dark: #8c4c30;
+  --gold: #d9a75b;
+  --teal: #1f6b73;
 }
 
 html {

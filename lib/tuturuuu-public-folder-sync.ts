@@ -30,15 +30,6 @@ type PublicManifest = {
 	};
 };
 
-type AssetUploadResponse = {
-	contentType?: unknown;
-	fullPath?: unknown;
-	headers?: unknown;
-	path?: unknown;
-	signedUrl?: unknown;
-	token?: unknown;
-};
-
 export type PublicFolderAssetUpload = {
 	collectionSlug: string;
 	entrySlug: string;
@@ -177,29 +168,6 @@ function getPublicAssetStoragePath({
 	);
 }
 
-function parseAssetUploadResponse(payload: AssetUploadResponse) {
-	if (
-		typeof payload.path !== "string" ||
-		!payload.path.trim() ||
-		typeof payload.signedUrl !== "string" ||
-		!payload.signedUrl.trim()
-	) {
-		throw new Error("Missing Tuturuuu asset upload URL payload");
-	}
-
-	return {
-		contentType: typeof payload.contentType === "string" ? payload.contentType : null,
-		fullPath: typeof payload.fullPath === "string" ? payload.fullPath : null,
-		headers:
-			payload.headers && typeof payload.headers === "object" && !Array.isArray(payload.headers)
-				? (payload.headers as Record<string, string>)
-				: null,
-		path: payload.path,
-		signedUrl: payload.signedUrl,
-		token: typeof payload.token === "string" ? payload.token : null,
-	};
-}
-
 async function readPublicAsset({
 	appBaseUrl,
 	fetchImpl,
@@ -278,24 +246,25 @@ export async function uploadExternalProjectAssetFile({
 	upsert = true,
 	workspaceId,
 }: UploadExternalProjectAssetFileInput) {
+	// Multipart direct upload: Supabase-backed workspaces reject the signed-URL
+	// flow ("Direct upload is required for Supabase-backed external assets").
+	const formData = new FormData();
+	formData.set("collectionType", collectionType);
+	formData.set("contentType", file.type || "application/octet-stream");
+	formData.set("entrySlug", entrySlug);
+	formData.set("file", file, filename);
+	formData.set("upsert", String(upsert));
+
 	const response = await fetchImpl(
 		`${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
 			workspaceId,
 		)}/external-projects/assets/upload-url`,
 		{
-			body: JSON.stringify({
-				collectionType,
-				contentType: file.type || "application/octet-stream",
-				entrySlug,
-				filename,
-				size: file.size,
-				upsert,
-			}),
+			body: formData,
 			cache: "no-store",
 			headers: {
 				Accept: "application/json",
 				Authorization: `${tokenType} ${accessToken}`,
-				"Content-Type": "application/json",
 			},
 			method: "POST",
 		},
@@ -305,50 +274,18 @@ export async function uploadExternalProjectAssetFile({
 		throw new Error(await readAssetUploadError(response));
 	}
 
-	const uploadUrl = parseAssetUploadResponse(await response.json());
-	const headers: Record<string, string> = {
-		...(uploadUrl.headers ?? {}),
+	const payload = (await response.json()) as {
+		fullPath?: unknown;
+		path?: unknown;
 	};
 
-	if (!headers["Content-Type"]) {
-		headers["Content-Type"] = uploadUrl.contentType || file.type || "application/octet-stream";
-	}
-
-	if (uploadUrl.token) {
-		headers.Authorization = `Bearer ${uploadUrl.token}`;
-	}
-
-	let uploadResponse = await fetchImpl(uploadUrl.signedUrl, {
-		body: file,
-		cache: "no-store",
-		headers,
-		method: "PUT",
-	});
-
-	if (!uploadResponse.ok) {
-		const fallbackHeaders = { ...headers };
-		delete fallbackHeaders["Content-Type"];
-
-		uploadResponse = await fetchImpl(uploadUrl.signedUrl, {
-			body: file,
-			cache: "no-store",
-			headers: fallbackHeaders,
-			method: "PUT",
-		});
-	}
-
-	if (!uploadResponse.ok) {
-		const message = await uploadResponse.text().catch(() => "");
-		throw new Error(
-			`Failed to upload public asset ${filename} (${uploadResponse.status})${
-				message ? `: ${message}` : ""
-			}`,
-		);
+	if (typeof payload.path !== "string" || !payload.path.trim()) {
+		throw new Error("Missing Tuturuuu asset upload path");
 	}
 
 	return {
-		fullPath: uploadUrl.fullPath,
-		path: uploadUrl.path,
+		fullPath: typeof payload.fullPath === "string" ? payload.fullPath : null,
+		path: payload.path,
 	};
 }
 

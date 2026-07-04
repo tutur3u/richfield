@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type ChangeEvent,
+  type DragEvent,
+  type FormEvent,
+} from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import type {
@@ -8,25 +15,9 @@ import type {
   RichfieldAdminContentItem,
   RichfieldContentStatus,
 } from "@/lib/richfield-admin-content-model";
-import type {
-  RichfieldAdminMember,
-  RichfieldAdminMembersContext,
-} from "@/lib/richfield-admin-members";
 import { slugifyRichfieldContent } from "@/lib/richfield-admin-content-model";
-import type { RichfieldStorageAnalyticsState } from "@/lib/richfield-admin-storage";
-import type {
-  RichfieldStorageFileItem,
-  RichfieldStorageFilesState,
-} from "@/lib/richfield-storage-files";
-import {
-  getRichfieldGalleryPlacement,
-  getRichfieldGalleryPlacementLabel,
-  richfieldGalleryPages,
-  richfieldGalleryPlacements,
-  richfieldGalleryShelfWeightOptions,
-} from "@/lib/richfield-gallery";
+import { getRichfieldGalleryPlacementLabel } from "@/lib/richfield-gallery";
 import { RichfieldGalleryPanel } from "./RichfieldGalleryPanel";
-import { RichfieldAdminSyncPanel } from "./RichfieldAdminSyncPanel";
 import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
 import {
   adminFetch,
@@ -49,30 +40,12 @@ import {
   type RichfieldEditorStepId,
 } from "./richfield-admin-editor-state";
 
-type AdminTab =
-  | RichfieldAdminCollectionKey
-  | "account"
-  | "members"
-  | "publish"
-  | "storage";
-
 type DashboardContent = Record<
   RichfieldAdminCollectionKey,
   RichfieldAdminContentItem[]
 >;
-type ReadyStorageAnalytics = Extract<
-  RichfieldStorageAnalyticsState,
-  { status: "ready" }
->;
-type ReadyStorageFiles = Extract<RichfieldStorageFilesState, { status: "ready" }>;
 
 type Draft = RichfieldAdminEditorDraft;
-
-type MembersResponse = {
-  context?: RichfieldAdminMembersContext;
-  error?: string;
-  members?: RichfieldAdminMember[];
-};
 
 type EditorTarget = {
   collectionKey: RichfieldAdminCollectionKey;
@@ -80,33 +53,10 @@ type EditorTarget = {
   itemId: string | null;
 };
 
-const contentTabs: RichfieldAdminCollectionKey[] = [
-  "brands",
-  "leadership",
-  "milestones",
-  "contact-page",
-  "contact-channels",
-  "contact-submissions",
-  "jobs",
-  "image-library",
-];
-
-const tabLabels: Array<{ id: AdminTab; label: string }> = [
-  { id: "brands", label: RICHFIELD_ADMIN_COPY.tabs.brands },
-  { id: "leadership", label: RICHFIELD_ADMIN_COPY.tabs.leadership },
-  { id: "milestones", label: RICHFIELD_ADMIN_COPY.tabs.milestones },
-  { id: "contact-page", label: RICHFIELD_ADMIN_COPY.tabs.contactPage },
-  { id: "contact-channels", label: RICHFIELD_ADMIN_COPY.tabs.contactChannels },
-  { id: "contact-submissions", label: RICHFIELD_ADMIN_COPY.tabs.contactSubmissions },
-  { id: "jobs", label: RICHFIELD_ADMIN_COPY.tabs.jobs },
+const tabLabels: Array<{ id: RichfieldAdminCollectionKey; label: string }> = [
   { id: "image-library", label: RICHFIELD_ADMIN_COPY.tabs.gallery },
-  { id: "publish", label: RICHFIELD_ADMIN_COPY.tabs.publish },
-  { id: "storage", label: RICHFIELD_ADMIN_COPY.tabs.storage },
-  { id: "members", label: RICHFIELD_ADMIN_COPY.tabs.members },
-  { id: "account", label: RICHFIELD_ADMIN_COPY.tabs.account },
+  { id: "contact-submissions", label: RICHFIELD_ADMIN_COPY.tabs.contactSubmissions },
 ];
-
-const byteUnits = ["B", "KB", "MB", "GB", "TB"] as const;
 
 const sectionCopy: Record<
   RichfieldAdminCollectionKey,
@@ -187,27 +137,6 @@ const contactKindOptions = [
   { label: "Facebook", value: "facebook" },
 ];
 
-const pageSectionOptions = richfieldGalleryPages;
-const placementOptions = richfieldGalleryPlacements.map((placement) => ({
-  label: placement.label,
-  value: placement.value,
-}));
-
-function getInitials(email: string | null) {
-  if (!email) return "R";
-
-  const [name] = email.split("@");
-  const initials =
-    name
-      ?.split(/[._-]+/)
-      .filter(Boolean)
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2) ?? "";
-
-  return initials.toUpperCase() || "R";
-}
-
 function statusLabel(status: RichfieldContentStatus) {
   return RICHFIELD_ADMIN_COPY.visibility[status];
 }
@@ -226,691 +155,6 @@ function statusClass(status: RichfieldContentStatus) {
   }
 
   return "border-[rgba(184,112,81,0.34)] bg-[rgba(184,112,81,0.1)] text-[var(--clay)]";
-}
-
-function formatBytes(bytes: number) {
-  if (!Number.isFinite(bytes) || bytes <= 0) return "0 B";
-
-  const exponent = Math.min(
-    Math.floor(Math.log(bytes) / Math.log(1024)),
-    byteUnits.length - 1,
-  );
-  const value = bytes / 1024 ** exponent;
-  const formatted =
-    value >= 10 || exponent === 0
-      ? Math.round(value).toString()
-      : value.toFixed(1);
-
-  return `${formatted} ${byteUnits[exponent]}`;
-}
-
-function formatFileDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return RICHFIELD_ADMIN_COPY.storage.unknownDate;
-  }
-
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(date);
-}
-
-function StorageMetric({
-  detail,
-  label,
-  value,
-}: {
-  detail?: string;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="parchment-card min-w-0 p-5 sm:p-6">
-      <p className="text-sm font-bold text-[var(--clay)]">{label}</p>
-      <strong className="mt-3 block break-words font-display text-3xl leading-none text-[var(--navy)] sm:text-4xl">
-        {value}
-      </strong>
-      {detail ? (
-        <p className="mt-2 text-sm leading-6 text-[var(--ink-soft)]">
-          {detail}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function StorageFileHighlight({
-  file,
-  label,
-}: {
-  file: ReadyStorageAnalytics["data"]["largestFile"];
-  label: string;
-}) {
-  return (
-    <div className="parchment-card min-w-0 p-5 sm:p-6">
-      <p className="text-sm font-bold text-[var(--clay)]">{label}</p>
-      {file ? (
-        <div className="mt-3">
-          <strong className="block truncate text-[var(--ink)]">
-            {file.name}
-          </strong>
-          <span className="mt-1 block text-sm text-[var(--ink-soft)]">
-            {formatBytes(file.size)} - {formatFileDate(file.createdAt)}
-          </span>
-        </div>
-      ) : (
-        <p className="mt-3 text-sm leading-6 text-[var(--ink-soft)]">
-          {RICHFIELD_ADMIN_COPY.storage.noFiles}
-        </p>
-      )}
-    </div>
-  );
-}
-
-function storageParentPath(path: string) {
-  const segments = path.split("/").filter(Boolean);
-  segments.pop();
-  return segments.join("/");
-}
-
-function isStorageFilesPayload(
-  value: unknown,
-): value is ReadyStorageFiles["data"] {
-  if (!value || typeof value !== "object") return false;
-
-  const payload = value as Record<string, unknown>;
-  return (
-    Array.isArray(payload.items) &&
-    typeof payload.path === "string" &&
-    typeof payload.total === "number"
-  );
-}
-
-function isStorageAnalyticsState(
-  value: unknown,
-): value is RichfieldStorageAnalyticsState {
-  if (!value || typeof value !== "object") return false;
-
-  const payload = value as Record<string, unknown>;
-  return payload.status === "ready" || payload.status === "unavailable";
-}
-
-function StorageFileRow({
-  busy,
-  confirmDeletePath,
-  item,
-  onDelete,
-  onOpen,
-  onOpenFolder,
-  onRename,
-  renamingPath,
-  renameValue,
-  setConfirmDeletePath,
-  setRenamingPath,
-  setRenameValue,
-}: {
-  busy: boolean;
-  confirmDeletePath: string | null;
-  item: RichfieldStorageFileItem;
-  onDelete: (item: RichfieldStorageFileItem) => void;
-  onOpen: (item: RichfieldStorageFileItem) => void;
-  onOpenFolder: (path: string) => void;
-  onRename: (item: RichfieldStorageFileItem) => void;
-  renamingPath: string | null;
-  renameValue: string;
-  setConfirmDeletePath: (path: string | null) => void;
-  setRenamingPath: (path: string | null) => void;
-  setRenameValue: (name: string) => void;
-}) {
-  const isRenaming = renamingPath === item.path;
-  const isConfirmingDelete = confirmDeletePath === item.path;
-  const dateLabel = formatFileDate(item.updatedAt ?? item.createdAt ?? "");
-
-  return (
-    <div className="grid gap-4 border border-[rgba(184,112,81,0.34)] bg-white/68 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
-      <div className="min-w-0">
-        {isRenaming ? (
-          <input
-            className="min-h-11 w-full border border-[rgba(184,112,81,0.42)] bg-white px-3 text-sm font-bold text-[var(--ink)] outline-none focus:border-[var(--gold)]"
-            onChange={(event) => setRenameValue(event.currentTarget.value)}
-            value={renameValue}
-          />
-        ) : item.kind === "folder" ? (
-          <button
-            className="block max-w-full truncate text-left font-bold text-[var(--ink)] underline decoration-[rgba(184,112,81,0.28)] underline-offset-4"
-            onClick={() => onOpenFolder(item.path)}
-            type="button"
-          >
-            {item.name}
-          </button>
-        ) : (
-          <strong className="block truncate text-[var(--ink)]">
-            {item.name}
-          </strong>
-        )}
-        <span className="mt-1 block text-sm text-[var(--ink-soft)]">
-          {item.kind === "folder" ? "Folder" : formatBytes(item.size)} -{" "}
-          {dateLabel}
-        </span>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
-        {item.kind === "file" && !isRenaming && !isConfirmingDelete ? (
-          <button
-            className="button-secondary min-h-10 px-4 text-xs"
-            disabled={busy}
-            onClick={() => onOpen(item)}
-            type="button"
-          >
-            {RICHFIELD_ADMIN_COPY.storage.open}
-          </button>
-        ) : null}
-        {isRenaming ? (
-          <>
-            <button
-              className="button-primary min-h-10 px-4 text-xs"
-              disabled={busy || !renameValue.trim()}
-              onClick={() => onRename(item)}
-              type="button"
-            >
-              {RICHFIELD_ADMIN_COPY.actions.save}
-            </button>
-            <button
-              className="button-secondary min-h-10 px-4 text-xs"
-              disabled={busy}
-              onClick={() => setRenamingPath(null)}
-              type="button"
-            >
-              {RICHFIELD_ADMIN_COPY.actions.cancel}
-            </button>
-          </>
-        ) : isConfirmingDelete ? (
-          <>
-            <button
-              className="min-h-10 bg-red-800 px-4 text-xs font-bold text-white disabled:opacity-50"
-              disabled={busy}
-              onClick={() => onDelete(item)}
-              type="button"
-            >
-              {RICHFIELD_ADMIN_COPY.storage.remove}
-            </button>
-            <button
-              className="button-secondary min-h-10 px-4 text-xs"
-              disabled={busy}
-              onClick={() => setConfirmDeletePath(null)}
-              type="button"
-            >
-              {RICHFIELD_ADMIN_COPY.actions.keep}
-            </button>
-          </>
-        ) : (
-          <>
-            <button
-              className="button-secondary min-h-10 px-4 text-xs"
-              disabled={busy}
-              onClick={() => {
-                setRenameValue(item.name);
-                setRenamingPath(item.path);
-              }}
-              type="button"
-            >
-              {RICHFIELD_ADMIN_COPY.storage.rename}
-            </button>
-            <button
-              className="min-h-10 border border-red-300 px-4 text-xs font-bold text-red-800 disabled:opacity-50"
-              disabled={busy}
-              onClick={() => setConfirmDeletePath(item.path)}
-              type="button"
-            >
-              {RICHFIELD_ADMIN_COPY.storage.remove}
-            </button>
-          </>
-        )}
-      </div>
-      {isConfirmingDelete ? (
-        <p className="text-sm leading-6 text-red-800 md:col-span-2">
-          {RICHFIELD_ADMIN_COPY.storage.deleteHint}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function StoragePanel({
-  driveHref,
-  storageAnalytics,
-  storageFiles,
-  onResourcesChanged,
-}: {
-  driveHref: string;
-  storageAnalytics: RichfieldStorageAnalyticsState;
-  storageFiles: RichfieldStorageFilesState;
-  onResourcesChanged: () => Promise<void>;
-}) {
-  const [analyticsState, setAnalyticsState] = useState(storageAnalytics);
-  const [filesState, setFilesState] = useState(storageFiles);
-  const [currentPath, setCurrentPath] = useState(
-    storageFiles.status === "ready" ? storageFiles.data.path : "",
-  );
-  const [folderName, setFolderName] = useState("");
-  const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [renamingPath, setRenamingPath] = useState<string | null>(null);
-  const [renameValue, setRenameValue] = useState("");
-  const [confirmDeletePath, setConfirmDeletePath] = useState<string | null>(
-    null,
-  );
-  const [message, setMessage] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
-
-  const refreshStorage = async (path = currentPath) => {
-    setBusy(true);
-    setMessage(null);
-    setCurrentPath(path);
-
-    try {
-      const filesUrl = new URL("/api/admin/storage", window.location.origin);
-      if (path) {
-        filesUrl.searchParams.set("path", path);
-      }
-
-      const [filesResponse, analyticsResponse] = await Promise.all([
-        adminFetch(filesUrl, { cache: "no-store" }),
-        adminFetch("/api/admin/storage/analytics", { cache: "no-store" }),
-      ]);
-      const filesPayload = (await filesResponse.json().catch(() => null)) as {
-        data?: unknown;
-        error?: string;
-      } | null;
-      const analyticsPayload = (await analyticsResponse
-        .json()
-        .catch(() => null)) as unknown;
-
-      if (filesResponse.ok && isStorageFilesPayload(filesPayload?.data)) {
-        setFilesState({ data: filesPayload.data, status: "ready" });
-      } else {
-        setFilesState({
-          message: filesPayload?.error ?? "Files are not available right now.",
-          status: "unavailable",
-        });
-      }
-
-      if (analyticsResponse.ok && isStorageAnalyticsState(analyticsPayload)) {
-        setAnalyticsState(analyticsPayload);
-      }
-    } catch {
-      setFilesState({
-        message: "Files are not available right now.",
-        status: "unavailable",
-      });
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  useEffect(() => {
-    if (
-      analyticsState.status === "unavailable" &&
-      filesState.status === "unavailable"
-    ) {
-      void refreshStorage("");
-    }
-    // StoragePanel only mounts when the Storage tab opens.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const runStorageMutation = async (
-    request: Promise<Response>,
-    successMessage: string,
-    refreshPath = currentPath,
-  ) => {
-    setBusy(true);
-    setMessage(null);
-
-    try {
-      const response = await request;
-      const payload = (await response.json().catch(() => null)) as {
-        data?: { detachedAssets?: number; updatedAssets?: number };
-        error?: string;
-      } | null;
-
-      if (!response.ok) {
-        setMessage(payload?.error ?? "Storage request failed.");
-        return;
-      }
-
-      const changedLinks =
-        (payload?.data?.detachedAssets ?? 0) +
-        (payload?.data?.updatedAssets ?? 0);
-      const successText =
-        changedLinks > 0
-          ? `${successMessage} ${changedLinks} saved item${changedLinks === 1 ? "" : "s"} updated.`
-          : successMessage;
-      setConfirmDeletePath(null);
-      setRenamingPath(null);
-      await refreshStorage(refreshPath);
-      setMessage(successText);
-      await onResourcesChanged();
-    } catch {
-      setMessage("Storage request failed.");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const uploadSelectedFile = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!uploadFile) {
-      setMessage(RICHFIELD_ADMIN_COPY.storage.chooseFile);
-      return;
-    }
-
-    const body = new FormData();
-    body.set("file", uploadFile);
-    body.set("path", currentPath);
-    body.set("upsert", "true");
-
-    await runStorageMutation(
-      adminFetch("/api/admin/storage", {
-        body,
-        method: "POST",
-      }),
-      RICHFIELD_ADMIN_COPY.storage.uploadDone,
-    );
-    setUploadFile(null);
-  };
-
-  const createFolder = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const name = folderName.trim();
-    if (!name) return;
-
-    await runStorageMutation(
-      adminFetch("/api/admin/storage", {
-        body: JSON.stringify({ name, path: currentPath }),
-        headers: { "Content-Type": "application/json" },
-        method: "POST",
-      }),
-      RICHFIELD_ADMIN_COPY.storage.folderDone,
-    );
-    setFolderName("");
-  };
-
-  const renameItem = (item: RichfieldStorageFileItem) => {
-    void runStorageMutation(
-      adminFetch("/api/admin/storage", {
-        body: JSON.stringify({
-          kind: item.kind,
-          newName: renameValue.trim(),
-          path: item.path,
-        }),
-        headers: { "Content-Type": "application/json" },
-        method: "PATCH",
-      }),
-      RICHFIELD_ADMIN_COPY.storage.renameDone,
-      storageParentPath(item.path),
-    );
-  };
-
-  const deleteItem = (item: RichfieldStorageFileItem) => {
-    void runStorageMutation(
-      adminFetch("/api/admin/storage", {
-        body: JSON.stringify({ kind: item.kind, path: item.path }),
-        headers: { "Content-Type": "application/json" },
-        method: "DELETE",
-      }),
-      RICHFIELD_ADMIN_COPY.storage.deleteDone,
-      storageParentPath(item.path),
-    );
-  };
-
-  const openFile = async (item: RichfieldStorageFileItem) => {
-    setBusy(true);
-    setMessage(null);
-
-    try {
-      const url = new URL("/api/admin/storage", window.location.origin);
-      url.searchParams.set("filePath", item.path);
-      const response = await adminFetch(url, { cache: "no-store" });
-      const payload = (await response.json().catch(() => null)) as {
-        data?: { signedUrl?: string };
-        error?: string;
-      } | null;
-
-      if (!response.ok || !payload?.data?.signedUrl) {
-        setMessage(payload?.error ?? "File could not be opened.");
-        return;
-      }
-
-      window.open(payload.data.signedUrl, "_blank", "noopener,noreferrer");
-    } catch {
-      setMessage("File could not be opened.");
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  if (
-    analyticsState.status === "unavailable" &&
-    filesState.status === "unavailable"
-  ) {
-    return (
-      <section className="parchment-card min-w-0 p-5 sm:p-6">
-        <p className="script-label">{RICHFIELD_ADMIN_COPY.storage.title}</p>
-        <h2 className="break-words font-display text-4xl leading-none text-[var(--navy)] sm:text-5xl">
-          {RICHFIELD_ADMIN_COPY.storage.unavailableTitle}
-        </h2>
-        <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ink-soft)]">
-          {analyticsState.message}
-        </p>
-        <Link
-          className="button-secondary mt-5 inline-flex"
-          href={driveHref}
-          rel="noreferrer"
-          target="_blank"
-        >
-          {RICHFIELD_ADMIN_COPY.storage.driveLink}
-        </Link>
-      </section>
-    );
-  }
-
-  const data = analyticsState.status === "ready" ? analyticsState.data : null;
-  const usagePercentage = data
-    ? Math.max(0, Math.min(100, data.usagePercentage))
-    : 0;
-  const files = filesState.status === "ready" ? filesState.data.items : [];
-  const pathLabel = currentPath || RICHFIELD_ADMIN_COPY.storage.root;
-
-  return (
-    <section className="grid min-w-0 gap-4 lg:grid-cols-3">
-      {data ? (
-        <div className="parchment-card min-w-0 p-5 sm:p-6 lg:col-span-3">
-          <p className="script-label">{RICHFIELD_ADMIN_COPY.storage.title}</p>
-          <div className="mt-2 grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
-            <div className="min-w-0">
-              <h2 className="break-words font-display text-4xl leading-none text-[var(--navy)] sm:text-5xl">
-                {RICHFIELD_ADMIN_COPY.storage.heading}
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ink-soft)]">
-                {RICHFIELD_ADMIN_COPY.storage.description}
-              </p>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--ink-soft)]">
-                {RICHFIELD_ADMIN_COPY.storage.driveDescription}
-              </p>
-            </div>
-            <div className="grid gap-3 text-left lg:text-right">
-              <strong className="font-display text-4xl leading-none text-[var(--clay)] sm:text-5xl">
-                {usagePercentage.toFixed(usagePercentage % 1 === 0 ? 0 : 1)}%
-              </strong>
-              <Link
-                className="button-secondary w-full lg:w-auto"
-                href={driveHref}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {RICHFIELD_ADMIN_COPY.storage.driveLink}
-              </Link>
-            </div>
-          </div>
-          <div className="mt-6 h-3 overflow-hidden border border-[rgba(184,112,81,0.34)] bg-white/72">
-            <div
-              className="h-full bg-[var(--clay)]"
-              style={{ width: `${usagePercentage}%` }}
-            />
-          </div>
-        </div>
-      ) : null}
-
-      {data ? (
-        <>
-          <StorageMetric
-            detail={`${formatBytes(data.totalSize)} ${RICHFIELD_ADMIN_COPY.storage.of} ${formatBytes(
-              data.storageLimit,
-            )}`}
-            label={RICHFIELD_ADMIN_COPY.storage.used}
-            value={formatBytes(data.totalSize)}
-          />
-          <StorageMetric
-            label={RICHFIELD_ADMIN_COPY.storage.limit}
-            value={formatBytes(data.storageLimit)}
-          />
-          <StorageMetric
-            label={RICHFIELD_ADMIN_COPY.storage.files}
-            value={String(data.fileCount)}
-          />
-          <StorageFileHighlight
-            file={data.largestFile}
-            label={RICHFIELD_ADMIN_COPY.storage.largest}
-          />
-          <StorageFileHighlight
-            file={data.smallestFile}
-            label={RICHFIELD_ADMIN_COPY.storage.smallest}
-          />
-        </>
-      ) : null}
-
-      <div className="parchment-card grid min-w-0 gap-5 p-5 sm:p-6 lg:col-span-3">
-        <p className="script-label">{RICHFIELD_ADMIN_COPY.storage.title}</p>
-        <div className="grid min-w-0 gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-          <div className="min-w-0">
-            <h3 className="break-words font-display text-3xl leading-none text-[var(--navy)] sm:text-4xl">
-              {pathLabel}
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-[var(--ink-soft)]">
-              {RICHFIELD_ADMIN_COPY.storage.uploadHelp}
-            </p>
-          </div>
-          <div className="grid gap-2 sm:flex sm:flex-wrap">
-            {currentPath ? (
-              <button
-                className="button-secondary min-h-10 px-4 text-xs"
-                disabled={busy}
-                onClick={() =>
-                  void refreshStorage(storageParentPath(currentPath))
-                }
-                type="button"
-              >
-                {RICHFIELD_ADMIN_COPY.storage.back}
-              </button>
-            ) : null}
-            <button
-              className="button-secondary min-h-10 px-4 text-xs"
-              disabled={busy}
-              onClick={() => void refreshStorage(currentPath)}
-              type="button"
-            >
-              {RICHFIELD_ADMIN_COPY.storage.refresh}
-            </button>
-          </div>
-        </div>
-
-        {message ? (
-          <div className="border border-[rgba(184,112,81,0.34)] bg-white/68 px-4 py-3 text-sm text-[var(--ink-soft)]">
-            {message}
-          </div>
-        ) : null}
-
-        <div className="grid gap-4 lg:grid-cols-2">
-          <form
-            className="grid min-w-0 gap-3 border border-[rgba(184,112,81,0.34)] bg-white/58 p-4"
-            onSubmit={uploadSelectedFile}
-          >
-            <label className="grid min-w-0 gap-2">
-              <span className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--clay)]">
-                {RICHFIELD_ADMIN_COPY.storage.chooseFile}
-              </span>
-              <input
-                className="min-h-11 w-full min-w-0 border border-[rgba(184,112,81,0.42)] bg-white/78 px-3 py-2 text-sm text-[var(--ink)]"
-                onChange={(event) =>
-                  setUploadFile(event.currentTarget.files?.[0] ?? null)
-                }
-                type="file"
-              />
-            </label>
-            <button
-              className="button-primary w-full"
-              disabled={busy || !uploadFile}
-              type="submit"
-            >
-              {RICHFIELD_ADMIN_COPY.storage.upload}
-            </button>
-          </form>
-
-          <form
-            className="grid min-w-0 gap-3 border border-[rgba(184,112,81,0.34)] bg-white/58 p-4"
-            onSubmit={createFolder}
-          >
-            <label className="grid min-w-0 gap-2">
-              <span className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--clay)]">
-                {RICHFIELD_ADMIN_COPY.storage.folderName}
-              </span>
-              <input
-                className="min-h-11 w-full min-w-0 border border-[rgba(184,112,81,0.42)] bg-white/78 px-3 text-sm text-[var(--ink)] outline-none focus:border-[var(--gold)]"
-                onChange={(event) => setFolderName(event.currentTarget.value)}
-                value={folderName}
-              />
-            </label>
-            <button
-              className="button-secondary w-full"
-              disabled={busy || !folderName.trim()}
-              type="submit"
-            >
-              {RICHFIELD_ADMIN_COPY.storage.createFolder}
-            </button>
-          </form>
-        </div>
-
-        <div className="grid gap-3">
-          {filesState.status === "unavailable" ? (
-            <p className="text-sm leading-6 text-[var(--ink-soft)]">
-              {filesState.message}
-            </p>
-          ) : files.length > 0 ? (
-            files.map((item) => (
-              <StorageFileRow
-                busy={busy}
-                confirmDeletePath={confirmDeletePath}
-                item={item}
-                key={item.path}
-                onDelete={deleteItem}
-                onOpen={(file) => void openFile(file)}
-                onOpenFolder={(path) => void refreshStorage(path)}
-                onRename={renameItem}
-                renameValue={renameValue}
-                renamingPath={renamingPath}
-                setConfirmDeletePath={setConfirmDeletePath}
-                setRenameValue={setRenameValue}
-                setRenamingPath={setRenamingPath}
-              />
-            ))
-          ) : (
-            <p className="border border-dashed border-[rgba(184,112,81,0.5)] bg-white/58 p-6 text-sm leading-6 text-[var(--ink-soft)]">
-              {RICHFIELD_ADMIN_COPY.storage.emptyFiles}
-            </p>
-          )}
-        </div>
-      </div>
-    </section>
-  );
 }
 
 function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
@@ -1013,6 +257,56 @@ function ContentCardCover({ item }: { item: RichfieldAdminContentItem }) {
   );
 }
 
+function toWebpFileName(name: string) {
+  const base = name.replace(/\.[^./\\]+$/u, "");
+  return `${base || "image"}.webp`;
+}
+
+// Convert an uploaded raster image to WebP in the browser before it is sent to
+// the platform, so stored gallery assets stay small. Vector and animated
+// formats are left untouched (rasterizing an SVG logo or flattening a GIF would
+// lose quality or motion), and we keep the original whenever WebP is not
+// actually smaller.
+async function convertImageToWebp(file: File): Promise<File> {
+  if (
+    file.type === "image/svg+xml" ||
+    file.type === "image/gif" ||
+    file.type === "image/webp"
+  ) {
+    return file;
+  }
+
+  try {
+    const bitmap = await createImageBitmap(file, {
+      imageOrientation: "from-image",
+    });
+    const canvas = document.createElement("canvas");
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      bitmap.close();
+      return file;
+    }
+
+    context.drawImage(bitmap, 0, 0);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob((result) => resolve(result), "image/webp", 0.9);
+    });
+
+    if (!blob || blob.size >= file.size) {
+      return file;
+    }
+
+    return new File([blob], toWebpFileName(file.name), { type: "image/webp" });
+  } catch {
+    return file;
+  }
+}
+
 function EditorCoverSummary({
   draft,
   imageFileLabel,
@@ -1034,13 +328,14 @@ function EditorCoverSummary({
   return (
     <aside className="grid min-w-0 gap-2 border border-[rgba(184,112,81,0.38)] bg-white p-3">
       <span
-        className={`relative block min-h-36 overflow-hidden border border-[rgba(184,112,81,0.28)] bg-[rgba(239,207,178,0.55)] bg-cover bg-center ${
+        className={`relative block min-h-36 overflow-hidden border border-[rgba(184,112,81,0.28)] bg-[rgba(239,207,178,0.55)] bg-cover ${
           hasVisibleCover ? "" : "grid place-items-center"
         }`}
         style={
           hasVisibleCover && item?.imageUrl
             ? {
                 backgroundImage: `url(${JSON.stringify(item.imageUrl)})`,
+                backgroundPosition: draft.objectPosition?.trim() || "center",
               }
             : undefined
         }
@@ -1272,130 +567,6 @@ function CheckboxField<TName extends keyof Draft>({
   );
 }
 
-function MembersPanel({ membersHref }: { membersHref: string }) {
-  const [members, setMembers] = useState<RichfieldAdminMember[]>([]);
-  const [context, setContext] = useState<RichfieldAdminMembersContext | null>(
-    null,
-  );
-  const [status, setStatus] = useState<"error" | "loading" | "ready">(
-    "loading",
-  );
-  const [message, setMessage] = useState<string>(
-    RICHFIELD_ADMIN_COPY.members.loading,
-  );
-
-  useEffect(() => {
-    let active = true;
-
-    const loadMembers = async () => {
-      setStatus("loading");
-      setMessage(RICHFIELD_ADMIN_COPY.members.loading);
-
-      try {
-        const response = await adminFetch("/api/admin/members", {
-          cache: "no-store",
-        });
-        const payload = (await response
-          .json()
-          .catch(() => ({}))) as MembersResponse;
-
-        if (!active) return;
-
-        if (!response.ok || !payload.members) {
-          setStatus("error");
-          setMessage(payload.error ?? RICHFIELD_ADMIN_COPY.members.unavailable);
-          return;
-        }
-
-        setMembers(payload.members);
-        setContext(payload.context ?? null);
-        setStatus("ready");
-      } catch {
-        if (!active) return;
-        setStatus("error");
-        setMessage(RICHFIELD_ADMIN_COPY.members.unavailable);
-      }
-    };
-
-    void loadMembers();
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  return (
-    <section className="parchment-card grid min-w-0 gap-5 p-4 sm:p-5">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="script-label">{RICHFIELD_ADMIN_COPY.members.title}</p>
-          <h2 className="break-words font-display text-4xl leading-none text-[var(--navy)] sm:text-5xl">
-            {context?.boundProjectName ?? "Site team"}
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ink-soft)]">
-            {RICHFIELD_ADMIN_COPY.members.description}
-          </p>
-        </div>
-        <Link
-          className="button-primary w-full sm:w-auto"
-          href={membersHref}
-          rel="noreferrer"
-          target="_blank"
-        >
-          {RICHFIELD_ADMIN_COPY.members.manage}
-        </Link>
-      </div>
-
-      {status === "loading" || status === "error" ? (
-        <div className="border border-[rgba(184,112,81,0.34)] bg-white/68 px-4 py-3 text-sm text-[var(--ink-soft)]">
-          {message}
-        </div>
-      ) : null}
-
-      {status === "ready" && members.length === 0 ? (
-        <p className="border border-dashed border-[rgba(184,112,81,0.5)] bg-white/58 p-6 text-sm leading-6 text-[var(--ink-soft)]">
-          {RICHFIELD_ADMIN_COPY.members.empty}
-        </p>
-      ) : null}
-
-      {members.length > 0 ? (
-        <div className="grid gap-3 lg:grid-cols-2">
-          {members.map((member) => (
-            <div
-              className="grid min-w-0 gap-2 border border-[rgba(184,112,81,0.34)] bg-white/68 p-4"
-              key={member.id}
-            >
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="grid size-11 shrink-0 place-items-center bg-[var(--navy)] font-display text-xl text-[var(--parchment)]">
-                  {member.initials}
-                </span>
-                <div className="min-w-0">
-                  <strong className="block truncate text-[var(--ink)]">
-                    {member.name}
-                  </strong>
-                  {member.email ? (
-                    <span className="mt-1 block truncate text-sm text-[var(--ink-soft)]">
-                      {member.email}
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <span className="border border-[rgba(184,112,81,0.34)] bg-white/72 px-2 py-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-[var(--clay)]">
-                  {member.status}
-                </span>
-                <span className="border border-[rgba(31,107,115,0.22)] bg-[rgba(31,107,115,0.08)] px-2 py-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-[var(--teal)]">
-                  {member.role}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
 function ContentList({
   collectionKey,
   items,
@@ -1528,6 +699,10 @@ function ContentForm({
   const [slugTouched, setSlugTouched] = useState(Boolean(item));
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileLabel, setImageFileLabel] = useState("");
+  const [imageDragActive, setImageDragActive] = useState(false);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+  const [imageProcessing, setImageProcessing] = useState(false);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
   const [saveProgress, setSaveProgress] = useState<SaveProgressState>({
@@ -1542,6 +717,15 @@ function ContentForm({
   const savedDraft = draftFromItem(effectiveItem);
   const isBusy = submitting || deleting;
   const supportsImage = collectionSupportsImage(collectionKey);
+  // Gallery images are managed as fixed slots: admins may only replace the
+  // image file or remove the entry. Everything else in the wizard is hidden.
+  const imageOnly = collectionKey === "image-library";
+  const previewImageSrc =
+    imagePreviewUrl ??
+    (effectiveItem?.imageUrl && !draft.removeImage
+      ? effectiveItem.imageUrl
+      : null);
+  const showImagePreview = Boolean(previewImageSrc);
   const editorSteps = getRichfieldEditorSteps({
     collectionKey,
     hasItem: Boolean(effectiveItem),
@@ -1566,21 +750,6 @@ function ContentForm({
         slug: effectiveItem.slug,
       })
     : null;
-  const galleryPlacement = getRichfieldGalleryPlacement(draft.placement);
-  const galleryPlacementNeedsProductFields = Boolean(
-    galleryPlacement?.productFields ||
-      draft.placement === "brand-logo" ||
-      draft.placement === "shared-logo" ||
-      draft.placement === "organization-logo" ||
-      draft.placement === "joint-venture-logo",
-  );
-  const galleryPlacementNeedsCategory = Boolean(
-    galleryPlacement?.categoryRequired ||
-      draft.placement === "shelf-banner" ||
-      draft.placement === "shelf-product",
-  );
-  const galleryPlacementNeedsWeight = draft.placement === "shelf-banner";
-
   useEffect(() => {
     onBusyChange(isBusy);
   }, [isBusy, onBusyChange]);
@@ -1588,6 +757,12 @@ function ContentForm({
   useEffect(() => {
     onDirtyChange(isDirty);
   }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreviewUrl) URL.revokeObjectURL(imagePreviewUrl);
+    };
+  }, [imagePreviewUrl]);
 
   const updateDraft = (name: keyof Draft, value: string | boolean) => {
     setDraft((current) => {
@@ -1606,34 +781,52 @@ function ContentForm({
     });
   };
 
-  const updateGalleryPage = (name: keyof Draft, value: string) => {
-    setDraft((current) => {
-      const next = { ...current, [name]: value };
-      const placement = getRichfieldGalleryPlacement(current.placement);
+  const applyImageFile = async (file: File | null) => {
+    if (!file) {
+      setImageFile(null);
+      setImageFileLabel("");
+      setImagePreviewUrl((previous) => {
+        if (previous) URL.revokeObjectURL(previous);
+        return null;
+      });
+      return;
+    }
 
-      if (placement && placement.pageSection !== value) {
-        next.placement = "";
-      }
+    setImageProcessing(true);
+    const optimized = await convertImageToWebp(file);
+    setImageProcessing(false);
 
-      return next;
+    setImageFile(optimized);
+    setImageFileLabel(
+      `${optimized.name} (${Math.round(optimized.size / 1024)} KB)`,
+    );
+    setImagePreviewUrl((previous) => {
+      if (previous) URL.revokeObjectURL(previous);
+      return URL.createObjectURL(optimized);
     });
+    setDraft((current) => ({ ...current, removeImage: false }));
   };
 
   const updateImageFile = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.currentTarget.files?.[0] ?? null;
-    setImageFile(file);
-    setImageFileLabel(
-      file ? `${file.name} (${Math.round(file.size / 1024)} KB)` : "",
-    );
+    void applyImageFile(event.currentTarget.files?.[0] ?? null);
+  };
 
+  const handleImageDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setImageDragActive(false);
+    if (isBusy || imageProcessing) return;
+
+    const file = Array.from(event.dataTransfer.files).find((candidate) =>
+      candidate.type.startsWith("image/"),
+    );
     if (file) {
-      setDraft((current) => ({ ...current, removeImage: false }));
+      void applyImageFile(file);
     }
   };
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!canSave) return;
+    if (!canSave || imageProcessing) return;
 
     setSubmitting(true);
     setFieldErrors({});
@@ -1748,6 +941,175 @@ function ContentForm({
     if (nextStep) setActiveStep(nextStep);
   };
 
+  if (imageOnly) {
+    return (
+      <form className="grid min-w-0 gap-5" onSubmit={submit}>
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[rgba(184,112,81,0.28)] pb-4">
+          <div className="min-w-0">
+            <p className="script-label">
+              {effectiveItem ? "Edit image" : copy.newLabel}
+            </p>
+            <h2 className="break-words font-display text-3xl leading-none text-[var(--navy)] sm:text-4xl">
+              {draft.title || `Untitled ${copy.singular}`}
+            </h2>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {previewHref ? (
+              <Link
+                className="button-secondary"
+                href={previewHref}
+                rel="noreferrer"
+                target="_blank"
+              >
+                {RICHFIELD_ADMIN_COPY.editor.openPreview}
+              </Link>
+            ) : null}
+            <button
+              className="button-secondary disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={isBusy}
+              onClick={onCloseRequest}
+              type="button"
+            >
+              Close
+            </button>
+            <button
+              className="button-primary disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={!canSave || imageProcessing}
+              type="submit"
+            >
+              {submitting
+                ? RICHFIELD_ADMIN_COPY.actions.saving
+                : RICHFIELD_ADMIN_COPY.actions.save}
+            </button>
+          </div>
+        </div>
+
+        {saveProgress.status === "running" || saveProgress.status === "error" ? (
+          <SaveProgressPanel state={saveProgress} />
+        ) : null}
+
+        {message ? (
+          <div className="border border-[rgba(184,112,81,0.34)] bg-white/68 px-4 py-3 text-sm text-[var(--ink-soft)]">
+            {message}
+          </div>
+        ) : null}
+
+        <div
+          aria-label="Replace image"
+          className={`group relative aspect-[16/10] w-full overflow-hidden border-2 border-dashed transition ${
+            imageDragActive
+              ? "border-[var(--gold)]"
+              : "border-[rgba(184,112,81,0.5)] hover:border-[var(--copper)]"
+          } ${
+            isBusy || imageProcessing
+              ? "cursor-not-allowed opacity-70"
+              : "cursor-pointer"
+          }`}
+          onClick={() => {
+            if (!isBusy && !imageProcessing) imageInputRef.current?.click();
+          }}
+          onDragLeave={() => setImageDragActive(false)}
+          onDragOver={(event) => {
+            event.preventDefault();
+            if (!isBusy && !imageProcessing) setImageDragActive(true);
+          }}
+          onDrop={handleImageDrop}
+          onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              if (!isBusy && !imageProcessing) imageInputRef.current?.click();
+            }
+          }}
+          role="button"
+          tabIndex={0}
+        >
+          {showImagePreview ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              alt={draft.imageAlt || effectiveItem?.title || "Image"}
+              className="h-full w-full object-cover"
+              src={previewImageSrc as string}
+              style={{ objectPosition: draft.objectPosition?.trim() || "center" }}
+            />
+          ) : (
+            <div className="grid h-full place-items-center px-4 text-center text-sm text-[var(--ink-soft)]">
+              No image yet.
+            </div>
+          )}
+          {imageFile ? (
+            <span className="absolute left-3 top-3 border border-[var(--gold)] bg-[var(--navy)] px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.14em] text-[var(--parchment)]">
+              New
+            </span>
+          ) : null}
+          <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 bg-[rgba(12,31,52,0.74)] px-3 py-2 text-xs text-[var(--parchment)]">
+            <span className="font-bold">
+              {imageProcessing
+                ? "Optimizing…"
+                : showImagePreview
+                  ? "Drag or click to replace"
+                  : "Drag or click to add"}
+            </span>
+            <span className="opacity-80">WebP · up to 12MB</span>
+          </div>
+        </div>
+        <input
+          accept="image/*"
+          className="hidden"
+          disabled={isBusy}
+          name="imageFile"
+          onChange={updateImageFile}
+          ref={imageInputRef}
+          type="file"
+        />
+        {imageFileLabel ? (
+          <span className="-mt-2 truncate text-xs font-bold text-[var(--navy)]">
+            {imageFileLabel}
+          </span>
+        ) : null}
+        {fieldErrors.imageFile ? (
+          <span className="-mt-2 text-xs text-red-700">
+            {fieldErrors.imageFile}
+          </span>
+        ) : null}
+
+        {effectiveItem ? (
+          confirmDelete ? (
+            <div className="flex flex-wrap items-center gap-3 border border-red-300 bg-red-500/10 px-3 py-2 text-sm text-red-800">
+              <span>Remove &ldquo;{effectiveItem.title}&rdquo; from the site?</span>
+              <div className="flex gap-2">
+                <button
+                  className="min-h-9 bg-red-800 px-3 text-sm font-bold text-white disabled:opacity-50"
+                  disabled={isBusy}
+                  onClick={() => void deleteItem()}
+                  type="button"
+                >
+                  {deleting ? "Removing" : RICHFIELD_ADMIN_COPY.actions.delete}
+                </button>
+                <button
+                  className="button-secondary min-h-9"
+                  disabled={isBusy}
+                  onClick={() => setConfirmDelete(false)}
+                  type="button"
+                >
+                  {RICHFIELD_ADMIN_COPY.actions.keep}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              className="justify-self-start text-sm font-bold text-red-800 underline decoration-red-800/25 underline-offset-4 disabled:opacity-50"
+              disabled={isBusy}
+              onClick={() => setConfirmDelete(true)}
+              type="button"
+            >
+              Remove image
+            </button>
+          )
+        ) : null}
+      </form>
+    );
+  }
+
   return (
     <form className="grid min-w-0 gap-6" onSubmit={submit}>
       <div className="grid gap-4 border-b border-[rgba(184,112,81,0.28)] pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
@@ -1793,7 +1155,7 @@ function ContentForm({
           </button>
           <button
             className="button-primary min-w-28 w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-            disabled={!canSave}
+            disabled={!canSave || imageProcessing}
             type="submit"
           >
             {submitting
@@ -2112,113 +1474,6 @@ function ContentForm({
               />
             </div>
           ) : null}
-          {collectionKey === "image-library" ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              <SelectField
-                disabled={isBusy}
-                label="Page"
-                name="pageSection"
-                onChange={updateGalleryPage}
-                options={pageSectionOptions}
-                placeholder="Choose a page"
-                value={draft.pageSection}
-              />
-              <SelectField
-                disabled={isBusy}
-                label="Placement"
-                name="placement"
-                onChange={updateDraft}
-                options={
-                  draft.pageSection
-                    ? placementOptions.filter(
-                        (option) =>
-                          getRichfieldGalleryPlacement(option.value)?.pageSection ===
-                          draft.pageSection,
-                      )
-                    : placementOptions
-                }
-                placeholder="Choose where this appears"
-                value={draft.placement}
-              />
-              {galleryPlacementNeedsCategory ? (
-                <SelectField
-                  disabled={isBusy}
-                  label="Product category"
-                  name="category"
-                  onChange={updateDraft}
-                  options={categoryOptions}
-                  placeholder="Choose a category"
-                  value={draft.category}
-                />
-              ) : null}
-              {galleryPlacementNeedsProductFields ? (
-                <TextField
-                  disabled={isBusy}
-                  label="Brand"
-                  name="brand"
-                  onChange={updateDraft}
-                  value={draft.brand}
-                />
-              ) : null}
-              {galleryPlacementNeedsProductFields ? (
-                <TextField
-                  disabled={isBusy}
-                  label="Product name"
-                  name="productName"
-                  onChange={updateDraft}
-                  value={draft.productName}
-                />
-              ) : null}
-              {galleryPlacementNeedsWeight ? (
-                <SelectField
-                  disabled={isBusy}
-                  label="Shelf banner size"
-                  name="shelfWeight"
-                  onChange={updateDraft}
-                  options={richfieldGalleryShelfWeightOptions}
-                  placeholder="Choose a banner size"
-                  value={draft.shelfWeight}
-                />
-              ) : null}
-              <TextField
-                disabled={isBusy}
-                label="Object position"
-                name="objectPosition"
-                onChange={updateDraft}
-                placeholder="center"
-                value={draft.objectPosition}
-              />
-              <NumberField
-                disabled={isBusy}
-                label="Ratio"
-                name="ratio"
-                onChange={updateDraft}
-                value={draft.ratio}
-              />
-              <NumberField
-                disabled={isBusy}
-                label="Sort order"
-                name="sortOrder"
-                onChange={updateDraft}
-                value={draft.sortOrder}
-              />
-              <TextField
-                disabled={isBusy}
-                label="Credit"
-                name="credit"
-                onChange={updateDraft}
-                value={draft.credit}
-              />
-              <TextField
-                disabled={isBusy}
-                label="Usage tags"
-                name="usageTags"
-                onChange={updateDraft}
-                placeholder="Optional: hero, gallery, people"
-                value={draft.usageTags}
-              />
-            </div>
-          ) : null}
           <TextAreaField
             disabled={isBusy}
             label={
@@ -2226,9 +1481,7 @@ function ContentForm({
                 ? "Story"
                 : collectionKey === "contact-channels"
                   ? "Primary text"
-                  : collectionKey === "image-library"
-                    ? "Alt text"
-                    : "Summary"
+                  : "Summary"
             }
             name="summary"
             onChange={updateDraft}
@@ -2314,27 +1567,93 @@ function ContentForm({
       {visibleStep === "image" && supportsImage ? (
         <section className={sectionSurfaceClass}>
           <EditorStepHeader step="image" />
-          <div>
-            <p className="mt-2 text-sm leading-6 text-[var(--ink-soft)]">
-              {RICHFIELD_ADMIN_COPY.editor.imageHelp}
-            </p>
-          </div>
-          <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,220px)_minmax(0,1fr)]">
-            <div className="relative min-h-48 overflow-hidden border border-[rgba(184,112,81,0.42)] bg-white">
-              {effectiveItem?.imageUrl && !draft.removeImage ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt={effectiveItem.imageAlt}
-                  className="h-full min-h-48 w-full object-cover"
-                  src={effectiveItem.imageUrl}
-                />
-              ) : (
-                <div className="grid min-h-48 place-items-center px-4 text-center text-sm text-[var(--ink-soft)]">
-                  Choose an image when this is ready.
-                </div>
-              )}
+          <p className="text-sm leading-6 text-[var(--ink-soft)]">
+            {RICHFIELD_ADMIN_COPY.editor.imageHelp}
+          </p>
+          <div className="grid min-w-0 gap-5 lg:grid-cols-2">
+            <div className="grid content-start gap-2">
+              <span className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--clay)]">
+                Preview
+              </span>
+              <div className="relative aspect-[4/3] w-full overflow-hidden border border-[rgba(184,112,81,0.42)] bg-[rgba(239,207,178,0.4)]">
+                {showImagePreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    alt={draft.imageAlt || effectiveItem?.title || "Preview"}
+                    className="h-full w-full object-cover"
+                    src={previewImageSrc as string}
+                    style={{
+                      objectPosition: draft.objectPosition?.trim() || "center",
+                    }}
+                  />
+                ) : (
+                  <div className="grid h-full place-items-center px-4 text-center text-sm text-[var(--ink-soft)]">
+                    Add an image to see it here.
+                  </div>
+                )}
+                {imageFile ? (
+                  <span className="absolute left-3 top-3 border border-[var(--gold)] bg-[var(--navy)] px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em] text-[var(--parchment)]">
+                    New image
+                  </span>
+                ) : null}
+              </div>
             </div>
             <div className="grid min-w-0 content-start gap-4">
+              <div
+                aria-label="Upload image"
+                className={`grid min-h-44 cursor-pointer place-items-center gap-2 border border-dashed px-4 py-6 text-center transition ${
+                  imageDragActive
+                    ? "border-[var(--gold)] bg-[rgba(217,167,91,0.14)]"
+                    : "border-[rgba(184,112,81,0.5)] bg-[var(--parchment)] hover:border-[var(--copper)]"
+                } ${isBusy || imageProcessing ? "cursor-not-allowed opacity-60" : ""}`}
+                onClick={() => {
+                  if (!isBusy && !imageProcessing) imageInputRef.current?.click();
+                }}
+                onDragLeave={() => setImageDragActive(false)}
+                onDragOver={(event) => {
+                  event.preventDefault();
+                  if (!isBusy && !imageProcessing) setImageDragActive(true);
+                }}
+                onDrop={handleImageDrop}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    if (!isBusy && !imageProcessing) {
+                      imageInputRef.current?.click();
+                    }
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+              >
+                <span className="text-sm font-bold text-[var(--copper-dark)]">
+                  {imageProcessing
+                    ? "Optimizing image…"
+                    : "Drag an image here or click to browse"}
+                </span>
+                <span className="text-xs text-[var(--ink-soft)]">
+                  Converted to WebP automatically · up to 12MB
+                </span>
+                {imageFileLabel ? (
+                  <span className="mt-1 max-w-full truncate text-xs font-bold text-[var(--navy)]">
+                    {imageFileLabel}
+                  </span>
+                ) : null}
+              </div>
+              <input
+                accept="image/*"
+                className="hidden"
+                disabled={isBusy}
+                name="imageFile"
+                onChange={updateImageFile}
+                ref={imageInputRef}
+                type="file"
+              />
+              {fieldErrors.imageFile ? (
+                <span className="text-xs text-red-700">
+                  {fieldErrors.imageFile}
+                </span>
+              ) : null}
               <TextField
                 disabled={isBusy}
                 label="Image description"
@@ -2342,29 +1661,6 @@ function ContentForm({
                 onChange={updateDraft}
                 value={draft.imageAlt}
               />
-              <label className="grid gap-2">
-                <span className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--clay)]">
-                  Choose image
-                </span>
-                <input
-                  accept="image/*"
-                  className="min-h-11 w-full min-w-0 max-w-full border border-[rgba(184,112,81,0.48)] bg-white px-3 py-2 text-sm text-[var(--ink)] disabled:cursor-not-allowed disabled:bg-[var(--parchment)] disabled:text-[var(--ink-soft)]"
-                  disabled={isBusy}
-                  name="imageFile"
-                  onChange={updateImageFile}
-                  type="file"
-                />
-                {imageFileLabel ? (
-                  <span className="text-xs text-[var(--ink-soft)]">
-                    {imageFileLabel}
-                  </span>
-                ) : null}
-                {fieldErrors.imageFile ? (
-                  <span className="text-xs text-red-700">
-                    {fieldErrors.imageFile}
-                  </span>
-                ) : null}
-              </label>
               {effectiveItem?.imageAssetId ? (
                 <label className="flex items-center gap-3 border border-[rgba(184,112,81,0.38)] bg-white px-3 py-3 text-sm text-[var(--ink)]">
                   <input
@@ -2450,25 +1746,16 @@ function ContentForm({
 }
 
 export function RichfieldAdminDashboard({
-  driveHref,
   initialContent,
-  membersHref,
   sessionExpiresAt,
   sessionRefreshEarlySeconds,
-  storageAnalytics,
-  storageFiles,
-  userEmail,
 }: {
-  driveHref: string;
   initialContent: DashboardContent;
-  membersHref: string;
   sessionExpiresAt: string;
   sessionRefreshEarlySeconds?: number;
-  storageAnalytics: RichfieldStorageAnalyticsState;
-  storageFiles: RichfieldStorageFilesState;
-  userEmail: string | null;
 }) {
-  const [activeTab, setActiveTab] = useState<AdminTab>("brands");
+  const [activeTab, setActiveTab] =
+    useState<RichfieldAdminCollectionKey>("image-library");
   const [content, setContent] = useState(initialContent);
   const [editorTarget, setEditorTarget] = useState<EditorTarget | null>(null);
   const [editorBusy, setEditorBusy] = useState(false);
@@ -2511,44 +1798,6 @@ export function RichfieldAdminDashboard({
     };
   }, [editorTarget]);
 
-  const refreshContent = async (
-    collectionKeys: RichfieldAdminCollectionKey[] = contentTabs,
-  ) => {
-    const nextContent = { ...content };
-
-    await Promise.all(
-      collectionKeys.map(async (collectionKey) => {
-        const response = await adminFetch(`/api/admin/content/${collectionKey}`, {
-          cache: "no-store",
-        });
-        const payload = (await response
-          .json()
-          .catch(() => ({}))) as MutationResponse;
-
-        if (response.ok && payload.items) {
-          nextContent[collectionKey] = payload.items;
-        }
-      }),
-    );
-
-    setContent(nextContent);
-    setSelectedIds((current) => {
-      const next = { ...current };
-
-      for (const collectionKey of collectionKeys) {
-        const selectedId = next[collectionKey];
-        if (
-          !selectedId ||
-          !nextContent[collectionKey].some((item) => item.id === selectedId)
-        ) {
-          next[collectionKey] = nextContent[collectionKey][0]?.id ?? null;
-        }
-      }
-
-      return next;
-    });
-  };
-
   const openEditor = (target: EditorTarget) => {
     setConfirmEditorClose(false);
     setEditorBusy(false);
@@ -2588,13 +1837,6 @@ export function RichfieldAdminDashboard({
         <section className="grid min-w-0 gap-6">
           <RichfieldGalleryPanel
             items={items}
-            onNew={(preset) => {
-              setSelectedIds((current) => ({
-                ...current,
-                [collectionKey]: null,
-              }));
-              openEditor({ collectionKey, initialDraft: preset, itemId: null });
-            }}
             onSelect={(id) => {
               setSelectedIds((current) => ({
                 ...current,
@@ -2690,9 +1932,7 @@ export function RichfieldAdminDashboard({
           ))}
         </nav>
 
-        {contentTabs.includes(activeTab as RichfieldAdminCollectionKey)
-          ? renderContentTab(activeTab as RichfieldAdminCollectionKey)
-          : null}
+        {renderContentTab(activeTab)}
 
         {editorTarget ? (
           <div
@@ -2707,7 +1947,11 @@ export function RichfieldAdminDashboard({
             <section
               aria-label={`${editorTarget.itemId ? "Edit" : "Create"} ${sectionCopy[editorTarget.collectionKey].singular}`}
               aria-modal="true"
-              className="mx-auto grid max-h-[calc(100vh-2rem)] w-full max-w-5xl min-w-0 overscroll-contain border border-[rgba(184,112,81,0.42)] bg-[var(--parchment)] self-center overflow-y-auto p-4 shadow-[0_28px_90px_rgba(12,31,52,0.44)] sm:p-5"
+              className={`mx-auto grid max-h-[calc(100vh-2rem)] w-full min-w-0 overscroll-contain border border-[rgba(184,112,81,0.42)] bg-[var(--parchment)] self-center overflow-y-auto p-4 shadow-[0_28px_90px_rgba(12,31,52,0.44)] sm:p-5 ${
+                editorTarget.collectionKey === "image-library"
+                  ? "max-w-xl"
+                  : "max-w-5xl"
+              }`}
               role="dialog"
             >
               <ContentForm
@@ -2783,53 +2027,6 @@ export function RichfieldAdminDashboard({
           </div>
         ) : null}
 
-        {activeTab === "publish" ? <RichfieldAdminSyncPanel /> : null}
-
-        {activeTab === "storage" ? (
-          <StoragePanel
-            driveHref={driveHref}
-            onResourcesChanged={() => refreshContent(["image-library"])}
-            storageAnalytics={storageAnalytics}
-            storageFiles={storageFiles}
-          />
-        ) : null}
-
-        {activeTab === "members" ? (
-          <MembersPanel membersHref={membersHref} />
-        ) : null}
-
-        {activeTab === "account" ? (
-          <section className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-            <div className="parchment-card min-w-0 p-5 sm:p-6">
-              <p className="script-label">
-                {RICHFIELD_ADMIN_COPY.account.signedIn}
-              </p>
-              <div className="mt-4 flex items-center gap-4">
-                <span className="grid size-14 place-items-center bg-[var(--navy)] font-display text-2xl text-[var(--parchment)]">
-                  {getInitials(userEmail)}
-                </span>
-                <div className="min-w-0">
-                  <strong className="block truncate text-[var(--ink)]">
-                    {userEmail ?? "Website editor"}
-                  </strong>
-                  <span className="mt-1 block text-sm text-[var(--ink-soft)]">
-                    {RICHFIELD_ADMIN_COPY.account.description}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="parchment-card grid min-w-0 content-start gap-3 p-5 sm:p-6">
-              <Link className="button-primary w-full" href="/">
-                {RICHFIELD_ADMIN_COPY.account.viewSite}
-              </Link>
-              <form action="/api/auth/logout" method="post">
-                <button className="button-secondary w-full" type="submit">
-                  {RICHFIELD_ADMIN_COPY.account.signOut}
-                </button>
-              </form>
-            </div>
-          </section>
-        ) : null}
       </div>
     </main>
   );

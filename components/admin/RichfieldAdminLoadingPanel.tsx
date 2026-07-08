@@ -10,13 +10,12 @@ export function RichfieldAdminLoadingPanel() {
           <p className="max-w-2xl text-sm leading-6 text-[var(--ink-soft)]">
             Checking your session, latest content, team access, and file room.
           </p>
-          <div
+          <progress
             aria-label="Dashboard is loading"
-            className="h-3 overflow-hidden border border-[rgba(184,112,81,0.34)] bg-white/72"
-            role="progressbar"
-          >
-            <div className="h-full w-1/2 animate-pulse bg-[var(--clay)]" />
-          </div>
+            className="h-3 w-full overflow-hidden border border-[rgba(184,112,81,0.34)] bg-white/72 [&::-moz-progress-bar]:animate-pulse [&::-moz-progress-bar]:bg-[var(--clay)] [&::-webkit-progress-bar]:bg-white/72 [&::-webkit-progress-value]:animate-pulse [&::-webkit-progress-value]:bg-[var(--clay)]"
+            max={100}
+            value={50}
+          />
           <ol className="grid gap-2 text-sm leading-6 text-[var(--ink-soft)] sm:grid-cols-3">
             <li className="border border-[rgba(184,112,81,0.24)] bg-white/50 px-3 py-2">
               1. Confirming access

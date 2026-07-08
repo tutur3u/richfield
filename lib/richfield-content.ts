@@ -24,6 +24,7 @@ import {
   type ShelfCategory,
 } from "@/content/en/shelf";
 import { site } from "@/content/en/site";
+import { RICHFIELD_CONTACT_CHANNELS } from "./richfield-contact-channels";
 
 type JsonObject = Record<string, unknown>;
 
@@ -161,48 +162,8 @@ const DEFAULT_CONTACT_PAGE: RichfieldContactPage = {
   mapQuery: site.address.full,
 };
 
-const DEFAULT_CONTACT_CHANNELS: RichfieldContactChannel[] = [
-  {
-    cta: "Open on Maps",
-    external: true,
-    href: `https://www.google.com/maps?q=${encodeURIComponent(site.address.full)}`,
-    kind: "office",
-    label: "Office",
-    primary: site.address.line1,
-    secondary: site.address.line2,
-    sortOrder: 10,
-  },
-  {
-    cta: "Call hotline",
-    external: false,
-    href: `tel:${site.phones.hotlineTel}`,
-    kind: "phone",
-    label: "Hotline",
-    primary: site.phones.hotline,
-    secondary: site.phones.office,
-    sortOrder: 20,
-  },
-  {
-    cta: "Write us",
-    external: false,
-    href: `mailto:${site.email}`,
-    kind: "email",
-    label: "Email",
-    primary: site.email,
-    secondary: "Partnerships team",
-    sortOrder: 30,
-  },
-  {
-    cta: "Visit page",
-    external: true,
-    href: site.socials.facebook,
-    kind: "facebook",
-    label: "Facebook",
-    primary: "RichField Group",
-    secondary: "Daily updates",
-    sortOrder: 40,
-  },
-];
+const DEFAULT_CONTACT_CHANNELS: RichfieldContactChannel[] =
+  RICHFIELD_CONTACT_CHANNELS.map(({ slug: _slug, ...channel }) => channel);
 
 const DEFAULT_IMAGE_LIBRARY: RichfieldImageLibraryItem[] = Object.entries(peoplePhotos).map(
   ([slug, photo], index) => ({
@@ -350,6 +311,29 @@ function asStringArray(value: unknown) {
     : [];
 }
 
+function slugifyContentKey(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function findByContentSlug<T>(
+  items: T[],
+  entry: DeliveryEntry,
+  getKey: (item: T) => string,
+) {
+  const slug = entry.slug;
+  const titleSlug = slugifyContentKey(entry.title);
+
+  return (
+    items.find((item) => slugifyContentKey(getKey(item)) === slug) ??
+    items.find((item) => slugifyContentKey(getKey(item)) === titleSlug) ??
+    null
+  );
+}
+
 function isBrandCategory(value: string | null): value is BrandCategory {
   return Boolean(value && ["Food", "Beverages", "Non-Food"].includes(value));
 }
@@ -374,7 +358,10 @@ function buildBrands(
 ) {
   const mapped = getPublishedEntries(delivery, "brands").map<Brand>((entry, index) => {
     const profileData = asRecord(entry.profile_data);
-    const fallback = brands[index % brands.length] ?? brands[0]!;
+    const fallback =
+      findByContentSlug(brands, entry, (brand) => brand.name) ??
+      brands[index % brands.length] ??
+      brands[0]!;
     const category = asString(profileData.category);
     const year = asNumber(profileData.year);
     const galleryLogo = findBrandLogo(images, entry.title) ?? findBrandLogo(images, fallback.name);
@@ -405,7 +392,10 @@ function buildBrands(
 
 function buildLeaders(delivery: RichfieldDeliveryPayload, apiBaseUrl: string) {
   const mapped = getPublishedEntries(delivery, "leadership").map<Leader>((entry, index) => {
-    const fallback = leaders[index % leaders.length] ?? leaders[0]!;
+    const fallback =
+      findByContentSlug(leaders, entry, (leader) => leader.name) ??
+      leaders[index % leaders.length] ??
+      leaders[0]!;
     const bio = getMarkdown(entry);
 
     return {
@@ -423,7 +413,15 @@ function buildLeaders(delivery: RichfieldDeliveryPayload, apiBaseUrl: string) {
 function buildMilestones(delivery: RichfieldDeliveryPayload) {
   const mapped = getPublishedEntries(delivery, "milestones").map<Milestone>((entry, index) => {
     const profileData = asRecord(entry.profile_data);
-    const fallback = milestones[index % milestones.length] ?? milestones[0]!;
+    const fallback =
+      findByContentSlug(
+        milestones,
+        entry,
+        (milestone) => `${milestone.year}-${milestone.brand}`,
+      ) ??
+      findByContentSlug(milestones, entry, (milestone) => milestone.brand) ??
+      milestones[index % milestones.length] ??
+      milestones[0]!;
     const year = asNumber(profileData.year);
 
     return {
@@ -576,7 +574,10 @@ function buildContactChannels(delivery: RichfieldDeliveryPayload) {
   const mapped = getPublishedEntries(delivery, "contact-channels").map<RichfieldContactChannel>(
     (entry, index) => {
       const profileData = asRecord(entry.profile_data);
-      const fallback = DEFAULT_CONTACT_CHANNELS[index % DEFAULT_CONTACT_CHANNELS.length]!;
+      const fallback =
+        RICHFIELD_CONTACT_CHANNELS.find((channel) => channel.slug === entry.slug) ??
+        findByContentSlug(DEFAULT_CONTACT_CHANNELS, entry, (channel) => channel.label) ??
+        DEFAULT_CONTACT_CHANNELS[index % DEFAULT_CONTACT_CHANNELS.length]!;
 
       return {
         cta: asString(profileData.cta) ?? fallback.cta,

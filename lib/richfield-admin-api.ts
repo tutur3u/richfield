@@ -4,6 +4,7 @@ import {
   uploadExternalProjectAssetFile,
 } from "./tuturuuu-public-folder-sync";
 import { getRichfieldApiBaseUrl, getRichfieldAppBaseUrl, getRichfieldWorkspaceId } from "./richfield-config";
+import { fetchWithRichfieldTimeout } from "./richfield-fetch";
 import { richfieldExternalProjectManifest } from "./richfield-external-project-manifest";
 import {
   getRichfieldSessionFromCookies,
@@ -60,7 +61,7 @@ export async function setupRichfieldAdminStudio(accessToken: string) {
   const apiBaseUrl = getRichfieldApiBaseUrl();
   const appBaseUrl = getRichfieldAppBaseUrl();
   const manifest = buildSyncManifest(appBaseUrl);
-  const response = await fetch(
+  const response = await fetchWithRichfieldTimeout(
     `${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
       workspaceId,
     )}/external-projects/setup`,

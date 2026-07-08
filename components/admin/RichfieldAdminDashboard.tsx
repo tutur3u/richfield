@@ -507,7 +507,9 @@ function StoragePanel({
       analyticsState.status === "unavailable" &&
       filesState.status === "unavailable"
     ) {
-      void refreshStorage("");
+      const timeout = window.setTimeout(() => void refreshStorage(""), 0);
+
+      return () => window.clearTimeout(timeout);
     }
     // StoragePanel only mounts when the Storage tab opens.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1118,6 +1120,8 @@ function toWebpFileName(name: string) {
   return `${base || "image"}.webp`;
 }
 
+const MAX_ADMIN_IMAGE_UPLOAD_BYTES = 12 * 1024 * 1024;
+
 // Convert an uploaded raster image to WebP in the browser before it is sent to
 // the platform, so stored gallery assets stay small. Vector and animated
 // formats are left untouched (rasterizing an SVG logo or flattening a GIF would
@@ -1645,6 +1649,11 @@ function ContentForm({
         if (previous) URL.revokeObjectURL(previous);
         return null;
       });
+      return;
+    }
+
+    if (file.size > MAX_ADMIN_IMAGE_UPLOAD_BYTES) {
+      setMessage("Choose an image smaller than 12MB.");
       return;
     }
 
@@ -2897,6 +2906,7 @@ export function RichfieldAdminDashboard({
                 role="presentation"
               >
                 <section
+                  aria-label={RICHFIELD_ADMIN_COPY.editor.unsavedTitle}
                   aria-modal="true"
                   className="w-full max-w-md border border-[rgba(184,112,81,0.42)] bg-[var(--parchment)] p-5 shadow-[0_24px_80px_rgba(12,31,52,0.42)]"
                   role="alertdialog"

@@ -4,6 +4,7 @@ import {
   getRichfieldAppBaseUrl,
   getRichfieldWorkspaceId,
 } from "@/lib/richfield-config";
+import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
 import { getRichfieldSessionFromCookies } from "@/lib/richfield-session";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
@@ -29,52 +30,56 @@ export async function POST(request: Request) {
   const appBaseUrl = getRichfieldAppBaseUrl(new URL(request.url).origin);
   const manifest = buildSyncManifest(appBaseUrl);
 
-  const setupResponse = await fetch(
-    `${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
-      workspaceId,
-    )}/external-projects/setup`,
-    {
-      body: JSON.stringify({ manifest }),
-      cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        Authorization: `${session.tokenType} ${session.accessToken}`,
-        "Content-Type": "application/json",
+  try {
+    const setupResponse = await fetchWithRichfieldTimeout(
+      `${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
+        workspaceId,
+      )}/external-projects/setup`,
+      {
+        body: JSON.stringify({ manifest }),
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+          Authorization: `${session.tokenType} ${session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
       },
-      method: "POST",
-    },
-  );
-
-  if (!setupResponse.ok) {
-    return NextResponse.json(
-      { error: await readApiError(setupResponse) },
-      { status: setupResponse.status },
     );
-  }
 
-  const response = await fetch(
-    `${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
-      workspaceId,
-    )}/external-projects/sync/apply`,
-    {
-      body: JSON.stringify({
-        force: body?.force === true,
-        manifest,
-      }),
-      cache: "no-store",
-      headers: {
-        Accept: "application/json",
-        Authorization: `${session.tokenType} ${session.accessToken}`,
-        "Content-Type": "application/json",
+    if (!setupResponse.ok) {
+      return NextResponse.json(
+        { error: await readApiError(setupResponse) },
+        { status: setupResponse.status },
+      );
+    }
+
+    const response = await fetchWithRichfieldTimeout(
+      `${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
+        workspaceId,
+      )}/external-projects/sync/apply`,
+      {
+        body: JSON.stringify({
+          force: body?.force === true,
+          manifest,
+        }),
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+          Authorization: `${session.tokenType} ${session.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        method: "POST",
       },
-      method: "POST",
-    },
-  );
+    );
 
-  if (!response.ok) {
-    return NextResponse.json({ error: await readApiError(response) }, { status: response.status });
+    if (!response.ok) {
+      return NextResponse.json({ error: await readApiError(response) }, { status: response.status });
+    }
+
+    revalidatePath("/", "layout");
+    return NextResponse.json(await response.json());
+  } catch {
+    return NextResponse.json({ error: "Sync apply request timed out." }, { status: 502 });
   }
-
-  revalidatePath("/", "layout");
-  return NextResponse.json(await response.json());
 }

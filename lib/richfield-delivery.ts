@@ -5,6 +5,7 @@ import {
   type RichfieldDeliveryPayload,
 } from "./richfield-content";
 import { getOptionalRichfieldWorkspaceId, getRichfieldApiBaseUrl } from "./richfield-config";
+import { fetchWithRichfieldTimeout } from "./richfield-fetch";
 
 const DELIVERY_REVALIDATE_SECONDS = 60;
 
@@ -16,7 +17,7 @@ async function fetchDeliveryPayload() {
   }
 
   const apiBaseUrl = getRichfieldApiBaseUrl();
-  const response = await fetch(
+  const response = await fetchWithRichfieldTimeout(
     `${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
       workspaceId,
     )}/external-projects/delivery`,

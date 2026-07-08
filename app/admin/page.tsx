@@ -74,7 +74,10 @@ async function AuthenticatedAdminDashboard({
 }: {
   session: AuthenticatedRichfieldAdminSession;
 }) {
-  const studio = await getRichfieldAdminStudio(session.accessToken).catch(() => emptyStudio());
+  const studio = await getRichfieldAdminStudio(session.accessToken).catch((error) => {
+    console.error("[richfield:admin] failed to load studio", error);
+    return emptyStudio();
+  });
 
   return (
     <RichfieldAdminDashboard

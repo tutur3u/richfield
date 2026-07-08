@@ -1,4 +1,5 @@
 import { getRichfieldApiBaseUrl, getRichfieldWorkspaceId } from "./richfield-config";
+import { fetchWithRichfieldTimeout } from "./richfield-fetch";
 
 type RawMember = Record<string, unknown>;
 
@@ -53,10 +54,12 @@ function readRoles(record: Record<string, unknown>) {
   const roles = record.roles;
   if (!Array.isArray(roles) || roles.length === 0) return null;
 
-  return roles
+  const roleNames = roles
     .map((role) => readString(readRecord(role), "name"))
     .filter((role): role is string => Boolean(role))
     .join(", ");
+
+  return roleNames || null;
 }
 
 function initialsFor(name: string, email: string | null) {
@@ -141,8 +144,8 @@ export async function getRichfieldAdminMembers(
     Authorization: `Bearer ${accessToken}`,
   };
   const [contextResponse, membersResponse] = await Promise.all([
-    fetch(baseEndpoint, { cache: "no-store", headers }),
-    fetch(`${baseEndpoint}/enhanced?status=joined`, {
+    fetchWithRichfieldTimeout(baseEndpoint, { cache: "no-store", headers }),
+    fetchWithRichfieldTimeout(`${baseEndpoint}/enhanced?status=joined`, {
       cache: "no-store",
       headers,
     }),

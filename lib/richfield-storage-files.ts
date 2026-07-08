@@ -1,4 +1,5 @@
 import { getRichfieldApiBaseUrl, getRichfieldWorkspaceId } from "./richfield-config";
+import { fetchWithRichfieldTimeout } from "./richfield-fetch";
 
 export type RichfieldStorageFileItem = {
   contentType: string | null;
@@ -73,7 +74,7 @@ export async function getRichfieldStorageFiles(
       url.searchParams.set("path", path);
     }
 
-    const response = await fetch(url, {
+    const response = await fetchWithRichfieldTimeout(url, {
       cache: "no-store",
       headers: {
         Accept: "application/json",

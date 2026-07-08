@@ -5,6 +5,7 @@ import { milestones, type Milestone } from "@/content/en/milestones";
 import { peoplePhotos, partnerLogos } from "@/content/en/photography";
 import { shelfCategories } from "@/content/en/shelf";
 import { site } from "@/content/en/site";
+import { RICHFIELD_CONTACT_CHANNELS } from "./richfield-contact-channels";
 
 export type RichfieldSyncField = {
   description?: string | null;
@@ -381,54 +382,7 @@ function contactPageEntry() {
 }
 
 function contactChannelEntries() {
-  const channels = [
-    {
-      cta: "Open on Maps",
-      external: true,
-      href: `https://www.google.com/maps?q=${encodeURIComponent(site.address.full)}`,
-      kind: "office",
-      primary: site.address.line1,
-      secondary: site.address.line2,
-      slug: "office",
-      sortOrder: 10,
-      title: "Office",
-    },
-    {
-      cta: "Call hotline",
-      external: false,
-      href: `tel:${site.phones.hotlineTel}`,
-      kind: "phone",
-      primary: site.phones.hotline,
-      secondary: site.phones.office,
-      slug: "hotline",
-      sortOrder: 20,
-      title: "Hotline",
-    },
-    {
-      cta: "Write us",
-      external: false,
-      href: `mailto:${site.email}`,
-      kind: "email",
-      primary: site.email,
-      secondary: "Partnerships team",
-      slug: "email",
-      sortOrder: 30,
-      title: "Email",
-    },
-    {
-      cta: "Visit page",
-      external: true,
-      href: site.socials.facebook,
-      kind: "facebook",
-      primary: "RichField Group",
-      secondary: "Daily updates",
-      slug: "facebook",
-      sortOrder: 40,
-      title: "Facebook",
-    },
-  ];
-
-  return channels.map((channel) => ({
+  return RICHFIELD_CONTACT_CHANNELS.map((channel) => ({
     blocks: [],
     collectionSlug: "contact-channels",
     profileData: {
@@ -444,7 +398,7 @@ function contactChannelEntries() {
     status: PUBLISHED_STATUS,
     subtitle: channel.secondary,
     summary: channel.primary,
-    title: channel.title,
+    title: channel.label,
   }));
 }
 

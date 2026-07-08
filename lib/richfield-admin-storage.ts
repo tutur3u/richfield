@@ -1,8 +1,9 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import type { StorageAnalytics } from "tuturuuu";
+import { getRichfieldAdminSession } from "./richfield-admin-api";
 import { getRichfieldApiBaseUrl, getRichfieldWorkspaceId } from "./richfield-config";
-import { getRichfieldSessionFromCookies } from "./richfield-session";
+import { fetchWithRichfieldTimeout } from "./richfield-fetch";
 
 export type RichfieldStorageAnalyticsState =
   | { data: StorageAnalytics; status: "ready" }
@@ -46,7 +47,7 @@ export async function getRichfieldStorageAnalytics(
   try {
     const apiBaseUrl = getRichfieldApiBaseUrl().replace(/\/+$/, "");
     const workspaceId = getRichfieldWorkspaceId();
-    const response = await fetch(
+    const response = await fetchWithRichfieldTimeout(
       `${apiBaseUrl}/workspaces/${encodeURIComponent(
         workspaceId,
       )}/external-projects/storage-analytics`,
@@ -90,17 +91,14 @@ export async function getRichfieldStorageAnalytics(
   }
 }
 
-function getRichfieldAdminSession() {
-  return getRichfieldSessionFromCookies();
-}
-
 function revalidateRichfieldContent() {
   revalidatePath("/", "layout");
-  revalidatePath("/blog");
+  revalidatePath("/");
+  revalidatePath("/brands");
+  revalidatePath("/careers");
   revalidatePath("/contact");
-  revalidatePath("/gallery");
-  revalidatePath("/shop");
-  revalidatePath("/worlds/[slug]", "page");
+  revalidatePath("/about/our-story");
+  revalidatePath("/about/who-we-are");
 }
 
 function getPlatformStorageUrl(request: Request) {
@@ -119,9 +117,17 @@ function getPlatformStorageUrl(request: Request) {
 }
 
 async function readPlatformPayload(response: Response) {
-  return (await response.json().catch(async () => ({
-    error: (await response.text().catch(() => "")) || "Storage request failed",
-  }))) as unknown;
+  const text = await response.text().catch(() => "");
+
+  if (!text) {
+    return response.ok ? {} : { error: "Storage request failed" };
+  }
+
+  try {
+    return JSON.parse(text) as unknown;
+  } catch {
+    return { error: text };
+  }
 }
 
 export async function forwardStorageRequest(request: Request, method: string) {
@@ -148,17 +154,21 @@ export async function forwardStorageRequest(request: Request, method: string) {
     }
   }
 
-  const response = await fetch(getPlatformStorageUrl(request), {
-    body,
-    cache: "no-store",
-    headers,
-    method,
-  });
-  const payload = await readPlatformPayload(response);
+  try {
+    const response = await fetchWithRichfieldTimeout(getPlatformStorageUrl(request), {
+      body,
+      cache: "no-store",
+      headers,
+      method,
+    });
+    const payload = await readPlatformPayload(response);
 
-  if (response.ok && method !== "GET") {
-    revalidateRichfieldContent();
+    if (response.ok && method !== "GET") {
+      revalidateRichfieldContent();
+    }
+
+    return NextResponse.json(payload, { status: response.status });
+  } catch {
+    return NextResponse.json({ error: "Storage request failed" }, { status: 502 });
   }
-
-  return NextResponse.json(payload, { status: response.status });
 }

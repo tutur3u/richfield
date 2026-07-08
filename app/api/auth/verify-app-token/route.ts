@@ -1,4 +1,5 @@
 import { getRichfieldApiBaseUrl, getRichfieldAppId, getRichfieldAppSecret, getRichfieldWorkspaceId } from "@/lib/richfield-config";
+import { fetchWithRichfieldTimeout, isRichfieldTimeoutError } from "@/lib/richfield-fetch";
 import {
   createRichfieldSessionFromExchangePayload,
   setRichfieldSessionCookie,
@@ -31,7 +32,7 @@ async function readExchangeError(response: Response) {
 }
 
 async function exchangeCrossAppToken(token: string) {
-  const response = await fetch(`${normalizeApiBaseUrl()}/auth/app-token/exchange`, {
+  const response = await fetchWithRichfieldTimeout(`${normalizeApiBaseUrl()}/auth/app-token/exchange`, {
     body: JSON.stringify({
       appId: getRichfieldAppId(),
       appSecret: getRichfieldAppSecret(),
@@ -77,6 +78,13 @@ export async function POST(request: NextRequest) {
     return response;
   } catch (error) {
     console.error("[richfield:auth] app token exchange failed", error);
+    if (isRichfieldTimeoutError(error)) {
+      return NextResponse.json(
+        { error: "Tuturuuu app token exchange timed out" },
+        { status: 504 },
+      );
+    }
+
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Internal server error" },
       { status: error instanceof TokenExchangeError ? error.status : 500 },

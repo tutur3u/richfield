@@ -9,6 +9,7 @@ export type RefreshSessionResponse = {
 const FALLBACK_REFRESH_DELAY_MS = 5 * 60 * 1000;
 const MAX_REFRESH_LEAD_SECONDS = 30;
 const MIN_REFRESH_LEAD_SECONDS = 5;
+const SESSION_REFRESH_TIMEOUT_MS = 8_000;
 
 let pendingRefresh: Promise<RefreshSessionResponse | null> | null = null;
 
@@ -55,6 +56,7 @@ async function requestRichfieldAdminSessionRefresh() {
       cache: "no-store",
       credentials: "same-origin",
       method: "POST",
+      signal: AbortSignal.timeout(SESSION_REFRESH_TIMEOUT_MS),
     });
     const payload = (await response.json().catch(() => null)) as
       | RefreshSessionResponse

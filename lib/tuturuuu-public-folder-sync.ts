@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { basename, extname, resolve, sep } from "node:path";
 import { posix } from "node:path";
+import { withRichfieldTimeout } from "./richfield-fetch";
 
 type PublicAssetMetadata = Record<string, unknown> & {
 	localAssetPath?: unknown;
@@ -71,6 +72,7 @@ type UploadExternalProjectAssetFileInput = {
 };
 
 const CONTENT_TYPES: Record<string, string> = {
+	".avif": "image/avif",
 	".gif": "image/gif",
 	".jpg": "image/jpeg",
 	".jpeg": "image/jpeg",
@@ -193,7 +195,10 @@ async function readPublicAsset({
 	}
 
 	const assetUrl = new URL(publicPath, appBaseUrl).toString();
-	const response = await fetchImpl(assetUrl, { cache: "no-store" }).catch(() => null);
+	const response = await fetchImpl(
+		assetUrl,
+		withRichfieldTimeout({ cache: "no-store" }),
+	).catch(() => null);
 
 	if (!response?.ok) {
 		return null;
@@ -259,7 +264,7 @@ export async function uploadExternalProjectAssetFile({
 		`${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
 			workspaceId,
 		)}/external-projects/assets/upload-url`,
-		{
+		withRichfieldTimeout({
 			body: formData,
 			cache: "no-store",
 			headers: {
@@ -267,8 +272,17 @@ export async function uploadExternalProjectAssetFile({
 				Authorization: `${tokenType} ${accessToken}`,
 			},
 			method: "POST",
-		},
-	);
+		}),
+	).catch((error: unknown) => {
+		if (
+			error instanceof Error &&
+			(error.name === "AbortError" || error.name === "TimeoutError")
+		) {
+			throw new Error("Tuturuuu asset upload timed out.");
+		}
+
+		throw error;
+	});
 
 	if (!response.ok) {
 		throw new Error(await readAssetUploadError(response));

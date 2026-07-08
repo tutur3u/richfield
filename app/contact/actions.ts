@@ -8,6 +8,7 @@ import {
   getRichfieldAppId,
   getRichfieldAppSecret,
 } from "@/lib/richfield-config";
+import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
 
 export type ContactState =
   | { status: "idle" }
@@ -65,16 +66,8 @@ export async function submitContact(
       message,
       name,
     });
-  } catch {
-    return {
-      status: "error",
-      errors: {
-        _form: [
-          `We couldn't save your message. Try email at ${site.email}.`,
-        ],
-      },
-      values: parsed.data as unknown as Record<string, string>,
-    };
+  } catch (error) {
+    console.warn("[contact] failed to persist lead before delivery", error);
   }
 
   try {
@@ -111,7 +104,7 @@ async function saveContactSubmission(input: {
   message: string;
   name: string;
 }) {
-  const response = await fetch(getSubmissionEndpoint(), {
+  const response = await fetchWithRichfieldTimeout(getSubmissionEndpoint(), {
     body: JSON.stringify({
       ...input,
       appId: getRichfieldAppId(),
@@ -141,7 +134,7 @@ async function updateContactSubmissionEmailStatus(
   entryId: string,
   emailNotificationStatus: "failed" | "sent",
 ) {
-  await fetch(getSubmissionEndpoint(`/${encodeURIComponent(entryId)}`), {
+  await fetchWithRichfieldTimeout(getSubmissionEndpoint(`/${encodeURIComponent(entryId)}`), {
     body: JSON.stringify({
       appId: getRichfieldAppId(),
       appSecret: getRichfieldAppSecret(),
@@ -173,7 +166,7 @@ async function deliverLead(input: {
     }
     throw new Error("RESEND_API_KEY missing in production");
   }
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetchWithRichfieldTimeout("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

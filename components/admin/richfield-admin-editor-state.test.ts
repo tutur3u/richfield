@@ -138,28 +138,28 @@ describe("Richfield admin editor state", () => {
     expect(getRichfieldDisplayDateFromInput("2026-02-31")).toBe("");
   });
 
-  test("builds no preview links while items have no public detail pages", () => {
+  test("builds preview links for collections with public pages", () => {
     expect(
       getRichfieldEditorPreviewHref({
         collectionKey: "brands",
         slug: "mars-wrigley",
       }),
-    ).toBeNull();
+    ).toBe("/brands");
     expect(
       getRichfieldEditorPreviewHref({
         collectionKey: "leadership",
         slug: "bill-chua",
       }),
-    ).toBeNull();
+    ).toBe("/about/our-story");
     expect(
       getRichfieldEditorPreviewHref({
         collectionKey: "milestones",
         slug: "1994-mars",
       }),
-    ).toBeNull();
+    ).toBe("/about/our-story");
     expect(
       getRichfieldEditorPreviewHref({
-        collectionKey: "brands",
+        collectionKey: "contact-submissions",
         slug: "Bad Slug",
       }),
     ).toBeNull();

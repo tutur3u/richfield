@@ -72,6 +72,7 @@ export function RichfieldAdminSyncPanel() {
   const runApply = async (force: boolean) => {
     setPendingAction("apply");
     setError(null);
+    setPublicAssetSync(null);
     try {
       const result = await postAdminJson<{
         diff?: SyncDiffResponse;

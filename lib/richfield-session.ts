@@ -5,12 +5,18 @@ import {
   getRichfieldAppSecret,
   getRichfieldWorkspaceId,
 } from "@/lib/richfield-config";
+import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
 import { cookies } from "next/headers";
 import type { NextResponse } from "next/server";
 
 const RICHFIELD_SESSION_COOKIE = "richfield_admin_session";
 const SESSION_VERSION = "v1";
 const RICHFIELD_ADMIN_SCOPES = ["external-projects:*"] as const;
+const SESSION_VALIDATION_CACHE_MS = 30_000;
+const sessionValidationCache = new Map<
+  string,
+  { expiresAt: number; session: RichfieldAdminSession }
+>();
 
 export type RichfieldAdminSession = {
   accessToken: string;
@@ -204,8 +210,15 @@ function getRichfieldAppTokenExchangeUrl() {
 }
 
 async function validateRichfieldSession(session: RichfieldAdminSession) {
+  const cacheKey = `${session.workspaceId}:${session.accessToken}`;
+  const cached = sessionValidationCache.get(cacheKey);
+
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.session;
+  }
+
   try {
-    const response = await fetch(getRichfieldSessionValidationUrl(session.workspaceId), {
+    const response = await fetchWithRichfieldTimeout(getRichfieldSessionValidationUrl(session.workspaceId), {
       cache: "no-store",
       headers: {
         Accept: "application/json",
@@ -213,8 +226,19 @@ async function validateRichfieldSession(session: RichfieldAdminSession) {
       },
     });
 
-    return response.ok ? session : null;
+    if (!response.ok) {
+      sessionValidationCache.delete(cacheKey);
+      return null;
+    }
+
+    sessionValidationCache.set(cacheKey, {
+      expiresAt: Date.now() + SESSION_VALIDATION_CACHE_MS,
+      session,
+    });
+
+    return session;
   } catch {
+    sessionValidationCache.delete(cacheKey);
     return null;
   }
 }
@@ -225,7 +249,7 @@ async function refreshRichfieldSession(session: RichfieldAdminSession) {
   }
 
   try {
-    const response = await fetch(getRichfieldAppTokenExchangeUrl(), {
+    const response = await fetchWithRichfieldTimeout(getRichfieldAppTokenExchangeUrl(), {
       body: JSON.stringify({
         appId: getRichfieldAppId(),
         appSecret: getRichfieldAppSecret(),

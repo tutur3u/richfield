@@ -96,7 +96,14 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
 ];
 
 const previewRouteByCollection: Partial<Record<RichfieldAdminCollectionKey, string>> =
-  {};
+  {
+    brands: "/brands",
+    "contact-channels": "/contact",
+    "contact-page": "/contact",
+    jobs: "/careers",
+    leadership: "/about/our-story",
+    milestones: "/about/our-story",
+  };
 
 function formatDatePart(value: number) {
   return String(value).padStart(2, "0");
@@ -169,11 +176,19 @@ export function getRichfieldEditorPreviewHref({
   const basePath = previewRouteByCollection[collectionKey];
   const safeSlug = slug.trim();
 
-  if (!basePath || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(safeSlug)) {
+  if (!basePath) {
     return null;
   }
 
-  return `${basePath}/${safeSlug}`;
+  if (!basePath.includes(":slug")) {
+    return basePath;
+  }
+
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(safeSlug)) {
+    return null;
+  }
+
+  return basePath.replace(":slug", safeSlug);
 }
 
 export function hasRichfieldEditorDirtyChanges({

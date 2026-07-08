@@ -402,11 +402,12 @@ async function saveImageAsset({
   const payload = buildImageAssetPayload({ entryId, input, upload });
 
   if (upload) {
-    await client.createAsset(workspaceId, payload);
-
     if (item?.imageAssetId) {
-      await client.deleteAsset(workspaceId, item.imageAssetId);
+      await client.updateAsset(workspaceId, item.imageAssetId, payload);
+      return;
     }
+
+    await client.createAsset(workspaceId, payload);
   }
 }
 
@@ -488,11 +489,7 @@ export async function createRichfieldContentItem(
     percent: 94,
     step: "refresh-dashboard",
   });
-  const studio = (await client.getStudio(workspaceId)) as RichfieldAdminStudioPayload;
-  return {
-    item: findItemById(studio, collectionKey, entryId),
-    items: readRichfieldAdminContent(studio, collectionKey),
-  };
+  return finalizeMutation(client, workspaceId, collectionKey, entryId);
 }
 
 export async function updateRichfieldContentItem(

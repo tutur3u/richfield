@@ -13,16 +13,22 @@ export function RichfieldAdminSessionRestorer({ loginHref }: { loginHref: string
     let cancelled = false;
 
     async function restoreAccess() {
-      const payload = await refreshRichfieldAdminSession();
+      try {
+        const payload = await refreshRichfieldAdminSession();
 
-      if (cancelled) return;
+        if (cancelled) return;
 
-      if (payload?.valid) {
-        router.refresh();
-        return;
+        if (payload?.valid) {
+          router.refresh();
+          return;
+        }
+
+        setFailed(true);
+      } catch {
+        if (!cancelled) {
+          setFailed(true);
+        }
       }
-
-      setFailed(true);
     }
 
     void restoreAccess();

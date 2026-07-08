@@ -91,19 +91,12 @@ export function SaveProgressPanel({ state }: { state: SaveProgressState }) {
           {Math.round(state.percent)}%
         </strong>
       </div>
-      <div
+      <progress
         aria-label="Save progress"
-        aria-valuemax={100}
-        aria-valuemin={0}
-        aria-valuenow={Math.round(state.percent)}
-        className="h-2 overflow-hidden border border-[rgba(184,112,81,0.34)] bg-white"
-        role="progressbar"
-      >
-        <div
-          className="h-full bg-[var(--clay)] transition-[width]"
-          style={{ width: `${Math.max(0, Math.min(100, state.percent))}%` }}
-        />
-      </div>
+        className="h-2 w-full overflow-hidden border border-[rgba(184,112,81,0.34)] bg-white accent-[var(--clay)] [&::-moz-progress-bar]:bg-[var(--clay)] [&::-webkit-progress-bar]:bg-white [&::-webkit-progress-value]:bg-[var(--clay)]"
+        max={100}
+        value={Math.max(0, Math.min(100, state.percent))}
+      />
       <div className="flex flex-wrap gap-2 text-xs text-[var(--ink-soft)]">
         {state.step ? <span>Step: {state.step}</span> : null}
         {state.statusCode ? <span>Status: {state.statusCode}</span> : null}

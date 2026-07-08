@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { sanitizeRichfieldNextPath } from "@/lib/richfield-url-utils";
 
 type VerificationState = "failed" | "loading" | "success";
 
@@ -12,28 +13,6 @@ type VerificationResponse = {
   valid?: boolean;
 };
 
-function sanitizeNextPath(
-  rawValue: string | null | undefined,
-  requestOrigin = "http://localhost",
-  fallbackPath = "/admin",
-) {
-  if (!rawValue?.trim() || rawValue.startsWith("//")) {
-    return fallbackPath;
-  }
-
-  try {
-    const parsed = new URL(rawValue, requestOrigin);
-
-    if (parsed.origin !== requestOrigin) {
-      return fallbackPath;
-    }
-
-    return `${parsed.pathname}${parsed.search}`;
-  } catch {
-    return fallbackPath;
-  }
-}
-
 export function VerifyTokenClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -41,7 +20,7 @@ export function VerifyTokenClient() {
   const [state, setState] = useState<VerificationState>("loading");
   const nextPath = useMemo(
     () =>
-      sanitizeNextPath(
+      sanitizeRichfieldNextPath(
         searchParams.get("nextUrl"),
         typeof window === "undefined" ? "http://localhost" : window.location.origin,
         "/admin",

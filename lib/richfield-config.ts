@@ -1,3 +1,5 @@
+import { sanitizeRichfieldNextPath } from "./richfield-url-utils";
+
 export const RICHFIELD_APP_NAME = "richfield";
 
 export type RichfieldAdminTargetKey =
@@ -162,27 +164,7 @@ export function getRichfieldAppBaseUrl(requestOrigin?: string) {
   return "http://localhost:3000";
 }
 
-export function sanitizeRichfieldNextPath(
-  rawValue: string | null | undefined,
-  requestOrigin = "http://localhost",
-  fallbackPath = "/admin",
-) {
-  if (!rawValue?.trim() || rawValue.startsWith("//")) {
-    return fallbackPath;
-  }
-
-  try {
-    const parsed = new URL(rawValue, requestOrigin);
-
-    if (parsed.origin !== requestOrigin) {
-      return fallbackPath;
-    }
-
-    return `${parsed.pathname}${parsed.search}`;
-  } catch {
-    return fallbackPath;
-  }
-}
+export { sanitizeRichfieldNextPath };
 
 export function resolveRichfieldAdminTargetKey(
   value: string | null | undefined,

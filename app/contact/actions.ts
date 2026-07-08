@@ -56,6 +56,7 @@ export async function submitContact(
   const inbox = process.env.RICHFIELD_LEAD_INBOX ?? FALLBACK_INBOX;
 
   let savedSubmissionId: string | null = null;
+  let persistenceFailed = false;
 
   try {
     savedSubmissionId = await saveContactSubmission({
@@ -67,6 +68,7 @@ export async function submitContact(
       name,
     });
   } catch (error) {
+    persistenceFailed = true;
     console.warn("[contact] failed to persist lead before delivery", error);
   }
 
@@ -75,9 +77,22 @@ export async function submitContact(
     if (savedSubmissionId) {
       await updateContactSubmissionEmailStatus(savedSubmissionId, "sent");
     }
-  } catch {
+  } catch (error) {
     if (savedSubmissionId) {
       await updateContactSubmissionEmailStatus(savedSubmissionId, "failed");
+    }
+
+    if (persistenceFailed) {
+      console.error("[contact] failed to persist and deliver lead", error);
+      return {
+        status: "error",
+        errors: {
+          _form: [
+            `We couldn't send your message. Try email at ${site.email}.`,
+          ],
+        },
+        values: parsed.data as unknown as Record<string, string>,
+      };
     }
   }
 

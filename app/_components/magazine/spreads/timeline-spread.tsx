@@ -1,7 +1,7 @@
 import { JourneyTimeline } from "@/app/_components/magazine/media/journey-timeline";
 import { PhotoCycle, type CyclePhoto } from "@/app/_components/magazine/media/photo-cycle";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
-import { milestones } from "@/content/en/milestones";
+import type { Milestone } from "@/content/en/milestones";
 import { anniversary30 } from "@/content/en/story";
 
 // Anniversary gallery — the Nov 2024 Nha Trang 30th-anniversary trip the coda
@@ -33,7 +33,7 @@ const ANNIVERSARY_PHOTOS: CyclePhoto[] = [
  * "Our Story · Timeline" — the six company milestones across a hairline, then
  * the 30th-anniversary note set as a gold-ruled coda beside a company photo.
  */
-export function TimelineSpread() {
+export function TimelineSpread({ milestones }: { milestones: Milestone[] }) {
   return (
     <Spread id="timeline" bg="cream" className="flex flex-col gap-y-[var(--v2-flow)]">
       <div className="flex flex-col gap-y-[var(--v2-rhythm)]">

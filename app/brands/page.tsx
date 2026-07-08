@@ -3,7 +3,7 @@ import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { JourneyTimeline } from "@/app/_components/magazine/media/journey-timeline";
 import { ShelfExplorer } from "@/app/_components/magazine/spreads/shelf-explorer";
-import { brandTimeline } from "@/content/en/brands";
+import { getRichfieldContent } from "@/lib/richfield-delivery";
 
 export const dynamic = "force-static";
 
@@ -14,7 +14,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/brands" },
 };
 
-export default function BrandsPage() {
+export default async function BrandsPage() {
+  const { brandTimeline, shelfCategories } = await getRichfieldContent();
+
   return (
     <>
       <RunningHead />
@@ -47,7 +49,7 @@ export default function BrandsPage() {
 
         {/* The portfolio — every product, by category. */}
         <Spread id="portfolio" bg="white">
-          <ShelfExplorer />
+          <ShelfExplorer categories={shelfCategories} />
         </Spread>
 
       </main>

@@ -41,6 +41,8 @@ const eslintConfig = defineConfig([
     "blob-report/**",
     "playwright/.cache/**",
     "coverage/**",
+    ".worktrees/**",
+    ".claude/worktrees/**",
   ]),
 ]);
 

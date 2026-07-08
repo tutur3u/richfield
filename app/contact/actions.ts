@@ -2,6 +2,13 @@
 
 import { contactSchema } from "./schema";
 import { site } from "@/content/en/site";
+import {
+  getOptionalRichfieldWorkspaceId,
+  getRichfieldApiBaseUrl,
+  getRichfieldAppId,
+  getRichfieldAppSecret,
+} from "@/lib/richfield-config";
+import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
 
 export type ContactState =
   | { status: "idle" }
@@ -48,21 +55,113 @@ export async function submitContact(
   const { name, company, country, email, inquiryType, message } = parsed.data;
   const inbox = process.env.RICHFIELD_LEAD_INBOX ?? FALLBACK_INBOX;
 
+  let savedSubmissionId: string | null = null;
+  let persistenceFailed = false;
+
+  try {
+    savedSubmissionId = await saveContactSubmission({
+      company,
+      country,
+      email,
+      inquiryType,
+      message,
+      name,
+    });
+  } catch (error) {
+    persistenceFailed = true;
+    console.warn("[contact] failed to persist lead before delivery", error);
+  }
+
   try {
     await deliverLead({ name, company, country, email, inquiryType, message, inbox });
-  } catch {
-    return {
-      status: "error",
-      errors: {
-        _form: [
-          `We couldn't send your message. Try email at ${site.email}.`,
-        ],
-      },
-      values: parsed.data as unknown as Record<string, string>,
-    };
+    if (savedSubmissionId) {
+      await updateContactSubmissionEmailStatus(savedSubmissionId, "sent");
+    }
+  } catch (error) {
+    if (savedSubmissionId) {
+      await updateContactSubmissionEmailStatus(savedSubmissionId, "failed");
+    }
+
+    if (persistenceFailed) {
+      console.error("[contact] failed to persist and deliver lead", error);
+      return {
+        status: "error",
+        errors: {
+          _form: [
+            `We couldn't send your message. Try email at ${site.email}.`,
+          ],
+        },
+        values: parsed.data as unknown as Record<string, string>,
+      };
+    }
   }
 
   return { status: "ok" };
+}
+
+function getSubmissionEndpoint(path = "") {
+  const workspaceId = getOptionalRichfieldWorkspaceId();
+
+  if (!workspaceId) {
+    throw new Error("Missing Richfield workspace id");
+  }
+
+  return `${getRichfieldApiBaseUrl().replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
+    workspaceId,
+  )}/external-projects/submissions${path}`;
+}
+
+async function saveContactSubmission(input: {
+  company: string;
+  country: string;
+  email: string;
+  inquiryType: string;
+  message: string;
+  name: string;
+}) {
+  const response = await fetchWithRichfieldTimeout(getSubmissionEndpoint(), {
+    body: JSON.stringify({
+      ...input,
+      appId: getRichfieldAppId(),
+      appSecret: getRichfieldAppSecret(),
+      receivedAt: new Date().toISOString(),
+    }),
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Submission save failed with status ${response.status}`);
+  }
+
+  const payload = (await response.json().catch(() => null)) as {
+    entry?: { id?: unknown };
+  } | null;
+
+  return typeof payload?.entry?.id === "string" ? payload.entry.id : null;
+}
+
+async function updateContactSubmissionEmailStatus(
+  entryId: string,
+  emailNotificationStatus: "failed" | "sent",
+) {
+  await fetchWithRichfieldTimeout(getSubmissionEndpoint(`/${encodeURIComponent(entryId)}`), {
+    body: JSON.stringify({
+      appId: getRichfieldAppId(),
+      appSecret: getRichfieldAppSecret(),
+      emailNotificationStatus,
+    }),
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    method: "PATCH",
+  }).catch(() => null);
 }
 
 async function deliverLead(input: {
@@ -82,7 +181,7 @@ async function deliverLead(input: {
     }
     throw new Error("RESEND_API_KEY missing in production");
   }
-  const res = await fetch("https://api.resend.com/emails", {
+  const res = await fetchWithRichfieldTimeout("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import type { RichfieldImageLibraryItem } from "@/lib/richfield-content";
 
 // A wall of life at Richfield: every frame from the curated set, no labels, no
 // dividers. Two full-bleed rows drift in opposite directions on their own, and
@@ -11,9 +12,10 @@ const SRCS = Array.from(
   { length: COUNT },
   (_, i) => `/photos/careers-life/${String(i + 1).padStart(2, "0")}.webp`,
 );
-const ROW_A = SRCS.filter((_, i) => i % 3 === 0); // 9
-const ROW_B = SRCS.filter((_, i) => i % 3 === 1); // 8
-const ROW_C = SRCS.filter((_, i) => i % 3 === 2); // 8
+const FALLBACK_IMAGES = SRCS.map((src) => ({
+  alt: "Life at Richfield.",
+  src,
+}));
 
 /**
  * One marquee row: an overflow-x rail whose scrollLeft is advanced every frame
@@ -27,7 +29,7 @@ function MarqueeRow({
   dir,
   speed,
 }: {
-  images: string[];
+  images: Array<{ alt: string; src: string }>;
   dir: 1 | -1;
   speed: number;
 }) {
@@ -135,15 +137,15 @@ function MarqueeRow({
       ref={railRef}
       className="v2-scroll-rail flex cursor-grab gap-2 overflow-x-auto overscroll-x-contain touch-pan-x select-none active:cursor-grabbing sm:gap-3"
     >
-      {[...images, ...images].map((src, i) => (
+      {[...images, ...images].map((image, i) => (
         <figure
-          key={`${src}-${i}`}
+          key={`${image.src}-${i}`}
           aria-hidden={i >= images.length}
           className="relative aspect-[4/3] h-[clamp(160px,21vw,280px)] shrink-0 overflow-hidden bg-cream"
         >
           <Image
-            src={src}
-            alt={i < images.length ? "Life at Richfield." : ""}
+            src={image.src}
+            alt={i < images.length ? image.alt : ""}
             fill
             draggable={false}
             sizes="(min-width:1024px) 28vw, 50vw"
@@ -155,7 +157,22 @@ function MarqueeRow({
   );
 }
 
-export function LifeGallery() {
+export function LifeGallery({
+  images,
+}: {
+  images?: RichfieldImageLibraryItem[];
+}) {
+  const galleryImages =
+    images && images.length > 0
+      ? images.map((image) => ({
+          alt: image.alt,
+          src: image.src,
+        }))
+      : FALLBACK_IMAGES;
+  const rowA = galleryImages.filter((_, i) => i % 3 === 0);
+  const rowB = galleryImages.filter((_, i) => i % 3 === 1);
+  const rowC = galleryImages.filter((_, i) => i % 3 === 2);
+
   return (
     <section
       aria-label="Life at Richfield, in pictures"
@@ -163,9 +180,9 @@ export function LifeGallery() {
     >
       <h2 className="sr-only">Life at Richfield, in pictures</h2>
       <div className="flex flex-col gap-2 sm:gap-3">
-        <MarqueeRow images={ROW_A} dir={1} speed={0.55} />
-        <MarqueeRow images={ROW_B} dir={-1} speed={0.55} />
-        <MarqueeRow images={ROW_C} dir={1} speed={0.55} />
+        <MarqueeRow images={rowA} dir={1} speed={0.55} />
+        <MarqueeRow images={rowB} dir={-1} speed={0.55} />
+        <MarqueeRow images={rowC} dir={1} speed={0.55} />
       </div>
     </section>
   );

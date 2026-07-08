@@ -1,8 +1,7 @@
 import Image from "next/image";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
-import { Folio } from "@/app/_components/magazine/primitives/folio";
 import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
-import { brands } from "@/content/en/brands";
+import type { Brand } from "@/content/en/brands";
 
 // ---------------------------------------------------------------------------
 // Brands hero — the homepage Brands chapter. An editorial lockup on the left
@@ -12,13 +11,13 @@ import { brands } from "@/content/en/brands";
 // get in touch. Reuses the .marquee-track CSS from globals.css.
 // ---------------------------------------------------------------------------
 
-type Lane = { direction: "left" | "right"; duration: string; brands: typeof brands };
+type Lane = { direction: "left" | "right"; duration: string; brands: Brand[] };
 
 // Spread the logo'd brands across three lanes, each with its own rhythm and
 // direction so the wall reads as movement rather than a single scroll.
-function buildLanes(): Lane[] {
+function buildLanes(brands: Brand[]): Lane[] {
   const withLogo = brands.filter((b) => b.logoSrc);
-  const lanes: (typeof brands)[] = [[], [], []];
+  const lanes: Brand[][] = [[], [], []];
   withLogo.forEach((b, i) => lanes[i % 3].push(b));
   return [
     { direction: "left", duration: "55s", brands: lanes[0] },
@@ -26,8 +25,6 @@ function buildLanes(): Lane[] {
     { direction: "left", duration: "85s", brands: lanes[2] },
   ];
 }
-
-const LANES = buildLanes();
 
 function MarqueeLane({ lane }: { lane: Lane }) {
   // Render the strip twice so the -50% translate loops seamlessly.
@@ -61,7 +58,9 @@ function MarqueeLane({ lane }: { lane: Lane }) {
   );
 }
 
-export function BrandsHeroSpread() {
+export function BrandsHeroSpread({ brands }: { brands: Brand[] }) {
+  const lanes = buildLanes(brands);
+
   return (
     <section
       id="brands"
@@ -72,7 +71,7 @@ export function BrandsHeroSpread() {
         aria-hidden
         className="absolute inset-0 flex flex-col justify-center gap-[clamp(20px,3vw,48px)]"
       >
-        {LANES.map((lane, i) => (
+        {lanes.map((lane, i) => (
           <MarqueeLane key={i} lane={lane} />
         ))}
       </div>

@@ -4,6 +4,8 @@ import { Geist, Fraunces } from "next/font/google";
 import "./globals.css";
 import { RouteAnnouncerPatch } from "@/app/_components/route-announcer-patch";
 import { SiteFooter } from "@/app/_components/magazine/chrome/site-footer";
+import { SiteFooterGate } from "@/app/_components/magazine/chrome/site-footer-gate";
+import { RichfieldToaster } from "@/components/RichfieldToaster";
 
 // The whole site runs on two type voices only (Anthropic-style):
 //   • Fraunces — the editorial serif, for every heading/title + italic accents.
@@ -50,12 +52,16 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${fraunces.variable}`}
+      data-scroll-behavior="smooth"
     >
       <body className="min-h-dvh bg-cream text-ink antialiased">
         {children}
-        <SiteFooter />
+        <SiteFooterGate>
+          <SiteFooter />
+        </SiteFooterGate>
         <Analytics />
         <RouteAnnouncerPatch />
+        <RichfieldToaster />
       </body>
     </html>
   );

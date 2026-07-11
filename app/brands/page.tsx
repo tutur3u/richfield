@@ -3,6 +3,7 @@ import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { JourneyTimeline } from "@/app/_components/magazine/media/journey-timeline";
 import { ShelfExplorer } from "@/app/_components/magazine/spreads/shelf-explorer";
+import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
 
 export const dynamic = "force-static";
@@ -28,7 +29,7 @@ export default async function BrandsPage() {
           head
           className="flex flex-col gap-y-[var(--v2-flow)]"
         >
-          <div className="flex w-full flex-col gap-y-[var(--v2-rhythm)] hyphens-auto" lang="en">
+          <RevealOnScroll lang="en" className="flex w-full flex-col gap-y-[var(--v2-rhythm)] hyphens-auto">
             <Eyebrow>OUR BRANDS</Eyebrow>
             <h1 className="font-display v2-headline">
               Trusted by the world&rsquo;s most{" "}
@@ -39,12 +40,12 @@ export default async function BrandsPage() {
               more. Richfield carries the brands shoppers already reach for, in
               partnerships that often run for decades.
             </p>
-          </div>
+          </RevealOnScroll>
 
-          <div className="flex flex-col gap-y-[var(--v2-rhythm)]">
+          <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]">
             <Eyebrow>THE COLLABORATIONS</Eyebrow>
             <JourneyTimeline milestones={brandTimeline} />
-          </div>
+          </RevealOnScroll>
         </Spread>
 
         {/* The portfolio — every product, by category. */}

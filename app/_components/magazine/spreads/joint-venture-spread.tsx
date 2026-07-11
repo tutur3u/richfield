@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
+import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { partnerLogos } from "@/content/en/photography";
 import { site } from "@/content/en/site";
 
@@ -15,90 +16,93 @@ export function JointVentureSpread() {
       bg="transparent"
       surfaceClass="v2-plate-fade-bottom"
     >
-      {/* Section eyebrow + masthead title */}
-      <Eyebrow tone="gold" className="mb-[var(--v2-rhythm)]">
-        JOINT VENTURE
-      </Eyebrow>
-
-      {/* Framed feature — the "boxed" magazine module. */}
-      <div className="relative flex border border-current/20">
-          {/* Tab index straddling the top border */}
-
-          <div className="grid w-full grid-cols-12 gap-x-[var(--v2-col-gap)] gap-y-[clamp(28px,3vw,40px)] p-[clamp(22px,2.8vw,52px)]">
-            {/* Left — the editorial story */}
-            <div className="col-span-12 flex flex-col lg:col-span-7">
-              <Eyebrow tone="gold" rule={false} className="mb-[var(--v2-rhythm)]">
-                ESTABLISHED 2024
-              </Eyebrow>
-
-              <h3 className="font-display text-[clamp(1.8rem,3.4vw,3rem)] leading-[1.05] tracking-[-0.022em]">
-                <span className="block">A successful collaboration</span>
-                <span className="block">between two leading corporations.</span>
-              </h3>
-
-              <p className="v2-size-body mt-[var(--v2-rhythm)] max-w-[52ch] opacity-90">
-                Dory Rich JSC pairs TCP Group&apos;s leadership in Thai
-                energy-drink production with Richfield Group&apos;s nationwide
-                FMCG distribution capability in Vietnam, bringing manufacturing,
-                brand-building, and distribution under one roof.
-              </p>
-
-              {/* Partner logos — the two corporations, on paper plates */}
-              <div className="mt-auto pt-[clamp(28px,3vw,48px)]">
-                <p className="v2-mono v2-size-folio mb-[clamp(12px,1.2vw,18px)] opacity-55">
-                  IN PARTNERSHIP
-                </p>
-                <div className="flex items-center gap-[clamp(14px,1.6vw,24px)]">
-                  {tcpLogo ? (
-                    <span className="inline-flex items-center rounded-[3px] bg-paper px-[clamp(12px,1.2vw,18px)] py-[clamp(8px,0.8vw,12px)]">
-                      <Image
-                        src={tcpLogo}
-                        alt="TCP Group"
-                        width={80}
-                        height={80}
-                        sizes="120px"
-                        className="h-[clamp(28px,3vw,40px)] w-auto object-contain"
-                      />
-                    </span>
-                  ) : null}
-                  <span aria-hidden className="text-gold text-[clamp(1.1rem,1.4vw,1.4rem)]">
-                    &times;
-                  </span>
-                  <span className="inline-flex items-center rounded-[3px] bg-paper px-[clamp(12px,1.2vw,18px)] py-[clamp(8px,0.8vw,12px)]">
-                    <Image
-                      src={RICHFIELD_LOGO}
-                      alt="Richfield Group"
-                      width={120}
-                      height={110}
-                      sizes="120px"
-                      className="h-[clamp(28px,3vw,40px)] w-auto object-contain"
-                    />
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right — the venture mark + link */}
-            <div className="col-span-12 flex flex-col items-center justify-center gap-[clamp(20px,2.2vw,32px)] lg:col-span-5 lg:items-end">
-              {doryLogo ? (
-                <span className="inline-flex items-center rounded-[4px] bg-paper px-[clamp(22px,2.4vw,40px)] py-[clamp(18px,2vw,32px)]">
-                  <Image
-                    src={doryLogo}
-                    alt="Dory Rich"
-                    width={240}
-                    height={80}
-                    sizes="320px"
-                    className="h-[clamp(44px,5vw,72px)] w-auto object-contain"
-                  />
-                </span>
-              ) : null}
-
-              <CtaLink href={site.external.doryRich} external arrow="→">
-                VISIT DORYRICH.COM.VN
-              </CtaLink>
-            </div>
-          </div>
+      {/* One centered composition on a single vertical spine, framed as a
+          boxed magazine feature: a warm paper plate with a fine gold frame,
+          the section label straddling the top border as a tab so the label
+          and the box read as one object. Inside, the lockup diagrams the
+          venture itself: the two parent marks flow down a hairline into the
+          Dory Rich mark and its link. */}
+      <RevealOnScroll className="relative w-full border border-gold-strong/30 bg-paper px-[clamp(24px,4vw,64px)] py-[clamp(44px,5.5vw,84px)]">
+        {/* Label tab — straddles the top border; its paper fill cuts the
+            border line behind the text. */}
+        <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-paper px-[clamp(14px,1.6vw,24px)]">
+          <Eyebrow tone="gold" className="justify-center">
+            JOINT VENTURE · ESTABLISHED 2024
+          </Eyebrow>
         </div>
+
+        {/* Inner rhythm is unified to the site scale: --v2-flow between the
+            story and the lockup, --v2-rhythm between everything else. */}
+        <div className="flex flex-col items-center gap-y-[var(--v2-flow)] text-center">
+          <div className="flex w-full flex-col items-center gap-y-[var(--v2-rhythm)]">
+            <h2 className="font-display v2-size-standfirst w-full text-balance">
+              A successful collaboration between two leading corporations.
+            </h2>
+
+            <p className="v2-size-body w-full opacity-90">
+              Dory Rich JSC pairs TCP Group&apos;s leadership in Thai
+              energy-drink production with Richfield Group&apos;s nationwide
+              FMCG distribution capability in Vietnam, bringing manufacturing,
+              brand-building, and distribution under one roof.
+            </p>
+          </div>
+
+          {/* The lineage lockup — parents, a descending hairline, the venture. */}
+          <RevealOnScroll
+            delayMs={120}
+            className="flex flex-col items-center gap-y-[var(--v2-rhythm)]"
+          >
+            <p className="v2-mono v2-size-folio opacity-55">IN PARTNERSHIP</p>
+
+            {/* All three marks share one height so no logo outranks the
+                others (the Dory Rich source also softens when enlarged). */}
+            <div className="flex items-center gap-[clamp(16px,2vw,28px)]">
+              {tcpLogo ? (
+                <Image
+                  src={tcpLogo}
+                  alt="TCP Group"
+                  width={80}
+                  height={80}
+                  sizes="128px"
+                  className="h-[clamp(44px,4.8vw,64px)] w-auto object-contain"
+                />
+              ) : null}
+              <span aria-hidden className="text-gold text-[clamp(1.1rem,1.4vw,1.4rem)]">
+                &times;
+              </span>
+              <Image
+                src={RICHFIELD_LOGO}
+                alt="Richfield Group"
+                width={120}
+                height={110}
+                sizes="128px"
+                className="h-[clamp(44px,4.8vw,64px)] w-auto object-contain"
+              />
+            </div>
+
+            {/* Descending hairline — the two parents converge into the venture. */}
+            <span
+              aria-hidden
+              className="block h-[clamp(28px,3.4vw,48px)] w-px bg-gold-rule/60"
+            />
+
+            {doryLogo ? (
+              <Image
+                src={doryLogo}
+                alt="Dory Rich"
+                width={240}
+                height={80}
+                sizes="224px"
+                className="h-[clamp(52px,5.6vw,76px)] w-auto object-contain"
+              />
+            ) : null}
+
+            <CtaLink href={site.external.doryRich} external arrow="→">
+              VISIT DORYRICH.COM.VN
+            </CtaLink>
+          </RevealOnScroll>
+        </div>
+      </RevealOnScroll>
     </Spread>
   );
 }

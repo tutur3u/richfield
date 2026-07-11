@@ -93,11 +93,7 @@ export function JourneyTimeline({ milestones }: { milestones: Milestone[] }) {
                         className="object-contain object-left-bottom"
                       />
                     </span>
-                  ) : (
-                    <span className="v2-display text-[clamp(15px,1.05vw,17px)] font-medium leading-tight opacity-85 transition-opacity duration-300 ease-out group-hover/item:opacity-100">
-                      {m.brand}
-                    </span>
-                  )}
+                  ) : null}
                 </div>
 
                 {/* Year — deepens to gold-strong with a gold rule that sweeps in

@@ -75,7 +75,7 @@ export function HubScrollytelling() {
             <div className="relative h-full w-full">
               {slides.map((slide, i) => (
                 <Image
-                  key={slide.src}
+                  key={`${slide.src}-${i}`}
                   src={slide.src}
                   alt={slide.alt}
                   fill

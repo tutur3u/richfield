@@ -8,10 +8,6 @@ import { coverSequence } from "@/app/_lib/cover-portrait-pool";
 import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
 const ADVANCE_MS = 7000;
 
-/** Supporting standfirst copy beneath the cover headline. */
-const COVER_SUBHEAD =
-  "One of Vietnam's largest FMCG distribution networks. Bringing the world's most loved brands to over 180,000 retail outlets nationwide.";
-
 export function CoverSpread() {
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
@@ -100,29 +96,22 @@ export function CoverSpread() {
           the photo. Text sizes/fonts match the rest of the issue. */}
       <div className="relative z-10 mx-auto w-full max-w-[1500px] px-6 pb-12 sm:px-10 sm:pb-14 lg:pb-20">
         <div className="max-w-full lg:max-w-[60%]">
-          <motion.div
-            className="v2-mono v2-size-eyebrow mb-[var(--v2-rhythm)] flex items-center gap-3 text-gold"
-            {...enter(0.35)}
-          >
-            <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
-            ESTABLISHED 1994
-          </motion.div>
-
           <h1 className="font-display v2-headline max-w-full text-balance lg:max-w-[20ch]">
-            <motion.span className="block" {...enter(0.55)}>
+            <motion.span className="block" {...enter(0.35)}>
               From market entry
             </motion.span>
-            <motion.span className="block" {...enter(0.73)}>
+            <motion.span className="block" {...enter(0.53)}>
               to <em className="italic text-gold">nationwide</em> distribution.
             </motion.span>
           </h1>
 
-          <motion.p
-            className="mt-[var(--v2-rhythm)] max-w-full text-[clamp(17px,1.4vw,22px)] leading-relaxed text-cream/90 [text-shadow:0_1px_4px_rgb(0_0_0_/_0.6)] lg:max-w-[46ch]"
-            {...enter(0.95)}
+          <motion.div
+            className="v2-mono v2-size-eyebrow mt-[var(--v2-rhythm)] flex items-center gap-3 text-gold"
+            {...enter(0.75)}
           >
-            {COVER_SUBHEAD}
-          </motion.p>
+            <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
+            ESTABLISHED 1994
+          </motion.div>
 
           {/* <CoverPagination
             count={coverSequence.length}

@@ -16,10 +16,10 @@ describe("<FootPrintSpread>", () => {
     );
   });
 
-  it("emphasises 'generations' in italic gold", () => {
+  it("emphasises 'promise' in italic gold", () => {
     const { container } = render(<FootPrintSpread />);
     const em = Array.from(container.querySelectorAll("em")).find(
-      (e) => e.textContent?.trim().toLowerCase() === "generations",
+      (e) => e.textContent?.trim().toLowerCase() === "promise",
     );
     expect(em).toBeDefined();
     expect(em?.className).toMatch(/gold/i);

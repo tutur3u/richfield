@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
+import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import type { Brand } from "@/content/en/brands";
 
 // ---------------------------------------------------------------------------
@@ -79,7 +80,7 @@ export function BrandsHeroSpread({ brands }: { brands: Brand[] }) {
       {/* Cream wash over the left so the headline reads; lanes breathe on the right. */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-cream)_0%,color-mix(in_oklch,var(--color-cream)_95%,transparent)_28%,color-mix(in_oklch,var(--color-cream)_60%,transparent)_50%,transparent_88%)]"
+        className="absolute inset-0 bg-[linear-gradient(90deg,var(--color-cream)_0%,color-mix(in_srgb,var(--color-cream)_95%,transparent)_28%,color-mix(in_srgb,var(--color-cream)_60%,transparent)_50%,transparent_88%)]"
       />
       {/* Soft top/bottom feather so the lanes don't crash into neighbours. */}
       <div
@@ -92,7 +93,7 @@ export function BrandsHeroSpread({ brands }: { brands: Brand[] }) {
       />
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1500px] flex-col px-6 pt-[calc(var(--v2-section)/2)] pb-[var(--v2-section)] sm:px-10 lg:px-12">
-        <div className="flex max-w-full flex-col gap-y-[var(--v2-rhythm)] lg:max-w-[48%]">
+        <RevealOnScroll className="flex max-w-full flex-col gap-y-[var(--v2-rhythm)] lg:max-w-[48%]">
           <Eyebrow>OUR BRANDS</Eyebrow>
 
           <h2 className="font-display v2-size-standfirst text-balance text-ink">
@@ -109,7 +110,7 @@ export function BrandsHeroSpread({ brands }: { brands: Brand[] }) {
           <CtaLink href="/brands" className="mt-1">
             EXPLORE OUR BRANDS
           </CtaLink>
-        </div>
+        </RevealOnScroll>
       </div>
     </section>
   );

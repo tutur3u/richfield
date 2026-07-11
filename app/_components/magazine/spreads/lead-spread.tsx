@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { LeadPhotoCycle } from "@/app/_components/magazine/media/lead-photo-cycle";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
+import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { ourStoryIntro } from "@/content/en/story";
 import { founder } from "@/content/en/founder";
 
@@ -29,14 +30,14 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
           {/* Our Story text — one block on desktop, but its heading and
               paragraph split apart on mobile (the carousel slots between). */}
           <div className="max-lg:contents">
-            <div className="max-lg:order-1 mb-[var(--v2-rhythm)] max-lg:mb-0">
+            <RevealOnScroll className="max-lg:order-1 mb-[var(--v2-rhythm)] max-lg:mb-0">
               <Eyebrow className="mb-[var(--v2-rhythm)]">OUR STORY</Eyebrow>
 
               <h1 className="font-display v2-size-standfirst max-w-[16ch]">
                 From a{" "}
                 <em className="italic text-gold-strong">single partnership</em>
               </h1>
-            </div>
+            </RevealOnScroll>
 
             <p className="v2-dropcap v2-size-body text-justify opacity-90 max-lg:order-3">
               {ourStoryIntro}
@@ -44,7 +45,7 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
           </div>
 
           <figure id="founder" className="overflow-hidden max-lg:order-5">
-            <div className="relative aspect-[2/3] w-full overflow-hidden">
+            <RevealOnScroll as="div" className="relative aspect-[2/3] w-full overflow-hidden">
               <Image
                 src={founder.photo}
                 alt={`${founder.name}, ${founder.role} of Richfield Group.`}
@@ -52,7 +53,7 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
                 sizes="(max-width: 1024px) 100vw, 45vw"
                 className="object-cover v2-photo-duotone"
               />
-            </div>
+            </RevealOnScroll>
             <figcaption className="v2-mono v2-size-folio mt-3 opacity-65">
               {founder.name.toUpperCase()} · {founder.role.toUpperCase()}
             </figcaption>
@@ -61,13 +62,13 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
 
         {/* Right column: team carousel + the founder write-up. */}
         <div className="max-lg:contents lg:flex lg:min-w-0 lg:flex-1 lg:flex-col lg:gap-[var(--v2-flow)]">
-          <figure className="overflow-hidden max-lg:order-2">
+          <RevealOnScroll as="figure" className="overflow-hidden max-lg:order-2">
             <div className="relative aspect-[3/2] w-full overflow-hidden">
               <LeadPhotoCycle />
             </div>
-          </figure>
+          </RevealOnScroll>
 
-          <div className="max-lg:order-4">
+          <RevealOnScroll className="max-lg:order-4">
             <Eyebrow className="mb-[var(--v2-rhythm)]">THE FOUNDER</Eyebrow>
 
             <h2 className="font-display v2-size-standfirst mb-[var(--v2-rhythm)]">
@@ -89,7 +90,7 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
                 “{founder.motto}”
               </p>
             </blockquote>
-          </div>
+          </RevealOnScroll>
         </div>
       </div>
     </Spread>

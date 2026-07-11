@@ -28,6 +28,16 @@ export function useRevealOnScroll<T extends HTMLElement>(threshold = 0.15) {
   useIsoLayoutEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Clear any stale armed state from a prior effect run before deciding
+    // afresh. Strict Mode double-invokes this effect (dev), and during a
+    // client-side navigation the first run can measure the element out of
+    // view (scroll isn't reset to the top yet) and arm it; without this
+    // reset, the second run's `startsInView` early-return would leave that
+    // arm in place with no observer to ever remove it — a permanently
+    // invisible (opacity 0) section.
+    el.classList.remove("reveal--armed");
+
     if (!("IntersectionObserver" in window)) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 

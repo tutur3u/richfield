@@ -30,12 +30,8 @@ export const warehouseHubs: WarehouseHub[] = [
     ],
     photos: [
       {
-        src: `${PHU_TUONG}/Hình ảnh Phú Tường/6.webp`,
-        alt: "High-bay pallet racking and a mezzanine inside the distribution centre",
-      },
-      {
-        src: `${PHU_TUONG}/Hình ảnh Phú Tường/3.webp`,
-        alt: "Palletised cases staged on the warehouse floor beside a forklift",
+        src: `${PHU_TUONG}/warehouse-aisle.webp`,
+        alt: "A reach truck moving a pallet down an aisle of high-bay racking stacked with cased goods",
       },
     ],
   },
@@ -50,8 +46,8 @@ export const warehouseHubs: WarehouseHub[] = [
     ],
     photos: [
       {
-        src: `${PHU_TUONG}/Hình ảnh Phú Tường/4.webp`,
-        alt: "Tall blue and orange pallet racking stacked with cased goods",
+        src: `${PHU_TUONG}/warehouse-racking.webp`,
+        alt: "Tall high-bay racking stacked with cased goods beneath a welcome banner",
       },
       {
         src: `${PHU_TUONG}/641295288_1384526297020229_6615026566403809628_n.webp`,

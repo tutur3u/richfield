@@ -94,7 +94,7 @@ export const shelfCategories: ShelfCategory[] = [
   {
     id: "non-food",
     label: "Non-Food",
-    descriptor: "Everyday tools and personal care.",
+    descriptor: "Everyday essentials and personal care.",
     brands: ["BiC", "Caretex"],
     banners: [
       { src: `${P}/bic-lighters-3.webp`, brand: "BiC", ratio: 1.77, weight: "hero", alt: "BiC lighters — brand-for-every-home campaign" },

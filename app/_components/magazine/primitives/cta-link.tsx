@@ -10,7 +10,7 @@ import type { ReactNode } from "react";
 // ---------------------------------------------------------------------------
 
 export const CTA_BOX =
-  "group inline-flex w-fit items-center gap-2 border border-gold-strong/45 px-[clamp(18px,1.8vw,28px)] py-[clamp(10px,1vw,14px)] v2-mono v2-size-folio text-gold-strong transition-[color,background-color,scale] duration-300 ease-out hover:bg-gold-strong hover:text-cream focus-visible:bg-gold-strong focus-visible:text-cream motion-safe:active:scale-[0.96]";
+  "group inline-flex w-fit items-center gap-2 border border-gold-strong bg-gold-strong/[0.06] px-[clamp(18px,1.8vw,28px)] py-[clamp(10px,1vw,14px)] v2-mono v2-size-folio text-gold-strong transition-[color,background-color,scale] duration-300 ease-out hover:bg-gold-strong hover:text-cream focus-visible:bg-gold-strong focus-visible:text-cream motion-safe:active:scale-[0.96]";
 
 type Props = {
   href: string;

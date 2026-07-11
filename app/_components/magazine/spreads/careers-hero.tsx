@@ -12,7 +12,7 @@ const ADVANCE_MS = 7000;
 
 /** Supporting standfirst beneath the hero headline. */
 const HERO_SUBHEAD =
-  "Workshops, openings, celebrations, congresses, beaches. Three decades of partnership, told through the people who built it.";
+  "Three decades of partnership, told through the people who built it.";
 
 type HeroPhoto = {
   src: string;

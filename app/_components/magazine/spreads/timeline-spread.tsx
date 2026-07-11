@@ -1,6 +1,7 @@
 import { JourneyTimeline } from "@/app/_components/magazine/media/journey-timeline";
 import { PhotoCycle, type CyclePhoto } from "@/app/_components/magazine/media/photo-cycle";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
+import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import type { Milestone } from "@/content/en/milestones";
 import { anniversary30 } from "@/content/en/story";
 
@@ -8,9 +9,9 @@ import { anniversary30 } from "@/content/en/story";
 // describes: the beach formation, the gala dinner, and the team activities.
 const ANNIVERSARY_PHOTOS: CyclePhoto[] = [
   {
-    src: "/photos/people/anniv-beach-1600.webp",
+    src: "/photos/people/selected-2026-05-03.webp",
     alt: "Richfield staff spell out RICHFIELD on the Nha Trang beach, seen from above, for the 30th anniversary.",
-    objectPosition: "center 55%",
+    objectPosition: "center 50%",
   },
   {
     src: "/photos/people/anniv-gala-1600.webp",
@@ -36,26 +37,22 @@ const ANNIVERSARY_PHOTOS: CyclePhoto[] = [
 export function TimelineSpread({ milestones }: { milestones: Milestone[] }) {
   return (
     <Spread id="timeline" bg="cream" className="flex flex-col gap-y-[var(--v2-flow)]">
-      <div className="flex flex-col gap-y-[var(--v2-rhythm)]">
+      <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]">
         <Eyebrow>THE TIMELINE</Eyebrow>
-        <h2 className="font-display v2-size-standfirst max-w-[20ch]">
-          Three decades, <em className="italic text-gold-strong">one</em>{" "}
-          through-line.
-        </h2>
-      </div>
+      </RevealOnScroll>
 
       <JourneyTimeline milestones={milestones} />
 
       {/* Anniversary coda — text hangs left, a company photo anchors the right
           so the chapter closes on a face rather than empty paper. */}
       <div className="grid grid-cols-12 items-center gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-flow)] border-t border-current/15 pt-[var(--v2-flow)]">
-        <div className="col-span-12 lg:col-span-6">
+        <RevealOnScroll className="col-span-12 lg:col-span-6">
           <Eyebrow className="mb-[var(--v2-rhythm)]">
             {anniversary30.title.toUpperCase()}
           </Eyebrow>
           <p className="v2-size-body opacity-90">{anniversary30.body}</p>
-        </div>
-        <div className="col-span-12 lg:col-span-6">
+        </RevealOnScroll>
+        <RevealOnScroll delayMs={80} className="col-span-12 lg:col-span-6">
           <div className="relative aspect-[16/10] w-full overflow-hidden">
             <PhotoCycle
               photos={ANNIVERSARY_PHOTOS}
@@ -63,7 +60,7 @@ export function TimelineSpread({ milestones }: { milestones: Milestone[] }) {
               label="30th-anniversary gallery"
             />
           </div>
-        </div>
+        </RevealOnScroll>
       </div>
     </Spread>
   );

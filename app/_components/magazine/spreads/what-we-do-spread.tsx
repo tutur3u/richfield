@@ -2,6 +2,7 @@ import Link from "next/link";
 import { gtFormats, mtFormats, pillars } from "@/content/en/capabilities";
 import { PillarPhoto } from "@/app/_components/magazine/media/pillar-photo";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
+import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 
 type PillarMeta = {
   photo: { src: string; alt: string; objectPosition?: string };
@@ -15,11 +16,11 @@ type PillarMeta = {
 const PILLAR_META: Record<string, PillarMeta> = {
   "Warehouse & Logistics": {
     photo: {
-      src: "/photos/people/facility/warehouse-dock.webp",
-      alt: "Loading pallets at a Richfield distribution centre.",
+      src: "/photos/RF Website/Richfield Foods (Phu Tuong)/DSC_0832.webp",
+      alt: "A container truck at the Richfield Foods warehouse loading bay.",
       objectPosition: "center 55%",
     },
-    stat: "TWO DCS · LONG AN · HANOI",
+    stat: "Two Distribution Centers: Long An and Hanoi",
     display: "Warehouse & Logistics",
     formats: "Ambient, cold storage 18–25°C, co-packing.",
   },
@@ -59,7 +60,7 @@ export function WhatWeDoSpread() {
   return (
     <Spread id="what" bg="transparent" className="flex flex-col gap-y-[var(--v2-flow)]">
       {/* Headline block — hangs left with a wide right gutter. */}
-      <div className="flex flex-col gap-y-[var(--v2-rhythm)] hyphens-auto" lang="en">
+      <RevealOnScroll lang="en" className="flex flex-col gap-y-[var(--v2-rhythm)] hyphens-auto">
         <Eyebrow tone="gold">WHAT WE DO</Eyebrow>
 
         <h2 className="font-display v2-size-standfirst text-balance">
@@ -73,7 +74,7 @@ export function WhatWeDoSpread() {
           distributors in Vietnam, backed by an international group with deep
           local knowledge of every market we serve.
         </p>
-      </div>
+      </RevealOnScroll>
 
       {/* Three pillar columns — pillar leads with the image, then long body and
           a quiet folio stat line. */}
@@ -81,34 +82,35 @@ export function WhatWeDoSpread() {
           {filteredPillars.map((p, i) => {
             const meta = PILLAR_META[p.name];
             return (
-              <Link
-                key={p.name}
-                href={p.href}
-                className="group flex flex-col gap-[clamp(12px,1.2vw,18px)]"
-              >
-                <div className="relative aspect-[16/10] w-full overflow-hidden outline outline-1 -outline-offset-1 outline-black/10">
-                  <PillarPhoto
-                    src={meta.photo.src}
-                    alt={meta.photo.alt}
-                    objectPosition={meta.photo.objectPosition}
-                    delay={i * 0.16}
-                  />
-                </div>
+              <RevealOnScroll as="div" key={p.name} delayMs={i * 120}>
+                <Link
+                  href={p.href}
+                  className="group flex flex-col gap-[clamp(12px,1.2vw,18px)]"
+                >
+                  <div className="relative aspect-[16/10] w-full overflow-hidden outline outline-1 -outline-offset-1 outline-black/10">
+                    <PillarPhoto
+                      src={meta.photo.src}
+                      alt={meta.photo.alt}
+                      objectPosition={meta.photo.objectPosition}
+                      delay={i * 0.16}
+                    />
+                  </div>
 
-                <h3 className="font-display flex items-center gap-2 text-[clamp(1.3rem,1.7vw,1.55rem)] leading-[1.1] tracking-[-0.018em] transition-colors duration-[700ms] ease-[var(--ease-out-expo)] group-hover:text-gold-strong">
-                  {meta.display}
-                  <span aria-hidden className="text-gold-strong opacity-0 transition-[translate,opacity] duration-300 group-hover:translate-x-1 group-hover:opacity-100">→</span>
-                </h3>
+                  <h3 className="font-display flex items-center gap-2 text-[clamp(1.3rem,1.7vw,1.55rem)] leading-[1.1] tracking-[-0.018em] transition-colors duration-[700ms] ease-[var(--ease-out-expo)] group-hover:text-gold-strong">
+                    {meta.display}
+                    <span aria-hidden className="text-gold-strong opacity-0 transition-[translate,opacity] duration-300 group-hover:translate-x-1 group-hover:opacity-100">→</span>
+                  </h3>
 
-                <p className="v2-size-body text-justify opacity-90">
-                  {p.shortBody}
-                  {/* <span className="v2-italic opacity-70">{meta.formats}</span> */}
-                </p>
+                  <p className="v2-size-body text-justify opacity-90">
+                    {p.shortBody}
+                    {/* <span className="v2-italic opacity-70">{meta.formats}</span> */}
+                  </p>
 
-                <p className="v2-mono v2-size-folio mt-auto opacity-55">
-                  {meta.stat}
-                </p>
-              </Link>
+                  <p className="v2-mono v2-size-folio mt-auto opacity-55">
+                    {meta.stat}
+                  </p>
+                </Link>
+              </RevealOnScroll>
             );
           })}
       </div>

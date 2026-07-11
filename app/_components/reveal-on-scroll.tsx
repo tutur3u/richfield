@@ -9,11 +9,17 @@ export function RevealOnScroll({
   as: Tag = "div",
   className = "",
   delayMs = 0,
+  id,
+  lang,
 }: {
   children: React.ReactNode;
   as?: AllowedTag;
   className?: string;
   delayMs?: number;
+  /** Forwarded so a wrapped block can keep its scroll-anchor target. */
+  id?: string;
+  /** Forwarded so hyphenation (`hyphens-auto`) keeps its language. */
+  lang?: string;
 }) {
   const { ref, armed } = useRevealOnScroll<HTMLElement>();
   const style = delayMs ? { transitionDelay: `${delayMs}ms` } : undefined;
@@ -22,6 +28,8 @@ export function RevealOnScroll({
   return (
     <TagAny
       ref={ref}
+      id={id}
+      lang={lang}
       style={style}
       className={`reveal ${armed ? "reveal--armed" : ""} ${className}`}
     >

@@ -28,7 +28,7 @@ describe("<WhatWeDoSpread>", () => {
 
   it("renders each capability's signature stat line", () => {
     render(<WhatWeDoSpread />);
-    expect(screen.getByText(/TWO DCS/i)).toBeInTheDocument();
+    expect(screen.getByText(/Two Distribution Centers/i)).toBeInTheDocument();
     expect(screen.getByText(/180,000\+ POINTS/i)).toBeInTheDocument();
     expect(screen.getByText(/EVERY CHAIN IN VIETNAM/i)).toBeInTheDocument();
   });
@@ -41,7 +41,7 @@ describe("<WhatWeDoSpread>", () => {
 
   it("renders the Logistics signature stat naming both DCs", () => {
     render(<WhatWeDoSpread />);
-    const stat = screen.getByText(/TWO DCS .{1,3} LONG AN .{1,3} HANOI/i);
+    const stat = screen.getByText(/Two Distribution Centers: Long An and Hanoi/i);
     expect(stat).toBeInTheDocument();
   });
 });

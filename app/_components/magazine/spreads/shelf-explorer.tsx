@@ -12,6 +12,7 @@ import {
 } from "react";
 import { partnerLogos } from "@/content/en/photography";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
+import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import {
   shelfCategories,
   type BannerWeight,
@@ -273,12 +274,12 @@ export function ShelfExplorer({
       {/* Masthead row — headline left, the "all brands" category filter right,
           sharing one baseline. */}
       <div className="flex shrink-0 flex-col gap-x-10 gap-y-4 border-b border-current/12 pb-[clamp(8px,1vw,14px)] lg:flex-row lg:items-end lg:justify-between">
-        <div>
+        <RevealOnScroll>
           <Eyebrow className="mb-[clamp(4px,0.5vw,8px)]">PORTFOLIO</Eyebrow>
           <h2 className="font-display v2-size-standfirst">
             Every brand on the shelf.
           </h2>
-        </div>
+        </RevealOnScroll>
 
         <div
           role="tablist"
@@ -330,7 +331,7 @@ export function ShelfExplorer({
         <h3 className="sr-only">{category.label}</h3>
 
         {/* Descriptor + brand roster for the active category. */}
-        <div className="mb-[clamp(10px,1.2vw,18px)] flex shrink-0 flex-wrap items-center justify-between gap-x-8 gap-y-3">
+        <RevealOnScroll className="mb-[clamp(10px,1.2vw,18px)] flex shrink-0 flex-wrap items-center justify-between gap-x-8 gap-y-3">
           <p className="v2-size-body max-w-[34ch] text-[clamp(13px,0.95vw,15px)] leading-[1.5] opacity-65">
             {category.descriptor}
           </p>
@@ -362,7 +363,7 @@ export function ShelfExplorer({
               );
             })}
           </div>
-        </div>
+        </RevealOnScroll>
 
         {/* The mosaic — a native-aspect masonry, lane-balanced so the bottom
             closes evenly (banners + packshots interleaved, placed by packTiles). */}

@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Spread } from "@/app/_components/magazine/primitives/spread";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
 import { DisplayHeading } from "@/app/_components/primitives/display-heading";
+import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 
 type Retailer = { name: string; src: string; unoptimized?: boolean };
 
@@ -78,7 +79,7 @@ export function RetailerWall() {
   return (
     <Spread id="mt" bg="paper">
       <div className="flex flex-col gap-[var(--v2-flow)]">
-        <div className="flex flex-col gap-[var(--v2-rhythm)]">
+        <RevealOnScroll className="flex flex-col gap-[var(--v2-rhythm)]">
           <Eyebrow tone="gold">02 / 02 · Modern Trade</Eyebrow>
           <div id="retailer-wall-heading">
             <DisplayHeading level={2} className="max-w-[22ch]">
@@ -89,11 +90,11 @@ export function RetailerWall() {
             40+ modern trade and e-commerce partners including supermarket chains
             and convenience stores.
           </p>
-        </div>
+        </RevealOnScroll>
 
         <div className="flex flex-col gap-y-[var(--v2-flow)]">
-          {CHANNELS.map((channel) => (
-            <div key={channel.label} className="flex flex-col gap-6">
+          {CHANNELS.map((channel, i) => (
+            <RevealOnScroll key={channel.label} delayMs={i * 80} className="flex flex-col gap-6">
               <span className="text-[11px] font-medium uppercase tracking-[0.32em] text-green">
                 {channel.label}
               </span>
@@ -115,7 +116,7 @@ export function RetailerWall() {
                   </li>
                 ))}
               </ul>
-            </div>
+            </RevealOnScroll>
           ))}
         </div>
       </div>

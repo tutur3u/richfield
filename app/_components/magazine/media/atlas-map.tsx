@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import { motion, useReducedMotion } from "motion/react";
 
 import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
+import type { Locale } from "@/lib/locale";
 
 /**
  * STORY 03 map plate — the dominant element of the spread. Fills its grid
@@ -13,8 +15,9 @@ import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
  * this is a plain motion-island image: a one-time scroll-triggered scale +
  * fade. Aspect ratio is locked to the source (1210 x 1300) so nothing crops.
  */
-export function AtlasMap() {
+export function AtlasMap(_props: { locale?: Locale }) {
   const reduce = useReducedMotion();
+  const t = useTranslations("atlasMap");
 
   return (
     <motion.figure
@@ -27,7 +30,7 @@ export function AtlasMap() {
       <div className="relative ml-auto aspect-[1210/1300] w-full max-w-[calc(86svh*1210/1300)]">
         <Image
           src="/photos/map/footprint.webp"
-          alt="Richfield operating footprint across China (50, sourcing and brands), Vietnam (1,000+ at headquarters and growing), and Malaysia (150, origin in the 1990s)."
+          alt={t("alt")}
           fill
           sizes="(max-width: 1024px) 100vw, 58vw"
           className="object-contain"
@@ -35,7 +38,7 @@ export function AtlasMap() {
         />
       </div>
       <figcaption className="v2-mono v2-size-folio opacity-50">
-        OPERATING FOOTPRINT · ASIA
+        {t("caption")}
       </figcaption>
     </motion.figure>
   );

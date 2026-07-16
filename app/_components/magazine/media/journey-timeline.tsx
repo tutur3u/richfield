@@ -1,8 +1,9 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
-import { partnerLogos } from "@/content/en/photography";
+import { getContent } from "@/content";
 import type { Milestone } from "@/content/en/milestones";
+import type { Locale } from "@/lib/locale";
 
 /**
  * Milestone brand names don't always match the partnerLogos keys (which use the
@@ -14,7 +15,10 @@ const LOGO_ALIASES: Record<string, string> = {
   "Dory Rich JSC": "Dory Rich",
 };
 
-function logoFor(brand: string): string | undefined {
+function logoFor(
+  partnerLogos: Record<string, string>,
+  brand: string,
+): string | undefined {
   return partnerLogos[LOGO_ALIASES[brand] ?? brand];
 }
 
@@ -29,7 +33,15 @@ function logoFor(brand: string): string | undefined {
  * groups (group/tl on the list, group/item on each entry) so siblings dim
  * without disturbing the scroll-reveal transition on the <li>.
  */
-export function JourneyTimeline({ milestones }: { milestones: Milestone[] }) {
+export function JourneyTimeline({
+  milestones,
+  locale = "en",
+}: {
+  milestones: Milestone[];
+  locale?: Locale;
+}) {
+  const { partnerLogos } = getContent(locale);
+
   return (
     <div
       className="relative"
@@ -51,7 +63,7 @@ export function JourneyTimeline({ milestones }: { milestones: Milestone[] }) {
 
       <ol className="group/tl flex flex-col lg:grid lg:grid-cols-6 lg:gap-x-[clamp(20px,2.4vw,40px)]">
         {milestones.map((m, i) => {
-          const logo = logoFor(m.brand);
+          const logo = logoFor(partnerLogos, m.brand);
           const isLast = i === milestones.length - 1;
           return (
             <RevealOnScroll

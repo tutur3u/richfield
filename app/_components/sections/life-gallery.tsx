@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
+import type { Locale } from "@/lib/locale";
 import type { RichfieldImageLibraryItem } from "@/lib/richfield-content";
 
 // A wall of life at Richfield: every frame from the curated set, no labels, no
@@ -12,10 +14,6 @@ const SRCS = Array.from(
   { length: COUNT },
   (_, i) => `/photos/careers-life/${String(i + 1).padStart(2, "0")}.webp`,
 );
-const FALLBACK_IMAGES = SRCS.map((src) => ({
-  alt: "Life at Richfield.",
-  src,
-}));
 
 /**
  * One marquee row: an overflow-x rail whose scrollLeft is advanced every frame
@@ -161,24 +159,26 @@ export function LifeGallery({
   images,
 }: {
   images?: RichfieldImageLibraryItem[];
+  locale?: Locale;
 }) {
+  const t = useTranslations("ops.lifeGallery");
   const galleryImages =
     images && images.length > 0
       ? images.map((image) => ({
           alt: image.alt,
           src: image.src,
         }))
-      : FALLBACK_IMAGES;
+      : SRCS.map((src) => ({ alt: t("fallbackAlt"), src }));
   const rowA = galleryImages.filter((_, i) => i % 3 === 0);
   const rowB = galleryImages.filter((_, i) => i % 3 === 1);
   const rowC = galleryImages.filter((_, i) => i % 3 === 2);
 
   return (
     <section
-      aria-label="Life at Richfield, in pictures"
+      aria-label={t("sectionLabel")}
       className="v2-display v2-bleed-x pt-[var(--v2-flow)]"
     >
-      <h2 className="sr-only">Life at Richfield, in pictures</h2>
+      <h2 className="sr-only">{t("sectionLabel")}</h2>
       <div className="flex flex-col gap-2 sm:gap-3">
         <MarqueeRow images={rowA} dir={1} speed={0.55} />
         <MarqueeRow images={rowB} dir={-1} speed={0.55} />

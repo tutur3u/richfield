@@ -1,11 +1,12 @@
 import { cache } from "react";
 import {
   buildRichfieldContent,
-  DEFAULT_RICHFIELD_CONTENT,
+  getDefaultRichfieldContent,
   type RichfieldDeliveryPayload,
 } from "./richfield-content";
 import { getOptionalRichfieldWorkspaceId, getRichfieldApiBaseUrl } from "./richfield-config";
 import { fetchWithRichfieldTimeout } from "./richfield-fetch";
+import { DEFAULT_LOCALE, type Locale } from "./locale";
 
 const DELIVERY_REVALIDATE_SECONDS = 60;
 
@@ -39,19 +40,20 @@ async function fetchDeliveryPayload() {
   };
 }
 
-export async function getUncachedRichfieldContent() {
+export async function getUncachedRichfieldContent(locale: Locale = DEFAULT_LOCALE) {
   try {
     const payload = await fetchDeliveryPayload();
 
     if (!payload) {
-      return DEFAULT_RICHFIELD_CONTENT;
+      return getDefaultRichfieldContent(locale);
     }
 
     return buildRichfieldContent(payload.delivery, {
       apiBaseUrl: payload.apiBaseUrl,
+      locale,
     });
   } catch {
-    return DEFAULT_RICHFIELD_CONTENT;
+    return getDefaultRichfieldContent(locale);
   }
 }
 

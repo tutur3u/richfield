@@ -9,7 +9,10 @@ import type { Icon } from "@phosphor-icons/react";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { WavyBand } from "@/app/_components/sections/wavy-band";
-import { coreValues, lifeAtRichfieldIntro } from "@/content/en/values";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import { useTranslations } from "next-intl";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 
 // One line-icon per value, in coreValues order: respect, integrity,
 // commitment, helpfulness, friendliness. Sits as a faint watermark behind
@@ -38,21 +41,23 @@ const VALUE_ICONS: readonly Icon[] = [
  * collapses each transition to an instant state change with the layout intact,
  * and every meaning is in the DOM at rest (no-JS and screen-reader complete).
  */
-export function LifeValues() {
+export function LifeValues({ locale = "en" }: { locale?: Locale }) {
+  const t = useTranslations("ops.lifeValues");
+  const { coreValues, lifeAtRichfieldIntro } = getContent(locale);
+
   return (
     <section className="v2-display pt-[var(--v2-section)]">
       <div className="flex flex-col gap-y-[var(--v2-flow)]">
         <div className="mx-auto flex w-full max-w-[1500px] flex-col gap-y-[var(--v2-flow)] px-6 sm:px-10 lg:px-12">
           <RevealOnScroll className="flex w-full flex-col gap-y-[var(--v2-rhythm)]">
-            <Eyebrow>LIFE AT RICHFIELD</Eyebrow>
-            <h2 className="font-display v2-size-standfirst w-full text-balance">
-              People are valued as{" "}
-              <em className="italic text-gold-strong">partners</em>.
+            <Eyebrow>{t("eyebrow")}</Eyebrow>
+            <h2 className="font-display v2-size-standfirst w-full text-pretty">
+              <ItalicText text={t("heading")} />
             </h2>
             <p className="v2-size-body w-full text-justify opacity-90">{lifeAtRichfieldIntro}</p>
           </RevealOnScroll>
 
-          <Eyebrow>CORE VALUES</Eyebrow>
+          <Eyebrow>{t("coreValuesEyebrow")}</Eyebrow>
         </div>
 
         <WavyBand>
@@ -75,7 +80,7 @@ export function LifeValues() {
                     ) : null}
 
                     <p className="origin-left font-display text-[clamp(1.7rem,2.5vw,2.4rem)] leading-[0.98] tracking-[-0.02em] text-balance transition-transform duration-500 ease-out lg:group-hover/item:scale-[1.03] lg:group-focus-within/item:scale-[1.03]">
-                      {v.en}
+                      {locale === "vi" ? v.vi : v.en}
                     </p>
 
                     {/* Meaning: visible on mobile; on lg it stays collapsed

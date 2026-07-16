@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "@/__tests__/test-utils";
 import { LeadSpread } from "@/app/_components/magazine/spreads/lead-spread";
 
 describe("<LeadSpread>", () => {

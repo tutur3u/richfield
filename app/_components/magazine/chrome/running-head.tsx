@@ -2,13 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { useFocusTrap } from "@/app/_hooks/use-focus-trap";
 
 import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
+import { LanguageSwitcher } from "@/app/_components/magazine/chrome/language-switcher";
+import type { Locale } from "@/lib/locale";
 
 type NavLeaf = { label: string; href: string };
 type NavParent = { label: string; children: NavLeaf[] };
@@ -16,48 +18,27 @@ type NavItem = NavLeaf | NavParent;
 
 // The magazine homepage (/) carries the company story (Home + About + Brands).
 // The top nav is the three action destinations; "What We Do" fans out to the
-// two operational pages. The logo returns to the homepage.
-const NAV: NavItem[] = [
-  {
-    label: "About Us",
-    children: [
-      { label: "Our Story", href: "/about/our-story" },
-      { label: "Who We Are", href: "/about/who-we-are" },
-    ],
-  },
-  {
-    label: "What We Do",
-    children: [
-      { label: "Logistics & Warehousing", href: "/logistics" },
-      { label: "Distribution", href: "/distribution" },
-    ],
-  },
-  {
-    label: "Brands",
-    children: [
-      { label: "Our Brands", href: "/brands" },
-      { label: "Portfolio", href: "/brands#portfolio" },
-    ],
-  },
-  { label: "Careers", href: "/careers" },
-  { label: "Contact", href: "/contact" },
-];
+// two operational pages. The logo returns to the homepage. Labels + hrefs come
+// from the nav namespace as bare paths; the i18n Link prefixes them per locale.
 
 function isParent(item: NavItem): item is NavParent {
   return "children" in item;
 }
 
-// A "route" navigates with the Next router; an anchor (#…, /#…) is a plain
-// <a> so hash scrolling works from any page.
+// A "route" navigates with the router; an anchor (#…, /#…) is a plain <a> so
+// hash scrolling works from any page.
 function isRoute(href: string): boolean {
   return href.startsWith("/") && !href.includes("#");
 }
 
 // The active top-level item is driven by the current route: a leaf matches its
-// own path, a parent matches when any of its child pages is active.
+// own path, a parent matches when any of its child pages is active. Hrefs are
+// already bare, and usePathname from @/i18n/navigation is locale-stripped too.
 function navActive(item: NavItem, pathname: string): boolean {
-  const hit = (href: string) =>
-    isRoute(href) && (pathname === href || pathname.startsWith(`${href}/`));
+  const hit = (href: string) => {
+    if (!isRoute(href)) return false;
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
   return isParent(item) ? item.children.some((c) => hit(c.href)) : hit(item.href);
 }
 
@@ -68,11 +49,14 @@ function navActive(item: NavItem, pathname: string): boolean {
  * burger + drawer below lg. The site is one cream canvas, so the bar does not
  * invert colours.
  */
-export function RunningHead() {
+export function RunningHead(_props: { locale?: Locale }) {
   const reduce = useReducedMotion();
-  const pathname = usePathname() ?? "/";
+  const pathname = usePathname();
+  const locale = useLocale();
   const [openMenu, setOpenMenu] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const t = useTranslations("nav");
+  const nav = t.raw("items") as NavItem[];
 
   // Lock body scroll while the mobile drawer is open.
   useEffect(() => {
@@ -90,7 +74,7 @@ export function RunningHead() {
       >
         <div className="mx-auto flex h-full max-w-[1500px] items-center justify-between gap-6 px-6 text-ink sm:px-10 lg:px-12">
           {/* Masthead logo. */}
-          <Link href="/" aria-label="Richfield — home" className="shrink-0">
+          <Link href="/" aria-label={t("homeAria")} className="shrink-0">
             <Image
               src="/photos/logos/richfield.webp"
               alt="Richfield Group"
@@ -105,7 +89,7 @@ export function RunningHead() {
             aria-label="Primary"
             className="hidden items-center gap-[clamp(16px,1.6vw,28px)] lg:flex"
           >
-            {NAV.map((item, i) => {
+            {nav.map((item, i) => {
               const active = navActive(item, pathname);
               if (isParent(item)) {
                 return (
@@ -119,44 +103,69 @@ export function RunningHead() {
                       setOpenMenu((cur) => (cur === i ? null : cur))
                     }
                     reduce={!!reduce}
+                    locale={locale}
                   />
                 );
               }
               return (
-                <NavTopLink key={item.label} href={item.href} active={active}>
+                <NavTopLink key={item.label} href={item.href} active={active} locale={locale}>
                   {item.label}
                 </NavTopLink>
               );
             })}
+            <LanguageSwitcher className="ml-2" />
           </nav>
 
           {/* Mobile burger. */}
-          <button
-            type="button"
-            aria-expanded={mobileOpen}
-            aria-controls="magazine-drawer"
-            aria-label="Open menu"
-            onClick={() => setMobileOpen(true)}
-            className="flex h-10 w-10 items-center justify-center text-ink transition-colors hover:text-gold lg:hidden"
-          >
-            <BurgerIcon />
-          </button>
+          <div className="flex items-center gap-4 lg:hidden">
+            <LanguageSwitcher />
+            <button
+              type="button"
+              aria-expanded={mobileOpen}
+              aria-controls="magazine-drawer"
+              aria-label={t("openMenu")}
+              onClick={() => setMobileOpen(true)}
+              className="flex h-10 w-10 items-center justify-center text-ink transition-colors hover:text-gold"
+            >
+              <BurgerIcon />
+            </button>
+          </div>
         </div>
       </header>
 
-      <MobileNav open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <MobileNav
+        open={mobileOpen}
+        onClose={() => setMobileOpen(false)}
+        locale={locale}
+        nav={nav}
+        strings={{
+          closeMenu: t("closeMenu"),
+          drawerAria: t("drawerAria"),
+          homeAria: t("homeAria"),
+          countriesLine: t("countriesLine"),
+        }}
+      />
     </>
   );
+}
+
+// Hash anchors (e.g. /brands#portfolio) render as plain <a>, so they need the
+// locale prefix applied by hand for non-default locales — the i18n Link only
+// prefixes the route links.
+function hashHref(locale: string, href: string): string {
+  return locale === "en" ? href : `/${locale}${href}`;
 }
 
 // A top-level anchor/route link with the sliding gold active underline.
 function NavTopLink({
   href,
   active,
+  locale,
   children,
 }: {
   href: string;
   active: boolean;
+  locale: string;
   children: React.ReactNode;
 }) {
   const cls = "v2-mono v2-size-folio relative";
@@ -173,7 +182,7 @@ function NavTopLink({
       {inner}
     </Link>
   ) : (
-    <a href={href} aria-current={active ? "location" : undefined} className={cls}>
+    <a href={hashHref(locale, href)} aria-current={active ? "location" : undefined} className={cls}>
       {inner}
     </a>
   );
@@ -199,6 +208,7 @@ function Dropdown({
   onOpen,
   onClose,
   reduce,
+  locale,
 }: {
   item: NavParent;
   active: boolean;
@@ -206,6 +216,7 @@ function Dropdown({
   onOpen: () => void;
   onClose: () => void;
   reduce: boolean;
+  locale: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -250,17 +261,23 @@ function Dropdown({
         className="absolute left-0 top-full pt-[10px]"
       >
         <ul className="flex min-w-[180px] flex-col rounded-xl border border-ink/10 bg-cream/95 p-2 shadow-[0_18px_40px_-20px_oklch(0.32_0.062_155/0.45)] backdrop-blur-md">
-          {item.children.map((leaf) => (
-            <li key={leaf.href}>
-              <a
-                href={leaf.href}
-                onClick={onClose}
-                className="v2-mono v2-size-folio block whitespace-nowrap rounded px-3 py-2 text-ink/80 transition-colors hover:bg-ink/5 hover:text-ink"
-              >
-                {leaf.label}
-              </a>
-            </li>
-          ))}
+          {item.children.map((leaf) => {
+            const leafCls =
+              "v2-mono v2-size-folio block whitespace-nowrap rounded px-3 py-2 text-ink/80 transition-colors hover:bg-ink/5 hover:text-ink";
+            return (
+              <li key={leaf.href}>
+                {isRoute(leaf.href) ? (
+                  <Link href={leaf.href} onClick={onClose} className={leafCls}>
+                    {leaf.label}
+                  </Link>
+                ) : (
+                  <a href={hashHref(locale, leaf.href)} onClick={onClose} className={leafCls}>
+                    {leaf.label}
+                  </a>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </motion.div>
     </div>
@@ -269,7 +286,24 @@ function Dropdown({
 
 // Mobile drawer — slides in from the right, traps focus, accordion for the
 // "About Us" group. Mirrors the classic SiteHeader drawer pattern.
-function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
+function MobileNav({
+  open,
+  onClose,
+  locale,
+  nav,
+  strings,
+}: {
+  open: boolean;
+  onClose: () => void;
+  locale: string;
+  nav: NavItem[];
+  strings: {
+    closeMenu: string;
+    drawerAria: string;
+    homeAria: string;
+    countriesLine: string;
+  };
+}) {
   const [mounted, setMounted] = useState(false);
   const [expanded, setExpanded] = useState<number | null>(0);
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -287,7 +321,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
     >
       <button
         type="button"
-        aria-label="Close menu"
+        aria-label={strings.closeMenu}
         tabIndex={open ? 0 : -1}
         onClick={onClose}
         className={`absolute inset-0 bg-ink/40 backdrop-blur-[2px] transition-opacity duration-300 ${open ? "opacity-100" : "opacity-0"}`}
@@ -298,11 +332,11 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
         ref={drawerRef}
         role="dialog"
         aria-modal="true"
-        aria-label="Site navigation"
+        aria-label={strings.drawerAria}
         className={`absolute right-0 top-0 flex h-[100svh] w-[min(92vw,420px)] flex-col bg-cream shadow-[0_24px_60px_-20px_oklch(0.32_0.062_155/0.4)] transition-transform duration-[350ms] ease-out-expo ${open ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex h-[68px] items-center justify-between border-b border-line px-5 sm:h-[88px] sm:px-7">
-          <Link href="/" onClick={onClose} aria-label="Richfield — home" className="flex items-center">
+          <Link href="/" onClick={onClose} aria-label={strings.homeAria} className="flex items-center">
             <Image
               src="/photos/logos/richfield.webp"
               alt="Richfield Group"
@@ -313,7 +347,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
           </Link>
           <button
             type="button"
-            aria-label="Close menu"
+            aria-label={strings.closeMenu}
             onClick={onClose}
             className="flex h-10 w-10 items-center justify-center text-ink transition-colors hover:text-gold"
           >
@@ -325,7 +359,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
           aria-label="Primary mobile"
           className="flex flex-1 flex-col gap-0 overflow-y-auto px-5 pt-4 sm:px-7"
         >
-          {NAV.map((item, i) =>
+          {nav.map((item, i) =>
             isParent(item) ? (
               <div key={item.label} className="border-b border-line">
                 <button
@@ -339,22 +373,28 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
                 </button>
                 {expanded === i ? (
                   <ul className="flex flex-col gap-0 pb-4">
-                    {item.children.map((leaf) => (
-                      <li key={leaf.href}>
-                        <a
-                          href={leaf.href}
-                          onClick={onClose}
-                          className="block py-2.5 pl-1 font-display text-[clamp(18px,4vw,24px)] text-ink/75 transition-colors hover:text-gold"
-                        >
-                          {leaf.label}
-                        </a>
-                      </li>
-                    ))}
+                    {item.children.map((leaf) => {
+                      const leafCls =
+                        "block py-2.5 pl-1 font-display text-[clamp(18px,4vw,24px)] text-ink/75 transition-colors hover:text-gold";
+                      return (
+                        <li key={leaf.href}>
+                          {isRoute(leaf.href) ? (
+                            <Link href={leaf.href} onClick={onClose} className={leafCls}>
+                              {leaf.label}
+                            </Link>
+                          ) : (
+                            <a href={hashHref(locale, leaf.href)} onClick={onClose} className={leafCls}>
+                              {leaf.label}
+                            </a>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                 ) : null}
               </div>
             ) : (
-              <MobileLeaf key={item.label} href={item.href} onClose={onClose}>
+              <MobileLeaf key={item.label} href={item.href} onClose={onClose} locale={locale}>
                 {item.label}
               </MobileLeaf>
             ),
@@ -363,7 +403,7 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
 
         <div className="flex flex-col gap-4 border-t border-line bg-paper/60 px-5 py-6 sm:px-7">
           <p className="text-[11px] uppercase tracking-[0.28em] text-muted">
-            Vietnam · Malaysia · China
+            {strings.countriesLine}
           </p>
         </div>
       </div>
@@ -375,10 +415,12 @@ function MobileNav({ open, onClose }: { open: boolean; onClose: () => void }) {
 function MobileLeaf({
   href,
   onClose,
+  locale,
   children,
 }: {
   href: string;
   onClose: () => void;
+  locale: string;
   children: React.ReactNode;
 }) {
   const cls =
@@ -394,7 +436,7 @@ function MobileLeaf({
       {arrow}
     </Link>
   ) : (
-    <a href={href} onClick={onClose} className={cls}>
+    <a href={hashHref(locale, href)} onClick={onClose} className={cls}>
       <span>{children}</span>
       {arrow}
     </a>

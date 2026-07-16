@@ -2,7 +2,10 @@ import Image from "next/image";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
-import { organizations, whoWeAreIntro } from "@/content/en/organizations";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import { useTranslations } from "next-intl";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 
 /**
  * "Who We Are" — an asymmetric opener (headline hangs left, standfirst sits in
@@ -21,7 +24,16 @@ import { organizations, whoWeAreIntro } from "@/content/en/organizations";
  * `prefers-reduced-motion` (see the "Issue Index" block in globals.css).
  * `head` clears the fixed running-head when this opens a standalone page.
  */
-export function OrganizationsSpread({ head = false }: { head?: boolean }) {
+export function OrganizationsSpread({
+  head = false,
+  locale = "en",
+}: {
+  head?: boolean;
+  locale?: Locale;
+}) {
+  const { organizations, whoWeAreIntro } = getContent(locale);
+  const t = useTranslations("story.organizationsSpread");
+
   return (
     <Spread
       id="organizations"
@@ -31,16 +43,15 @@ export function OrganizationsSpread({ head = false }: { head?: boolean }) {
     >
       <div
         className="grid grid-cols-12 gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-rhythm)] hyphens-auto"
-        lang="en"
+        lang={locale}
       >
         <div className="col-span-12 flex flex-col gap-y-[var(--v2-rhythm)] lg:col-span-5">
-          <Eyebrow className="v2-enter">WHO WE ARE</Eyebrow>
+          <Eyebrow className="v2-enter">{t("eyebrow")}</Eyebrow>
           <h1
             className="v2-enter font-display v2-size-standfirst text-balance"
             style={{ animationDelay: "90ms" }}
           >
-            One group, <em className="italic text-gold-strong">three</em>{" "}
-            companies.
+            <ItalicText text={t("heading")} />
           </h1>
         </div>
         <p

@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
+import { Link } from "@/i18n/navigation";
 
 // ---------------------------------------------------------------------------
 // CtaLink — the one call-to-action treatment: a rectangular gold-outlined box

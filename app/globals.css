@@ -234,7 +234,7 @@ button:focus-visible {
 .v2-size-cover      { font-size: clamp(4rem, 12vw, 11rem); line-height: 0.92; letter-spacing: -0.035em; }
 .v2-size-feature    { font-size: clamp(3rem, 7vw, 6rem);   line-height: 0.98; letter-spacing: -0.028em; }
 .v2-size-section    { font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1.05; letter-spacing: -0.02em; }
-.v2-size-standfirst { font-size: clamp(2.4rem, 4.6vw, 5rem); line-height: 1.04; letter-spacing: -0.026em; }
+.v2-size-standfirst { font-size: clamp(2.4rem, 4.6vw, 5rem); line-height: 1.04; letter-spacing: -0.012em; }
 .v2-size-body       { font-size: clamp(17px, 1.3vw, 20px); line-height: 1.62; }
 .v2-size-folio      { font-size: clamp(11px, 0.9vw, 13px); letter-spacing: 0.18em; text-transform: uppercase; }
 .v2-size-eyebrow    { font-size: clamp(12px, 1vw, 14px);   letter-spacing: 0.22em; text-transform: uppercase; }

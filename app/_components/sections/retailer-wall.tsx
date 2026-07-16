@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { Spread } from "@/app/_components/magazine/primitives/spread";
-import { Eyebrow } from "@/app/_components/primitives/eyebrow";
 import { DisplayHeading } from "@/app/_components/primitives/display-heading";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
+import { useTranslations } from "next-intl";
+import type { Locale } from "@/lib/locale";
 
 type Retailer = { name: string; src: string; unoptimized?: boolean };
 
@@ -67,33 +68,32 @@ const ECOMMERCE: Retailer[] = [
   { name: "TikTok Shop", src: "/photos/retailers/tiktok.webp" },
 ];
 
-const CHANNELS: Array<{ label: string; items: Retailer[] }> = [
-  { label: "E-commerce", items: ECOMMERCE },
-  { label: "Convenience", items: CONVENIENCE },
-  { label: "Supermarket & Hypermarket", items: SUPERMARKET },
-  { label: "Health & Beauty", items: HEALTH_BEAUTY },
-  { label: "Mom, Baby & Specialty", items: SPECIALTY },
-];
+export function RetailerWall(_props: { locale?: Locale }) {
+  const t = useTranslations("ops.retailerWall");
+  const channels: Array<{ label: string; items: Retailer[] }> = [
+    { label: t("channels.ecommerce"), items: ECOMMERCE },
+    { label: t("channels.convenience"), items: CONVENIENCE },
+    { label: t("channels.supermarket"), items: SUPERMARKET },
+    { label: t("channels.healthBeauty"), items: HEALTH_BEAUTY },
+    { label: t("channels.specialty"), items: SPECIALTY },
+  ];
 
-export function RetailerWall() {
   return (
     <Spread id="mt" bg="paper">
       <div className="flex flex-col gap-[var(--v2-flow)]">
         <RevealOnScroll className="flex flex-col gap-[var(--v2-rhythm)]">
-          <Eyebrow tone="gold">02 / 02 · Modern Trade</Eyebrow>
           <div id="retailer-wall-heading">
             <DisplayHeading level={2} className="max-w-[22ch]">
-              Modern *Trade*.
+              {t("heading")}
             </DisplayHeading>
           </div>
           <p className="v2-size-body text-justify opacity-90">
-            40+ modern trade and e-commerce partners including supermarket chains
-            and convenience stores.
+            {t("body")}
           </p>
         </RevealOnScroll>
 
         <div className="flex flex-col gap-y-[var(--v2-flow)]">
-          {CHANNELS.map((channel, i) => (
+          {channels.map((channel, i) => (
             <RevealOnScroll key={channel.label} delayMs={i * 80} className="flex flex-col gap-6">
               <span className="text-[11px] font-medium uppercase tracking-[0.32em] text-green">
                 {channel.label}
@@ -106,7 +106,7 @@ export function RetailerWall() {
                   >
                     <Image
                       src={r.src}
-                      alt={`${r.name} logo`}
+                      alt={t("logoAlt", { name: r.name })}
                       width={200}
                       height={88}
                       unoptimized={r.unoptimized}

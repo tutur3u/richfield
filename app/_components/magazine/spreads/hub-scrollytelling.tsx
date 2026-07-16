@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
-import { warehouseHubs } from "@/content/en/hubs";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 
 /**
  * The two hubs as a sticky-media scrollytelling spread. On desktop the facility
@@ -13,7 +14,9 @@ import { warehouseHubs } from "@/content/en/hubs";
  * through the hub's own photo set. Below lg it collapses to a normal stack
  * (content then lead photo per hub). The location is the eyebrow.
  */
-export function HubScrollytelling() {
+export function HubScrollytelling({ locale = "en" }: { locale?: Locale }) {
+  const { warehouseHubs } = getContent(locale);
+
   // Flatten every hub photo into one ordered slide list; remember where each
   // hub's slides begin so an (activeHub, sub) pair maps to a flat index.
   const { slides, offsets } = useMemo(() => {
@@ -24,7 +27,7 @@ export function HubScrollytelling() {
       slides.push(...hub.photos);
     }
     return { slides, offsets };
-  }, []);
+  }, [warehouseHubs]);
 
   const [active, setActive] = useState(0);
   const refs = useRef<Array<HTMLElement | null>>([]);
@@ -63,7 +66,7 @@ export function HubScrollytelling() {
       window.removeEventListener("resize", onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, [offsets]);
+  }, [offsets, warehouseHubs]);
 
   return (
     <section className="v2-display relative w-full bg-cream text-ink">

@@ -4,30 +4,21 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
+import { useTranslations } from "next-intl";
+
 import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
-import { peoplePhotos } from "@/content/en/photography";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 import type { RichfieldImageLibraryItem } from "@/lib/richfield-content";
 
 const ADVANCE_MS = 7000;
-
-/** Supporting standfirst beneath the hero headline. */
-const HERO_SUBHEAD =
-  "Three decades of partnership, told through the people who built it.";
 
 type HeroPhoto = {
   src: string;
   alt: string;
   objectPosition?: string;
 };
-
-// People photography — the same sequence the careers chapter has always led with.
-const HERO_SEQUENCE: HeroPhoto[] = [
-  { src: peoplePhotos.gala.src, alt: peoplePhotos.gala.alt },
-  { src: peoplePhotos.teamBuilding.src, alt: peoplePhotos.teamBuilding.alt },
-  { src: peoplePhotos.teamBuildingEnergy.src, alt: peoplePhotos.teamBuildingEnergy.alt },
-  { src: peoplePhotos.happyTime.src, alt: peoplePhotos.happyTime.alt },
-  { src: peoplePhotos.celebration.src, alt: peoplePhotos.celebration.alt },
-];
 
 /**
  * Careers chapter opener, built to match the homepage cover: a full-bleed
@@ -38,10 +29,22 @@ const HERO_SEQUENCE: HeroPhoto[] = [
  */
 export function CareersHero({
   photos,
+  locale = "en",
 }: {
   photos?: RichfieldImageLibraryItem[];
+  locale?: Locale;
 }) {
   const reduce = useReducedMotion();
+  const t = useTranslations("ops.careersHero");
+  const { peoplePhotos } = getContent(locale);
+  // People photography — the same sequence the careers chapter has always led with.
+  const fallbackSequence: HeroPhoto[] = [
+    { src: peoplePhotos.gala.src, alt: peoplePhotos.gala.alt },
+    { src: peoplePhotos.teamBuilding.src, alt: peoplePhotos.teamBuilding.alt },
+    { src: peoplePhotos.teamBuildingEnergy.src, alt: peoplePhotos.teamBuildingEnergy.alt },
+    { src: peoplePhotos.happyTime.src, alt: peoplePhotos.happyTime.alt },
+    { src: peoplePhotos.celebration.src, alt: peoplePhotos.celebration.alt },
+  ];
   const sequence =
     photos && photos.length > 0
       ? photos.map((item) => ({
@@ -49,7 +52,7 @@ export function CareersHero({
           objectPosition: item.objectPosition ?? undefined,
           src: item.src,
         }))
-      : HERO_SEQUENCE;
+      : fallbackSequence;
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -74,7 +77,7 @@ export function CareersHero({
 
   return (
     <section
-      aria-label="Careers"
+      aria-label={t("ariaLabel")}
       aria-roledescription="carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -129,15 +132,15 @@ export function CareersHero({
             {...enter(0.35)}
           >
             <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
-            CAREERS
+            {t("eyebrow")}
           </motion.div>
 
           <h1 className="font-display v2-headline max-w-full text-balance lg:max-w-[20ch]">
             <motion.span className="block" {...enter(0.55)}>
-              A place where
+              <ItalicText text={t("headlineLine1")} emClassName="italic text-gold" />
             </motion.span>
             <motion.span className="block" {...enter(0.73)}>
-              <em className="italic text-gold">people stay</em>.
+              <ItalicText text={t("headlineLine2")} emClassName="italic text-gold" />
             </motion.span>
           </h1>
 
@@ -145,7 +148,7 @@ export function CareersHero({
             className="mt-[var(--v2-rhythm)] max-w-full text-[clamp(17px,1.4vw,22px)] leading-relaxed text-cream/90 [text-shadow:0_1px_4px_rgb(0_0_0_/_0.6)] lg:max-w-[48ch]"
             {...enter(0.95)}
           >
-            {HERO_SUBHEAD}
+            {t("subhead")}
           </motion.p>
         </div>
       </div>

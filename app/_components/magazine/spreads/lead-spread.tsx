@@ -2,8 +2,10 @@ import Image from "next/image";
 import { LeadPhotoCycle } from "@/app/_components/magazine/media/lead-photo-cycle";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
-import { ourStoryIntro } from "@/content/en/story";
-import { founder } from "@/content/en/founder";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import { useTranslations } from "next-intl";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 
 /**
  * "Our Story" flows straight into "The Founder" as one continuous spread. On
@@ -18,12 +20,21 @@ import { founder } from "@/content/en/founder";
  *   Our Story: eyebrow+headline → carousel → paragraph
  *   Founder:   eyebrow+headline+bio → portrait
  */
-export function LeadSpread({ head = false }: { head?: boolean }) {
+export function LeadSpread({
+  head = false,
+  locale = "en",
+}: {
+  head?: boolean;
+  locale?: Locale;
+}) {
+  const { ourStoryIntro, founder } = getContent(locale);
+  const t = useTranslations("story.leadSpread");
+
   return (
     <Spread id="story" bg="cream" head={head}>
       <div
         className="flex flex-col gap-[var(--v2-flow)] hyphens-auto lg:flex-row lg:items-start lg:gap-[var(--v2-col-gap)]"
-        lang="en"
+        lang={locale}
       >
         {/* Left column: Our Story copy + the founder portrait beneath it. */}
         <div className="max-lg:contents lg:flex lg:w-[47%] lg:flex-col lg:gap-[var(--v2-flow)]">
@@ -31,11 +42,12 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
               paragraph split apart on mobile (the carousel slots between). */}
           <div className="max-lg:contents">
             <RevealOnScroll className="max-lg:order-1 mb-[var(--v2-rhythm)] max-lg:mb-0">
-              <Eyebrow className="mb-[var(--v2-rhythm)]">OUR STORY</Eyebrow>
+              <Eyebrow className="mb-[var(--v2-rhythm)]">
+                {t("storyEyebrow")}
+              </Eyebrow>
 
               <h1 className="font-display v2-size-standfirst max-w-[16ch]">
-                From a{" "}
-                <em className="italic text-gold-strong">single partnership</em>
+                <ItalicText text={t("heading")} />
               </h1>
             </RevealOnScroll>
 
@@ -48,7 +60,7 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
             <RevealOnScroll as="div" className="relative aspect-[2/3] w-full overflow-hidden">
               <Image
                 src={founder.photo}
-                alt={`${founder.name}, ${founder.role} of Richfield Group.`}
+                alt={t("founderPhotoAlt", { name: founder.name, role: founder.role })}
                 fill
                 sizes="(max-width: 1024px) 100vw, 45vw"
                 className="object-cover v2-photo-duotone"
@@ -64,12 +76,14 @@ export function LeadSpread({ head = false }: { head?: boolean }) {
         <div className="max-lg:contents lg:flex lg:min-w-0 lg:flex-1 lg:flex-col lg:gap-[var(--v2-flow)]">
           <RevealOnScroll as="figure" className="overflow-hidden max-lg:order-2">
             <div className="relative aspect-[3/2] w-full overflow-hidden">
-              <LeadPhotoCycle />
+              <LeadPhotoCycle locale={locale} />
             </div>
           </RevealOnScroll>
 
           <RevealOnScroll className="max-lg:order-4">
-            <Eyebrow className="mb-[var(--v2-rhythm)]">THE FOUNDER</Eyebrow>
+            <Eyebrow className="mb-[var(--v2-rhythm)]">
+              {t("founderEyebrow")}
+            </Eyebrow>
 
             <h2 className="font-display v2-size-standfirst mb-[var(--v2-rhythm)]">
               {founder.name}

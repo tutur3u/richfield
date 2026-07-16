@@ -1,0 +1,375 @@
+{
+  "nav": {
+    "items": [
+      {
+        "label": "Về chúng tôi",
+        "children": [
+          {
+            "label": "Câu chuyện của chúng tôi",
+            "href": "/about/our-story"
+          },
+          {
+            "label": "Chúng tôi là ai",
+            "href": "/about/who-we-are"
+          }
+        ]
+      },
+      {
+        "label": "Lĩnh vực hoạt động",
+        "children": [
+          {
+            "label": "Kho vận & Logistics",
+            "href": "/logistics"
+          },
+          {
+            "label": "Phân phối",
+            "href": "/distribution"
+          }
+        ]
+      },
+      {
+        "label": "Thương hiệu",
+        "children": [
+          {
+            "label": "Thương hiệu của chúng tôi",
+            "href": "/brands"
+          },
+          {
+            "label": "Danh mục sản phẩm",
+            "href": "/brands#portfolio"
+          }
+        ]
+      },
+      {
+        "label": "Tuyển dụng",
+        "href": "/careers"
+      },
+      {
+        "label": "Liên hệ",
+        "href": "/contact"
+      }
+    ],
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu",
+    "homeAria": "Richfield — trang chủ",
+    "drawerAria": "Điều hướng trang",
+    "countriesLine": "Việt Nam · Malaysia · Trung Quốc"
+  },
+  "langSwitcher": {
+    "aria": "Chuyển ngôn ngữ"
+  },
+  "footer": {
+    "links": [
+      {
+        "label": "Thương hiệu",
+        "href": "/brands"
+      },
+      {
+        "label": "Kho vận",
+        "href": "/logistics"
+      },
+      {
+        "label": "Phân phối",
+        "href": "/distribution"
+      },
+      {
+        "label": "Tuyển dụng",
+        "href": "/careers"
+      },
+      {
+        "label": "Liên hệ",
+        "href": "/contact"
+      }
+    ],
+    "promise": "“Chúng tôi không chỉ giao sản phẩm. Chúng tôi mang đến *cơ hội tiếp cận thị trường*.”",
+    "promiseEyebrow": "LỜI HỨA CỦA RICHFIELD",
+    "homeAria": "Richfield — trang chủ"
+  },
+  "meta": {
+    "site": {
+      "title": "Richfield Group: Từ thâm nhập thị trường đến phân phối toàn quốc",
+      "description": "Mạng lưới phân phối FMCG lớn nhất Việt Nam. Đưa những thương hiệu được yêu thích nhất thế giới đến hơn 180.000 điểm bán lẻ trên toàn quốc."
+    },
+    "brands": {
+      "title": "Thương hiệu",
+      "description": "Các thương hiệu Richfield phân phối — ba thập kỷ hợp tác trong ngành bánh kẹo, đồ uống và chăm sóc cá nhân, cùng trọn bộ sản phẩm phía sau."
+    },
+    "careers": {
+      "title": "Tuyển dụng",
+      "description": "Richfield là nơi mọi người gắn bó lâu dài. Giá trị cốt lõi, lãnh đạo đặt con người lên trước, đóng góp cộng đồng và cuộc sống tại các văn phòng của chúng tôi."
+    },
+    "contact": {
+      "title": "Liên hệ",
+      "description": "Hãy kể cho chúng tôi về thương hiệu của bạn. Dù bạn là chủ thương hiệu, đối tác hay nhà báo, chúng tôi sẽ phản hồi sớm."
+    },
+    "distribution": {
+      "title": "Phân phối",
+      "description": "Từ kho hàng đến từng kệ hàng. Kênh truyền thống và kênh hiện đại trên khắp Việt Nam."
+    },
+    "logistics": {
+      "title": "Kho vận & Logistics",
+      "description": "Vận hành trọn gói, Bắc và Nam. Hai trung tâm phân phối, kho thường và kho lạnh, năng lực đồng đóng gói."
+    },
+    "ourStory": {
+      "title": "Câu chuyện của chúng tôi",
+      "description": "Từ một mối hợp tác duy nhất đến mạng lưới toàn quốc — câu chuyện nhà sáng lập và ba thập kỷ cột mốc của Richfield."
+    },
+    "whoWeAre": {
+      "title": "Chúng tôi là ai",
+      "description": "Một tập đoàn, ba công ty — Richfield Worldwide, Richfield Foods và Dory Rich — bao trùm phân phối, kho vận và nước tăng lực."
+    }
+  },
+  "brandsPage": {
+    "eyebrow": "THƯƠNG HIỆU CỦA CHÚNG TÔI",
+    "heading": "Tin chọn bởi những thương hiệu *được yêu thích* nhất thế giới.",
+    "intro": "Hơn 100 sản phẩm trải rộng từ bánh kẹo, đồ uống đến chăm sóc cá nhân và nhiều hơn nữa. Richfield phân phối những thương hiệu người tiêu dùng luôn tìm đến, trong những mối hợp tác thường kéo dài hàng thập kỷ.",
+    "collabEyebrow": "NHỮNG MỐI HỢP TÁC"
+  },
+  "careersPage": {
+    "whyEyebrow": "VÌ SAO CHỌN RICHFIELD",
+    "whyHeading": "Đội ngũ lãnh đạo thật lòng *quan tâm*.",
+    "saysEyebrow": "NHÂN VIÊN NÓI GÌ",
+    "practiceEyebrow": "TRONG THỰC TẾ",
+    "communityEyebrow": "CỘNG ĐỒNG & TÁC ĐỘNG",
+    "communityHeading": "Sự quan tâm vượt ngoài *nơi làm việc*.",
+    "watchFilm": "PHIM ÁO DÀI",
+    "vacanciesEyebrow": "VỊ TRÍ TUYỂN DỤNG",
+    "noVacancies": "Hiện tại chúng tôi chưa mở đợt tuyển dụng mới. Dù vậy, hãy cứ liên hệ — chúng tôi luôn muốn gặp những người phù hợp với câu chuyện của mình.",
+    "getInTouch": "Liên hệ →",
+    "jobTitle": "Vị trí",
+    "positions": "Số lượng",
+    "location": "Địa điểm",
+    "deadline": "Hạn nộp",
+    "videoTitle": "Phim về di sản văn hóa áo dài của Richfield",
+    "videoCaption": "Gìn giữ văn hóa — hội áo dài"
+  },
+  "contactPage": {
+    "eyebrow": "Liên hệ",
+    "channelsEyebrow": "Kênh liên hệ",
+    "formEyebrow": "Gửi tin nhắn",
+    "mapAria": "Vị trí văn phòng",
+    "mapTitle": "Trụ sở chính Richfield trên Google Maps",
+    "headline": "Hãy kể cho chúng tôi về *thương hiệu* của bạn.",
+    "intro": "Chủ thương hiệu đang tìm hiểu thị trường Việt Nam, đối tác cân nhắc liên doanh, hay nhà báo cần thông tin gấp: chúng tôi sẽ phản hồi trong vòng hai ngày làm việc.",
+    "heroAlt": "Đội ngũ Richfield xếp chữ tên công ty trên bãi biển"
+  },
+  "contactForm": {
+    "success": "Cảm ơn bạn. Đội ngũ đối tác của chúng tôi sẽ phản hồi trong vòng hai ngày làm việc.",
+    "name": "Họ và tên",
+    "company": "Công ty",
+    "country": "Quốc gia",
+    "email": "Email",
+    "inquiryType": "Loại yêu cầu",
+    "message": "Nội dung",
+    "sending": "Đang gửi…",
+    "send": "Gửi tin nhắn",
+    "inquiryTypeLabels": {
+      "Brand partnership": "Hợp tác thương hiệu",
+      "Distribution opportunity": "Cơ hội phân phối",
+      "Careers": "Tuyển dụng",
+      "Press": "Báo chí",
+      "Other": "Khác"
+    },
+    "errors": {
+      "nameRequired": "Vui lòng nhập họ tên.",
+      "companyRequired": "Vui lòng nhập tên công ty.",
+      "emailInvalid": "Vui lòng nhập email hợp lệ.",
+      "messageRequired": "Vui lòng nhập nội dung.",
+      "messageTooLong": "Vui lòng giữ nội dung dưới 600 ký tự.",
+      "tooFast": "Vui lòng chờ một chút trước khi gửi.",
+      "deliveryFailed": "Chúng tôi không thể gửi tin nhắn của bạn. Hãy thử gửi email tới {email}."
+    }
+  },
+  "distributionPage": {
+    "gtHeading": "Kênh *Truyền thống*",
+    "gtBody": "Kênh lớn nhất của chúng tôi. Hơn 300 nhà phân phối cấp dưới vươn tới các điểm bán lẻ truyền thống trên khắp các tỉnh thành: chợ, tiệm tạp hóa và cửa hàng chuyên doanh. Kênh truyền thống là nền tảng của chúng tôi từ năm 1994.",
+    "gtAltTapHoa": "Một tiệm tạp hóa truyền thống đầy ắp hàng hóa đóng gói.",
+    "gtAltWholesaler": "Một lối đi trong chợ bán sỉ xếp đầy thùng sản phẩm.",
+    "gtAltPharmacy": "Quầy và kệ hàng của một nhà thuốc độc lập."
+  },
+  "logisticsPage": {
+    "operationKicker": "BÊN TRONG VẬN HÀNH",
+    "operationHeading": "Dạo một vòng *trung tâm phân phối*.",
+    "videoTitle": "Tham quan kho và trung tâm phân phối Richfield",
+    "videoCaption": "Trung tâm phân phối Richfield · tham quan cơ sở"
+  },
+  "home": {
+    "coverSpread": {
+      "sectionAria": "Trang bìa số kỷ niệm 30 năm",
+      "headlineLine1": "Từ thâm nhập thị trường",
+      "headlineLine2": "đến phân phối *toàn quốc*.",
+      "established": "THÀNH LẬP NĂM 1994",
+      "photoAlts": [
+        "Đội ngũ Richfield nối thành hàng dài trên bãi biển lúc hoàng hôn",
+        "Đội ngũ Richfield nối thành hàng dài trên bãi biển lúc hoàng hôn",
+        "Đội ngũ Richfield Worldwide xếp thành hình trái tim",
+        "Góc nhìn flycam: đội ngũ Richfield xếp thành chữ RICHFIELD trên bãi biển",
+        "Đội ngũ Richfield trên sân khấu Gala Dinner kỷ niệm 30 năm"
+      ]
+    },
+    "groupOverview": {
+      "eyebrow": "TẬP ĐOÀN RICHFIELD",
+      "heading": "Một trong những mạng lưới phân phối *FMCG* lớn nhất Việt Nam.",
+      "galleryLabel": "Thư viện ảnh mạng lưới phân phối Richfield",
+      "photoAlts": [
+        "Đội ngũ Richfield nối thành hàng dài trên bãi biển lúc hoàng hôn.",
+        "Đội ngũ Richfield Worldwide xếp thành hình trái tim.",
+        "Góc nhìn flycam: đội ngũ Richfield xếp thành chữ RICHFIELD trên bãi biển.",
+        "Đội ngũ Richfield trên sân khấu tiệc gala kỷ niệm 30 năm."
+      ]
+    },
+    "whatWeDo": {
+      "eyebrow": "LĨNH VỰC HOẠT ĐỘNG",
+      "heading": "Ba cách chúng tôi đưa thương hiệu đến *thị trường*.",
+      "intro": "Tập đoàn Richfield khởi đầu là một doanh nghiệp gia đình tại Malaysia và đã phát triển qua ba thế hệ. Ngày nay, chúng tôi là một trong những nhà phân phối FMCG lớn nhất Việt Nam, với sự hậu thuẫn của một tập đoàn quốc tế cùng sự am hiểu sâu sắc từng thị trường mà chúng tôi phục vụ.",
+      "pillars": {
+        "/logistics": {
+          "photoAlt": "Xe container tại khu xuất hàng của kho Richfield Foods.",
+          "stat": "Hai trung tâm phân phối: Long An và Hà Nội",
+          "formats": "Kho thường, kho mát 18–25°C, đồng đóng gói (co-packing)."
+        },
+        "/distribution#gt": {
+          "photoAlt": "Một cửa hàng tạp hóa kênh truyền thống với đầy đủ các thương hiệu.",
+          "stat": "180,000+ ĐIỂM BÁN · 300+ NHÀ PHÂN PHỐI THỨ CẤP",
+          "formats": "tạp hóa, bán sỉ, horeca, chợ truyền thống."
+        },
+        "/distribution#mt": {
+          "photoAlt": "Khách mua sắm trong một gian hàng siêu thị kênh hiện đại.",
+          "stat": "PHỦ MỌI CHUỖI BÁN LẺ TẠI VIỆT NAM",
+          "formats": "siêu thị & đại siêu thị, cửa hàng tiện lợi, siêu thị mini & cửa hàng thực phẩm, sức khỏe & làm đẹp."
+        }
+      }
+    },
+    "footprint": {
+      "eyebrow": "PHẠM VI HOẠT ĐỘNG",
+      "headlineLine1": "3 quốc gia.",
+      "headlineLine2": "3 thế hệ.",
+      "headlineLine3": "1 *lời hứa*.",
+      "body": "Tập đoàn Richfield trải rộng trên ba quốc gia và ba thế hệ lãnh đạo gia đình, kết hợp quy mô quốc tế với sự am hiểu thực tế về từng thị trường mà chúng tôi phục vụ."
+    },
+    "jointVenture": {
+      "eyebrow": "LIÊN DOANH · THÀNH LẬP 2024",
+      "heading": "Sự hợp tác thành công giữa hai tập đoàn hàng đầu.",
+      "body": "Dory Rich JSC kết hợp vị thế dẫn đầu của TCP Group trong lĩnh vực sản xuất nước tăng lực Thái Lan với năng lực phân phối FMCG toàn quốc của Tập đoàn Richfield tại Việt Nam — quy tụ sản xuất, xây dựng thương hiệu và phân phối dưới một mái nhà.",
+      "partnership": "HỢP TÁC CÙNG",
+      "cta": "TRUY CẬP DORYRICH.COM.VN"
+    },
+    "brandsHero": {
+      "eyebrow": "THƯƠNG HIỆU CỦA CHÚNG TÔI",
+      "heading": "Được tin chọn bởi những thương hiệu *được yêu thích* nhất thế giới.",
+      "body": "Hơn 100 sản phẩm trải rộng từ bánh kẹo, đồ uống, chăm sóc cá nhân và nhiều ngành hàng khác — Richfield phân phối những thương hiệu mà người tiêu dùng luôn tin chọn, trong những mối quan hệ hợp tác thường kéo dài hàng thập kỷ.",
+      "cta": "KHÁM PHÁ THƯƠNG HIỆU"
+    },
+    "peopleMosaic": {
+      "photoAlts": [
+        "Tiết mục biểu diễn tại tiệc tất niên Richfield",
+        "Các đồng nghiệp trong một buổi workshop của đội ngũ",
+        "Đồng nghiệp tại tiệc tất niên Richfield",
+        "Tập thể quây quần trong tiệc tất niên",
+        "Một nhóm thành viên Richfield chung vui",
+        "Các đồng nghiệp bên nhau tại tiệc tất niên",
+        "Khoảnh khắc gia đình tại buổi tiệc của công ty",
+        "Nâng ly chúc mừng tại tiệc tất niên",
+        "Chào mừng ngày Quốc tế Phụ nữ 2026",
+        "Đội ngũ Richfield tại tiệc tất niên",
+        "Một buổi workshop của đội ngũ",
+        "Một đồng nghiệp tại tiệc tất niên",
+        "Toàn thể đội ngũ trong tiệc tất niên",
+        "Lễ khánh thành văn phòng năm 2026",
+        "Đồng nghiệp cùng nhau chung vui",
+        "Buổi workshop của đội ngũ đang diễn ra",
+        "Một buổi workshop của đội ngũ"
+      ]
+    },
+    "leadPhotoCycle": {
+      "label": "Thư viện ảnh đội ngũ Richfield",
+      "photoAlts": [
+        "Đội ngũ Richfield trước khuôn viên hiện đại, năm 2026.",
+        "Buổi họp mặt đội ngũ Richfield, cuối năm 2025.",
+        "Một buổi workshop đào tạo của Richfield đang diễn ra.",
+        "Một khoảnh khắc chung vui của Richfield."
+      ]
+    }
+  },
+  "story": {
+    "leadSpread": {
+      "storyEyebrow": "CÂU CHUYỆN CỦA CHÚNG TÔI",
+      "heading": "Khởi đầu từ *một mối hợp tác duy nhất*",
+      "founderEyebrow": "NHÀ SÁNG LẬP",
+      "founderPhotoAlt": "{name}, {role} của Richfield Group."
+    },
+    "timelineSpread": {
+      "eyebrow": "DÒNG THỜI GIAN",
+      "galleryLabel": "Bộ ảnh kỷ niệm 30 năm",
+      "anniversaryPhotoAlts": [
+        "Nhân viên Richfield xếp chữ RICHFIELD trên bãi biển Nha Trang, nhìn từ trên cao, nhân dịp kỷ niệm 30 năm thành lập.",
+        "Đội ngũ Richfield trên sân khấu tiệc gala kỷ niệm 30 năm tại Nha Trang.",
+        "Các đồng nghiệp xếp hàng cùng xe đạp trong hoạt động đồng đội dịp kỷ niệm 30 năm.",
+        "Đội ngũ Richfield tại Tháp Bà Po Nagar trong chuyến đi kỷ niệm tại Nha Trang."
+      ]
+    },
+    "organizationsSpread": {
+      "eyebrow": "CHÚNG TÔI LÀ AI",
+      "heading": "Một tập đoàn, *ba* công ty."
+    }
+  },
+  "ops": {
+    "careersHero": {
+      "ariaLabel": "Tuyển dụng",
+      "eyebrow": "TUYỂN DỤNG",
+      "headlineLine1": "Nơi những con người",
+      "headlineLine2": "*gắn bó lâu dài*.",
+      "subhead": "Ba thập kỷ đồng hành, được kể lại qua chính những con người đã gây dựng nên chặng đường ấy."
+    },
+    "lifeValues": {
+      "eyebrow": "CUỘC SỐNG TẠI RICHFIELD",
+      "heading": "Con người được trân trọng như những *thành viên gia đình*.",
+      "coreValuesEyebrow": "GIÁ TRỊ CỐT LÕI"
+    },
+    "lifeGallery": {
+      "sectionLabel": "Cuộc sống tại Richfield qua những khung hình",
+      "fallbackAlt": "Cuộc sống tại Richfield."
+    },
+    "shelfExplorer": {
+      "eyebrow": "DANH MỤC",
+      "heading": "Sản phẩm phân phối",
+      "tablistAria": "Danh mục sản phẩm",
+      "brandsAria": "Thương hiệu {label}",
+      "productsAria": "Sản phẩm {label}"
+    },
+    "logisticsHero": {
+      "ariaLabel": "Kho bãi và logistics",
+      "eyebrow": "KHO BÃI & LOGISTICS",
+      "headlineLine1": "Hai trung tâm kho vận tại vị trí chiến lược",
+      "headlineLine2": "phục vụ trọn chiều dài *đất nước*.",
+      "subhead": "Vận hành bởi Richfield Foods. Kho thường và kho lạnh, dịch vụ co-packing, cùng đội xe tải vươn đến mọi tỉnh thành.",
+      "heroAlts": [
+        "Xe container tại khu vực xuất hàng của kho Richfield Foods",
+        "Xe nâng xếp pallet bên cạnh xe giao hàng tại trung tâm phân phối",
+        "Công nhân xếp hàng lên xe tải tại bến kho",
+        "Các thùng hàng được xếp lên xe tải tại bến kho Richfield Foods"
+      ]
+    },
+    "hubScrollytelling": {},
+    "retailerWall": {
+      "heading": "Kênh *hiện đại*.",
+      "body": "Hơn 40 đối tác kênh hiện đại và thương mại điện tử, bao gồm các chuỗi siêu thị và cửa hàng tiện lợi.",
+      "channels": {
+        "ecommerce": "Thương mại điện tử",
+        "convenience": "Cửa hàng tiện lợi",
+        "supermarket": "Siêu thị & Đại siêu thị",
+        "healthBeauty": "Sức khỏe & Làm đẹp",
+        "specialty": "Mẹ & Bé, Chuyên biệt"
+      },
+      "logoAlt": "Logo {name}"
+    }
+  },
+  "photoCycle": {
+    "selection": "Chọn ảnh",
+    "show": "Xem ảnh {index} trong {total}"
+  },
+  "atlasMap": {
+    "alt": "Bản đồ hoạt động của Richfield: Trung Quốc (50 nhân sự, tìm nguồn hàng và thương hiệu), Việt Nam (hơn 1.000 tại trụ sở chính và đang tăng), và Malaysia (150, khởi nguồn từ thập niên 1990).",
+    "caption": "DẤU CHÂN HOẠT ĐỘNG · CHÂU Á"
+  }
+}

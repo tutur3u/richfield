@@ -2,12 +2,15 @@ import Image from "next/image";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
-import { partnerLogos } from "@/content/en/photography";
-import { site } from "@/content/en/site";
+import { useTranslations } from "next-intl";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 
 const RICHFIELD_LOGO = "/photos/logos/richfield.webp";
 
-export function JointVentureSpread() {
+export function JointVentureSpread({ locale = "en" }: { locale?: Locale }) {
+  const { partnerLogos, site } = getContent(locale);
+  const t = useTranslations("home.jointVenture");
   const doryLogo = partnerLogos["Dory Rich"];
   const tcpLogo = partnerLogos.TCP;
   return (
@@ -27,7 +30,7 @@ export function JointVentureSpread() {
             border line behind the text. */}
         <div className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap bg-paper px-[clamp(14px,1.6vw,24px)]">
           <Eyebrow tone="gold" className="justify-center">
-            JOINT VENTURE · ESTABLISHED 2024
+            {t("eyebrow")}
           </Eyebrow>
         </div>
 
@@ -36,14 +39,11 @@ export function JointVentureSpread() {
         <div className="flex flex-col items-center gap-y-[var(--v2-flow)] text-center">
           <div className="flex w-full flex-col items-center gap-y-[var(--v2-rhythm)]">
             <h2 className="font-display v2-size-standfirst w-full text-balance">
-              A successful collaboration between two leading corporations.
+              {t("heading")}
             </h2>
 
             <p className="v2-size-body w-full opacity-90">
-              Dory Rich JSC pairs TCP Group&apos;s leadership in Thai
-              energy-drink production with Richfield Group&apos;s nationwide
-              FMCG distribution capability in Vietnam, bringing manufacturing,
-              brand-building, and distribution under one roof.
+              {t("body")}
             </p>
           </div>
 
@@ -52,7 +52,7 @@ export function JointVentureSpread() {
             delayMs={120}
             className="flex flex-col items-center gap-y-[var(--v2-rhythm)]"
           >
-            <p className="v2-mono v2-size-folio opacity-55">IN PARTNERSHIP</p>
+            <p className="v2-mono v2-size-folio opacity-55">{t("partnership")}</p>
 
             {/* All three marks share one height so no logo outranks the
                 others (the Dory Rich source also softens when enlarged). */}
@@ -98,7 +98,7 @@ export function JointVentureSpread() {
             ) : null}
 
             <CtaLink href={site.external.doryRich} external arrow="→">
-              VISIT DORYRICH.COM.VN
+              {t("cta")}
             </CtaLink>
           </RevealOnScroll>
         </div>

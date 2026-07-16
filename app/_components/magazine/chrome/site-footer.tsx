@@ -1,7 +1,12 @@
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
-import { site } from "@/content/en/site";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
+
+type FooterLink = { label: string; href: string };
 
 // ---------------------------------------------------------------------------
 // SiteFooter — the global close that ends every route. Two stacked dark bands:
@@ -13,16 +18,11 @@ import { site } from "@/content/en/site";
 // no matter which route. The promise always reads first; the footer grounds it.
 // ---------------------------------------------------------------------------
 
-const FOOTER_LINKS = [
-  { label: "Brands", href: "/brands" },
-  { label: "Logistics", href: "/logistics" },
-  { label: "Distribution", href: "/distribution" },
-  { label: "Careers", href: "/careers" },
-  { label: "Contact", href: "/contact" },
-];
-
-export function SiteFooter() {
+export function SiteFooter({ locale = "en" }: { locale?: Locale }) {
   const year = new Date().getFullYear();
+  const footer = useTranslations("footer");
+  const links = footer.raw("links") as FooterLink[];
+  const { site } = getContent(locale);
 
   return (
     <>
@@ -33,11 +33,10 @@ export function SiteFooter() {
       >
         <div className="mx-auto flex w-full max-w-[1500px] flex-col items-center px-6 py-[clamp(48px,6vw,88px)] text-center sm:px-10 lg:px-12">
           <p className="font-display max-w-[26ch] text-[clamp(1.4rem,2.8vw,2.4rem)] italic leading-[1.3] text-balance">
-            &ldquo;We don&rsquo;t just deliver products. We deliver{" "}
-            <span className="text-gold">market access</span>.&rdquo;
+            <ItalicText text={footer("promise")} emClassName="text-gold" />
           </p>
           <Eyebrow tone="gold" className="mt-[var(--v2-flow)] justify-center opacity-80">
-            THE RICHFIELD PROMISE
+            {footer("promiseEyebrow")}
           </Eyebrow>
         </div>
       </section>
@@ -48,7 +47,7 @@ export function SiteFooter() {
           <div className="flex flex-col gap-[var(--v2-flow)] sm:flex-row sm:items-start sm:justify-between">
             {/* Logo + tagline */}
             <div className="flex flex-col gap-3">
-              <Link href="/" aria-label="Richfield — home" className="w-fit">
+              <Link href="/" aria-label={footer("homeAria")} className="w-fit">
                 <Image
                   src="/photos/logos/richfield.webp"
                   alt="Richfield Group"
@@ -65,7 +64,7 @@ export function SiteFooter() {
             {/* Links + essentials */}
             <div className="flex flex-col gap-[var(--v2-rhythm)] sm:items-end">
               <nav className="flex flex-wrap gap-x-6 gap-y-2 sm:justify-end">
-                {FOOTER_LINKS.map((l) => (
+                {links.map((l) => (
                   <Link
                     key={l.href}
                     href={l.href}

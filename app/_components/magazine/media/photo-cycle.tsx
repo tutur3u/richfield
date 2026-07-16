@@ -2,8 +2,10 @@
 
 import { useRef } from "react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 import { useCarouselScroll } from "@/app/_components/use-carousel-scroll";
+import type { Locale } from "@/lib/locale";
 
 export type CyclePhoto = {
   src: string;
@@ -27,9 +29,11 @@ export function PhotoCycle({
   photos: CyclePhoto[];
   sizes: string;
   label: string;
+  locale?: Locale;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const { active, goTo, handlers } = useCarouselScroll(trackRef, photos.length);
+  const t = useTranslations("photoCycle");
 
   return (
     <div
@@ -70,7 +74,7 @@ export function PhotoCycle({
 
       <div
         role="tablist"
-        aria-label="Photo selection"
+        aria-label={t("selection")}
         className="absolute bottom-3 right-3 flex items-center gap-2"
       >
         {photos.map((_, i) => {
@@ -81,7 +85,7 @@ export function PhotoCycle({
               type="button"
               role="tab"
               aria-selected={isActive}
-              aria-label={`Show photo ${i + 1} of ${photos.length}`}
+              aria-label={t("show", { index: i + 1, total: photos.length })}
               onClick={() => goTo(i)}
               className="relative outline-none before:absolute before:left-1/2 before:top-1/2 before:h-10 before:w-4 before:-translate-x-1/2 before:-translate-y-1/2 before:content-['']"
             >

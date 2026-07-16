@@ -6,7 +6,8 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import type { Icon } from "@phosphor-icons/react";
 import { WavyBand } from "@/app/_components/sections/wavy-band";
-import { groupStats } from "@/content/en/stats";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 
 // One premium line-icon per headline figure, in the same order as groupStats:
 // steady growth, the workforce, the distributor network, the retail footprint.
@@ -56,7 +57,8 @@ function StatFigure({
  * it). Giant gold numerals sit over a faint icon watermark; hovering a figure
  * washes its whole column (wave-to-wave) in a bolder beige.
  */
-export function GroupStatsPanel() {
+export function GroupStatsPanel({ locale = "en" }: { locale?: Locale }) {
+  const { groupStats } = getContent(locale);
   return (
     <WavyBand>
       <dl className="relative z-[1] mx-auto grid max-w-[1500px] grid-cols-2 px-6 sm:px-10 lg:grid-cols-4 lg:px-12">

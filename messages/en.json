@@ -1,0 +1,375 @@
+{
+  "nav": {
+    "items": [
+      {
+        "label": "About Us",
+        "children": [
+          {
+            "label": "Our Story",
+            "href": "/about/our-story"
+          },
+          {
+            "label": "Who We Are",
+            "href": "/about/who-we-are"
+          }
+        ]
+      },
+      {
+        "label": "What We Do",
+        "children": [
+          {
+            "label": "Logistics & Warehousing",
+            "href": "/logistics"
+          },
+          {
+            "label": "Distribution",
+            "href": "/distribution"
+          }
+        ]
+      },
+      {
+        "label": "Brands",
+        "children": [
+          {
+            "label": "Our Brands",
+            "href": "/brands"
+          },
+          {
+            "label": "Portfolio",
+            "href": "/brands#portfolio"
+          }
+        ]
+      },
+      {
+        "label": "Careers",
+        "href": "/careers"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact"
+      }
+    ],
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "homeAria": "Richfield — home",
+    "drawerAria": "Site navigation",
+    "countriesLine": "Vietnam · Malaysia · China"
+  },
+  "langSwitcher": {
+    "aria": "Switch language"
+  },
+  "footer": {
+    "links": [
+      {
+        "label": "Brands",
+        "href": "/brands"
+      },
+      {
+        "label": "Logistics",
+        "href": "/logistics"
+      },
+      {
+        "label": "Distribution",
+        "href": "/distribution"
+      },
+      {
+        "label": "Careers",
+        "href": "/careers"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact"
+      }
+    ],
+    "promise": "“We don’t just deliver products. We deliver *market access*.”",
+    "promiseEyebrow": "THE RICHFIELD PROMISE",
+    "homeAria": "Richfield — home"
+  },
+  "meta": {
+    "site": {
+      "title": "Richfield Group: From Market Entry to Nationwide Distribution",
+      "description": "Vietnam's largest FMCG distribution network. Bringing the world's most loved brands to over 180,000 retail outlets nationwide."
+    },
+    "brands": {
+      "title": "Brands",
+      "description": "The brands Richfield carries — three decades of partnerships across confectionery, beverages, and personal care, and the full shelf of products behind them."
+    },
+    "careers": {
+      "title": "Careers",
+      "description": "Richfield is a place where people stay. Core values, people-first leadership, community impact, and life across our offices."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Tell us about your brand. Whether you're a brand owner, partner, or journalist, we'll get back to you."
+    },
+    "distribution": {
+      "title": "Distribution",
+      "description": "From the warehouse floor to every shelf. General trade and modern trade across Vietnam."
+    },
+    "logistics": {
+      "title": "Warehouse & Logistics",
+      "description": "End-to-end handling, north and south. Two distribution centres, ambient and cold storage, co-packing capability."
+    },
+    "ourStory": {
+      "title": "Our Story",
+      "description": "From a single partnership to a nationwide network — the founder's story and three decades of Richfield milestones."
+    },
+    "whoWeAre": {
+      "title": "Who We Are",
+      "description": "One group, three companies — Richfield Worldwide, Richfield Foods, and Dory Rich — covering distribution, logistics, and energy drinks."
+    }
+  },
+  "brandsPage": {
+    "eyebrow": "OUR BRANDS",
+    "heading": "Trusted by the world’s most *loved* brands.",
+    "intro": "100+ products across confectionery, beverages, personal care, and more. Richfield carries the brands shoppers already reach for, in partnerships that often run for decades.",
+    "collabEyebrow": "THE COLLABORATIONS"
+  },
+  "careersPage": {
+    "whyEyebrow": "WHY RICHFIELD",
+    "whyHeading": "Leadership that genuinely *cares*.",
+    "saysEyebrow": "WHAT EMPLOYEES SAY",
+    "practiceEyebrow": "IN PRACTICE",
+    "communityEyebrow": "COMMUNITY & IMPACT",
+    "communityHeading": "Care beyond the *workplace*.",
+    "watchFilm": "WATCH THE ÁO DÀI FILM",
+    "vacanciesEyebrow": "VACANCIES",
+    "noVacancies": "We're not actively recruiting right now. Reach out anyway — we'd like to hear from people who fit our story.",
+    "getInTouch": "Get in touch →",
+    "jobTitle": "Job title",
+    "positions": "Positions",
+    "location": "Location",
+    "deadline": "Deadline",
+    "videoTitle": "Richfield áo dài cultural-heritage film",
+    "videoCaption": "Cultural preservation — the áo dài association"
+  },
+  "contactPage": {
+    "eyebrow": "Contact",
+    "channelsEyebrow": "Channels",
+    "formEyebrow": "Send a message",
+    "mapAria": "Office location",
+    "mapTitle": "Richfield head-office on Google Maps",
+    "headline": "Tell us about your *brand*.",
+    "intro": "Brand owner exploring Vietnam, partner considering a joint venture, or journalist on deadline: we'll write back within two business days.",
+    "heroAlt": "Richfield team spelling the company name on the beach"
+  },
+  "contactForm": {
+    "success": "Thanks. We'll write back from our partnerships team within two business days.",
+    "name": "Name",
+    "company": "Company",
+    "country": "Country",
+    "email": "Email",
+    "inquiryType": "Inquiry type",
+    "message": "Message",
+    "sending": "Sending…",
+    "send": "Send message",
+    "inquiryTypeLabels": {
+      "Brand partnership": "Brand partnership",
+      "Distribution opportunity": "Distribution opportunity",
+      "Careers": "Careers",
+      "Press": "Press",
+      "Other": "Other"
+    },
+    "errors": {
+      "nameRequired": "Please enter your name.",
+      "companyRequired": "Please enter your company.",
+      "emailInvalid": "Please enter a valid email.",
+      "messageRequired": "Please add a message.",
+      "messageTooLong": "Please keep your message under 600 characters.",
+      "tooFast": "Please give us a moment before submitting.",
+      "deliveryFailed": "We couldn't send your message. Try email at {email}."
+    }
+  },
+  "distributionPage": {
+    "gtHeading": "General *Trade*",
+    "gtBody": "Our largest channel. 300+ sub-distributors reaching traditional retail points across all provinces: markets, grocery stores, and specialty shops. Traditional trade has been our foundation since 1994.",
+    "gtAltTapHoa": "A traditional tap hoa grocery store stocked with packaged goods.",
+    "gtAltWholesaler": "A wholesaler market aisle lined with cased products.",
+    "gtAltPharmacy": "An independent pharmacy counter and shelving."
+  },
+  "logisticsPage": {
+    "operationKicker": "INSIDE THE OPERATION",
+    "operationHeading": "A walk through the *distribution centre*.",
+    "videoTitle": "Richfield warehouse and distribution centre tour",
+    "videoCaption": "Richfield distribution centre · facility tour"
+  },
+  "home": {
+    "coverSpread": {
+      "sectionAria": "Issue 30 cover",
+      "headlineLine1": "From market entry",
+      "headlineLine2": "to *nationwide* distribution.",
+      "established": "ESTABLISHED 1994",
+      "photoAlts": [
+        "The Richfield team in a conga line on the beach at dusk",
+        "The Richfield team in a conga line on the beach at dusk",
+        "The Richfield Worldwide team arranged in a heart formation",
+        "Aerial drone view of the Richfield team spelling out RICHFIELD on the beach",
+        "The Richfield team on stage at the 30-year anniversary Gala Dinner"
+      ]
+    },
+    "groupOverview": {
+      "eyebrow": "RICHFIELD GROUP",
+      "heading": "One of Vietnam’s largest *FMCG* distribution networks.",
+      "galleryLabel": "Richfield distribution network gallery",
+      "photoAlts": [
+        "The Richfield team in a conga line on the beach at dusk.",
+        "The Richfield Worldwide team arranged in a heart formation.",
+        "Aerial drone view of the Richfield team spelling out RICHFIELD on the beach.",
+        "The Richfield team on stage at the 30-year anniversary gala dinner."
+      ]
+    },
+    "whatWeDo": {
+      "eyebrow": "WHAT WE DO",
+      "heading": "Three ways we move brands to *markets*.",
+      "intro": "Richfield Group began as a family business in Malaysia and has grown across three generations. Today we operate as one of the largest FMCG distributors in Vietnam, backed by an international group with deep local knowledge of every market we serve.",
+      "pillars": {
+        "/logistics": {
+          "photoAlt": "A container truck at the Richfield Foods warehouse loading bay.",
+          "stat": "Two Distribution Centers: Long An and Hanoi",
+          "formats": "Ambient, cold storage 18–25°C, co-packing."
+        },
+        "/distribution#gt": {
+          "photoAlt": "A traditional-trade neighbourhood store stocked with brands.",
+          "stat": "180,000+ POINTS · 300+ SUB-DISTRIBUTORS",
+          "formats": "grocery, wholesaler, horeca, wet market."
+        },
+        "/distribution#mt": {
+          "photoAlt": "Shoppers in a modern-trade supermarket aisle.",
+          "stat": "EVERY CHAIN IN VIETNAM",
+          "formats": "super & hyper, convenience, mini & foodstore, health & beauty."
+        }
+      }
+    },
+    "footprint": {
+      "eyebrow": "FOOTPRINT",
+      "headlineLine1": "3 countries.",
+      "headlineLine2": "3 generations.",
+      "headlineLine3": "1 *promise*.",
+      "body": "The Richfield Group spans three countries and three generations of family leadership, combining international scale with hands-on knowledge of every market we serve."
+    },
+    "jointVenture": {
+      "eyebrow": "JOINT VENTURE · ESTABLISHED 2024",
+      "heading": "A successful collaboration between two leading corporations.",
+      "body": "Dory Rich JSC pairs TCP Group’s leadership in Thai energy-drink production with Richfield Group’s nationwide FMCG distribution capability in Vietnam, bringing manufacturing, brand-building, and distribution under one roof.",
+      "partnership": "IN PARTNERSHIP",
+      "cta": "VISIT DORYRICH.COM.VN"
+    },
+    "brandsHero": {
+      "eyebrow": "OUR BRANDS",
+      "heading": "Trusted by the world’s most *loved* brands.",
+      "body": "100+ products across confectionery, beverages, personal care, and more — Richfield carries the brands shoppers already reach for, in partnerships that often run for decades.",
+      "cta": "EXPLORE OUR BRANDS"
+    },
+    "peopleMosaic": {
+      "photoAlts": [
+        "A performance at the Richfield year-end party",
+        "Teammates at a team workshop",
+        "Colleagues at the Richfield year-end party",
+        "The team gathered for the year-end celebration",
+        "A group of the Richfield team celebrating",
+        "Teammates together at the year-end party",
+        "A family moment at the company celebration",
+        "A toast at the year-end party",
+        "Celebrating International Women's Day 2026",
+        "The Richfield team at the year-end party",
+        "A team workshop session",
+        "A colleague at the year-end party",
+        "The full team at the year-end celebration",
+        "The 2026 office grand opening",
+        "Colleagues celebrating together",
+        "A team workshop in progress",
+        "A team workshop session"
+      ]
+    },
+    "leadPhotoCycle": {
+      "label": "Richfield team gallery",
+      "photoAlts": [
+        "The Richfield team in front of the modern campus, 2026.",
+        "A Richfield team gathering, late 2025.",
+        "A Richfield training workshop in session.",
+        "A Richfield celebration moment."
+      ]
+    }
+  },
+  "story": {
+    "leadSpread": {
+      "storyEyebrow": "OUR STORY",
+      "heading": "From a *single partnership*",
+      "founderEyebrow": "THE FOUNDER",
+      "founderPhotoAlt": "{name}, {role} of Richfield Group."
+    },
+    "timelineSpread": {
+      "eyebrow": "THE TIMELINE",
+      "galleryLabel": "30th-anniversary gallery",
+      "anniversaryPhotoAlts": [
+        "Richfield staff spell out RICHFIELD on the Nha Trang beach, seen from above, for the 30th anniversary.",
+        "The Richfield team on stage at the 30th-anniversary gala dinner in Nha Trang.",
+        "Colleagues lined up with bicycles during the 30th-anniversary team activities.",
+        "The Richfield team at the Po Nagar Cham towers during the Nha Trang anniversary trip."
+      ]
+    },
+    "organizationsSpread": {
+      "eyebrow": "WHO WE ARE",
+      "heading": "One group, *three* companies."
+    }
+  },
+  "ops": {
+    "careersHero": {
+      "ariaLabel": "Careers",
+      "eyebrow": "CAREERS",
+      "headlineLine1": "A place where",
+      "headlineLine2": "*people stay*.",
+      "subhead": "Three decades of partnership, told through the people who built it."
+    },
+    "lifeValues": {
+      "eyebrow": "LIFE AT RICHFIELD",
+      "heading": "People are valued as *partners*.",
+      "coreValuesEyebrow": "CORE VALUES"
+    },
+    "lifeGallery": {
+      "sectionLabel": "Life at Richfield, in pictures",
+      "fallbackAlt": "Life at Richfield."
+    },
+    "shelfExplorer": {
+      "eyebrow": "PORTFOLIO",
+      "heading": "Every brand on the shelf.",
+      "tablistAria": "Product categories",
+      "brandsAria": "{label} brands",
+      "productsAria": "{label} products"
+    },
+    "logisticsHero": {
+      "ariaLabel": "Warehouse and logistics",
+      "eyebrow": "WAREHOUSE & LOGISTICS",
+      "headlineLine1": "Two strategically located hubs",
+      "headlineLine2": "serve the full length of the *country*.",
+      "subhead": "Operated by Richfield Foods. Ambient and cold storage, co-packing, and the trucks that reach every province.",
+      "heroAlts": [
+        "A container truck at the Richfield Foods warehouse loading bay",
+        "A forklift loading pallets beside a delivery truck at the distribution centre",
+        "Workers loading product onto a truck on the warehouse dock",
+        "Cases being loaded into a truck at the Richfield Foods dock"
+      ]
+    },
+    "hubScrollytelling": {},
+    "retailerWall": {
+      "heading": "Modern *Trade*.",
+      "body": "40+ modern trade and e-commerce partners including supermarket chains and convenience stores.",
+      "channels": {
+        "ecommerce": "E-commerce",
+        "convenience": "Convenience",
+        "supermarket": "Supermarket & Hypermarket",
+        "healthBeauty": "Health & Beauty",
+        "specialty": "Mom, Baby & Specialty"
+      },
+      "logoAlt": "{name} logo"
+    }
+  },
+  "photoCycle": {
+    "selection": "Photo selection",
+    "show": "Show photo {index} of {total}"
+  },
+  "atlasMap": {
+    "alt": "Richfield operating footprint across China (50, sourcing and brands), Vietnam (1,000+ at headquarters and growing), and Malaysia (150, origin in the 1990s).",
+    "caption": "OPERATING FOOTPRINT · ASIA"
+  }
+}

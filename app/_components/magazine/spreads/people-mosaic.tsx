@@ -7,6 +7,8 @@ import {
   type RenderImageProps,
 } from "react-photo-album";
 import "react-photo-album/columns.css";
+import { useTranslations } from "next-intl";
+import type { Locale } from "@/lib/locale";
 
 // ---------------------------------------------------------------------------
 // People band — the mid-issue chapter break. A full-bleed column masonry of the
@@ -21,25 +23,26 @@ type Photo = { src: string; width: number; height: number; alt: string };
 
 // Sources live in /photos/people/gallery; width/height are intrinsic pixels
 // (drive the column packing). Order interleaves wide group shots with candids.
+// Alt text lives in the home.peopleMosaic messages (same order), so it can localize.
 const G = "/photos/people/gallery";
-const PHOTOS: Photo[] = [
-  { src: `${G}/yep-stage.webp`, width: 2000, height: 1331, alt: "A performance at the Richfield year-end party" },
-  { src: `${G}/workshop-heart.webp`, width: 2000, height: 1334, alt: "Teammates at a team workshop" },
-  { src: `${G}/yep-portrait-1.webp`, width: 1263, height: 1911, alt: "Colleagues at the Richfield year-end party" },
-  { src: `${G}/yep-crowd-1.webp`, width: 2000, height: 1125, alt: "The team gathered for the year-end celebration" },
-  { src: `${G}/yep-group-1.webp`, width: 2000, height: 1331, alt: "A group of the Richfield team celebrating" },
-  { src: `${G}/yep-table-1.webp`, width: 2000, height: 1188, alt: "Teammates together at the year-end party" },
-  { src: `${G}/yep-portrait-2.webp`, width: 1334, height: 2000, alt: "A family moment at the company celebration" },
-  { src: `${G}/yep-toast.webp`, width: 2000, height: 1185, alt: "A toast at the year-end party" },
-  { src: `${G}/womens-day.webp`, width: 2000, height: 1334, alt: "Celebrating International Women's Day 2026" },
-  { src: `${G}/yep-group-2.webp`, width: 2000, height: 1148, alt: "The Richfield team at the year-end party" },
-  { src: `${G}/workshop-2.webp`, width: 2000, height: 1334, alt: "A team workshop session" },
-  { src: `${G}/yep-portrait-3.webp`, width: 1351, height: 2000, alt: "A colleague at the year-end party" },
-  { src: `${G}/yep-crowd-2.webp`, width: 2000, height: 1156, alt: "The full team at the year-end celebration" },
-  { src: `${G}/grand-opening.webp`, width: 2000, height: 1105, alt: "The 2026 office grand opening" },
-  { src: `${G}/yep-group-3.webp`, width: 2000, height: 1364, alt: "Colleagues celebrating together" },
-  { src: `${G}/workshop-3.webp`, width: 2000, height: 1334, alt: "A team workshop in progress" },
-  { src: `${G}/workshop-4.webp`, width: 2000, height: 1334, alt: "A team workshop session" },
+const PHOTO_SOURCES: Omit<Photo, "alt">[] = [
+  { src: `${G}/yep-stage.webp`, width: 2000, height: 1331 },
+  { src: `${G}/workshop-heart.webp`, width: 2000, height: 1334 },
+  { src: `${G}/yep-portrait-1.webp`, width: 1263, height: 1911 },
+  { src: `${G}/yep-crowd-1.webp`, width: 2000, height: 1125 },
+  { src: `${G}/yep-group-1.webp`, width: 2000, height: 1331 },
+  { src: `${G}/yep-table-1.webp`, width: 2000, height: 1188 },
+  { src: `${G}/yep-portrait-2.webp`, width: 1334, height: 2000 },
+  { src: `${G}/yep-toast.webp`, width: 2000, height: 1185 },
+  { src: `${G}/womens-day.webp`, width: 2000, height: 1334 },
+  { src: `${G}/yep-group-2.webp`, width: 2000, height: 1148 },
+  { src: `${G}/workshop-2.webp`, width: 2000, height: 1334 },
+  { src: `${G}/yep-portrait-3.webp`, width: 1351, height: 2000 },
+  { src: `${G}/yep-crowd-2.webp`, width: 2000, height: 1156 },
+  { src: `${G}/grand-opening.webp`, width: 2000, height: 1105 },
+  { src: `${G}/yep-group-3.webp`, width: 2000, height: 1364 },
+  { src: `${G}/workshop-3.webp`, width: 2000, height: 1334 },
+  { src: `${G}/workshop-4.webp`, width: 2000, height: 1334 },
 ];
 
 // Render each tile through next/image so the gallery gets optimization + lazy
@@ -66,11 +69,17 @@ function renderNextImage(
   );
 }
 
-export function PeopleMosaic() {
+export function PeopleMosaic(_props: { locale?: Locale } = {}) {
+  const t = useTranslations("home.peopleMosaic");
+  const photoAlts = t.raw("photoAlts") as string[];
+  const photos: Photo[] = PHOTO_SOURCES.map((p, i) => ({
+    ...p,
+    alt: photoAlts[i] ?? "",
+  }));
   return (
     <section id="people" className="relative w-full bg-ink">
       <ColumnsPhotoAlbum
-        photos={PHOTOS}
+        photos={photos}
         render={{ image: renderNextImage }}
         columns={(containerWidth) =>
           containerWidth < 640 ? 1 : containerWidth < 1024 ? 2 : 3

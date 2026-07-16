@@ -1,5 +1,16 @@
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import type { ComponentProps } from "react";
+import { render, screen } from "@/__tests__/test-utils";
+
+// The i18n navigation Link (via CtaLink) resolves next/navigation, which
+// vitest's resolver can't load. These tests assert copy, not routing.
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({ href, locale: _locale, ...props }: ComponentProps<"a"> & { href: string; locale?: string }) => (
+    <a href={typeof href === "string" ? href : "#"} {...props} />
+  ),
+  usePathname: () => "/",
+}));
+
 import { JointVentureSpread } from "@/app/_components/magazine/spreads/joint-venture-spread";
 
 describe("<JointVentureSpread>", () => {

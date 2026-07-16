@@ -3,12 +3,19 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useTranslations } from "next-intl";
 import { coverSequence } from "@/app/_lib/cover-portrait-pool";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import type { Locale } from "@/lib/locale";
 
 import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
 const ADVANCE_MS = 7000;
 
-export function CoverSpread() {
+export function CoverSpread(_props: { locale?: Locale } = {}) {
+  const t = useTranslations("home.coverSpread");
+  // Parallel to coverSequence order (message keys can't contain the dots in
+  // filenames, so this is an array indexed by position, not by src).
+  const photoAlts = t.raw("photoAlts") as string[];
   const reduce = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -42,7 +49,7 @@ export function CoverSpread() {
 
   return (
     <section
-      aria-label="Issue 30 cover"
+      aria-label={t("sectionAria")}
       aria-roledescription="carousel"
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
@@ -67,7 +74,7 @@ export function CoverSpread() {
         >
           <Image
             src={portrait.src}
-            alt={portrait.alt}
+            alt={photoAlts[index] ?? portrait.alt}
             fill
             priority={index === 0}
             sizes="100vw"
@@ -98,10 +105,10 @@ export function CoverSpread() {
         <div className="max-w-full lg:max-w-[60%]">
           <h1 className="font-display v2-headline max-w-full text-balance lg:max-w-[20ch]">
             <motion.span className="block" {...enter(0.35)}>
-              From market entry
+              {t("headlineLine1")}
             </motion.span>
             <motion.span className="block" {...enter(0.53)}>
-              to <em className="italic text-gold">nationwide</em> distribution.
+              <ItalicText text={t("headlineLine2")} emClassName="italic text-gold" />
             </motion.span>
           </h1>
 
@@ -110,7 +117,7 @@ export function CoverSpread() {
             {...enter(0.75)}
           >
             <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
-            ESTABLISHED 1994
+            {t("established")}
           </motion.div>
 
           {/* <CoverPagination

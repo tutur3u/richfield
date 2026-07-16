@@ -1,15 +1,20 @@
 "use client";
 
 import { useActionState, useId, useState } from "react";
-import { submitContact, type ContactState } from "@/app/contact/actions";
-import { INQUIRY_TYPES } from "@/app/contact/schema";
+import { useLocale, useTranslations } from "next-intl";
+import { submitContact, type ContactState } from "@/app/[locale]/contact/actions";
+import { INQUIRY_TYPES } from "@/app/[locale]/contact/schema";
 import { CTA_BOX } from "@/app/_components/magazine/primitives/cta-link";
+import type { Locale } from "@/lib/locale";
 
 const initial: ContactState = { status: "idle" };
 
-export function ContactForm() {
+export function ContactForm(_props: { locale?: Locale }) {
   const [state, formAction, pending] = useActionState(submitContact, initial);
   const formId = useId();
+  const locale = useLocale();
+  const t = useTranslations("contactForm");
+  const inquiryLabel = useTranslations("contactForm.inquiryTypeLabels");
   // Capture mount-time once. Posted as a hidden field; the action rejects
   // submissions faster than 3s as automated.
   const [submittedAtMs] = useState(() => String(Date.now()));
@@ -22,8 +27,7 @@ export function ContactForm() {
         className="border-t border-line pt-10"
       >
         <p className="font-display text-[clamp(24px,2.5vw,32px)] text-ink">
-          Thanks. We'll write back from our partnerships team within two
-          business days.
+          {t("success")}
         </p>
       </div>
     );
@@ -35,6 +39,7 @@ export function ContactForm() {
   return (
     <form action={formAction} id={formId} className="flex flex-col gap-6" noValidate>
       <input type="hidden" name="submittedAtMs" value={submittedAtMs} />
+      <input type="hidden" name="locale" value={locale} />
       {/* Honeypot. Visually hidden but tab-skipped. */}
       <label className="sr-only" aria-hidden="true">
         Website
@@ -51,7 +56,7 @@ export function ContactForm() {
       ) : null}
 
       <Field
-        label="Name"
+        label={t("name")}
         name="name"
         required
         defaultValue={values.name}
@@ -59,7 +64,7 @@ export function ContactForm() {
         autoComplete="name"
       />
       <Field
-        label="Company"
+        label={t("company")}
         name="company"
         required
         defaultValue={values.company}
@@ -67,14 +72,14 @@ export function ContactForm() {
         autoComplete="organization"
       />
       <Field
-        label="Country"
+        label={t("country")}
         name="country"
         defaultValue={values.country ?? "Vietnam"}
         errors={errors.country}
         autoComplete="country-name"
       />
       <Field
-        label="Email"
+        label={t("email")}
         name="email"
         type="email"
         required
@@ -83,22 +88,22 @@ export function ContactForm() {
         autoComplete="email"
       />
 
-      <FieldShell label="Inquiry type" name="inquiryType" errors={errors.inquiryType}>
+      <FieldShell label={t("inquiryType")} name="inquiryType" errors={errors.inquiryType}>
         <select
           id="inquiryType"
           name="inquiryType"
           defaultValue={values.inquiryType ?? INQUIRY_TYPES[0]}
           className="w-full border-b border-line bg-transparent py-3 text-[17px] focus:border-gold focus:outline-none"
         >
-          {INQUIRY_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          {INQUIRY_TYPES.map((value) => (
+            <option key={value} value={value}>
+              {inquiryLabel(value)}
             </option>
           ))}
         </select>
       </FieldShell>
 
-      <FieldShell label="Message" name="message" errors={errors.message}>
+      <FieldShell label={t("message")} name="message" errors={errors.message}>
         <textarea
           id="message"
           name="message"
@@ -115,7 +120,7 @@ export function ContactForm() {
         disabled={pending}
         className={`${CTA_BOX} self-start disabled:opacity-50`}
       >
-        {pending ? "Sending…" : "Send message"}
+        {pending ? t("sending") : t("send")}
         <span
           aria-hidden
           className="transition-transform duration-300 ease-out motion-safe:group-hover:translate-x-1"

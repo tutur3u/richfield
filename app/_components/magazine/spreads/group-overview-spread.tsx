@@ -5,29 +5,29 @@ import {
 } from "@/app/_components/magazine/media/photo-cycle";
 import { GroupStatsPanel } from "@/app/_components/magazine/spreads/group-stats-panel";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
-import { groupIntro } from "@/content/en/stats";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import { useTranslations } from "next-intl";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 
 // The Richfield team, end to end: the branded beach formations, the company
 // heart formation, and the anniversary gala. Hand-scrollable, auto-advancing.
-const NETWORK_PHOTOS: CyclePhoto[] = [
+// Alt text lives in the home.groupOverview messages (same order), so it can localize.
+const NETWORK_PHOTOS: Omit<CyclePhoto, "alt">[] = [
   {
     src: "/photos/people/richfield.webp",
-    alt: "The Richfield team in a conga line on the beach at dusk.",
     objectPosition: "center 45%",
   },
   {
     src: "/photos/people/group-company-1920.webp",
-    alt: "The Richfield Worldwide team arranged in a heart formation.",
     objectPosition: "center 40%",
   },
   {
     src: "/photos/people/selected-2026-05-03.webp",
-    alt: "Aerial drone view of the Richfield team spelling out RICHFIELD on the beach.",
     objectPosition: "center 50%",
   },
   {
     src: "/photos/people/selected-2026-05-04.webp",
-    alt: "The Richfield team on stage at the 30-year anniversary gala dinner.",
     objectPosition: "center 38%",
   },
 ];
@@ -40,7 +40,14 @@ const NETWORK_PHOTOS: CyclePhoto[] = [
  * numerals) that lifts them off the white page. This is the dominant home of
  * the group stats; the cover no longer repeats them.
  */
-export function GroupOverviewSpread() {
+export function GroupOverviewSpread({ locale = "en" }: { locale?: Locale }) {
+  const { groupIntro } = getContent(locale);
+  const t = useTranslations("home.groupOverview");
+  const photoAlts = t.raw("photoAlts") as string[];
+  const networkPhotos: CyclePhoto[] = NETWORK_PHOTOS.map((p, i) => ({
+    ...p,
+    alt: photoAlts[i] ?? "",
+  }));
   return (
     <Spread
       id="group"
@@ -50,11 +57,9 @@ export function GroupOverviewSpread() {
       {/* Chapter open — a feature statement that breaks the grid (leaves a
           wide right margin). */}
       <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]">
-        <Eyebrow>RICHFIELD GROUP</Eyebrow>
+        <Eyebrow>{t("eyebrow")}</Eyebrow>
         <h2 className="font-display v2-size-standfirst text-balance text-ink">
-          One of Vietnam&rsquo;s largest{" "}
-          <em className="italic text-gold-strong">FMCG</em> distribution
-          networks.
+          <ItalicText text={t("heading")} />
         </h2>
       </RevealOnScroll>
 
@@ -63,7 +68,7 @@ export function GroupOverviewSpread() {
           the page so it dominates. */}
       <div className="grid grid-cols-12 items-center gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-flow)]">
         <RevealOnScroll
-          lang="en"
+          lang={locale}
           className="col-span-12 flex max-w-[52ch] flex-col gap-y-[var(--v2-rhythm)] hyphens-auto lg:col-span-5"
         >
           <p className="v2-dropcap v2-size-body text-justify opacity-90">
@@ -80,9 +85,10 @@ export function GroupOverviewSpread() {
           <figure className="flex flex-col gap-[clamp(10px,1vw,16px)]">
             <div className="relative aspect-[4/3] w-full overflow-hidden lg:mr-[calc(-1*(max((100vw-1500px)/2,0px)+48px))]">
               <PhotoCycle
-                photos={NETWORK_PHOTOS}
+                photos={networkPhotos}
                 sizes="(max-width: 1024px) 100vw, 60vw"
-                label="Richfield distribution network gallery"
+                label={t("galleryLabel")}
+                locale={locale}
               />
             </div>
           </figure>
@@ -93,7 +99,7 @@ export function GroupOverviewSpread() {
           edges. With the Spread's bottom band removed (!pb-0 above) the bottom
           wave is the seam into the next chapter. */}
       <RevealOnScroll as="div">
-        <GroupStatsPanel />
+        <GroupStatsPanel locale={locale} />
       </RevealOnScroll>
     </Spread>
   );

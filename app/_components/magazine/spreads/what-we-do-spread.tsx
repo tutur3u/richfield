@@ -1,103 +1,84 @@
-import Link from "next/link";
-import { gtFormats, mtFormats, pillars } from "@/content/en/capabilities";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { PillarPhoto } from "@/app/_components/magazine/media/pillar-photo";
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
 
-type PillarMeta = {
-  photo: { src: string; alt: string; objectPosition?: string };
-  stat: string;
-  display: string;
-  /** Italic continuation sentence appended after the shortBody — keeps the
-      formats / facets visible without taking a separate block. */
-  formats: string;
-};
+type PillarMeta = { photoAlt: string; stat: string; formats: string };
 
-const PILLAR_META: Record<string, PillarMeta> = {
-  "Warehouse & Logistics": {
-    photo: {
+// Pillar photos, keyed by href (stable across locales — names translate).
+// Alt text, the stat line, and the formats continuation live in the
+// home.whatWeDo messages under the same keys.
+const PILLAR_PHOTOS: Record<string, { src: string; objectPosition?: string }> =
+  {
+    "/logistics": {
       src: "/photos/RF Website/Richfield Foods (Phu Tuong)/DSC_0832.webp",
-      alt: "A container truck at the Richfield Foods warehouse loading bay.",
       objectPosition: "center 55%",
     },
-    stat: "Two Distribution Centers: Long An and Hanoi",
-    display: "Warehouse & Logistics",
-    formats: "Ambient, cold storage 18–25°C, co-packing.",
-  },
-  "General Trade": {
-    photo: {
+    "/distribution#gt": {
       src: "/photos/people/facility/general-trade-store.webp",
-      alt: "A traditional-trade neighbourhood store stocked with brands.",
       objectPosition: "center 50%",
     },
-    stat: "180,000+ POINTS · 300+ SUB-DISTRIBUTORS",
-    display: "General Trade",
-    formats: `${gtFormats.slice(0, 4).join(", ").toLowerCase()}.`,
-  },
-  "Modern Trade": {
-    photo: {
+    "/distribution#mt": {
       src: "/photos/people/facility/modern-trade-aisle.webp",
-      alt: "Shoppers in a modern-trade supermarket aisle.",
       objectPosition: "center 50%",
     },
-    stat: "EVERY CHAIN IN VIETNAM",
-    display: "Modern Trade",
-    formats: `${mtFormats.slice(0, 4).join(", ").toLowerCase()}.`,
-  },
-};
+  };
 
 const INCLUDED_PILLARS = [
-  "Warehouse & Logistics",
-  "General Trade",
-  "Modern Trade",
+  "/logistics",
+  "/distribution#gt",
+  "/distribution#mt",
 ] as const;
 
-const filteredPillars = pillars.filter((p) =>
-  (INCLUDED_PILLARS as readonly string[]).includes(p.name),
-);
-
-export function WhatWeDoSpread() {
+export function WhatWeDoSpread({ locale = "en" }: { locale?: Locale }) {
+  const { pillars } = getContent(locale);
+  const t = useTranslations("home.whatWeDo");
+  const pillarMeta = t.raw("pillars" as never) as Record<string, PillarMeta>;
+  const filteredPillars = pillars.filter((p) =>
+    (INCLUDED_PILLARS as readonly string[]).includes(p.href),
+  );
   return (
     <Spread id="what" bg="transparent" className="flex flex-col gap-y-[var(--v2-flow)]">
       {/* Headline block — hangs left with a wide right gutter. */}
-      <RevealOnScroll lang="en" className="flex flex-col gap-y-[var(--v2-rhythm)] hyphens-auto">
-        <Eyebrow tone="gold">WHAT WE DO</Eyebrow>
+      <RevealOnScroll lang={locale} className="flex flex-col gap-y-[var(--v2-rhythm)] hyphens-auto">
+        <Eyebrow tone="gold">{t("eyebrow")}</Eyebrow>
 
         <h2 className="font-display v2-size-standfirst text-balance">
-          Three ways we move brands to{" "}
-          <em className="italic text-gold-strong">markets</em>.
+          <ItalicText text={t("heading")} />
         </h2>
 
         <p className="v2-size-body text-justify opacity-90">
-          Richfield Group began as a family business in Malaysia and has grown
-          across three generations. Today we operate as one of the largest FMCG
-          distributors in Vietnam, backed by an international group with deep
-          local knowledge of every market we serve.
+          {t("intro")}
         </p>
       </RevealOnScroll>
 
       {/* Three pillar columns — pillar leads with the image, then long body and
           a quiet folio stat line. */}
-      <div className="v2-pillar-row hyphens-auto grid grid-cols-1 gap-x-[clamp(24px,2.8vw,48px)] gap-y-[var(--v2-flow)] lg:grid-cols-3" lang="en">
+      <div className="v2-pillar-row hyphens-auto grid grid-cols-1 gap-x-[clamp(24px,2.8vw,48px)] gap-y-[var(--v2-flow)] lg:grid-cols-3" lang={locale}>
           {filteredPillars.map((p, i) => {
-            const meta = PILLAR_META[p.name];
+            const photo = PILLAR_PHOTOS[p.href];
+            const meta = pillarMeta[p.href];
             return (
-              <RevealOnScroll as="div" key={p.name} delayMs={i * 120}>
+              <RevealOnScroll as="div" key={p.href} delayMs={i * 120}>
                 <Link
                   href={p.href}
                   className="group flex flex-col gap-[clamp(12px,1.2vw,18px)]"
                 >
                   <div className="relative aspect-[16/10] w-full overflow-hidden outline outline-1 -outline-offset-1 outline-black/10">
                     <PillarPhoto
-                      src={meta.photo.src}
-                      alt={meta.photo.alt}
-                      objectPosition={meta.photo.objectPosition}
+                      src={photo.src}
+                      alt={meta.photoAlt}
+                      objectPosition={photo.objectPosition}
                       delay={i * 0.16}
                     />
                   </div>
 
                   <h3 className="font-display flex items-center gap-2 text-[clamp(1.3rem,1.7vw,1.55rem)] leading-[1.1] tracking-[-0.018em] transition-colors duration-[700ms] ease-[var(--ease-out-expo)] group-hover:text-gold-strong">
-                    {meta.display}
+                    {p.name}
                     <span aria-hidden className="text-gold-strong opacity-0 transition-[translate,opacity] duration-300 group-hover:translate-x-1 group-hover:opacity-100">→</span>
                   </h3>
 

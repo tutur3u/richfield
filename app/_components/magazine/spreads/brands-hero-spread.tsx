@@ -2,6 +2,9 @@ import Image from "next/image";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import { useTranslations } from "next-intl";
+import type { Locale } from "@/lib/locale";
 import type { Brand } from "@/content/en/brands";
 
 // ---------------------------------------------------------------------------
@@ -59,8 +62,14 @@ function MarqueeLane({ lane }: { lane: Lane }) {
   );
 }
 
-export function BrandsHeroSpread({ brands }: { brands: Brand[] }) {
+export function BrandsHeroSpread({
+  brands,
+}: {
+  brands: Brand[];
+  locale?: Locale;
+}) {
   const lanes = buildLanes(brands);
+  const t = useTranslations("home.brandsHero");
 
   return (
     <section
@@ -94,21 +103,18 @@ export function BrandsHeroSpread({ brands }: { brands: Brand[] }) {
 
       <div className="relative z-10 mx-auto flex w-full max-w-[1500px] flex-col px-6 pt-[calc(var(--v2-section)/2)] pb-[var(--v2-section)] sm:px-10 lg:px-12">
         <RevealOnScroll className="flex max-w-full flex-col gap-y-[var(--v2-rhythm)] lg:max-w-[48%]">
-          <Eyebrow>OUR BRANDS</Eyebrow>
+          <Eyebrow>{t("eyebrow")}</Eyebrow>
 
           <h2 className="font-display v2-size-standfirst text-balance text-ink">
-            Trusted by the world&rsquo;s most{" "}
-            <em className="italic text-gold-strong">loved</em> brands.
+            <ItalicText text={t("heading")} />
           </h2>
 
           <p className="v2-size-body max-w-[46ch] text-justify opacity-90">
-            100+ products across confectionery, beverages, personal care, and
-            more — Richfield carries the brands shoppers already reach for, in
-            partnerships that often run for decades.
+            {t("body")}
           </p>
 
           <CtaLink href="/brands" className="mt-1">
-            EXPLORE OUR BRANDS
+            {t("cta")}
           </CtaLink>
         </RevealOnScroll>
       </div>

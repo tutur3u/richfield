@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
+import { useTranslations } from "next-intl";
+
 import { EASE_OUT_EXPO } from "@/app/_components/magazine/_ease";
+import { ItalicText } from "@/app/_components/primitives/italic-text";
+import type { Locale } from "@/lib/locale";
 
 const ADVANCE_MS = 7000;
-
-/** Supporting standfirst beneath the hero headline. */
-const HERO_SUBHEAD =
-  "Operated by Richfield Foods. Ambient and cold storage, co-packing, and the trucks that reach every province.";
 
 type HeroPhoto = {
   src: string;
@@ -19,25 +19,22 @@ type HeroPhoto = {
 };
 
 // Warehouse + logistics photography from the Phú Tường (Long An) facility.
-const HERO_SEQUENCE: HeroPhoto[] = [
+// Alt text comes from the ops messages (heroAlts), index-aligned with this list.
+const HERO_FRAMES: Array<Omit<HeroPhoto, "alt">> = [
   {
     src: "/photos/RF Website/Richfield Foods (Phu Tuong)/DSC_0832.webp",
-    alt: "A container truck at the Richfield Foods warehouse loading bay",
     objectPosition: "center 55%",
   },
   {
     src: "/photos/RF Website/Richfield Foods (Phu Tuong)/DSC_0892.webp",
-    alt: "A forklift loading pallets beside a delivery truck at the distribution centre",
     objectPosition: "center 50%",
   },
   {
     src: "/photos/RF Website/Richfield Foods (Phu Tuong)/DSC_0781.webp",
-    alt: "Workers loading product onto a truck on the warehouse dock",
     objectPosition: "center 50%",
   },
   {
     src: "/photos/RF Website/Richfield Foods (Phu Tuong)/DSC_0844.webp",
-    alt: "Cases being loaded into a truck at the Richfield Foods dock",
     objectPosition: "center 45%",
   },
 ];
@@ -49,20 +46,26 @@ const HERO_SEQUENCE: HeroPhoto[] = [
  * standfirst) that rises in on first paint. Auto-advance pauses on hover/focus
  * and is disabled under reduced motion.
  */
-export function LogisticsHero() {
+export function LogisticsHero(_props: { locale?: Locale }) {
   const reduce = useReducedMotion();
+  const t = useTranslations("ops.logisticsHero");
+  const heroAlts = t.raw("heroAlts") as string[];
+  const sequence: HeroPhoto[] = HERO_FRAMES.map((frame, i) => ({
+    ...frame,
+    alt: heroAlts[i] ?? "",
+  }));
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     if (reduce || paused) return;
     const id = setInterval(() => {
-      setIndex((i) => (i + 1) % HERO_SEQUENCE.length);
+      setIndex((i) => (i + 1) % HERO_FRAMES.length);
     }, ADVANCE_MS);
     return () => clearInterval(id);
   }, [reduce, paused]);
 
-  const photo = HERO_SEQUENCE[index];
+  const photo = sequence[index];
 
   const enter = (delay: number) =>
     reduce
@@ -75,7 +78,7 @@ export function LogisticsHero() {
 
   return (
     <section
-      aria-label="Warehouse and logistics"
+      aria-label={t("ariaLabel")}
       aria-roledescription="carousel"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
@@ -130,16 +133,15 @@ export function LogisticsHero() {
             {...enter(0.35)}
           >
             <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
-            WAREHOUSE &amp; LOGISTICS
+            {t("eyebrow")}
           </motion.div>
 
           <h1 className="font-display v2-headline max-w-full text-balance">
             <motion.span className="block" {...enter(0.55)}>
-              Two strategically located hubs
+              <ItalicText text={t("headlineLine1")} emClassName="italic text-gold" />
             </motion.span>
             <motion.span className="block" {...enter(0.73)}>
-              serve the full length of the{" "}
-              <em className="italic text-gold">country</em>.
+              <ItalicText text={t("headlineLine2")} emClassName="italic text-gold" />
             </motion.span>
           </h1>
 
@@ -147,7 +149,7 @@ export function LogisticsHero() {
             className="mt-[var(--v2-rhythm)] max-w-full text-[clamp(17px,1.4vw,22px)] leading-relaxed text-cream/90 [text-shadow:0_1px_4px_rgb(0_0_0_/_0.6)] lg:max-w-[48ch]"
             {...enter(0.95)}
           >
-            {HERO_SUBHEAD}
+            {t("subhead")}
           </motion.p>
         </div>
       </div>

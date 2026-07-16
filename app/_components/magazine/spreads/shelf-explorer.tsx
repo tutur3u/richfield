@@ -10,15 +10,16 @@ import {
   useState,
   type CSSProperties,
 } from "react";
-import { partnerLogos } from "@/content/en/photography";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
-import {
-  shelfCategories,
-  type BannerWeight,
-  type ShelfBanner,
-  type ShelfCategory,
-  type ShelfPackshot,
+import { useTranslations } from "next-intl";
+import { getContent } from "@/content";
+import type { Locale } from "@/lib/locale";
+import type {
+  BannerWeight,
+  ShelfBanner,
+  ShelfCategory,
+  ShelfPackshot,
 } from "@/content/en/shelf";
 
 // --- Masonry geometry -------------------------------------------------------
@@ -235,16 +236,20 @@ function packTiles(tiles: Tile[], metrics: Metrics): Placed[] {
 // --- Explorer ---------------------------------------------------------------
 
 export function ShelfExplorer({
-  categories = shelfCategories,
+  categories,
+  locale = "en",
 }: {
   categories?: ShelfCategory[];
+  locale?: Locale;
 }) {
+  const t = useTranslations("ops.shelfExplorer");
+  const { partnerLogos, shelfCategories } = getContent(locale);
   const [active, setActive] = useState(0);
   const baseId = useId();
   const [gridRef, metrics] = useGridMetrics();
   const activeCategories = useMemo(
-    () => (categories.length > 0 ? categories : shelfCategories),
-    [categories],
+    () => (categories && categories.length > 0 ? categories : shelfCategories),
+    [categories, shelfCategories],
   );
   const category = activeCategories[active] ?? activeCategories[0] ?? shelfCategories[0];
   const placed = packTiles(interleave(category), metrics);
@@ -275,15 +280,15 @@ export function ShelfExplorer({
           sharing one baseline. */}
       <div className="flex shrink-0 flex-col gap-x-10 gap-y-4 border-b border-current/12 pb-[clamp(8px,1vw,14px)] lg:flex-row lg:items-end lg:justify-between">
         <RevealOnScroll>
-          <Eyebrow className="mb-[clamp(4px,0.5vw,8px)]">PORTFOLIO</Eyebrow>
+          <Eyebrow className="mb-[clamp(4px,0.5vw,8px)]">{t("eyebrow")}</Eyebrow>
           <h2 className="font-display v2-size-standfirst">
-            Every brand on the shelf.
+            {t("heading")}
           </h2>
         </RevealOnScroll>
 
         <div
           role="tablist"
-          aria-label="Product categories"
+          aria-label={t("tablistAria")}
           className="flex flex-wrap items-end gap-x-[clamp(18px,2.4vw,40px)] gap-y-2"
         >
           {activeCategories.map((cat, i) => {
@@ -337,7 +342,7 @@ export function ShelfExplorer({
           </p>
           <div
             role="region"
-            aria-label={`${category.label} brands`}
+            aria-label={t("brandsAria", { label: category.label })}
             className="flex flex-wrap items-center gap-x-[clamp(16px,2vw,32px)] gap-y-3"
           >
             {category.brands.map((name) => {
@@ -371,7 +376,7 @@ export function ShelfExplorer({
           <div
             ref={gridRef}
             role="region"
-            aria-label={`${category.label} products`}
+            aria-label={t("productsAria", { label: category.label })}
             className="grid"
             style={{
               gridTemplateColumns: `repeat(${metrics.cols}, minmax(0, 1fr))`,

@@ -76,10 +76,13 @@ export function BrandsHeroSpread({
       id="brands"
       className="v2-display relative isolate flex w-full flex-col overflow-hidden"
     >
-      {/* Moving logo lanes — full bleed, vertically centered behind the type. */}
+      {/* Moving logo lanes — full bleed, vertically centered behind the type.
+          Below lg the type column goes full width and overlaps the lanes, so we
+          dim them to keep the copy legible; at lg the type clamps back to the
+          left half (under the cream wash) and the lanes return to full strength. */}
       <div
         aria-hidden
-        className="absolute inset-0 flex flex-col justify-center gap-[clamp(20px,3vw,48px)]"
+        className="absolute inset-0 flex flex-col justify-center gap-[clamp(20px,3vw,48px)] opacity-20 lg:opacity-100"
       >
         {lanes.map((lane, i) => (
           <MarqueeLane key={i} lane={lane} />

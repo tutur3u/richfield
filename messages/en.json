@@ -121,17 +121,17 @@
   },
   "brandsPage": {
     "eyebrow": "OUR BRANDS",
-    "heading": "Trusted by the world’s most *loved* brands.",
+    "heading": "Trusted by the world’s most *loved* brands",
     "intro": "100+ products across confectionery, beverages, personal care, and more. Richfield carries the brands shoppers already reach for, in partnerships that often run for decades.",
     "collabEyebrow": "THE COLLABORATIONS"
   },
   "careersPage": {
     "whyEyebrow": "WHY RICHFIELD",
-    "whyHeading": "Leadership that genuinely *cares*.",
+    "whyHeading": "Leadership that genuinely *cares*",
     "saysEyebrow": "WHAT EMPLOYEES SAY",
     "practiceEyebrow": "IN PRACTICE",
     "communityEyebrow": "COMMUNITY & IMPACT",
-    "communityHeading": "Care beyond the *workplace*.",
+    "communityHeading": "Care beyond the *workplace*",
     "watchFilm": "WATCH THE ÁO DÀI FILM",
     "vacanciesEyebrow": "VACANCIES",
     "noVacancies": "We're not actively recruiting right now. Reach out anyway — we'd like to hear from people who fit our story.",
@@ -149,7 +149,7 @@
     "formEyebrow": "Send a message",
     "mapAria": "Office location",
     "mapTitle": "Richfield head-office on Google Maps",
-    "headline": "Tell us about your *brand*.",
+    "headline": "Tell us about your *brand*",
     "intro": "Brand owner exploring Vietnam, partner considering a joint venture, or journalist on deadline: we'll write back within two business days.",
     "heroAlt": "Richfield team spelling the company name on the beach"
   },
@@ -189,7 +189,7 @@
   },
   "logisticsPage": {
     "operationKicker": "INSIDE THE OPERATION",
-    "operationHeading": "A walk through the *distribution centre*.",
+    "operationHeading": "A walk through the *distribution centre*",
     "videoTitle": "Richfield warehouse and distribution centre tour",
     "videoCaption": "Richfield distribution centre · facility tour"
   },
@@ -197,7 +197,7 @@
     "coverSpread": {
       "sectionAria": "Issue 30 cover",
       "headlineLine1": "From market entry",
-      "headlineLine2": "to *nationwide* distribution.",
+      "headlineLine2": "to *nationwide* distribution",
       "established": "ESTABLISHED 1994",
       "photoAlts": [
         "The Richfield team in a conga line on the beach at dusk",
@@ -209,7 +209,7 @@
     },
     "groupOverview": {
       "eyebrow": "RICHFIELD GROUP",
-      "heading": "One of Vietnam’s largest *FMCG* distribution networks.",
+      "heading": "One of Vietnam’s largest *FMCG* distribution networks",
       "galleryLabel": "Richfield distribution network gallery",
       "photoAlts": [
         "The Richfield team in a conga line on the beach at dusk.",
@@ -220,7 +220,7 @@
     },
     "whatWeDo": {
       "eyebrow": "WHAT WE DO",
-      "heading": "Three ways we move brands to *markets*.",
+      "heading": "Three ways we move brands to *markets*",
       "intro": "Richfield Group began as a family business in Malaysia and has grown across three generations. Today we operate as one of the largest FMCG distributors in Vietnam, backed by an international group with deep local knowledge of every market we serve.",
       "pillars": {
         "/logistics": {
@@ -242,21 +242,21 @@
     },
     "footprint": {
       "eyebrow": "FOOTPRINT",
-      "headlineLine1": "3 countries.",
-      "headlineLine2": "3 generations.",
-      "headlineLine3": "1 *promise*.",
+      "headlineLine1": "3 countries",
+      "headlineLine2": "3 generations",
+      "headlineLine3": "1 *promise*",
       "body": "The Richfield Group spans three countries and three generations of family leadership, combining international scale with hands-on knowledge of every market we serve."
     },
     "jointVenture": {
       "eyebrow": "JOINT VENTURE · ESTABLISHED 2024",
-      "heading": "A successful collaboration between two leading corporations.",
+      "heading": "A successful collaboration between two leading corporations",
       "body": "Dory Rich JSC pairs TCP Group’s leadership in Thai energy-drink production with Richfield Group’s nationwide FMCG distribution capability in Vietnam, bringing manufacturing, brand-building, and distribution under one roof.",
       "partnership": "IN PARTNERSHIP",
       "cta": "VISIT DORYRICH.COM.VN"
     },
     "brandsHero": {
       "eyebrow": "OUR BRANDS",
-      "heading": "Trusted by the world’s most *loved* brands.",
+      "heading": "Trusted by the world’s most *loved* brands",
       "body": "100+ products across confectionery, beverages, personal care, and more — Richfield carries the brands shoppers already reach for, in partnerships that often run for decades.",
       "cta": "EXPLORE OUR BRANDS"
     },
@@ -310,7 +310,7 @@
     },
     "organizationsSpread": {
       "eyebrow": "WHO WE ARE",
-      "heading": "One group, *three* companies."
+      "heading": "One group, *three* companies"
     }
   },
   "ops": {
@@ -318,12 +318,12 @@
       "ariaLabel": "Careers",
       "eyebrow": "CAREERS",
       "headlineLine1": "A place where",
-      "headlineLine2": "*people stay*.",
+      "headlineLine2": "*people stay*",
       "subhead": "Three decades of partnership, told through the people who built it."
     },
     "lifeValues": {
       "eyebrow": "LIFE AT RICHFIELD",
-      "heading": "People are valued as *partners*.",
+      "heading": "People are valued as *partners*",
       "coreValuesEyebrow": "CORE VALUES"
     },
     "lifeGallery": {
@@ -332,7 +332,7 @@
     },
     "shelfExplorer": {
       "eyebrow": "PORTFOLIO",
-      "heading": "Every brand on the shelf.",
+      "heading": "Every brand on the shelf",
       "tablistAria": "Product categories",
       "brandsAria": "{label} brands",
       "productsAria": "{label} products"
@@ -341,7 +341,7 @@
       "ariaLabel": "Warehouse and logistics",
       "eyebrow": "WAREHOUSE & LOGISTICS",
       "headlineLine1": "Two strategically located hubs",
-      "headlineLine2": "serve the full length of the *country*.",
+      "headlineLine2": "serve the full length of the *country*",
       "subhead": "Operated by Richfield Foods. Ambient and cold storage, co-packing, and the trucks that reach every province.",
       "heroAlts": [
         "A container truck at the Richfield Foods warehouse loading bay",
@@ -352,7 +352,7 @@
     },
     "hubScrollytelling": {},
     "retailerWall": {
-      "heading": "Modern *Trade*.",
+      "heading": "Modern *Trade*",
       "body": "40+ modern trade and e-commerce partners including supermarket chains and convenience stores.",
       "channels": {
         "ecommerce": "E-commerce",

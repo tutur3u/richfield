@@ -1,9 +1,10 @@
-type Tone = "gold" | "muted" | "ink-on-green";
+type Tone = "gold" | "muted" | "ink-on-green" | "ink";
 
 const toneClass: Record<Tone, string> = {
   gold: "text-gold",
   muted: "text-muted",
   "ink-on-green": "text-gold",
+  ink: "text-ink",
 };
 
 export function Eyebrow({

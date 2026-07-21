@@ -7,7 +7,6 @@ import { CareersHero } from "@/app/_components/magazine/spreads/careers-hero";
 import { LifeValues } from "@/app/_components/sections/life-values";
 import { LifeGallery } from "@/app/_components/sections/life-gallery";
 import { CtaLink } from "@/app/_components/magazine/primitives/cta-link";
-import { YouTubeEmbed } from "@/app/_components/primitives/youtube-embed";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { ItalicText } from "@/app/_components/primitives/italic-text";
 import { getContent } from "@/content";
@@ -243,15 +242,6 @@ export default async function CareersPage({
                 </tbody>
               </table>
             )}
-
-            {/* Community video — the áo dài film, embedded for those who want it */}
-            <div className="border-t border-current/15 pt-[var(--v2-flow)]">
-              <YouTubeEmbed
-                videoId="ZTd2L_xhYt8"
-                title={t("videoTitle")}
-                caption={t("videoCaption")}
-              />
-            </div>
           </RevealOnScroll>
         </section>
 

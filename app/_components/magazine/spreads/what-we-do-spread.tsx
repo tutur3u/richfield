@@ -44,7 +44,7 @@ export function WhatWeDoSpread({ locale = "en" }: { locale?: Locale }) {
   return (
     <Spread id="what" bg="transparent" className="flex flex-col gap-y-[var(--v2-flow)]">
       {/* Headline block — hangs left with a wide right gutter. */}
-      <RevealOnScroll lang={locale} className="flex flex-col gap-y-[var(--v2-rhythm)] hyphens-auto">
+      <RevealOnScroll lang={locale} className="flex flex-col gap-y-[var(--v2-rhythm)] [hyphens:none]">
         <Eyebrow tone="gold">{t("eyebrow")}</Eyebrow>
 
         <h2 className="font-display v2-size-standfirst text-balance">
@@ -58,7 +58,7 @@ export function WhatWeDoSpread({ locale = "en" }: { locale?: Locale }) {
 
       {/* Three pillar columns — pillar leads with the image, then long body and
           a quiet folio stat line. */}
-      <div className="v2-pillar-row hyphens-auto grid grid-cols-1 gap-x-[clamp(24px,2.8vw,48px)] gap-y-[var(--v2-flow)] lg:grid-cols-3" lang={locale}>
+      <div className="v2-pillar-row [hyphens:none] grid grid-cols-1 gap-x-[clamp(24px,2.8vw,48px)] gap-y-[var(--v2-flow)] lg:grid-cols-3" lang={locale}>
           {filteredPillars.map((p, i) => {
             const photo = PILLAR_PHOTOS[p.href];
             const meta = pillarMeta[p.href];

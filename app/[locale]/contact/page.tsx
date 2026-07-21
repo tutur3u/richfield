@@ -88,7 +88,6 @@ export default async function ContactPage({
   const { contactChannels, contactPage } = await getRichfieldContent(locale);
   const t = await getTranslations({ locale, namespace: "contactPage" });
   const mapQuery = encodeURIComponent(contactPage.mapQuery);
-  const backgroundImage = contactPage.backgroundImage?.src ?? "/photos/contact-richfield.webp";
   return (
     <>
       <script
@@ -102,29 +101,13 @@ export default async function ContactPage({
 
       <section
         aria-label={t("eyebrow")}
-        className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-cream pb-[var(--v2-section)] pt-[calc(var(--v2-runhead)+var(--v2-section)/2)]"
+        className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-cream-gradient pb-[var(--v2-section)] pt-[calc(var(--v2-runhead)+var(--v2-section)/2)]"
       >
-        {/* The beach, pinned to the viewport so it holds still behind the
-            content as the page scrolls. background-attachment:fixed confines it
-            to this section's box, so it stops where the contact section ends
-            rather than bleeding under the footer. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 bg-[url('/photos/contact-bg.webp')] bg-contain bg-fixed bg-center bg-no-repeat opacity-[0.12]"
-        />
-        {/* RICHFIELD spelled by the team, big and centred and pinned to the
-            viewport (bg-fixed) just like the beach, so the two hold together and
-            stay put as the page scrolls, stopping at the section's end. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-[5] bg-[url('/photos/contact-richfield.webp')] bg-[length:min(92vw,1200px)_auto] bg-fixed bg-center bg-no-repeat opacity-[0.55]"
-          style={{ backgroundImage: `url(${JSON.stringify(backgroundImage)})` }}
-        />
         <div className="mx-auto flex w-full max-w-[1500px] flex-1 flex-col gap-y-[var(--v2-flow)] px-6 sm:px-10 lg:px-12">
           {/* Compact heading — spans full width (nothing on the right). */}
           <RevealOnScroll className="flex w-full flex-col gap-y-[var(--v2-rhythm)]">
             <Eyebrow tone="gold">{t("eyebrow")}</Eyebrow>
-            <DisplayHeading level={1} className="w-full">
+            <DisplayHeading level={1} className="w-full text-[clamp(34px,4vw,56px)]!">
               {contactPage.headline}
             </DisplayHeading>
             <p className="w-full text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-muted">
@@ -135,7 +118,7 @@ export default async function ContactPage({
           <div className="grid flex-1 gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-flow)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
             {/* Channels — icon-coded for instant differentiation */}
             <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]">
-              <Eyebrow tone="gold">{t("channelsEyebrow")}</Eyebrow>
+              <Eyebrow tone="ink">{t("channelsEyebrow")}</Eyebrow>
               <ul className="flex flex-col gap-3">
                 {contactChannels.map((c, idx) => {
                   const { Icon, iconBg, iconFg } = getChannelIcon(c.kind);
@@ -182,7 +165,7 @@ export default async function ContactPage({
 
             {/* Form */}
             <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]" delayMs={120}>
-              <Eyebrow tone="gold">{t("formEyebrow")}</Eyebrow>
+              <Eyebrow tone="ink">{t("formEyebrow")}</Eyebrow>
               <div className="rounded-sm border border-line bg-paper p-6 sm:p-8">
                 <ContactForm locale={locale} />
               </div>

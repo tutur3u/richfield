@@ -46,7 +46,7 @@ export const shelfCategories: ShelfCategory[] = [
   {
     id: "food",
     label: "Food",
-    descriptor: "Confectionery, snacks, and stationery treats.",
+    descriptor: "Confectionery, snacks, and sweet treats.",
     brands: ["Mars · Wrigley", "Glico", "NewChoice", "AMOS", "Wei Long"],
     banners: [
       { src: `${P}/amos/amos-bunny.webp`, brand: "AMOS", ratio: 3.11, weight: "hero", alt: "AMOS Peelitz gummy candy — spring campaign" },

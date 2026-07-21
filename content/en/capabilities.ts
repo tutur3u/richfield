@@ -11,7 +11,7 @@ export const pillars: Pillar[] = [
     number: "01",
     name: "Warehouse & Logistics",
     shortBody:
-      "End-to-end storage, handling, and last-mile distribution capabilities",
+      "End-to-end storage, handling, and last-mile distribution capabilities",
     longBody:
       "Two distribution centres in Long An and Hanoi cover the country end to end. Ambient and cold storage (18°C–25°C), co-packing infrastructure, and a network of vehicles serving every province.",
     href: "/logistics",

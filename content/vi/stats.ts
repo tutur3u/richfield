@@ -17,5 +17,5 @@ export const groupStats: readonly Stat[] = [
 export const groupIntro: readonly string[] = [
   "Ngày nay, mạng lưới phân phối của chúng tôi phủ khắp các tỉnh, thành phố trên cả nước, cho phép chúng tôi phục vụ khách hàng và đối tác trên toàn quốc.",
   "Tại Richfield, chúng tôi không chỉ tập trung vào sản xuất và hiệu quả kinh doanh — chúng tôi còn dành sự quan tâm tương xứng cho con người và những cộng đồng mà mình phục vụ. Thông qua các hoạt động xã hội và thiện nguyện thường xuyên, chúng tôi nỗ lực tạo nên những giá trị ý nghĩa vượt ra ngoài phạm vi tổ chức.",
-  "Với đội ngũ nhiệt huyết và năng động, cùng vị thế thương hiệu dẫn đầu và sự đồng hành mạnh mẽ của các thương hiệu hàng đầu như Mars, Richfield đã tăng trưởng ổn định trong suốt hơn 30 năm qua. Chúng tôi tiếp tục phát huy đà phát triển này, duy trì sự tăng trưởng nhất quán và bền vững trong những năm tới."
+  "Với đội ngũ nhiệt huyết và năng động, cùng những mối quan hệ hợp tác lâu dài với các thương hiệu toàn cầu như Mars, Richfield đã tăng trưởng ổn định trong suốt hơn 30 năm qua. Chúng tôi tiếp tục phát huy đà phát triển này, duy trì sự tăng trưởng nhất quán và bền vững trong những năm tới."
 ];

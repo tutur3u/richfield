@@ -69,7 +69,7 @@ export function GroupOverviewSpread({ locale = "en" }: { locale?: Locale }) {
       <div className="grid grid-cols-12 items-center gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-flow)]">
         <RevealOnScroll
           lang={locale}
-          className="col-span-12 flex max-w-[52ch] flex-col gap-y-[var(--v2-rhythm)] hyphens-auto lg:col-span-5"
+          className="col-span-12 flex max-w-[52ch] flex-col gap-y-[var(--v2-rhythm)] [hyphens:none] lg:col-span-5"
         >
           <p className="v2-dropcap v2-size-body text-justify opacity-90">
             {groupIntro[0]}

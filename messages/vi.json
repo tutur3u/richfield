@@ -107,7 +107,7 @@
     },
     "whoWeAre": {
       "title": "Chúng tôi là ai",
-      "description": "Một tập đoàn, ba công ty — Richfield Worldwide, Richfield Foods và Dory Rich — bao trùm phân phối, kho vận và nước tăng lực."
+      "description": "Một tập đoàn, 3 công ty — Richfield Worldwide, Richfield Foods và Dory Rich — bao trùm phân phối, kho vận và nước tăng lực."
     }
   },
   "brandsPage": {
@@ -211,7 +211,7 @@
     },
     "whatWeDo": {
       "eyebrow": "LĨNH VỰC HOẠT ĐỘNG",
-      "heading": "Ba cách chúng tôi đưa thương hiệu đến *thị trường*",
+      "heading": "3 cách chúng tôi đưa thương hiệu đến *thị trường*",
       "intro": "Tập đoàn Richfield khởi đầu là một doanh nghiệp gia đình tại Malaysia và đã phát triển qua ba thế hệ. Ngày nay, chúng tôi là một trong những nhà phân phối FMCG lớn nhất Việt Nam, với sự hậu thuẫn của một tập đoàn quốc tế cùng sự am hiểu sâu sắc từng thị trường mà chúng tôi phục vụ.",
       "pillars": {
         "/logistics": {
@@ -301,7 +301,7 @@
     },
     "organizationsSpread": {
       "eyebrow": "CHÚNG TÔI LÀ AI",
-      "heading": "Một tập đoàn, *ba* công ty"
+      "heading": "Một tập đoàn, *3* công ty"
     }
   },
   "ops": {

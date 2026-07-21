@@ -14,5 +14,5 @@ export const groupStats: readonly Stat[] = [
 export const groupIntro: readonly string[] = [
   "Today, our distribution network covers all provinces and cities nationwide, enabling us to serve customers and partners across the country.",
   "At Richfield, we go beyond focusing on production and business performance—we are equally committed to our people and the communities we serve. Through ongoing social and charitable initiatives, we strive to make a meaningful impact beyond our organization.",
-  "Driven by a passionate and dynamic team and strengthened by our position as a leading brand with strong support from leading brands such as Mars, Richfield has experienced steady growth over the past 30+ years. We continue to build on this momentum, maintaining consistent and sustainable development in the years ahead."
+  "Driven by a passionate and dynamic team and strengthened by long-standing partnerships with global brands such as Mars, Richfield has experienced steady growth over the past 30+ years. We continue to build on this momentum, maintaining consistent and sustainable development in the years ahead."
 ];

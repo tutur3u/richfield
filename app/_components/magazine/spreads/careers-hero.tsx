@@ -114,7 +114,7 @@ export function CareersHero({
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10
-                   bg-[linear-gradient(180deg,oklch(0.22_0.015_158/0.82)_0%,oklch(0.22_0.015_158/0.28)_22%,oklch(0.22_0.015_158/0.26)_45%,oklch(0.22_0.015_158/0.94)_100%)]"
+                   bg-[linear-gradient(180deg,oklch(0.20_0.015_158/0.80)_0%,oklch(0.20_0.015_158/0.30)_20%,oklch(0.20_0.015_158/0.34)_45%,oklch(0.20_0.015_158/0.72)_72%,oklch(0.20_0.015_158/0.96)_100%)]"
       />
       <div
         aria-hidden
@@ -127,14 +127,6 @@ export function CareersHero({
       {/* Bottom block — eyebrow, headline, standfirst. */}
       <div className="relative z-10 mx-auto w-full max-w-[1500px] px-6 pb-12 sm:px-10 sm:pb-14 lg:pb-20">
         <div className="max-w-full">
-          <motion.div
-            className="v2-mono v2-size-eyebrow mb-[var(--v2-rhythm)] flex items-center gap-3 text-gold"
-            {...enter(0.35)}
-          >
-            <span aria-hidden className="inline-block h-px w-8 bg-current opacity-80" />
-            {t("eyebrow")}
-          </motion.div>
-
           <h1 className="font-display v2-headline max-w-full text-balance lg:max-w-[20ch]">
             <motion.span className="block" {...enter(0.55)}>
               <ItalicText text={t("headlineLine1")} emClassName="italic text-gold" />

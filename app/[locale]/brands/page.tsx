@@ -47,7 +47,7 @@ export default async function BrandsPage({
           head
           className="flex flex-col gap-y-[var(--v2-flow)]"
         >
-          <RevealOnScroll lang={locale} className="flex w-full flex-col gap-y-[var(--v2-rhythm)] hyphens-auto">
+          <RevealOnScroll lang={locale} className="flex w-full flex-col gap-y-[var(--v2-rhythm)] [hyphens:none]">
             <Eyebrow>{t("eyebrow")}</Eyebrow>
             <h1 className="font-display v2-size-standfirst w-full text-pretty">
               <ItalicText text={t("heading")} />

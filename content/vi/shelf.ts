@@ -10,7 +10,7 @@ export const shelfCategories: ShelfCategory[] = [
   {
     id: "food",
     label: "Thực phẩm",
-    descriptor: "Bánh kẹo, snack và văn phòng phẩm.",
+    descriptor: "Bánh kẹo, snack và đồ ngọt.",
     brands: ["Mars · Wrigley", "Glico", "NewChoice", "AMOS", "Wei Long"],
     banners: [
       { src: `${P}/amos/amos-bunny.webp`, brand: "AMOS", ratio: 3.11, weight: "hero", alt: "Kẹo dẻo AMOS Peelitz — chiến dịch mùa xuân" },

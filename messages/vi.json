@@ -29,16 +29,7 @@
       },
       {
         "label": "Thương hiệu",
-        "children": [
-          {
-            "label": "Thương hiệu của chúng tôi",
-            "href": "/brands"
-          },
-          {
-            "label": "Danh mục sản phẩm",
-            "href": "/brands#portfolio"
-          }
-        ]
+        "href": "/brands"
       },
       {
         "label": "Tuyển dụng",
@@ -242,9 +233,9 @@
     },
     "footprint": {
       "eyebrow": "PHẠM VI HOẠT ĐỘNG",
-      "headlineLine1": "3 quốc gia",
-      "headlineLine2": "3 thế hệ",
-      "headlineLine3": "1 *lời hứa*",
+      "headlineLine1": "3 quốc gia,",
+      "headlineLine2": "3 thế hệ,",
+      "headlineLine3": "1 *lời hứa*.",
       "body": "Tập đoàn Richfield trải rộng trên ba quốc gia và ba thế hệ lãnh đạo gia đình, kết hợp quy mô quốc tế với sự am hiểu thực tế về từng thị trường mà chúng tôi phục vụ."
     },
     "jointVenture": {

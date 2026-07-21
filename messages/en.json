@@ -29,16 +29,7 @@
       },
       {
         "label": "Brands",
-        "children": [
-          {
-            "label": "Our Brands",
-            "href": "/brands"
-          },
-          {
-            "label": "Portfolio",
-            "href": "/brands#portfolio"
-          }
-        ]
+        "href": "/brands"
       },
       {
         "label": "Careers",
@@ -221,7 +212,7 @@
     "whatWeDo": {
       "eyebrow": "WHAT WE DO",
       "heading": "Three ways we move brands to *markets*",
-      "intro": "Richfield Group began as a family business in Malaysia and has grown across three generations. Today we operate as one of the largest FMCG distributors in Vietnam, backed by an international group with deep local knowledge of every market we serve.",
+      "intro": "Richfield Group began as a family business in Malaysia and has grown across three generations. Today, we operate as one of the largest FMCG distributors in Vietnam, backed by an international group with deep local knowledge of every market we serve.",
       "pillars": {
         "/logistics": {
           "photoAlt": "A container truck at the Richfield Foods warehouse loading bay.",
@@ -242,9 +233,9 @@
     },
     "footprint": {
       "eyebrow": "FOOTPRINT",
-      "headlineLine1": "3 countries",
-      "headlineLine2": "3 generations",
-      "headlineLine3": "1 *promise*",
+      "headlineLine1": "3 countries,",
+      "headlineLine2": "3 generations,",
+      "headlineLine3": "1 *promise*.",
       "body": "The Richfield Group spans three countries and three generations of family leadership, combining international scale with hands-on knowledge of every market we serve."
     },
     "jointVenture": {

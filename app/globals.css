@@ -239,6 +239,12 @@ button:focus-visible {
 .v2-size-folio      { font-size: clamp(11px, 0.9vw, 13px); letter-spacing: 0.18em; text-transform: uppercase; }
 .v2-size-eyebrow    { font-size: clamp(12px, 1vw, 14px);   letter-spacing: 0.22em; text-transform: uppercase; }
 
+/* Section-intro copy runs the full width of its container. Wrap a standalone
+   intro block (nothing beside it) in .v2-lede and its heading + lede are never
+   clamped to a narrow measure — no per-element max-w needed, and this beats any
+   stray max-w-[ch] utility (0,1,1 specificity, unlayered). */
+.v2-lede :is(h1, h2, h3, p) { max-width: none; }
+
 /* Shared H2 opener scale (DESIGN.md §3 Headline/Feature). One scale across
    every spread; pair with `font-display` (Fraunces) on the element. Color and
    the one gold-italic emphasis word stay inline per spread. */
@@ -250,28 +256,20 @@ button:focus-visible {
 .v2-rule       { height: 1px; background: currentColor; opacity: 0.18; }
 .v2-rule-gold  { height: 1px; background: var(--color-gold); opacity: 0.7; }
 
-/* Editorial drop cap. Float-left initial set in upright Fraunces at large
-   display size. Tightens against the body baseline. Apply to a <p> whose
-   first letter should anchor the column. */
+/* Editorial drop cap. Float-left initial set in upright Fraunces, sized in `em`
+   so it scales with the body copy and spans ~2 text lines — never taller than a
+   short (2-line) paragraph. Line-based, not a hardcoded height, so it holds at
+   any viewport width. Apply to a <p> whose first letter should anchor it. */
 .v2-dropcap::first-letter {
   font-family: var(--font-display), Georgia, serif;
   font-style: normal;
   font-weight: 400;
   float: left;
-  font-size: clamp(4.4rem, 7.5vw, 6.8rem);
-  line-height: 0.78;
-  margin: 0.06em 0.08em -0.08em -0.04em;
+  font-size: 3.24em;
+  line-height: 0.9;
+  margin: 0.02em 0.08em -0.04em -0.02em;
   color: inherit;
   letter-spacing: -0.02em;
-}
-
-/* On phones the cap's floor (4.4rem) would lock it at ~70px against 16px body
-   text in a ~330px column — far too dominant. Scale it down and let it grow
-   with viewport width; at >=640px the rule above takes back over unchanged. */
-@media (max-width: 639px) {
-  .v2-dropcap::first-letter {
-    font-size: clamp(2.8rem, 13vw, 4rem);
-  }
 }
 
 /* Multi-column editorial body. */

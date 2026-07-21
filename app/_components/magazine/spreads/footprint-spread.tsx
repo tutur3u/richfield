@@ -20,7 +20,7 @@ export function FootPrintSpread({ locale = "en" }: { locale?: Locale }) {
           beige gap between them. The headline hangs top-left over a ghost "3"
           (three countries, three generations). */}
       <div className="grid grid-cols-12 items-center gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-flow)]">
-        <div className="relative col-span-12 hyphens-auto lg:col-span-4" lang={locale}>
+        <div className="relative col-span-12 [hyphens:none] lg:col-span-4" lang={locale}>
 
           <RevealOnScroll className="relative z-10">
             <Eyebrow className="mb-[var(--v2-rhythm)]">{t("eyebrow")}</Eyebrow>

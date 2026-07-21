@@ -42,7 +42,7 @@ export function OrganizationsSpread({
       className="flex flex-col gap-y-[var(--v2-flow)]"
     >
       <div
-        className="grid grid-cols-12 gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-rhythm)] hyphens-auto"
+        className="grid grid-cols-12 gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-rhythm)] [hyphens:none]"
         lang={locale}
       >
         <div className="col-span-12 flex flex-col gap-y-[var(--v2-rhythm)] lg:col-span-5">

@@ -76,10 +76,12 @@ export type RichfieldDeliveryPayload = {
 };
 
 export type RichfieldContent = {
+  articles: RichfieldArticle[];
   brands: Brand[];
   homepageBrands: Brand[];
   brandTimeline: Milestone[];
   contactChannels: RichfieldContactChannel[];
+  contactForm: RichfieldContactForm;
   contactPage: RichfieldContactPage;
   featuredPartners: typeof featuredPartners;
   imageLibrary: RichfieldImageLibraryItem[];
@@ -91,11 +93,31 @@ export type RichfieldContent = {
   shelfCategories: ShelfCategory[];
 };
 
+export type RichfieldArticle = {
+  author: string | null;
+  body: string;
+  category: string | null;
+  featured: boolean;
+  imageUrl: string | null;
+  publishedAt: string | null;
+  slug: string;
+  summary: string;
+  title: string;
+};
+
 export type RichfieldContactPage = {
   backgroundImage: RichfieldImageLibraryItem | null;
   headline: string;
   intro: string;
   mapQuery: string;
+};
+
+export type RichfieldContactForm = {
+  inquiryTypes: string[];
+  maxMessageLength: number;
+  recipientEmail: string;
+  submitLabel: string;
+  successMessage: string;
 };
 
 export type RichfieldContactChannel = {
@@ -162,6 +184,24 @@ function buildDefaultContactChannels(locale: Locale): RichfieldContactChannel[] 
   return getRichfieldContactChannels(locale).map(({ slug: _slug, ...channel }) => channel);
 }
 
+function buildDefaultContactForm(locale: Locale, content: LocaleContent): RichfieldContactForm {
+  const labels = locale === "vi" ? messagesVi.contactForm : messagesEn.contactForm;
+
+  return {
+    inquiryTypes: [
+      "Brand partnership",
+      "Distribution opportunity",
+      "Careers",
+      "Press",
+      "Other",
+    ],
+    maxMessageLength: 1_200,
+    recipientEmail: content.site.email,
+    submitLabel: labels.send,
+    successMessage: labels.success,
+  };
+}
+
 function buildDefaultImageLibrary(content: LocaleContent): RichfieldImageLibraryItem[] {
   return Object.entries(content.peoplePhotos).map(([slug, photo], index) => ({
     alt: photo.alt,
@@ -193,10 +233,12 @@ export function getDefaultRichfieldContent(locale: Locale = DEFAULT_LOCALE): Ric
 
   const content = getContent(locale);
   const built: RichfieldContent = {
+    articles: [],
     brands: content.brands,
     homepageBrands: content.homepageBrands,
     brandTimeline: content.brandTimeline,
     contactChannels: buildDefaultContactChannels(locale),
+    contactForm: buildDefaultContactForm(locale, content),
     contactPage: buildDefaultContactPage(locale, content),
     featuredPartners: content.featuredPartners,
     imageLibrary: buildDefaultImageLibrary(content),
@@ -652,6 +694,39 @@ function buildContactChannels(delivery: RichfieldDeliveryPayload, locale: Locale
     : defaultChannels;
 }
 
+function buildContactForm(
+  delivery: RichfieldDeliveryPayload,
+  defaultContactForm: RichfieldContactForm,
+) {
+  const entry = getPublishedEntries(delivery, "contact-form")[0];
+  if (!entry) return defaultContactForm;
+
+  const profileData = asRecord(entry.profile_data);
+  const inquiryTypes = Array.isArray(profileData.inquiryTypes)
+    ? profileData.inquiryTypes.filter(
+        (value): value is string => typeof value === "string" && value.trim().length > 0,
+      )
+    : [];
+  const maxMessageLength = asNumber(profileData.maxMessageLength);
+
+  return {
+    inquiryTypes:
+      inquiryTypes.length > 0 ? [...new Set(inquiryTypes)] : defaultContactForm.inquiryTypes,
+    maxMessageLength:
+      maxMessageLength && maxMessageLength >= 100 && maxMessageLength <= 5_000
+        ? Math.floor(maxMessageLength)
+        : defaultContactForm.maxMessageLength,
+    recipientEmail:
+      asString(profileData.recipientEmail) ?? defaultContactForm.recipientEmail,
+    submitLabel: asString(profileData.submitLabel) ?? defaultContactForm.submitLabel,
+    successMessage:
+      getMarkdown(entry) ??
+      asString(profileData.successMessage) ??
+      entry.summary ??
+      defaultContactForm.successMessage,
+  } satisfies RichfieldContactForm;
+}
+
 function buildOpenPositions(
   delivery: RichfieldDeliveryPayload,
   openPositions: OpenPosition[],
@@ -662,12 +737,18 @@ function buildOpenPositions(
 
       return {
         item: {
+          applyEmail: asString(profileData.applyEmail) ?? undefined,
+          body: getMarkdown(entry) ?? undefined,
           deadline: asString(profileData.deadline) ?? "",
+          department: asString(profileData.department) ?? undefined,
+          employmentType: asString(profileData.employmentType) ?? undefined,
           href: asString(profileData.href) ?? undefined,
           location: asString(profileData.location) ?? entry.subtitle ?? "",
           positions: asNumber(profileData.positions) ?? 1,
+          slug: entry.slug,
           summary: entry.summary ?? undefined,
           title: entry.title,
+          workMode: asString(profileData.workMode) ?? undefined,
         } satisfies OpenPosition,
         sortOrder: asNumber(profileData.sortOrder) ?? 0,
       };
@@ -676,6 +757,31 @@ function buildOpenPositions(
     .map(({ item }) => item);
 
   return mapped.length > 0 ? mapped : openPositions;
+}
+
+function buildArticles(
+  delivery: RichfieldDeliveryPayload,
+  apiBaseUrl: string,
+) {
+  return getPublishedEntries(delivery, "articles")
+    .map<RichfieldArticle>((entry) => {
+      const profileData = asRecord(entry.profile_data);
+      return {
+        author: asString(profileData.author),
+        body: getMarkdown(entry) ?? entry.summary ?? "",
+        category: asString(profileData.category) ?? entry.subtitle,
+        featured: profileData.feature === true,
+        imageUrl: getImageUrl(entry, apiBaseUrl),
+        publishedAt: asString(profileData.publishedAt) ?? entry.published_at,
+        slug: entry.slug,
+        summary: entry.summary ?? "",
+        title: entry.title,
+      };
+    })
+    .sort((left, right) => {
+      if (left.featured !== right.featured) return left.featured ? -1 : 1;
+      return (right.publishedAt ?? "").localeCompare(left.publishedAt ?? "");
+    });
 }
 
 // Brand-collaboration timeline — when each partnership began, oldest first.
@@ -715,10 +821,12 @@ export function buildRichfieldContent(
 
   return {
     ...defaults,
+    articles: buildArticles(delivery, apiBaseUrl),
     brands: nextBrands,
     homepageBrands: nextBrands,
     brandTimeline: deriveBrandTimeline(nextBrands),
     contactChannels: buildContactChannels(delivery, locale),
+    contactForm: buildContactForm(delivery, defaults.contactForm),
     contactPage: buildContactPage(delivery, apiBaseUrl, nextImageLibrary, defaults.contactPage, locale),
     imageLibrary: nextImageLibrary,
     leaders: buildLeaders(delivery, apiBaseUrl, defaults.leaders, locale),

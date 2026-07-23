@@ -27,6 +27,7 @@ import type {
 } from "@/lib/richfield-storage-files";
 import { getRichfieldGalleryPlacementLabel } from "@/lib/richfield-gallery";
 import { RichfieldGalleryPanel } from "./RichfieldGalleryPanel";
+import { RichTextEditor } from "./RichTextEditor";
 import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
 import {
   adminFetch,
@@ -76,11 +77,27 @@ type EditorTarget = {
 };
 
 const contentTabs: RichfieldAdminCollectionKey[] = [
+  "articles",
+  "jobs",
+  "brands",
+  "leadership",
+  "milestones",
+  "contact-page",
+  "contact-form",
+  "contact-channels",
   "image-library",
   "contact-submissions",
 ];
 
 const tabLabels: Array<{ id: AdminTab; label: string }> = [
+  { id: "articles", label: RICHFIELD_ADMIN_COPY.tabs.articles },
+  { id: "jobs", label: RICHFIELD_ADMIN_COPY.tabs.jobs },
+  { id: "brands", label: RICHFIELD_ADMIN_COPY.tabs.brands },
+  { id: "leadership", label: RICHFIELD_ADMIN_COPY.tabs.leadership },
+  { id: "milestones", label: RICHFIELD_ADMIN_COPY.tabs.milestones },
+  { id: "contact-page", label: RICHFIELD_ADMIN_COPY.tabs.contactPage },
+  { id: "contact-form", label: RICHFIELD_ADMIN_COPY.tabs.contactForm },
+  { id: "contact-channels", label: RICHFIELD_ADMIN_COPY.tabs.contactChannels },
   { id: "image-library", label: RICHFIELD_ADMIN_COPY.tabs.gallery },
   { id: "contact-submissions", label: RICHFIELD_ADMIN_COPY.tabs.contactSubmissions },
   { id: "storage", label: RICHFIELD_ADMIN_COPY.tabs.storage },
@@ -99,6 +116,12 @@ const sectionCopy: Record<
     singular: string;
   }
 > = {
+  articles: {
+    empty: RICHFIELD_ADMIN_COPY.empty.articles,
+    listTitle: "Insights and updates",
+    newLabel: RICHFIELD_ADMIN_COPY.actions.newArticle,
+    singular: "article",
+  },
   brands: {
     empty: RICHFIELD_ADMIN_COPY.empty.brands,
     listTitle: "Brands",
@@ -122,6 +145,12 @@ const sectionCopy: Record<
     listTitle: "Contact page",
     newLabel: RICHFIELD_ADMIN_COPY.actions.newContactPage,
     singular: "contact page",
+  },
+  "contact-form": {
+    empty: RICHFIELD_ADMIN_COPY.empty.contactForm,
+    listTitle: "Contact form",
+    newLabel: RICHFIELD_ADMIN_COPY.actions.newContactForm,
+    singular: "form configuration",
   },
   "contact-channels": {
     empty: RICHFIELD_ADMIN_COPY.empty.contactChannels,
@@ -1019,6 +1048,8 @@ function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
   return {
     aboutOnly: item?.aboutOnly ?? false,
     accent: item?.accent ?? "",
+    applyEmail: item?.applyEmail ?? "",
+    author: item?.author ?? "",
     body: item?.body ?? "",
     brand: item?.brand ?? "",
     category: item?.category ?? "",
@@ -1026,8 +1057,10 @@ function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     credit: item?.credit ?? "",
     cta: item?.cta ?? "",
     deadline: item?.deadline ?? "",
+    department: item?.department ?? "",
     email: item?.email ?? "",
     emailNotificationStatus: item?.emailNotificationStatus ?? "",
+    employmentType: item?.employmentType ?? "",
     feature: item?.feature ?? false,
     featureCaption: item?.featureCaption ?? "",
     href: item?.href ?? "",
@@ -1042,6 +1075,7 @@ function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     placement: item?.placement ?? "",
     positions: item?.positions ?? "",
     productName: item?.productName ?? "",
+    publishedAt: item?.publishedAt ?? "",
     ratio: item?.ratio ?? "",
     receivedAt: item?.receivedAt ?? "",
     removeImage: false,
@@ -1055,6 +1089,7 @@ function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     shelfWeight: item?.shelfWeight ?? "",
     title: item?.title ?? "",
     usageTags: item?.usageTags ?? "",
+    workMode: item?.workMode ?? "",
     year: item?.year ?? "",
   };
 }
@@ -1075,6 +1110,7 @@ function contentItemMetaLabel(
   item: RichfieldAdminContentItem,
 ) {
   if (collectionKey === "brands") return item.category || "Brand";
+  if (collectionKey === "articles") return item.category || "Insight";
   if (collectionKey === "leadership") return item.role || "Leader";
   if (collectionKey === "contact-page") return "Contact page";
   if (collectionKey === "contact-channels") return item.kind || "Channel";
@@ -1087,7 +1123,11 @@ function contentItemMetaLabel(
 }
 
 function collectionSupportsImage(collectionKey: RichfieldAdminCollectionKey) {
-  return collectionKey === "image-library";
+  return (
+    collectionKey === "image-library" ||
+    collectionKey === "articles" ||
+    collectionKey === "jobs"
+  );
 }
 
 function ContentCardCover({ item }: { item: RichfieldAdminContentItem }) {
@@ -1448,7 +1488,7 @@ function ContentList({
         <div className="min-w-0">
           <p className="script-label">{copy.listTitle}</p>
           <h2 className="font-display text-4xl leading-none text-[var(--navy)] sm:text-5xl">
-            Choose one
+            Manage {copy.listTitle.toLowerCase()}
           </h2>
         </div>
         <button
@@ -2132,6 +2172,47 @@ function ContentForm({
       {visibleStep === "details" ? (
         <section className={sectionSurfaceClass}>
           <EditorStepHeader step="details" />
+          {collectionKey === "articles" ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              <TextField
+                disabled={isBusy}
+                label="Author"
+                name="author"
+                onChange={updateDraft}
+                value={draft.author}
+              />
+              <TextField
+                disabled={isBusy}
+                label="Topic"
+                name="category"
+                onChange={updateDraft}
+                value={draft.category}
+              />
+              <TextField
+                disabled={isBusy}
+                label="Publish date"
+                name="publishedAt"
+                onChange={updateDraft}
+                placeholder="2026-07-23"
+                value={draft.publishedAt}
+              />
+              <NumberField
+                disabled={isBusy}
+                label="Sort order"
+                name="sortOrder"
+                onChange={updateDraft}
+                value={draft.sortOrder}
+              />
+              <CheckboxField
+                description="Pin this article to the top of the insights feed."
+                disabled={isBusy}
+                label="Featured story"
+                name="feature"
+                onChange={updateDraft}
+                value={draft.feature}
+              />
+            </div>
+          ) : null}
           {collectionKey === "brands" ? (
             <div className="grid gap-4 md:grid-cols-2">
               <SelectField
@@ -2202,6 +2283,39 @@ function ContentForm({
                 name="mapQuery"
                 onChange={updateDraft}
                 value={draft.mapQuery}
+              />
+            </div>
+          ) : null}
+          {collectionKey === "contact-form" ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              <TextField
+                disabled={isBusy}
+                label="Recipient email"
+                name="email"
+                onChange={updateDraft}
+                value={draft.email}
+              />
+              <TextField
+                disabled={isBusy}
+                label="Submit button label"
+                name="cta"
+                onChange={updateDraft}
+                value={draft.cta}
+              />
+              <NumberField
+                disabled={isBusy}
+                label="Maximum message length"
+                name="positions"
+                onChange={updateDraft}
+                value={draft.positions}
+              />
+              <TextField
+                disabled={isBusy}
+                label="Inquiry types"
+                name="usageTags"
+                onChange={updateDraft}
+                placeholder="Brand partnership, Careers, Press"
+                value={draft.usageTags}
               />
             </div>
           ) : null}
@@ -2302,6 +2416,29 @@ function ContentForm({
           ) : null}
           {collectionKey === "jobs" ? (
             <div className="grid gap-4 md:grid-cols-2">
+              <TextField
+                disabled={isBusy}
+                label="Department"
+                name="department"
+                onChange={updateDraft}
+                value={draft.department}
+              />
+              <TextField
+                disabled={isBusy}
+                label="Employment type"
+                name="employmentType"
+                onChange={updateDraft}
+                placeholder="Full-time"
+                value={draft.employmentType}
+              />
+              <TextField
+                disabled={isBusy}
+                label="Work mode"
+                name="workMode"
+                onChange={updateDraft}
+                placeholder="On-site, hybrid, or remote"
+                value={draft.workMode}
+              />
               <NumberField
                 disabled={isBusy}
                 label="Positions"
@@ -2329,6 +2466,13 @@ function ContentForm({
                 name="href"
                 onChange={updateDraft}
                 value={draft.href}
+              />
+              <TextField
+                disabled={isBusy}
+                label="Applications email"
+                name="applyEmail"
+                onChange={updateDraft}
+                value={draft.applyEmail}
               />
               <NumberField
                 disabled={isBusy}
@@ -2416,6 +2560,17 @@ function ContentForm({
               value={draft.body || draft.summary}
             />
           ) : null}
+          {collectionKey === "contact-form" ? (
+            <RichTextEditor
+              disabled={isBusy}
+              label="Success message"
+              onChange={(value) => {
+                updateDraft("body", value);
+                updateDraft("summary", value);
+              }}
+              value={draft.body || draft.summary}
+            />
+          ) : null}
           {collectionKey === "contact-submissions" ? (
             <TextAreaField
               disabled={isBusy}
@@ -2424,6 +2579,14 @@ function ContentForm({
               onChange={updateDraft}
               rows={8}
               value={draft.body || draft.summary}
+            />
+          ) : null}
+          {collectionKey === "articles" || collectionKey === "jobs" ? (
+            <RichTextEditor
+              disabled={isBusy}
+              label={collectionKey === "jobs" ? "Position description" : "Article"}
+              onChange={(value) => updateDraft("body", value)}
+              value={draft.body}
             />
           ) : null}
         </section>
@@ -2638,9 +2801,11 @@ export function RichfieldAdminDashboard({
   const [selectedIds, setSelectedIds] = useState<
     Record<RichfieldAdminCollectionKey, string | null>
   >({
+    articles: initialContent.articles[0]?.id ?? null,
     brands: initialContent.brands[0]?.id ?? null,
     "contact-channels": initialContent["contact-channels"][0]?.id ?? null,
     "contact-page": initialContent["contact-page"][0]?.id ?? null,
+    "contact-form": initialContent["contact-form"][0]?.id ?? null,
     "contact-submissions": initialContent["contact-submissions"][0]?.id ?? null,
     "image-library": initialContent["image-library"][0]?.id ?? null,
     jobs: initialContent.jobs[0]?.id ?? null,

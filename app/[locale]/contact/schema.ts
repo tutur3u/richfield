@@ -14,26 +14,28 @@ export type ContactFormErrors = {
   nameRequired: string;
   companyRequired: string;
   emailInvalid: string;
+  inquiryTypeInvalid: string;
   messageRequired: string;
   messageTooLong: string;
   tooFast: string;
   deliveryFailed: string;
 };
 
-// Validation messages come from the locale's contactForm.errors; the machine
-// values (INQUIRY_TYPES) stay English in both locales.
+// Validation messages come from the locale's contactForm.errors. Inquiry
+// values are managed by CMS and validated against that live allowlist in the
+// server action after this structural validation.
 export function contactSchemaFor(errors: ContactFormErrors) {
   return z.object({
     name: z.string().trim().min(1, errors.nameRequired),
     company: z.string().trim().min(1, errors.companyRequired),
     country: z.string().trim().optional().default("Vietnam"),
     email: z.string().trim().email(errors.emailInvalid),
-    inquiryType: z.enum(INQUIRY_TYPES),
+    inquiryType: z.string().trim().min(1, errors.inquiryTypeInvalid).max(120),
     message: z
       .string()
       .trim()
       .min(1, errors.messageRequired)
-      .max(600, errors.messageTooLong),
+      .max(5_000, errors.messageTooLong),
     // Honeypot: must be empty.
     website: z
       .string()

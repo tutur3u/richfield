@@ -11,8 +11,10 @@ export type RichfieldAdminStudioPayload = {
 
 export type RichfieldContentStatus = "archived" | "draft" | "published" | "scheduled";
 export type RichfieldAdminCollectionKey =
+  | "articles"
   | "brands"
   | "contact-channels"
+  | "contact-form"
   | "contact-page"
   | "contact-submissions"
   | "image-library"
@@ -29,6 +31,8 @@ export type RichfieldAdminCollectionConfig = {
 export type RichfieldAdminContentItem = {
   aboutOnly: boolean;
   accent: string;
+  applyEmail: string;
+  author: string;
   blockId: string | null;
   body: string;
   brand: string;
@@ -38,8 +42,10 @@ export type RichfieldAdminContentItem = {
   credit: string;
   cta: string;
   deadline: string;
+  department: string;
   email: string;
   emailNotificationStatus: string;
+  employmentType: string;
   feature: boolean;
   featureCaption: string;
   href: string;
@@ -58,6 +64,7 @@ export type RichfieldAdminContentItem = {
   placement: string;
   positions: string;
   productName: string;
+  publishedAt: string;
   ratio: string;
   receivedAt: string;
   role: string;
@@ -70,12 +77,15 @@ export type RichfieldAdminContentItem = {
   shelfWeight: string;
   title: string;
   usageTags: string;
+  workMode: string;
   year: string;
 };
 
 export type RichfieldContentMutationInput = {
   aboutOnly: boolean;
   accent: string;
+  applyEmail: string;
+  author: string;
   body: string;
   brand: string;
   category: string;
@@ -84,8 +94,10 @@ export type RichfieldContentMutationInput = {
   credit: string;
   cta: string;
   deadline: string;
+  department: string;
   email: string;
   emailNotificationStatus: string;
+  employmentType: string;
   feature: boolean;
   featureCaption: string;
   href: string;
@@ -101,6 +113,7 @@ export type RichfieldContentMutationInput = {
   placement: string;
   positions: string;
   productName: string;
+  publishedAt: string;
   ratio: string;
   receivedAt: string;
   removeImage: boolean;
@@ -114,6 +127,7 @@ export type RichfieldContentMutationInput = {
   shelfWeight: string;
   title: string;
   usageTags: string;
+  workMode: string;
   year: string;
 };
 
@@ -130,6 +144,11 @@ export const RICHFIELD_ADMIN_COLLECTIONS: Record<
   RichfieldAdminCollectionKey,
   RichfieldAdminCollectionConfig
 > = {
+  articles: {
+    collectionSlug: "articles",
+    key: "articles",
+    singularLabel: "article",
+  },
   brands: {
     collectionSlug: "brands",
     key: "brands",
@@ -139,6 +158,11 @@ export const RICHFIELD_ADMIN_COLLECTIONS: Record<
     collectionSlug: "contact-page",
     key: "contact-page",
     singularLabel: "contact page",
+  },
+  "contact-form": {
+    collectionSlug: "contact-form",
+    key: "contact-form",
+    singularLabel: "contact form",
   },
   "contact-channels": {
     collectionSlug: "contact-channels",
@@ -305,10 +329,13 @@ export function readRichfieldAdminContent(
       const imageAsset = imageAssets.find((asset) => getAssetEntryId(asset) === entryId);
       const markdownBlock = markdownBlocks.find((block) => getBlockEntryId(block) === entryId);
       const yearValue = readNumber(profileData, "year");
+      const stringList = profileData.inquiryTypes ?? profileData.usageTags;
 
       return {
         aboutOnly: readBoolean(profileData, "aboutOnly"),
         accent: readString(profileData, "accent") ?? "",
+        applyEmail: readString(profileData, "applyEmail") ?? "",
+        author: readString(profileData, "author") ?? "",
         blockId: markdownBlock ? String(markdownBlock.id) : null,
         body: getBlockMarkdown(markdownBlock),
         brand: readString(profileData, "brand") ?? readString(entry, "title") ?? "",
@@ -318,8 +345,13 @@ export function readRichfieldAdminContent(
         credit: readString(profileData, "credit") ?? readString(profileData, "country") ?? "",
         cta: readString(profileData, "cta") ?? "",
         deadline: readString(profileData, "deadline") ?? "",
-        email: readString(profileData, "email") ?? "",
+        department: readString(profileData, "department") ?? "",
+        email:
+          readString(profileData, "recipientEmail") ??
+          readString(profileData, "email") ??
+          "",
         emailNotificationStatus: readString(profileData, "emailNotificationStatus") ?? readString(readRecord(entry.metadata), "emailNotificationStatus") ?? "",
+        employmentType: readString(profileData, "employmentType") ?? "",
         feature: readBoolean(profileData, "feature"),
         featureCaption: readString(profileData, "featureCaption") ?? "",
         href: readString(profileData, "href") ?? "",
@@ -336,8 +368,14 @@ export function readRichfieldAdminContent(
         objectPosition: readString(profileData, "objectPosition") ?? "",
         pageSection: readString(profileData, "pageSection") ?? "",
         placement: readString(profileData, "placement") ?? readString(profileData, "usage") ?? "",
-        positions: readNumber(profileData, "positions") !== null ? String(readNumber(profileData, "positions")) : "",
+        positions:
+          readNumber(profileData, "maxMessageLength") !== null
+            ? String(readNumber(profileData, "maxMessageLength"))
+            : readNumber(profileData, "positions") !== null
+              ? String(readNumber(profileData, "positions"))
+              : "",
         productName: readString(profileData, "productName") ?? "",
+        publishedAt: readString(profileData, "publishedAt") ?? readString(entry, "published_at") ?? "",
         ratio: readNumber(profileData, "ratio") !== null ? String(readNumber(profileData, "ratio")) : "",
         receivedAt: readString(profileData, "receivedAt") ?? "",
         role: readString(profileData, "role") ?? readString(entry, "subtitle") ?? "",
@@ -349,9 +387,12 @@ export function readRichfieldAdminContent(
         summary: readString(entry, "summary") ?? "",
         shelfWeight: readString(profileData, "shelfWeight") ?? "",
         title: readString(entry, "title") ?? "Untitled",
-        usageTags: Array.isArray(profileData.usageTags)
-          ? profileData.usageTags.filter((item) => typeof item === "string").join(", ")
+        usageTags: Array.isArray(stringList)
+          ? stringList
+              .filter((item: unknown): item is string => typeof item === "string")
+              .join(", ")
           : "",
+        workMode: readString(profileData, "workMode") ?? "",
         year: yearValue !== null ? String(yearValue) : "",
       };
     })
@@ -408,6 +449,8 @@ export function parseRichfieldContentFormData(
     input: {
       aboutOnly: formData.get("aboutOnly") === "true" || formData.get("aboutOnly") === "on",
       accent: String(formData.get("accent") ?? "").trim(),
+      applyEmail: String(formData.get("applyEmail") ?? "").trim(),
+      author: String(formData.get("author") ?? "").trim(),
       body: String(formData.get("body") ?? "").trim(),
       brand: String(formData.get("brand") ?? "").trim(),
       category: String(formData.get("category") ?? "").trim(),
@@ -416,8 +459,10 @@ export function parseRichfieldContentFormData(
       credit: String(formData.get("credit") ?? "").trim(),
       cta: String(formData.get("cta") ?? "").trim(),
       deadline: String(formData.get("deadline") ?? "").trim(),
+      department: String(formData.get("department") ?? "").trim(),
       email: String(formData.get("email") ?? "").trim(),
       emailNotificationStatus: String(formData.get("emailNotificationStatus") ?? "").trim(),
+      employmentType: String(formData.get("employmentType") ?? "").trim(),
       feature: formData.get("feature") === "true" || formData.get("feature") === "on",
       featureCaption: String(formData.get("featureCaption") ?? "").trim(),
       href: String(formData.get("href") ?? "").trim(),
@@ -433,6 +478,7 @@ export function parseRichfieldContentFormData(
       placement: String(formData.get("placement") ?? "").trim(),
       positions: String(formData.get("positions") ?? "").trim(),
       productName: String(formData.get("productName") ?? "").trim(),
+      publishedAt: String(formData.get("publishedAt") ?? "").trim(),
       ratio: String(formData.get("ratio") ?? "").trim(),
       receivedAt: String(formData.get("receivedAt") ?? "").trim(),
       removeImage: formData.get("removeImage") === "true" || formData.get("removeImage") === "on",
@@ -446,6 +492,7 @@ export function parseRichfieldContentFormData(
       shelfWeight: String(formData.get("shelfWeight") ?? "").trim(),
       title,
       usageTags: String(formData.get("usageTags") ?? "").trim(),
+      workMode: String(formData.get("workMode") ?? "").trim(),
       year: Number.isFinite(parsedYear) ? String(parsedYear) : "",
     },
   };

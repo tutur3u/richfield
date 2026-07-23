@@ -213,34 +213,57 @@ export default async function CareersPage({
                 </Link>
               </div>
             ) : (
-              <table className="w-full border-collapse">
-                <thead>
-                  <tr className="v2-mono v2-size-folio text-left opacity-55">
-                    <th className="border-b border-current/15 py-4">{t("jobTitle")}</th>
-                    <th className="border-b border-current/15 py-4">{t("positions")}</th>
-                    <th className="border-b border-current/15 py-4">{t("location")}</th>
-                    <th className="border-b border-current/15 py-4">{t("deadline")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {openPositions.map((p) => (
-                    <tr key={p.title} className="v2-size-body">
-                      <td className="border-b border-current/15 py-4">
-                        {p.href ? (
-                          <Link href={p.href} className="hover:text-gold-strong">
-                            {p.title}
-                          </Link>
-                        ) : (
-                          p.title
-                        )}
-                      </td>
-                      <td className="border-b border-current/15 py-4">{p.positions}</td>
-                      <td className="border-b border-current/15 py-4">{p.location}</td>
-                      <td className="border-b border-current/15 py-4">{p.deadline}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="grid gap-5 md:grid-cols-2">
+                {openPositions.map((position, index) => (
+                  <RevealOnScroll
+                    as="article"
+                    className="group relative flex flex-col border border-current/15 bg-paper/75 p-6 transition-colors hover:border-gold-strong sm:p-8"
+                    delayMs={index * 55}
+                    key={position.slug}
+                  >
+                    <div className="v2-mono v2-size-folio flex flex-wrap gap-x-3 text-gold-strong">
+                      <span>{(position.department ?? "Richfield Group").toUpperCase()}</span>
+                      {position.employmentType ? (
+                        <span>{position.employmentType.toUpperCase()}</span>
+                      ) : null}
+                    </div>
+                    <h3 className="font-display mt-5 text-[clamp(1.8rem,3vw,2.7rem)] leading-tight">
+                      <Link
+                        className="after:absolute after:inset-0"
+                        href={`/careers/${position.slug}`}
+                      >
+                        {position.title}
+                      </Link>
+                    </h3>
+                    {position.summary ? (
+                      <p className="v2-size-body mt-4 line-clamp-3 opacity-70">
+                        {position.summary}
+                      </p>
+                    ) : null}
+                    <dl className="v2-size-body mt-8 grid grid-cols-2 gap-4 border-t border-current/15 pt-5">
+                      <div>
+                        <dt className="v2-mono v2-size-folio opacity-45">{t("location")}</dt>
+                        <dd className="mt-1">{position.location}</dd>
+                      </div>
+                      <div>
+                        <dt className="v2-mono v2-size-folio opacity-45">{t("positions")}</dt>
+                        <dd className="mt-1">{position.positions}</dd>
+                      </div>
+                      <div>
+                        <dt className="v2-mono v2-size-folio opacity-45">{t("workMode")}</dt>
+                        <dd className="mt-1">{position.workMode ?? "On-site"}</dd>
+                      </div>
+                      <div>
+                        <dt className="v2-mono v2-size-folio opacity-45">{t("deadline")}</dt>
+                        <dd className="mt-1">{position.deadline}</dd>
+                      </div>
+                    </dl>
+                    <span className="v2-mono v2-size-folio mt-7 text-gold-strong">
+                      {t("viewPosition")}
+                    </span>
+                  </RevealOnScroll>
+                ))}
+              </div>
             )}
           </RevealOnScroll>
         </section>

@@ -32,6 +32,10 @@
         "href": "/brands"
       },
       {
+        "label": "Insights",
+        "href": "/insights"
+      },
+      {
         "label": "Careers",
         "href": "/careers"
       },
@@ -64,6 +68,10 @@
         "href": "/distribution"
       },
       {
+        "label": "Insights",
+        "href": "/insights"
+      },
+      {
         "label": "Careers",
         "href": "/careers"
       },
@@ -88,6 +96,10 @@
     "careers": {
       "title": "Careers",
       "description": "Richfield is a place where people stay. Core values, people-first leadership, community impact, and life across our offices."
+    },
+    "insights": {
+      "title": "Insights",
+      "description": "News, market perspectives, partnership stories, and updates from Richfield Group."
     },
     "contact": {
       "title": "Contact",
@@ -131,8 +143,31 @@
     "positions": "Positions",
     "location": "Location",
     "deadline": "Deadline",
+    "workMode": "Work mode",
+    "viewPosition": "View position →",
     "videoTitle": "Richfield áo dài cultural-heritage film",
     "videoCaption": "Cultural preservation — the áo dài association"
+  },
+  "careerDetailPage": {
+    "allOpportunities": "← All opportunities",
+    "location": "Location",
+    "workMode": "Work mode",
+    "employment": "Employment",
+    "openings": "Openings",
+    "deadline": "Deadline",
+    "fallbackBody": "We are looking for thoughtful, collaborative people who want to build durable partnerships and grow with Richfield.",
+    "interested": "Interested?",
+    "applyIntro": "Share your profile and tell us why this role feels right for you.",
+    "applyNow": "Apply now ↗"
+  },
+  "insightsPage": {
+    "eyebrow": "Insights & updates",
+    "heading": "Perspective from across our *markets*.",
+    "intro": "Partnership stories, company news, and practical observations from more than three decades of building brands in Southeast Asia.",
+    "emptyTitle": "The next story is being prepared.",
+    "emptyBody": "New Richfield updates will appear here as they are published.",
+    "readStory": "Read story →",
+    "allInsights": "← All insights"
   },
   "contactPage": {
     "eyebrow": "Contact",
@@ -165,8 +200,9 @@
       "nameRequired": "Please enter your name.",
       "companyRequired": "Please enter your company.",
       "emailInvalid": "Please enter a valid email.",
+      "inquiryTypeInvalid": "Please choose an available inquiry type.",
       "messageRequired": "Please add a message.",
-      "messageTooLong": "Please keep your message under 600 characters.",
+      "messageTooLong": "Please keep your message under {max} characters.",
       "tooFast": "Please give us a moment before submitting.",
       "deliveryFailed": "We couldn't send your message. Try email at {email}."
     }

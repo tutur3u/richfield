@@ -26,12 +26,18 @@ export const heritageBlock =
   "Rooted in over 30 years of trust, Richfield Group began as a family business in Malaysia and has grown across three generations. Today, we continue to build not just a company, but a community where people are valued as partners, not just employees. We see our people as long-term partners in a shared journey, built on trust, ambition, and sustainable growth.";
 
 export type OpenPosition = {
+  applyEmail?: string;
+  body?: string;
+  department?: string;
   title: string;
+  slug: string;
   positions: number;
   location: string;
   deadline: string;
+  employmentType?: string;
   href?: string;
   summary?: string;
+  workMode?: string;
 };
 
 export const openPositions: OpenPosition[] = [];

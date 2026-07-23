@@ -149,11 +149,31 @@ const contactSubmissionFields = [
   },
 ] satisfies RichfieldSyncField[];
 
+const contactFormFields = [
+  { key: "recipientEmail", label: "Recipient email", type: "string" },
+  { key: "submitLabel", label: "Submit button label", type: "string" },
+  { key: "successMessage", label: "Success message", type: "string" },
+  { key: "inquiryTypes", label: "Inquiry types", type: "string-array" },
+  { key: "maxMessageLength", label: "Maximum message length", type: "number" },
+] satisfies RichfieldSyncField[];
+
 const jobFields = [
   { key: "positions", label: "Positions", type: "number" },
+  { key: "department", label: "Department", type: "string" },
+  { key: "employmentType", label: "Employment type", type: "string" },
+  { key: "workMode", label: "Work mode", type: "string" },
   { key: "location", label: "Location", type: "string" },
   { key: "deadline", label: "Deadline", type: "string" },
+  { key: "applyEmail", label: "Application email", type: "string" },
   { key: "href", label: "External link", type: "string" },
+  { key: "sortOrder", label: "Sort order", type: "number" },
+] satisfies RichfieldSyncField[];
+
+const articleFields = [
+  { key: "author", label: "Author", type: "string" },
+  { key: "category", label: "Category", type: "string" },
+  { key: "publishedAt", label: "Published at", type: "datetime" },
+  { key: "feature", label: "Featured", type: "boolean" },
   { key: "sortOrder", label: "Sort order", type: "number" },
 ] satisfies RichfieldSyncField[];
 
@@ -402,24 +422,77 @@ function contactChannelEntries() {
   }));
 }
 
-function jobEntry(job: OpenPosition, index: number) {
-  const slug = slugify(job.title);
+function contactFormEntry() {
+  const successMessage =
+    "Thanks. We'll write back from our partnerships team within two business days.";
 
   return {
-    blocks: [],
+    blocks: [
+      {
+        blockType: "markdown",
+        content: { markdown: successMessage },
+        sortOrder: 0,
+        stableSourceId: "richfield:contact-form:main:success",
+        title: "Success message",
+      },
+    ],
+    collectionSlug: "contact-form",
+    profileData: {
+      inquiryTypes: [
+        "Brand partnership",
+        "Distribution opportunity",
+        "Careers",
+        "Press",
+        "Other",
+      ],
+      maxMessageLength: 1_200,
+      recipientEmail: site.email,
+      submitLabel: "Send message",
+      successMessage,
+    },
+    slug: "main",
+    stableSourceId: "richfield:contact-form:main",
+    status: PUBLISHED_STATUS,
+    subtitle: "External project form",
+    summary: "Self-serve configuration for the public contact form.",
+    title: "Contact Form",
+  };
+}
+
+function jobEntry(job: OpenPosition, index: number) {
+  const slug = job.slug || slugify(job.title);
+
+  return {
+    blocks: job.body
+      ? [
+          {
+            blockType: "markdown",
+            content: { markdown: job.body },
+            sortOrder: 0,
+            stableSourceId: `richfield:jobs:${slug}:body`,
+            title: "Position details",
+          },
+        ]
+      : [],
     collectionSlug: "jobs",
     profileData: {
+      applyEmail: job.applyEmail ?? null,
       deadline: job.deadline,
+      department: job.department ?? null,
+      employmentType: job.employmentType ?? null,
       href: job.href ?? null,
       location: job.location,
       positions: job.positions,
       sortOrder: index * 10,
+      workMode: job.workMode ?? null,
     },
     slug,
     stableSourceId: `richfield:jobs:${slug}`,
     status: PUBLISHED_STATUS,
     subtitle: job.location,
-    summary: `${job.positions} position${job.positions === 1 ? "" : "s"} · ${job.deadline}`,
+    summary:
+      job.summary ??
+      `${job.positions} position${job.positions === 1 ? "" : "s"} · ${job.deadline}`,
     title: job.title,
   };
 }
@@ -564,6 +637,7 @@ export const richfieldExternalProjectManifest = {
       ...milestones.map(milestoneEntry),
       contactPageEntry(),
       ...contactChannelEntries(),
+      contactFormEntry(),
       ...openPositions.map(jobEntry),
       ...curatedImageSeeds.map(imageLibraryEntry),
     ],
@@ -613,6 +687,15 @@ export const richfieldExternalProjectManifest = {
       },
       {
         blockTypes: ["markdown"],
+        collection_type: "contact-form",
+        description:
+          "Public form fields, inquiry choices, recipient routing, and success messaging.",
+        profileFields: contactFormFields,
+        slug: "contact-form",
+        title: "Contact Form",
+      },
+      {
+        blockTypes: ["markdown"],
         collection_type: "contact-submissions",
         description: "Private inbound contact form messages saved for Richfield admins.",
         profileFields: contactSubmissionFields,
@@ -620,8 +703,21 @@ export const richfieldExternalProjectManifest = {
         title: "Contact Inbox",
       },
       {
+        assetTypes: ["image"],
+        blockTypes: ["markdown"],
+        collection_type: "articles",
+        description:
+          "Self-serve Richfield news, insights, and company updates published to the public feed.",
+        profileFields: articleFields,
+        slug: "articles",
+        title: "Insights",
+      },
+      {
+        assetTypes: ["image"],
+        blockTypes: ["markdown"],
         collection_type: "jobs",
-        description: "Careers vacancies shown on the Richfield careers page.",
+        description:
+          "Careers vacancies, application details, and rich position descriptions shown on the public site.",
         profileFields: jobFields,
         slug: "jobs",
         title: "Jobs",

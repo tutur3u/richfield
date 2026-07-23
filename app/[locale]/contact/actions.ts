@@ -11,6 +11,7 @@ import {
   getRichfieldAppSecret,
 } from "@/lib/richfield-config";
 import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
+import { getRichfieldContent } from "@/lib/richfield-delivery";
 
 export type ContactState =
   | { status: "idle" }
@@ -32,8 +33,9 @@ export async function submitContact(
     nameRequired: te("nameRequired"),
     companyRequired: te("companyRequired"),
     emailInvalid: te("emailInvalid"),
+    inquiryTypeInvalid: te("inquiryTypeInvalid"),
     messageRequired: te("messageRequired"),
-    messageTooLong: te("messageTooLong"),
+    messageTooLong: te("messageTooLong", { max: 5_000 }),
     tooFast: te("tooFast"),
     deliveryFailed: te("deliveryFailed"),
   };
@@ -68,7 +70,34 @@ export async function submitContact(
   }
 
   const { name, company, country, email, inquiryType, message } = parsed.data;
-  const inbox = process.env.RICHFIELD_LEAD_INBOX ?? FALLBACK_INBOX;
+  const contactForm = await getRichfieldContent(locale)
+    .then((content) => content.contactForm)
+    .catch(() => null);
+  const allowedInquiryTypes = contactForm?.inquiryTypes ?? [];
+  const maxMessageLength = contactForm?.maxMessageLength ?? 1_200;
+
+  if (
+    (allowedInquiryTypes.length > 0 && !allowedInquiryTypes.includes(inquiryType)) ||
+    message.length > maxMessageLength
+  ) {
+    return {
+      status: "error",
+      errors: {
+        ...(allowedInquiryTypes.length === 0 || allowedInquiryTypes.includes(inquiryType)
+          ? {}
+          : { inquiryType: [te("inquiryTypeInvalid")] }),
+        ...(message.length <= maxMessageLength
+          ? {}
+          : { message: [te("messageTooLong", { max: maxMessageLength })] }),
+      },
+      values: parsed.data as unknown as Record<string, string>,
+    };
+  }
+
+  const inbox =
+    process.env.RICHFIELD_LEAD_INBOX ??
+    contactForm?.recipientEmail ??
+    FALLBACK_INBOX;
 
   let savedSubmissionId: string | null = null;
   let persistenceFailed = false;
@@ -137,6 +166,8 @@ async function saveContactSubmission(input: {
       ...input,
       appId: getRichfieldAppId(),
       appSecret: getRichfieldAppSecret(),
+      formSlug: "contact",
+      formVersion: 1,
       receivedAt: new Date().toISOString(),
     }),
     cache: "no-store",

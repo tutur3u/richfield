@@ -149,6 +149,16 @@ function parseStringList(value: string) {
 }
 
 function buildProfileData(input: RichfieldContentMutationInput) {
+  if (input.collectionKey === "articles") {
+    return {
+      author: input.author || null,
+      category: input.category || null,
+      feature: input.feature,
+      publishedAt: input.publishedAt || null,
+      sortOrder: parseNumber(input.sortOrder),
+    };
+  }
+
   if (input.collectionKey === "brands") {
     return {
       accent: input.accent || null,
@@ -178,6 +188,16 @@ function buildProfileData(input: RichfieldContentMutationInput) {
     };
   }
 
+  if (input.collectionKey === "contact-form") {
+    return {
+      inquiryTypes: parseStringList(input.usageTags),
+      maxMessageLength: parseNumber(input.positions),
+      recipientEmail: input.email || null,
+      submitLabel: input.cta || null,
+      successMessage: input.summary || input.body || null,
+    };
+  }
+
   if (input.collectionKey === "contact-channels") {
     return {
       cta: input.cta || null,
@@ -204,11 +224,15 @@ function buildProfileData(input: RichfieldContentMutationInput) {
 
   if (input.collectionKey === "jobs") {
     return {
+      applyEmail: input.applyEmail || null,
       deadline: input.deadline || null,
+      department: input.department || null,
+      employmentType: input.employmentType || null,
       href: input.href || null,
       location: input.location || null,
       positions: parseNumber(input.positions),
       sortOrder: parseNumber(input.sortOrder),
+      workMode: input.workMode || null,
     };
   }
 
@@ -235,9 +259,11 @@ function buildProfileData(input: RichfieldContentMutationInput) {
 }
 
 function getSubtitle(input: RichfieldContentMutationInput) {
+  if (input.collectionKey === "articles") return input.category || null;
   if (input.collectionKey === "brands") return input.category || null;
   if (input.collectionKey === "milestones") return input.country || null;
   if (input.collectionKey === "contact-page") return "Contact";
+  if (input.collectionKey === "contact-form") return "External project form";
   if (input.collectionKey === "contact-channels") return input.subtitle || null;
   if (input.collectionKey === "contact-submissions") return input.email || null;
   if (input.collectionKey === "jobs") return input.location || null;
@@ -291,7 +317,10 @@ async function saveBodyBlock({
   workspaceId: string;
 }) {
   if (
+    input.collectionKey !== "articles" &&
+    input.collectionKey !== "jobs" &&
     input.collectionKey !== "leadership" &&
+    input.collectionKey !== "contact-form" &&
     input.collectionKey !== "contact-page" &&
     input.collectionKey !== "contact-submissions"
   ) return;
@@ -306,7 +335,14 @@ async function saveBodyBlock({
           },
           entry_id: entryId,
           sort_order: 0,
-          title: input.collectionKey === "contact-page" ? "Intro" : "Message",
+          title:
+            input.collectionKey === "contact-page"
+              ? "Intro"
+              : input.collectionKey === "contact-form"
+                ? "Success message"
+              : input.collectionKey === "contact-submissions"
+                ? "Message"
+                : "Body",
         };
 
   if (item?.blockId) {
@@ -378,8 +414,7 @@ async function saveImageAsset({
   if (
     input.collectionKey === "milestones" ||
     input.collectionKey === "contact-channels" ||
-    input.collectionKey === "contact-submissions" ||
-    input.collectionKey === "jobs"
+    input.collectionKey === "contact-submissions"
   ) return;
 
   if (input.removeImage && item?.imageAssetId) {

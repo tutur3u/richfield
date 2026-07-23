@@ -32,6 +32,10 @@
         "href": "/brands"
       },
       {
+        "label": "Góc nhìn",
+        "href": "/insights"
+      },
+      {
         "label": "Tuyển dụng",
         "href": "/careers"
       },
@@ -64,6 +68,10 @@
         "href": "/distribution"
       },
       {
+        "label": "Góc nhìn",
+        "href": "/insights"
+      },
+      {
         "label": "Tuyển dụng",
         "href": "/careers"
       },
@@ -88,6 +96,10 @@
     "careers": {
       "title": "Tuyển dụng",
       "description": "Richfield là nơi mọi người gắn bó lâu dài. Giá trị cốt lõi, lãnh đạo đặt con người lên trước, đóng góp cộng đồng và cuộc sống tại các văn phòng của chúng tôi."
+    },
+    "insights": {
+      "title": "Góc nhìn",
+      "description": "Tin tức, góc nhìn thị trường, câu chuyện hợp tác và cập nhật từ Richfield Group."
     },
     "contact": {
       "title": "Liên hệ",
@@ -131,8 +143,31 @@
     "positions": "Số lượng",
     "location": "Địa điểm",
     "deadline": "Hạn nộp",
+    "workMode": "Hình thức làm việc",
+    "viewPosition": "Xem vị trí →",
     "videoTitle": "Phim về di sản văn hóa áo dài của Richfield",
     "videoCaption": "Gìn giữ văn hóa — hội áo dài"
+  },
+  "careerDetailPage": {
+    "allOpportunities": "← Tất cả cơ hội",
+    "location": "Địa điểm",
+    "workMode": "Hình thức làm việc",
+    "employment": "Loại hình",
+    "openings": "Số lượng",
+    "deadline": "Hạn nộp",
+    "fallbackBody": "Chúng tôi tìm kiếm những người chu đáo, hợp tác và mong muốn xây dựng các mối quan hệ bền vững cùng Richfield.",
+    "interested": "Bạn quan tâm?",
+    "applyIntro": "Hãy gửi hồ sơ và chia sẻ vì sao vị trí này phù hợp với bạn.",
+    "applyNow": "Ứng tuyển ngay ↗"
+  },
+  "insightsPage": {
+    "eyebrow": "Góc nhìn & cập nhật",
+    "heading": "Góc nhìn từ khắp các *thị trường* của chúng tôi.",
+    "intro": "Câu chuyện hợp tác, tin tức công ty và những quan sát thực tiễn từ hơn ba thập kỷ xây dựng thương hiệu tại Đông Nam Á.",
+    "emptyTitle": "Câu chuyện tiếp theo đang được chuẩn bị.",
+    "emptyBody": "Các cập nhật mới từ Richfield sẽ xuất hiện tại đây khi được xuất bản.",
+    "readStory": "Đọc bài viết →",
+    "allInsights": "← Tất cả góc nhìn"
   },
   "contactPage": {
     "eyebrow": "Liên hệ",
@@ -165,8 +200,9 @@
       "nameRequired": "Vui lòng nhập họ tên.",
       "companyRequired": "Vui lòng nhập tên công ty.",
       "emailInvalid": "Vui lòng nhập email hợp lệ.",
+      "inquiryTypeInvalid": "Vui lòng chọn một loại yêu cầu hiện có.",
       "messageRequired": "Vui lòng nhập nội dung.",
-      "messageTooLong": "Vui lòng giữ nội dung dưới 600 ký tự.",
+      "messageTooLong": "Vui lòng giữ nội dung dưới {max} ký tự.",
       "tooFast": "Vui lòng chờ một chút trước khi gửi.",
       "deliveryFailed": "Chúng tôi không thể gửi tin nhắn của bạn. Hãy thử gửi email tới {email}."
     }

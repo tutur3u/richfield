@@ -33,6 +33,18 @@ describe("Richfield external project manifest", () => {
         [],
       ],
       [
+        "contact-form",
+        [
+          "recipientEmail",
+          "submitLabel",
+          "successMessage",
+          "inquiryTypes",
+          "maxMessageLength",
+        ],
+        ["markdown"],
+        [],
+      ],
+      [
         "contact-submissions",
         [
           "name",
@@ -47,7 +59,28 @@ describe("Richfield external project manifest", () => {
         ["markdown"],
         [],
       ],
-      ["jobs", ["positions", "location", "deadline", "href", "sortOrder"], [], []],
+      [
+        "articles",
+        ["author", "category", "publishedAt", "feature", "sortOrder"],
+        ["markdown"],
+        ["image"],
+      ],
+      [
+        "jobs",
+        [
+          "positions",
+          "department",
+          "employmentType",
+          "workMode",
+          "location",
+          "deadline",
+          "applyEmail",
+          "href",
+          "sortOrder",
+        ],
+        ["markdown"],
+        ["image"],
+      ],
       [
         "image-library",
         [
@@ -80,6 +113,7 @@ describe("Richfield external project manifest", () => {
         "milestones",
         "contact-page",
         "contact-channels",
+        "contact-form",
         "image-library",
       ]),
     );

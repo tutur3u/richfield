@@ -6,6 +6,8 @@ import type {
 export type RichfieldAdminEditorDraft = {
   aboutOnly: boolean;
   accent: string;
+  applyEmail: string;
+  author: string;
   body: string;
   brand: string;
   category: string;
@@ -13,8 +15,10 @@ export type RichfieldAdminEditorDraft = {
   credit: string;
   cta: string;
   deadline: string;
+  department: string;
   email: string;
   emailNotificationStatus: string;
+  employmentType: string;
   feature: boolean;
   featureCaption: string;
   href: string;
@@ -29,6 +33,7 @@ export type RichfieldAdminEditorDraft = {
   placement: string;
   positions: string;
   productName: string;
+  publishedAt: string;
   ratio: string;
   receivedAt: string;
   removeImage: boolean;
@@ -42,6 +47,7 @@ export type RichfieldAdminEditorDraft = {
   shelfWeight: string;
   title: string;
   usageTags: string;
+  workMode: string;
   year: string;
 };
 
@@ -56,6 +62,8 @@ export type RichfieldEditorStepId =
 const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "aboutOnly",
   "accent",
+  "applyEmail",
+  "author",
   "body",
   "brand",
   "category",
@@ -63,8 +71,10 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "credit",
   "cta",
   "deadline",
+  "department",
   "email",
   "emailNotificationStatus",
+  "employmentType",
   "feature",
   "featureCaption",
   "href",
@@ -79,6 +89,7 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "placement",
   "positions",
   "productName",
+  "publishedAt",
   "ratio",
   "receivedAt",
   "removeImage",
@@ -92,15 +103,18 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "shelfWeight",
   "title",
   "usageTags",
+  "workMode",
   "year",
 ];
 
 const previewRouteByCollection: Partial<Record<RichfieldAdminCollectionKey, string>> =
   {
+    articles: "/insights/:slug",
     brands: "/brands",
     "contact-channels": "/contact",
+    "contact-form": "/contact",
     "contact-page": "/contact",
-    jobs: "/careers",
+    jobs: "/careers/:slug",
     leadership: "/about/our-story",
     milestones: "/about/our-story",
   };
@@ -239,13 +253,18 @@ export function getRichfieldEditorSteps({
   if (
     collectionKey === "leadership" ||
     collectionKey === "contact-page" ||
-    collectionKey === "contact-submissions"
+    collectionKey === "contact-form" ||
+    collectionKey === "contact-submissions" ||
+    collectionKey === "articles" ||
+    collectionKey === "jobs"
   ) {
     steps.push("writing");
   }
 
   if (
-    collectionKey === "image-library"
+    collectionKey === "image-library" ||
+    collectionKey === "articles" ||
+    collectionKey === "jobs"
   ) {
     steps.push("image");
   }

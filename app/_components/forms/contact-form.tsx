@@ -3,18 +3,16 @@
 import { useActionState, useId, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { submitContact, type ContactState } from "@/app/[locale]/contact/actions";
-import { INQUIRY_TYPES } from "@/app/[locale]/contact/schema";
 import { CTA_BOX } from "@/app/_components/magazine/primitives/cta-link";
-import type { Locale } from "@/lib/locale";
+import type { RichfieldContactForm } from "@/lib/richfield-content";
 
 const initial: ContactState = { status: "idle" };
 
-export function ContactForm(_props: { locale?: Locale }) {
+export function ContactForm({ config }: { config: RichfieldContactForm }) {
   const [state, formAction, pending] = useActionState(submitContact, initial);
   const formId = useId();
   const locale = useLocale();
   const t = useTranslations("contactForm");
-  const inquiryLabel = useTranslations("contactForm.inquiryTypeLabels");
   // Capture mount-time once. Posted as a hidden field; the action rejects
   // submissions faster than 3s as automated.
   const [submittedAtMs] = useState(() => String(Date.now()));
@@ -27,7 +25,7 @@ export function ContactForm(_props: { locale?: Locale }) {
         className="border-t border-line pt-10"
       >
         <p className="font-display text-[clamp(24px,2.5vw,32px)] text-ink">
-          {t("success")}
+          {config.successMessage}
         </p>
       </div>
     );
@@ -92,12 +90,12 @@ export function ContactForm(_props: { locale?: Locale }) {
         <select
           id="inquiryType"
           name="inquiryType"
-          defaultValue={values.inquiryType ?? INQUIRY_TYPES[0]}
+          defaultValue={values.inquiryType ?? config.inquiryTypes[0]}
           className="w-full border-b border-line bg-transparent py-3 text-[17px] focus:border-gold focus:outline-none"
         >
-          {INQUIRY_TYPES.map((value) => (
-            <option key={value} value={value}>
-              {inquiryLabel(value)}
+          {config.inquiryTypes.map((inquiryType) => (
+            <option key={inquiryType} value={inquiryType}>
+              {inquiryType}
             </option>
           ))}
         </select>
@@ -108,7 +106,7 @@ export function ContactForm(_props: { locale?: Locale }) {
           id="message"
           name="message"
           rows={6}
-          maxLength={600}
+          maxLength={config.maxMessageLength}
           required
           defaultValue={values.message ?? ""}
           className="w-full border-b border-line bg-transparent py-3 text-[17px] focus:border-gold focus:outline-none"
@@ -120,7 +118,7 @@ export function ContactForm(_props: { locale?: Locale }) {
         disabled={pending}
         className={`${CTA_BOX} self-start disabled:opacity-50`}
       >
-        {pending ? t("sending") : t("send")}
+        {pending ? t("sending") : config.submitLabel}
         <span
           aria-hidden
           className="transition-transform duration-300 ease-out motion-safe:group-hover:translate-x-1"

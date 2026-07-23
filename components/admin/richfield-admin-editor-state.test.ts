@@ -13,6 +13,8 @@ import {
 const baseDraft: RichfieldAdminEditorDraft = {
   aboutOnly: false,
   accent: "bg-[oklch(0.86_0.12_28/0.18)]",
+  applyEmail: "",
+  author: "",
   body: "",
   brand: "Mars · Wrigley",
   category: "Food",
@@ -20,8 +22,10 @@ const baseDraft: RichfieldAdminEditorDraft = {
   credit: "",
   cta: "",
   deadline: "",
+  department: "",
   email: "",
   emailNotificationStatus: "",
+  employmentType: "",
   feature: true,
   featureCaption: "Founding partner · Since 1994",
   href: "",
@@ -36,6 +40,7 @@ const baseDraft: RichfieldAdminEditorDraft = {
   placement: "",
   positions: "",
   productName: "",
+  publishedAt: "",
   ratio: "",
   receivedAt: "",
   removeImage: false,
@@ -49,6 +54,7 @@ const baseDraft: RichfieldAdminEditorDraft = {
   shelfWeight: "",
   title: "Mars · Wrigley",
   usageTags: "",
+  workMode: "",
   year: "1994",
 };
 
@@ -120,7 +126,10 @@ describe("Richfield admin editor state", () => {
     ).toEqual(["basics", "details", "writing", "danger"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "jobs", hasItem: true }),
-    ).toEqual(["basics", "details", "danger"]);
+    ).toEqual(["basics", "details", "writing", "image", "danger"]);
+    expect(
+      getRichfieldEditorSteps({ collectionKey: "articles", hasItem: true }),
+    ).toEqual(["basics", "details", "writing", "image", "danger"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "image-library", hasItem: true }),
     ).toEqual(["basics", "details", "image", "danger"]);
@@ -157,6 +166,18 @@ describe("Richfield admin editor state", () => {
         slug: "1994-mars",
       }),
     ).toBe("/about/our-story");
+    expect(
+      getRichfieldEditorPreviewHref({
+        collectionKey: "articles",
+        slug: "market-access",
+      }),
+    ).toBe("/insights/market-access");
+    expect(
+      getRichfieldEditorPreviewHref({
+        collectionKey: "jobs",
+        slug: "sales-executive",
+      }),
+    ).toBe("/careers/sales-executive");
     expect(
       getRichfieldEditorPreviewHref({
         collectionKey: "contact-submissions",

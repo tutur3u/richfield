@@ -82,9 +82,11 @@ async function AuthenticatedAdminDashboard({
   return (
     <RichfieldAdminDashboard
       initialContent={{
+        articles: readRichfieldAdminContent(studio, "articles"),
         brands: readRichfieldAdminContent(studio, "brands"),
         "contact-channels": readRichfieldAdminContent(studio, "contact-channels"),
         "contact-page": readRichfieldAdminContent(studio, "contact-page"),
+        "contact-form": readRichfieldAdminContent(studio, "contact-form"),
         "contact-submissions": readRichfieldAdminContent(studio, "contact-submissions"),
         "image-library": readRichfieldAdminContent(studio, "image-library"),
         jobs: readRichfieldAdminContent(studio, "jobs"),

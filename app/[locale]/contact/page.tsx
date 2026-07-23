@@ -85,7 +85,7 @@ export default async function ContactPage({
 }) {
   const locale = toLocale((await params).locale);
   setRequestLocale(locale);
-  const { contactChannels, contactPage } = await getRichfieldContent(locale);
+  const { contactChannels, contactForm, contactPage } = await getRichfieldContent(locale);
   const t = await getTranslations({ locale, namespace: "contactPage" });
   const mapQuery = encodeURIComponent(contactPage.mapQuery);
   return (
@@ -167,7 +167,7 @@ export default async function ContactPage({
             <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]" delayMs={120}>
               <Eyebrow tone="ink">{t("formEyebrow")}</Eyebrow>
               <div className="rounded-sm border border-line bg-paper p-6 sm:p-8">
-                <ContactForm locale={locale} />
+                <ContactForm config={contactForm} />
               </div>
             </RevealOnScroll>
           </div>

@@ -26,16 +26,16 @@ describe("contactSchema", () => {
     expect(r.success).toBe(false);
   });
 
-  it("rejects unknown inquiry type", () => {
+  it("accepts a structurally valid inquiry for CMS allowlist validation", () => {
     const r = contactSchema.safeParse({
       name: "Asha",
       company: "Acme",
       email: "asha@example.com",
-      inquiryType: "Spam",
+      inquiryType: "Retail leasing",
       message: "Hello",
       website: "",
     });
-    expect(r.success).toBe(false);
+    expect(r.success).toBe(true);
   });
 
   it("rejects when honeypot 'website' field is filled", () => {

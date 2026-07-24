@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { BodyChrome, fontVariables } from "@/app/_components/root-chrome";
-import { SiteFooter } from "@/app/_components/magazine/chrome/site-footer";
-import { SiteFooterGate } from "@/app/_components/magazine/chrome/site-footer-gate";
 
 // Root layout for the non-localized system surfaces (admin, login,
-// verify-token). Always English; the footer stays hidden on /admin via the
-// same gate as before.
+// verify-token). These routes intentionally omit localized public chrome:
+// SiteFooter consumes next-intl context that only exists in [locale]/layout.
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://richfieldgroup.com.vn"),
@@ -25,15 +23,7 @@ export default function SystemLayout({
 }) {
   return (
     <html lang="en" className={fontVariables} data-scroll-behavior="smooth">
-      <BodyChrome
-        footer={
-          <SiteFooterGate>
-            <SiteFooter locale="en" />
-          </SiteFooterGate>
-        }
-      >
-        {children}
-      </BodyChrome>
+      <BodyChrome>{children}</BodyChrome>
     </html>
   );
 }

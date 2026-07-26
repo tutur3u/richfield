@@ -62,6 +62,20 @@ describe("summariseForwardingMetrics", () => {
   });
 });
 
+describe("failed responses stay visible", () => {
+  test("a response the transport could not deliver is counted, not lost", () => {
+    // The send that runs at submission time marks a response failed whenever
+    // the transport is down, so "failed" must stay a first-class, countable
+    // state that the operator can see and the scheduled job can retry.
+    const metrics = summariseForwardingMetrics([
+      { emailNotificationStatus: "failed" },
+      { emailNotificationStatus: "failed" },
+    ]);
+
+    expect(metrics).toMatchObject({ costVnd: 0, failed: 2, sent: 0, total: 2 });
+  });
+});
+
 describe("formatVnd", () => {
   test("groups thousands the Vietnamese way", () => {
     expect(formatVnd(0)).toBe("0₫");

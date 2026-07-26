@@ -167,14 +167,16 @@ function appCredentialHeaders() {
   };
 }
 
-export async function fetchPendingSubmissions(limit: number) {
+async function listByStatus(status: "failed" | "pending", limit: number) {
   const response = await fetchWithRichfieldTimeout(
-    `${submissionsEndpoint()}?emailNotificationStatus=pending&limit=${limit}`,
+    `${submissionsEndpoint()}?emailNotificationStatus=${status}&limit=${limit}`,
     { cache: "no-store", headers: appCredentialHeaders() },
   );
 
   if (!response.ok) {
-    throw new Error(`Listing pending responses failed with status ${response.status}`);
+    throw new Error(
+      `Listing ${status} responses failed with status ${response.status}`,
+    );
   }
 
   const payload = (await response.json()) as {
@@ -182,6 +184,27 @@ export async function fetchPendingSubmissions(limit: number) {
   };
 
   return payload.submissions ?? [];
+}
+
+/**
+ * Everything still owed to the inbox: never-attempted responses first, then
+ * ones an earlier attempt could not deliver.
+ *
+ * Retrying `failed` matters because the send that happens at submission time
+ * marks a response failed whenever the transport is unavailable — without a
+ * retry those responses would sit unread forever, which is precisely the
+ * failure this scheduled job exists to prevent.
+ */
+export async function fetchPendingSubmissions(limit: number) {
+  const pending = await listByStatus("pending", limit);
+
+  if (pending.length >= limit) {
+    return pending;
+  }
+
+  const retryable = await listByStatus("failed", limit - pending.length);
+
+  return [...pending, ...retryable];
 }
 
 export async function markSubmissionStatus(entryId: string, status: "failed" | "sent") {

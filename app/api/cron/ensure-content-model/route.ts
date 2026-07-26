@@ -39,6 +39,21 @@ async function readError(response: Response) {
   return payload?.error ?? `status ${response.status}`;
 }
 
+function externalProjectUrl(path: string) {
+  return `${getRichfieldApiBaseUrl().replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
+    getRichfieldWorkspaceId(),
+  )}/external-projects/${path}`;
+}
+
+function appHeaders() {
+  return {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+    "x-app-id": getRichfieldAppId(),
+    "x-app-secret": getRichfieldAppSecret(),
+  };
+}
+
 export async function GET(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -48,36 +63,49 @@ export async function GET(request: Request) {
     const manifest = buildSyncManifest(
       getRichfieldAppBaseUrl(new URL(request.url).origin),
     );
-    const response = await fetchWithRichfieldTimeout(
-      `${getRichfieldApiBaseUrl().replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
-        getRichfieldWorkspaceId(),
-      )}/external-projects/setup`,
+
+    // Two steps, and both are needed. Setup only ensures the binding and the
+    // canonical project; it reports success while the workspace still holds no
+    // collections. The sync is what actually writes them, so a setup-only run
+    // looks applied and leaves every editor screen empty.
+    const setupResponse = await fetchWithRichfieldTimeout(
+      externalProjectUrl("setup"),
       {
         body: JSON.stringify({ manifest }),
         cache: "no-store",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "x-app-id": getRichfieldAppId(),
-          "x-app-secret": getRichfieldAppSecret(),
-        },
+        headers: appHeaders(),
         method: "POST",
       },
     );
 
-    if (!response.ok) {
+    if (!setupResponse.ok) {
       return NextResponse.json(
-        { error: await readError(response), status: "failed" },
-        { status: response.status },
+        { error: await readError(setupResponse), status: "setup-failed" },
+        { status: setupResponse.status },
       );
     }
 
-    const result = (await response.json()) as Record<string, unknown>;
+    const syncResponse = await fetchWithRichfieldTimeout(
+      externalProjectUrl("sync/apply"),
+      {
+        body: JSON.stringify({ force: true, manifest }),
+        cache: "no-store",
+        headers: appHeaders(),
+        method: "POST",
+      },
+    );
+
+    if (!syncResponse.ok) {
+      return NextResponse.json(
+        { error: await readError(syncResponse), status: "sync-failed" },
+        { status: syncResponse.status },
+      );
+    }
 
     return NextResponse.json({
-      collections: manifest.schema?.collections?.length ?? 0,
-      result,
+      expectedCollections: manifest.schema?.collections?.length ?? 0,
       status: "applied",
+      sync: (await syncResponse.json()) as Record<string, unknown>,
     });
   } catch (error) {
     console.error("[richfield:setup] content model install failed", error);

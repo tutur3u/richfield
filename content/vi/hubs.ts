@@ -13,7 +13,7 @@ const PHU_TUONG = "/photos/RF Website/Richfield Foods (Phu Tuong)";
 export const warehouseHubs: WarehouseHub[] = [
   {
     name: "Trung tâm miền Bắc",
-    location: "Khu công nghiệp Sài Đồng B, quận Long Biên, Hà Nội",
+    location: "Khu công nghiệp Sài Đồng B, phường Long Biên, Hà Nội",
     facts: [
       { label: "Diện tích kho", value: "1,500+ m²" },
       { label: "Vị trí pallet", value: "1,050" },
@@ -29,7 +29,7 @@ export const warehouseHubs: WarehouseHub[] = [
   },
   {
     name: "Trung tâm miền Nam",
-    location: "Khu công nghiệp Đức Hòa 1, Long An",
+    location: "Khu công nghiệp Đức Hòa 1, tỉnh Tây Ninh (Long An cũ)",
     facts: [
       { label: "Diện tích kho", value: "9,300+ m²" },
       { label: "Vị trí pallet", value: "9,700" },

@@ -58,7 +58,7 @@ export function GroupOverviewSpread({ locale = "en" }: { locale?: Locale }) {
           wide right margin). */}
       <RevealOnScroll className="flex flex-col gap-y-[var(--v2-rhythm)]">
         <Eyebrow>{t("eyebrow")}</Eyebrow>
-        <h2 className="font-display v2-size-standfirst text-balance text-ink">
+        <h2 className="font-display v2-size-standfirst text-pretty text-ink">
           <ItalicText text={t("heading")} />
         </h2>
       </RevealOnScroll>

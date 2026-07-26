@@ -10,7 +10,7 @@ export const whoWeAreIntro =
 
 export const organizations: Organization[] = [
   {
-    name: "Richfield Worldwide JSC",
+    name: "Công ty Cổ phần Phú Trường Quốc Tế (Richfield Worldwide JSC)",
     established: "Thành lập 1994",
     body: "Công ty phân phối cốt lõi của chúng tôi. Phủ khắp các tỉnh thành qua kênh truyền thống, kênh hiện đại, B2B và thương mại điện tử — với 180,000+ điểm bán lẻ trên toàn quốc.",
     href: "/distribution",
@@ -18,9 +18,9 @@ export const organizations: Organization[] = [
     logo: "/photos/logos/richfield.webp",
   },
   {
-    name: "Richfield Foods JSC",
+    name: "Công Ty Cổ Phần Thực Phẩm Phú Tường (Richfield Foods JSC)",
     established: "Thành lập 2010",
-    body: "Cơ sở đóng gói và kho mát của chúng tôi. Tọa lạc tại Khu công nghiệp Đức Hòa 1, Long An — 20,000 m² diện tích đạt chứng nhận ISO & HACCP với hệ thống kho mát duy trì ở 18–25°C.",
+    body: "Cơ sở đóng gói, kho thường và kho mát của chúng tôi. Tọa lạc tại Khu công nghiệp Đức Hòa 1, tỉnh Tây Ninh (Long An cũ) — tổng diện tích 20,000 m² đạt chứng nhận ISO & HACCP, có đầu tư hệ thống kho mát duy trì ở 18–25°C.",
     href: "/logistics",
     linkLabel: "Logistics & kho vận",
   },

@@ -35,7 +35,7 @@ export default async function LogisticsPage({
   const t = await getTranslations({ locale, namespace: "logisticsPage" });
   return (
     <>
-      <RunningHead locale={locale} />
+      <RunningHead locale={locale} transparentOverHero />
       <main className="bg-cream text-ink">
         <LogisticsHero locale={locale} />
 

@@ -46,15 +46,25 @@ function navActive(item: NavItem, pathname: string): boolean {
  * Persistent masthead pinned to the top of every page. Left: the Richfield logo
  * (returns home). Right: the primary nav — a "What We Do" dropdown plus Careers
  * and Contact, with a gold underline marking the active route. Collapses to a
- * burger + drawer below lg. The site is one cream canvas, so the bar does not
- * invert colours.
+ * burger + drawer below lg.
+ *
+ * `transparentOverHero` is set by pages that open on a full-bleed dark image
+ * hero (home, logistics, careers): the bar starts transparent with light type
+ * so the image reads edge to edge, then solidifies into the cream bar once the
+ * reader scrolls past the hero (where light type would vanish on the cream body).
  */
-export function RunningHead(_props: { locale?: Locale }) {
+export function RunningHead({
+  transparentOverHero = false,
+}: {
+  locale?: Locale;
+  transparentOverHero?: boolean;
+}) {
   const reduce = useReducedMotion();
   const pathname = usePathname();
   const locale = useLocale();
   const [openMenu, setOpenMenu] = useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolledPastHero, setScrolledPastHero] = useState(false);
   const t = useTranslations("nav");
   const nav = t.raw("items") as NavItem[];
 
@@ -66,13 +76,32 @@ export function RunningHead(_props: { locale?: Locale }) {
     };
   }, [mobileOpen]);
 
+  // Over an image hero, flip to the solid bar once the hero (~viewport tall) is
+  // mostly scrolled away. Passive listener; a no-op when the flag is off.
+  useEffect(() => {
+    if (!transparentOverHero) return;
+    const onScroll = () =>
+      setScrolledPastHero(window.scrollY > window.innerHeight * 0.85);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [transparentOverHero]);
+
+  // Transparent only while still over the hero; the mobile drawer forces the
+  // solid treatment so the burger/logo stay legible against the cream panel.
+  const transparent = transparentOverHero && !scrolledPastHero && !mobileOpen;
+
   return (
     <>
       <header
-        className="fixed inset-x-0 top-0 z-40 border-b border-ink/10 bg-cream/80 backdrop-blur-md"
+        className={`fixed inset-x-0 top-0 z-40 transition-colors duration-300 ${
+          transparent
+            ? "bg-transparent text-cream"
+            : "border-b border-ink/10 bg-cream/80 text-ink backdrop-blur-md"
+        }`}
         style={{ height: "var(--v2-runhead)" }}
       >
-        <div className="mx-auto flex h-full max-w-[1500px] items-center justify-between gap-6 px-6 text-ink sm:px-10 lg:px-12">
+        <div className="mx-auto flex h-full max-w-[1500px] items-center justify-between gap-6 px-6 sm:px-10 lg:px-12">
           {/* Masthead logo. */}
           <Link href="/" aria-label={t("homeAria")} className="shrink-0">
             <Image

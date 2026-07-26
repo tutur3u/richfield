@@ -24,7 +24,7 @@ const brandDetails: Array<Omit<Brand, "logoSrc">> = [
     category: "Non-Food",
     accent: "bg-[oklch(0.55_0.12_258/0.14)]",
     story:
-      "Dao cạo và bật lửa mở rộng tầm phủ của Richfield sang các sản phẩm chăm sóc cá nhân và nhu yếu phẩm hằng ngày.",
+      "Dao cạo và bật lửa BIC giúp mở rộng tầm phủ của Richfield sang các sản phẩm chăm sóc cá nhân và nhu yếu phẩm hằng ngày.",
   },
   {
     name: "Red Bull",

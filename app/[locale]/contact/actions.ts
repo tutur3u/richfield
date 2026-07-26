@@ -12,6 +12,7 @@ import {
 } from "@/lib/richfield-config";
 import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
+import { sendRichfieldEmail } from "@/lib/richfield-response-forwarding";
 
 export type ContactState =
   | { status: "idle" }
@@ -121,7 +122,16 @@ export async function submitContact(
   }
 
   try {
-    await deliverLead({ name, company, country, email, inquiryType, message, inbox });
+    await deliverLead({
+      company,
+      country,
+      email,
+      entryId: savedSubmissionId,
+      inbox,
+      inquiryType,
+      message,
+      name,
+    });
     if (savedSubmissionId) {
       await updateContactSubmissionEmailStatus(savedSubmissionId, "sent");
     }
@@ -225,39 +235,25 @@ async function deliverLead(input: {
   inquiryType: string;
   message: string;
   inbox: string;
+  entryId?: string | null;
 }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    if (process.env.NODE_ENV !== "production") {
-      console.info("[contact] RESEND_API_KEY missing; lead would be delivered:", input);
-      return;
-    }
-    throw new Error("RESEND_API_KEY missing in production");
-  }
-  const res = await fetchWithRichfieldTimeout("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-    },
-    body: JSON.stringify({
-      from: `Richfield Site <noreply@${new URL(site.domainCanonical).hostname}>`,
-      to: input.inbox,
-      reply_to: input.email,
-      subject: `[Richfield site] ${input.inquiryType} from ${input.company}`,
-      text: [
-        `Name: ${input.name}`,
-        `Company: ${input.company}`,
-        `Country: ${input.country}`,
-        `Email: ${input.email}`,
-        `Inquiry type: ${input.inquiryType}`,
-        "",
-        "Message:",
-        input.message,
-      ].join("\n"),
-    }),
+  // Sent through Tuturuuu's SES-backed mailer with the app credentials this
+  // site already holds, so there is no third-party mail key here to rotate or
+  // leak, and the send is rate limited, audited, and metered centrally.
+  await sendRichfieldEmail({
+    body: [
+      `Name: ${input.name}`,
+      `Company: ${input.company}`,
+      `Country: ${input.country}`,
+      `Email: ${input.email}`,
+      `Inquiry type: ${input.inquiryType}`,
+      '',
+      'Message:',
+      input.message,
+    ].join('\n'),
+    entityId: input.entryId ?? undefined,
+    replyTo: input.email,
+    subject: `[Richfield] ${input.inquiryType} from ${input.company}`,
+    to: input.inbox,
   });
-  if (!res.ok) {
-    throw new Error(`Resend API failed with status ${res.status}`);
-  }
 }

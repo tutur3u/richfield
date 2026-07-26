@@ -240,7 +240,13 @@ function emailsEndpoint() {
  * blacklist checks, and the audit trail all apply centrally, and there is no
  * separate credential here to rotate or leak.
  */
-export async function sendForwardedEmail(input: RichfieldForwardEmail) {
+export async function sendRichfieldEmail(input: {
+  body: string;
+  entityId?: string;
+  replyTo: string | null;
+  subject: string;
+  to: string;
+}) {
   const response = await fetchWithRichfieldTimeout(emailsEndpoint(), {
     body: JSON.stringify({
       entityId: input.entityId,
@@ -265,4 +271,8 @@ export async function sendForwardedEmail(input: RichfieldForwardEmail) {
       `Tuturuuu mail send failed with status ${response.status}${detail ? `: ${detail}` : ""}`,
     );
   }
+}
+
+export function sendForwardedEmail(input: RichfieldForwardEmail) {
+  return sendRichfieldEmail(input);
 }

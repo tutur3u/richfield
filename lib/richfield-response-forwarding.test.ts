@@ -110,7 +110,7 @@ describe("forwardPendingResponses", () => {
     const sendEmail = vi
       .fn()
       .mockResolvedValueOnce(undefined)
-      .mockRejectedValueOnce(new Error("resend 500"))
+      .mockRejectedValueOnce(new Error("mail transport 500"))
       .mockResolvedValueOnce(undefined);
     const d = deps({
       fetchPending: vi.fn(async () => [

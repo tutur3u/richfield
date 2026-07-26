@@ -55,7 +55,7 @@ export default async function CareersPage({
 
   return (
     <>
-      <RunningHead locale={locale} />
+      <RunningHead locale={locale} transparentOverHero />
       <main className="v2-bg-morph text-ink">
         <CareersHero photos={careerHeroImages} locale={locale} />
 

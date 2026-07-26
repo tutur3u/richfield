@@ -24,13 +24,13 @@ export const milestones: Milestone[] = [
     year: 2006,
     brand: "Group",
     country: "Việt Nam",
-    body: "Chính thức thành lập pháp nhân Richfield Worldwide JSC.",
+    body: "Chính thức thành lập pháp nhân Công ty Cổ phần Phú Trường Quốc Tế (Richfield Worldwide JSC).",
   },
   {
     year: 2010,
     brand: "Group",
     country: "Việt Nam",
-    body: "Thành lập Richfield Foods JSC tại Long An.",
+    body: "Thành lập Công Ty Cổ Phần Thực Phẩm Phú Tường (Richfield Foods JSC) tại Long An.",
   },
   {
     year: 2016,

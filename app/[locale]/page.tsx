@@ -26,7 +26,7 @@ export default async function HomePage({
 
   return (
     <>
-      <RunningHead locale={locale} />
+      <RunningHead locale={locale} transparentOverHero />
       <main className="v2-bg-morph text-ink">
         <CoverSpread locale={locale} />
 

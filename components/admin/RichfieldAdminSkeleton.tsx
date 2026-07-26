@@ -29,7 +29,7 @@ export function SkeletonBlock({ className = "" }: { className?: string }) {
 /** One row of the content list: title, meta line, and a status chip. */
 function SkeletonListRow() {
   return (
-    <div className="grid gap-2 border border-[rgba(184,112,81,0.24)] bg-white/45 p-4">
+    <div className="grid gap-2 border border-admin-rule bg-white/45 p-4">
       <div className="flex items-center justify-between gap-4">
         <SkeletonLine className="h-4" width="42%" />
         <SkeletonBlock className="h-5 w-16" />

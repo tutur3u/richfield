@@ -13,6 +13,24 @@
   --color-muted: oklch(0.52 0.018 250);
   --color-line: oklch(0.86 0.018 82);
 
+  /* Admin editorial palette, registered so the /admin surface has real
+     utilities (bg-admin-navy, text-admin-ink-soft, border-admin-rule) rather
+     than reaching for arbitrary [var(--navy)] values on every element.
+     Prefixed because `gold` and `ink` already name different site colours
+     above and the two palettes must not quietly blend. The :root aliases below
+     keep their literal values — the dashboard still reads those directly. */
+  --color-admin-navy: #0c1f34;
+  --color-admin-ink: #241f1a;
+  --color-admin-ink-soft: #6f6557;
+  --color-admin-parchment: #f6efe1;
+  --color-admin-clay: #b87051;
+  --color-admin-copper: #a85f3f;
+  --color-admin-copper-dark: #8c4c30;
+  --color-admin-gold: #d9a75b;
+  --color-admin-surface: rgb(255 253 248 / 86%);
+  --color-admin-rule: rgb(184 112 81 / 28%);
+  --color-admin-rule-strong: rgb(184 112 81 / 42%);
+
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-geist-sans);
 
@@ -408,118 +426,80 @@ button:focus-visible {
   }
 }
 
-
 /* -----------------------------------------------------------------------
    Admin surface (/admin, /admin/login, /verify-token)
 
    These class names were used throughout the admin components but never
-   defined anywhere, so every one of them was a no-op: cards rendered with no
-   surface or border, and the sign-in call to action was an unstyled link.
-   Defined here as plain CSS, alongside the v2 utilities and for the same
-   reason — Tailwind v4's Lightning CSS pipeline cannot see them, because the
-   components use them as class strings rather than @apply directives.
+   defined anywhere, so every one was a no-op: cards rendered with no surface
+   or border, and the sign-in call to action was an unstyled link.
+
+   Authored as Tailwind v4 `@utility` rules so they compose with variants
+   (hover:, sm:, focus-visible:) and resolve against the theme tokens above
+   rather than duplicating literals. Only the gradient, inset highlight, and
+   keyframes drop to raw CSS — Tailwind has no utility for those.
    ----------------------------------------------------------------------- */
 
 /* Page band the admin screens sit on: warm paper, not the site's cream, so the
    tool reads as a distinct surface from the published magazine. */
-.section-band {
+@utility section-band {
+  @apply text-admin-ink;
   background:
     radial-gradient(
       120% 90% at 50% 0%,
-      rgba(217, 167, 91, 0.1) 0%,
+      --alpha(var(--color-admin-gold) / 10%) 0%,
       transparent 62%
     ),
-    linear-gradient(180deg, #fbf6ec 0%, var(--parchment) 100%);
-  color: var(--ink);
+    linear-gradient(180deg, #fbf6ec 0%, var(--color-admin-parchment) 100%);
 }
 
 /* The one surface primitive. A hairline copper rule and a low, wide shadow —
    paper on a desk, not a floating material card. Square by intent: the whole
    site is built on right angles. */
-.parchment-card {
-  background: rgba(255, 253, 248, 0.86);
-  border: 1px solid rgba(184, 112, 81, 0.28);
+@utility parchment-card {
+  @apply border border-admin-rule bg-admin-surface;
   box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.7) inset,
-    0 18px 44px -28px rgba(36, 31, 26, 0.42);
+    0 1px 0 rgb(255 255 255 / 70%) inset,
+    0 18px 44px -28px rgb(36 31 26 / 42%);
 }
 
 /* Small tracked eyebrow above a display heading. */
-.script-label {
-  font-size: clamp(11px, 0.9vw, 13px);
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--clay);
+@utility script-label {
+  @apply text-[clamp(11px,0.9vw,13px)] font-bold uppercase tracking-[0.24em] text-admin-clay;
 }
 
 /* Shared button geometry. Sized for touch (44px) and never below it. */
-.button-primary,
-.button-secondary {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  padding: 0 1.25rem;
-  font-size: 14px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-align: center;
-  transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
+@utility button-base {
+  @apply inline-flex min-h-11 items-center justify-center gap-2 px-5
+    text-center text-sm font-extrabold tracking-[0.04em]
+    transition-colors duration-200
+    focus-visible:outline-2 focus-visible:outline-offset-2
+    focus-visible:outline-admin-gold
+    disabled:cursor-not-allowed disabled:opacity-55;
 }
 
-.button-primary {
-  background: var(--copper);
-  border: 1px solid var(--copper-dark);
-  color: #fffdf8;
+@utility button-primary {
+  @apply button-base border border-admin-copper-dark bg-admin-copper
+    text-[#fffdf8] hover:bg-admin-copper-dark;
 }
 
-.button-secondary {
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(184, 112, 81, 0.42);
-  color: var(--navy);
-}
-
-@media (hover: hover) {
-  .button-primary:hover { background: var(--copper-dark); }
-  .button-secondary:hover {
-    background: rgba(255, 255, 255, 0.9);
-    border-color: rgba(184, 112, 81, 0.7);
-  }
-}
-
-.button-primary:focus-visible,
-.button-secondary:focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 2px;
-}
-
-.button-primary:disabled,
-.button-secondary:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
+@utility button-secondary {
+  @apply button-base border border-admin-rule-strong bg-white/50
+    text-admin-navy hover:border-admin-clay/70 hover:bg-white/90;
 }
 
 /* Skeleton shimmer for the dashboard's loading state. Reduced-motion users get
-   a still block rather than a pulsing one — the layout still communicates
-   what is coming. */
-.admin-skeleton {
+   a still block rather than a pulsing one — the layout still communicates what
+   is coming. */
+@utility admin-skeleton {
   background: linear-gradient(
     90deg,
-    rgba(184, 112, 81, 0.13) 0%,
-    rgba(184, 112, 81, 0.2) 50%,
-    rgba(184, 112, 81, 0.13) 100%
+    rgb(184 112 81 / 13%) 0%,
+    rgb(184 112 81 / 20%) 50%,
+    rgb(184 112 81 / 13%) 100%
   );
   background-size: 200% 100%;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .admin-skeleton {
+  @media (prefers-reduced-motion: no-preference) {
     animation: admin-skeleton-sweep 1.6s ease-in-out infinite;
   }
 }

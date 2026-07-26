@@ -84,13 +84,13 @@ export function VerifyTokenClient() {
     return (
       <>
         <span aria-hidden className="block h-px w-12 bg-red-300/70" />
-        <h1 className="mt-5 font-display text-[clamp(1.9rem,3.4vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-[var(--gold)]">
+        <h1 className="mt-5 font-display text-[clamp(1.9rem,3.4vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-admin-gold">
           We could not sign you in
         </h1>
         {/* The upstream reason, verbatim: it is the only thing that tells an
             operator whether to retry or to ask for workspace access. */}
         <p
-          className="mt-3 border-l-2 border-red-300/50 pl-3 text-sm leading-6 text-[rgba(246,239,225,0.78)]"
+          className="mt-3 border-l-2 border-red-300/50 pl-3 text-sm leading-6 text-admin-parchment/80"
           role="alert"
         >
           {error}
@@ -114,14 +114,14 @@ export function VerifyTokenClient() {
     <>
       <span
         aria-hidden
-        className="block h-px w-12 bg-[var(--gold)] opacity-80"
+        className="block h-px w-12 bg-admin-gold opacity-80"
       />
-      <h1 className="mt-5 font-display text-[clamp(1.9rem,3.4vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-[var(--gold)]">
+      <h1 className="mt-5 font-display text-[clamp(1.9rem,3.4vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-admin-gold">
         {state === "success" ? "You are signed in" : "Signing you in"}
       </h1>
       <p
         aria-live="polite"
-        className="mt-3 text-sm leading-6 text-[rgba(246,239,225,0.72)]"
+        className="mt-3 text-sm leading-6 text-admin-parchment/70"
       >
         {state === "success"
           ? "Opening your dashboard…"

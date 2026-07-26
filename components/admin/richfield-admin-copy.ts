@@ -143,9 +143,11 @@ export const RICHFIELD_ADMIN_COPY = {
     articles: "Insights",
     brands: "Brands",
     contactChannels: "Channels",
-    contactForm: "Form",
-    contactPage: "Contact",
-    contactSubmissions: "Contact",
+    contactForm: "Form fields",
+    contactPage: "Contact page",
+    // Previously "Contact" as well, which put two identically-labelled tabs in
+    // the same bar with no way to tell them apart.
+    contactSubmissions: "Responses",
     gallery: "Gallery",
     images: "Gallery",
     jobs: "Jobs",
@@ -154,6 +156,14 @@ export const RICHFIELD_ADMIN_COPY = {
     milestones: "Milestones",
     publish: "Publish",
     storage: "Storage",
+  },
+  // Thirteen flat tabs read as undifferentiated soup. These group them into
+  // scannable areas so an editor can find a surface without reading every label.
+  tabGroups: {
+    contact: "Contact",
+    content: "Content",
+    media: "Media",
+    team: "Team",
   },
   visibility: {
     archived: "Hidden",

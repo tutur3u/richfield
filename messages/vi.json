@@ -48,7 +48,8 @@
     "closeMenu": "Đóng menu",
     "homeAria": "Richfield — trang chủ",
     "drawerAria": "Điều hướng trang",
-    "countriesLine": "Việt Nam · Malaysia · Trung Quốc"
+    "countriesLine": "Việt Nam · Malaysia · Trung Quốc",
+    "admin": "Quản trị"
   },
   "langSwitcher": {
     "aria": "Chuyển ngôn ngữ"

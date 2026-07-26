@@ -89,20 +89,52 @@ const contentTabs: RichfieldAdminCollectionKey[] = [
   "contact-submissions",
 ];
 
-const tabLabels: Array<{ id: AdminTab; label: string }> = [
-  { id: "articles", label: RICHFIELD_ADMIN_COPY.tabs.articles },
-  { id: "jobs", label: RICHFIELD_ADMIN_COPY.tabs.jobs },
-  { id: "brands", label: RICHFIELD_ADMIN_COPY.tabs.brands },
-  { id: "leadership", label: RICHFIELD_ADMIN_COPY.tabs.leadership },
-  { id: "milestones", label: RICHFIELD_ADMIN_COPY.tabs.milestones },
-  { id: "contact-page", label: RICHFIELD_ADMIN_COPY.tabs.contactPage },
-  { id: "contact-form", label: RICHFIELD_ADMIN_COPY.tabs.contactForm },
-  { id: "contact-channels", label: RICHFIELD_ADMIN_COPY.tabs.contactChannels },
-  { id: "image-library", label: RICHFIELD_ADMIN_COPY.tabs.gallery },
-  { id: "contact-submissions", label: RICHFIELD_ADMIN_COPY.tabs.contactSubmissions },
-  { id: "storage", label: RICHFIELD_ADMIN_COPY.tabs.storage },
-  { id: "members", label: RICHFIELD_ADMIN_COPY.tabs.members },
-  { id: "account", label: RICHFIELD_ADMIN_COPY.tabs.account },
+// Grouped rather than flat: the thirteen surfaces divide cleanly into what you
+// publish, what the public sends back, the asset stores, and workspace admin.
+// Order within each group follows how often an editor reaches for it.
+const tabGroups: Array<{
+  label: string;
+  tabs: Array<{ id: AdminTab; label: string }>;
+}> = [
+  {
+    label: RICHFIELD_ADMIN_COPY.tabGroups.content,
+    tabs: [
+      { id: "articles", label: RICHFIELD_ADMIN_COPY.tabs.articles },
+      { id: "jobs", label: RICHFIELD_ADMIN_COPY.tabs.jobs },
+      { id: "brands", label: RICHFIELD_ADMIN_COPY.tabs.brands },
+      { id: "leadership", label: RICHFIELD_ADMIN_COPY.tabs.leadership },
+      { id: "milestones", label: RICHFIELD_ADMIN_COPY.tabs.milestones },
+    ],
+  },
+  {
+    label: RICHFIELD_ADMIN_COPY.tabGroups.contact,
+    tabs: [
+      {
+        id: "contact-submissions",
+        label: RICHFIELD_ADMIN_COPY.tabs.contactSubmissions,
+      },
+      { id: "contact-page", label: RICHFIELD_ADMIN_COPY.tabs.contactPage },
+      { id: "contact-form", label: RICHFIELD_ADMIN_COPY.tabs.contactForm },
+      {
+        id: "contact-channels",
+        label: RICHFIELD_ADMIN_COPY.tabs.contactChannels,
+      },
+    ],
+  },
+  {
+    label: RICHFIELD_ADMIN_COPY.tabGroups.media,
+    tabs: [
+      { id: "image-library", label: RICHFIELD_ADMIN_COPY.tabs.gallery },
+      { id: "storage", label: RICHFIELD_ADMIN_COPY.tabs.storage },
+    ],
+  },
+  {
+    label: RICHFIELD_ADMIN_COPY.tabGroups.team,
+    tabs: [
+      { id: "members", label: RICHFIELD_ADMIN_COPY.tabs.members },
+      { id: "account", label: RICHFIELD_ADMIN_COPY.tabs.account },
+    ],
+  },
 ];
 
 const byteUnits = ["B", "KB", "MB", "GB", "TB"] as const;
@@ -2991,21 +3023,31 @@ export function RichfieldAdminDashboard({
 
         <nav
           aria-label="Dashboard areas"
-          className="grid grid-cols-2 gap-2 border-b border-[rgba(184,112,81,0.34)] pb-3 sm:flex sm:flex-wrap"
+          className="flex flex-col gap-4 border-b border-[rgba(184,112,81,0.34)] pb-4 sm:flex-row sm:flex-wrap sm:gap-x-8 sm:gap-y-4"
         >
-          {tabLabels.map((tab) => (
-            <button
-              className={`min-h-11 border px-3 text-sm font-black transition sm:min-h-12 sm:border-b-2 sm:px-4 ${
-                activeTab === tab.id
-                  ? "border-[var(--clay)] bg-[rgba(164,78,67,0.08)] text-[var(--clay)]"
-                  : "border-[rgba(184,112,81,0.28)] bg-white/35 text-[var(--ink-soft)] hover:text-[var(--navy)] sm:border-transparent sm:bg-transparent"
-              }`}
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              type="button"
-            >
-              {tab.label}
-            </button>
+          {tabGroups.map((group) => (
+            <div className="min-w-0" key={group.label}>
+              <p className="mb-2 text-[11px] font-black uppercase tracking-[0.22em] text-[var(--ink-soft)]/70">
+                {group.label}
+              </p>
+              <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
+                {group.tabs.map((tab) => (
+                  <button
+                    aria-current={activeTab === tab.id ? "page" : undefined}
+                    className={`min-h-11 border px-3 text-sm font-black transition sm:min-h-10 sm:px-4 ${
+                      activeTab === tab.id
+                        ? "border-[var(--clay)] bg-[rgba(164,78,67,0.08)] text-[var(--clay)]"
+                        : "border-[rgba(184,112,81,0.28)] bg-white/35 text-[var(--ink-soft)] hover:border-[rgba(184,112,81,0.55)] hover:text-[var(--navy)]"
+                    }`}
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    type="button"
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 

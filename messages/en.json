@@ -48,7 +48,8 @@
     "closeMenu": "Close menu",
     "homeAria": "Richfield — home",
     "drawerAria": "Site navigation",
-    "countriesLine": "Vietnam · Malaysia · China"
+    "countriesLine": "Vietnam · Malaysia · China",
+    "admin": "Admin"
   },
   "langSwitcher": {
     "aria": "Switch language"

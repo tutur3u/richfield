@@ -4,6 +4,7 @@ import { useActionState, useId, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { submitContact, type ContactState } from "@/app/[locale]/contact/actions";
 import { CTA_BOX } from "@/app/_components/magazine/primitives/cta-link";
+import { TurnstileWidget } from "@/app/_components/forms/turnstile-widget";
 import type { RichfieldContactForm } from "@/lib/richfield-content";
 
 const initial: ContactState = { status: "idle" };
@@ -112,6 +113,11 @@ export function ContactForm({ config }: { config: RichfieldContactForm }) {
           className="w-full border-b border-line bg-transparent py-3 text-[17px] focus:border-gold focus:outline-none"
         />
       </FieldShell>
+
+      <TurnstileWidget
+        className="self-start"
+        siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+      />
 
       <button
         type="submit"

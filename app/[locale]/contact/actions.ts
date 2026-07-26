@@ -110,6 +110,10 @@ export async function submitContact(
       inquiryType,
       message,
       name,
+      turnstileToken:
+        typeof raw["cf-turnstile-response"] === "string"
+          ? raw["cf-turnstile-response"]
+          : undefined,
     });
   } catch (error) {
     persistenceFailed = true;
@@ -160,15 +164,20 @@ async function saveContactSubmission(input: {
   inquiryType: string;
   message: string;
   name: string;
+  turnstileToken?: string;
 }) {
+  const { turnstileToken, ...submission } = input;
   const response = await fetchWithRichfieldTimeout(getSubmissionEndpoint(), {
     body: JSON.stringify({
-      ...input,
+      ...submission,
       appId: getRichfieldAppId(),
       appSecret: getRichfieldAppSecret(),
       formSlug: "contact",
       formVersion: 1,
       receivedAt: new Date().toISOString(),
+      // Verified centrally by Tuturuuu, which holds the secret; this site only
+      // relays the visitor's challenge result.
+      ...(turnstileToken ? { turnstileToken } : {}),
     }),
     cache: "no-store",
     headers: {

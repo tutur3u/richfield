@@ -1,4 +1,3 @@
-import { site } from "@/content/en/site";
 import {
   getOptionalRichfieldWorkspaceId,
   getRichfieldApiBaseUrl,
@@ -28,7 +27,7 @@ export type RichfieldForwardOutcome =
       // forward to. Deliberately not an error: an unconfigured site is a valid
       // state, and a scheduled job should not page anyone for it.
       status: "cancelled";
-      reason: "forwarding-not-configured" | "delivery-unavailable" | "transport-not-configured";
+      reason: "forwarding-not-configured";
     }
   | { status: "idle"; pending: 0 }
   | {
@@ -48,6 +47,8 @@ export type RichfieldForwardingDeps = {
 
 export type RichfieldForwardEmail = {
   body: string;
+  /** The response this email carries, so the platform audit row points back at it. */
+  entityId: string;
   replyTo: string | null;
   subject: string;
   to: string;
@@ -77,6 +78,7 @@ export function buildForwardEmail(
   const senderEmail = readString(profile, "email");
 
   return {
+    entityId: submission.id,
     body: [
       `Name: ${name}`,
       `Company: ${company}`,
@@ -220,29 +222,47 @@ export async function markSubmissionStatus(entryId: string, status: "failed" | "
   });
 }
 
-export async function sendForwardedEmail(input: RichfieldForwardEmail) {
-  const apiKey = process.env.RESEND_API_KEY;
+function emailsEndpoint() {
+  const workspaceId = getOptionalRichfieldWorkspaceId();
 
-  if (!apiKey) {
-    throw new Error("RESEND_API_KEY missing");
+  if (!workspaceId) {
+    throw new Error("Missing Richfield workspace id");
   }
 
-  const response = await fetchWithRichfieldTimeout("https://api.resend.com/emails", {
+  return `${getRichfieldApiBaseUrl().replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
+    workspaceId,
+  )}/external-projects/emails`;
+}
+
+/**
+ * Send through Tuturuuu's own SES-backed mailer rather than a third-party key
+ * held by this site. The workspace owns the sending identity, so rate limiting,
+ * blacklist checks, and the audit trail all apply centrally, and there is no
+ * separate credential here to rotate or leak.
+ */
+export async function sendForwardedEmail(input: RichfieldForwardEmail) {
+  const response = await fetchWithRichfieldTimeout(emailsEndpoint(), {
     body: JSON.stringify({
-      from: `Richfield Site <noreply@${new URL(site.domainCanonical).hostname}>`,
-      ...(input.replyTo ? { reply_to: input.replyTo } : {}),
+      entityId: input.entityId,
+      entityType: "contact-submission",
+      ...(input.replyTo ? { replyTo: [input.replyTo] } : {}),
       subject: input.subject,
       text: input.body,
-      to: input.to,
+      to: [input.to],
     }),
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
+    cache: "no-store",
+    headers: { ...appCredentialHeaders(), "Content-Type": "application/json" },
     method: "POST",
   });
 
   if (!response.ok) {
-    throw new Error(`Resend API failed with status ${response.status}`);
+    const detail = await response
+      .json()
+      .then((payload: { error?: string }) => payload?.error)
+      .catch(() => null);
+
+    throw new Error(
+      `Tuturuuu mail send failed with status ${response.status}${detail ? `: ${detail}` : ""}`,
+    );
   }
 }

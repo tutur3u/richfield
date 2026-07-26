@@ -40,15 +40,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Transport first: with no API key every send would fail and every response
-  // would be burned to "failed". Cancelling leaves them pending for a later run.
-  if (!process.env.RESEND_API_KEY) {
-    return NextResponse.json({
-      reason: "transport-not-configured",
-      status: "cancelled",
-    });
-  }
-
+  // Mail goes through Tuturuuu's SES-backed mailer using the app credentials
+  // this site already holds, so there is no separate transport key to check —
+  // if those are missing the run cancels below when the inbox cannot be read.
   try {
     const outcome = await forwardPendingResponses({
       fetchPending: fetchPendingSubmissions,

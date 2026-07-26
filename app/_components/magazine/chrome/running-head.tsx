@@ -232,7 +232,9 @@ function AdminNavLink({ label }: { label: string }) {
   return (
     <NextLink
       href="/admin"
-      className="v2-mono v2-size-folio ml-1 border-l border-ink/15 pl-[clamp(16px,1.6vw,28px)] opacity-45 transition-opacity duration-200 hover:opacity-80"
+      // border-current rather than a fixed ink tone: the bar turns transparent
+      // with cream type over dark image heroes, where an ink divider vanishes.
+      className="v2-mono v2-size-folio ml-1 border-l border-current pl-[clamp(16px,1.6vw,28px)] opacity-45 transition-opacity duration-200 hover:opacity-80"
     >
       {label}
     </NextLink>

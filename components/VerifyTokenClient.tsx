@@ -83,31 +83,54 @@ export function VerifyTokenClient() {
   if (state === "failed") {
     return (
       <>
-        <div className="grid size-12 place-items-center border border-red-200 bg-red-500/12 font-display text-2xl text-red-100">
-          !
-        </div>
-        <h1 className="mt-5 font-display text-4xl leading-none text-[var(--gold)]">
-          Authentication failed
+        <span aria-hidden className="block h-px w-12 bg-red-300/70" />
+        <h1 className="mt-5 font-display text-[clamp(1.9rem,3.4vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-[var(--gold)]">
+          We could not sign you in
         </h1>
-        <p className="mt-3 text-sm leading-6 text-[var(--parchment-soft)]">{error}</p>
-        <Link className="button-primary mt-6" href="/admin/login?next=library">
-          Sign in again
-        </Link>
+        {/* The upstream reason, verbatim: it is the only thing that tells an
+            operator whether to retry or to ask for workspace access. */}
+        <p
+          className="mt-3 border-l-2 border-red-300/50 pl-3 text-sm leading-6 text-[rgba(246,239,225,0.78)]"
+          role="alert"
+        >
+          {error}
+        </p>
+        <div className="mt-7 grid gap-2.5">
+          <Link
+            className="button-primary w-full"
+            href="/admin/login?next=library"
+          >
+            Try signing in again
+          </Link>
+          <Link className="button-secondary w-full" href="/">
+            Back to the site
+          </Link>
+        </div>
       </>
     );
   }
 
   return (
     <>
-      <div className="grid size-12 place-items-center border border-[rgba(217,167,91,0.62)] bg-[rgba(239,207,178,0.08)] font-display text-2xl text-[var(--gold)]">
-        ...
-      </div>
-      <h1 className="mt-5 font-display text-4xl leading-none text-[var(--gold)]">
-        {state === "success" ? "Connected" : "Connecting Richfield"}
+      <span
+        aria-hidden
+        className="block h-px w-12 bg-[var(--gold)] opacity-80"
+      />
+      <h1 className="mt-5 font-display text-[clamp(1.9rem,3.4vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-[var(--gold)]">
+        {state === "success" ? "You are signed in" : "Signing you in"}
       </h1>
-      <p className="mt-3 text-sm leading-6 text-[var(--parchment-soft)]">
-        Finishing centralized Tuturuuu authentication.
+      <p
+        aria-live="polite"
+        className="mt-3 text-sm leading-6 text-[rgba(246,239,225,0.72)]"
+      >
+        {state === "success"
+          ? "Opening your dashboard…"
+          : "Confirming your Tuturuuu account."}
       </p>
+      <div aria-hidden className="mt-7 grid gap-2">
+        <span className="admin-skeleton block h-3 w-full opacity-40" />
+        <span className="admin-skeleton block h-3 w-[76%] opacity-40" />
+      </div>
     </>
   );
 }

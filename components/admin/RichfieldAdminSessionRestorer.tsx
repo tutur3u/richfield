@@ -39,26 +39,35 @@ export function RichfieldAdminSessionRestorer({ loginHref }: { loginHref: string
   }, [router]);
 
   return (
-    <main className="section-band grid min-h-[calc(100vh-96px)] place-items-center px-4 py-12 sm:px-6">
-      <section className="parchment-card w-full max-w-[420px] p-6 text-center sm:p-8">
-        <p className="script-label">Admin access</p>
-        <h1 className="font-display text-4xl leading-none text-[var(--navy)] sm:text-5xl">
-          {failed ? "Login expired" : "Restoring access"}
+    <main className="section-band grid min-h-screen place-items-center px-4 py-12 sm:px-6">
+      <section className="parchment-card w-full max-w-[460px] p-7 sm:p-9">
+        <span
+          aria-hidden
+          className="block h-px w-12 bg-[var(--gold)] opacity-80"
+        />
+        <p className="script-label mt-5">
+          {failed ? "Session ended" : "One moment"}
+        </p>
+        <h1 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-[var(--navy)]">
+          {failed ? "Please sign in again" : "Restoring your access"}
         </h1>
-        <p className="mx-auto mt-3 max-w-[300px] text-sm leading-6 text-[var(--ink-soft)]">
+        <p
+          aria-live="polite"
+          className="mt-3 max-w-[38ch] text-sm leading-6 text-[var(--ink-soft)]"
+        >
           {failed
-            ? "Login again to continue managing the website."
-            : "Refreshing your access before opening the dashboard."}
+            ? "Your session has expired. Signing in again will bring you straight back here."
+            : "Checking your Tuturuuu session before the dashboard opens."}
         </p>
         {failed ? (
-          <Link className="button-primary mt-6 inline-flex" href={loginHref}>
-            Login with Tuturuuu
+          <Link className="button-primary mt-7 w-full" href={loginHref}>
+            Continue with Tuturuuu
           </Link>
         ) : (
-          <div className="mx-auto mt-6 grid w-full max-w-[220px] gap-2" aria-hidden="true">
-            <span className="h-2 animate-pulse bg-[rgba(184,112,81,0.22)]" />
-            <span className="h-2 animate-pulse bg-[rgba(184,112,81,0.22)] [animation-delay:120ms]" />
-            <span className="h-2 animate-pulse bg-[rgba(184,112,81,0.22)] [animation-delay:240ms]" />
+          <div aria-hidden className="mt-7 grid gap-2">
+            <span className="admin-skeleton block h-3 w-full" />
+            <span className="admin-skeleton block h-3 w-[82%]" />
+            <span className="admin-skeleton block h-3 w-[56%]" />
           </div>
         )}
       </section>

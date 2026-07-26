@@ -165,6 +165,16 @@ export const RICHFIELD_ADMIN_COPY = {
     media: "Media",
     team: "Team",
   },
+  forwarding: {
+    cost: "Email cost",
+    costDetail: "Charged at 25₫ per email forwarded.",
+    failed: "Could not send",
+    failedDetail: "These were tried and did not go through.",
+    sent: "Forwarded",
+    sentDetail: "Messages emailed to your inbox so far.",
+    waiting: "Waiting to send",
+    waitingDetail: "These go out on the next run, every four hours.",
+  },
   visibility: {
     archived: "Hidden",
     draft: "Draft",

@@ -26,6 +26,10 @@ import type {
   RichfieldStorageFilesState,
 } from "@/lib/richfield-storage-files";
 import { getRichfieldGalleryPlacementLabel } from "@/lib/richfield-gallery";
+import {
+  formatVnd,
+  summariseForwardingMetrics,
+} from "@/lib/richfield-response-metrics";
 import { RichfieldGalleryPanel } from "./RichfieldGalleryPanel";
 import { RichTextEditor } from "./RichTextEditor";
 import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
@@ -269,6 +273,44 @@ function formatFileDate(value: string) {
   }
 
   return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(date);
+}
+
+/**
+ * What the scheduled forwarding job has done with the inbox, and what it cost.
+ * Counted from the responses already on screen, so the numbers can never
+ * disagree with the list underneath them.
+ */
+function ResponseForwardingPanel({
+  items,
+}: {
+  items: RichfieldAdminContentItem[];
+}) {
+  const metrics = summariseForwardingMetrics(items);
+
+  return (
+    <section className="grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <StorageMetric
+        detail={RICHFIELD_ADMIN_COPY.forwarding.sentDetail}
+        label={RICHFIELD_ADMIN_COPY.forwarding.sent}
+        value={String(metrics.sent)}
+      />
+      <StorageMetric
+        detail={RICHFIELD_ADMIN_COPY.forwarding.waitingDetail}
+        label={RICHFIELD_ADMIN_COPY.forwarding.waiting}
+        value={String(metrics.pending)}
+      />
+      <StorageMetric
+        detail={RICHFIELD_ADMIN_COPY.forwarding.failedDetail}
+        label={RICHFIELD_ADMIN_COPY.forwarding.failed}
+        value={String(metrics.failed)}
+      />
+      <StorageMetric
+        detail={RICHFIELD_ADMIN_COPY.forwarding.costDetail}
+        label={RICHFIELD_ADMIN_COPY.forwarding.cost}
+        value={formatVnd(metrics.costVnd)}
+      />
+    </section>
+  );
 }
 
 function StorageMetric({
@@ -2940,6 +2982,27 @@ export function RichfieldAdminDashboard({
   const renderContentTab = (collectionKey: RichfieldAdminCollectionKey) => {
     const items = content[collectionKey];
     const selectedId = selectedIds[collectionKey];
+
+    if (collectionKey === "contact-submissions") {
+      return (
+        <section className="grid min-w-0 gap-6">
+          <ResponseForwardingPanel items={items} />
+          <ContentList
+            collectionKey={collectionKey}
+            items={items}
+            onNew={() => {
+              setSelectedIds((current) => ({ ...current, [collectionKey]: null }));
+              openEditor({ collectionKey, itemId: null });
+            }}
+            onSelect={(id) => {
+              setSelectedIds((current) => ({ ...current, [collectionKey]: id }));
+              openEditor({ collectionKey, itemId: id });
+            }}
+            selectedId={selectedId}
+          />
+        </section>
+      );
+    }
 
     if (collectionKey === "image-library") {
       return (

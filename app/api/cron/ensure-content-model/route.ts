@@ -12,6 +12,17 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 /**
+ * Installing a schema writes every collection and field definition in one
+ * request, which comfortably outruns the 8s default meant for read paths — the
+ * first live run aborted on it. Both the client-side budget and the function's
+ * own ceiling have to allow for it, or the work is killed halfway and the
+ * workspace is left half-provisioned.
+ */
+export const maxDuration = 120;
+
+const SETUP_TIMEOUT_MS = 60_000;
+
+/**
  * Install (or repair) this site's content model in Tuturuuu.
  *
  * The studio schema is defined here, in the sync manifest, but until now it
@@ -76,6 +87,7 @@ export async function GET(request: Request) {
         headers: appHeaders(),
         method: "POST",
       },
+      SETUP_TIMEOUT_MS,
     );
 
     if (!setupResponse.ok) {
@@ -93,6 +105,7 @@ export async function GET(request: Request) {
         headers: appHeaders(),
         method: "POST",
       },
+      SETUP_TIMEOUT_MS,
     );
 
     if (!syncResponse.ok) {

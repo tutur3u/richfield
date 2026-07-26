@@ -11,6 +11,13 @@ import { NextResponse } from "next/server";
 export const dynamic = "force-dynamic";
 
 /**
+ * A run forwards up to 100 responses one at a time, so it needs far more than
+ * the default ceiling. Being killed midway is safe — each response is marked as
+ * it is sent — but the rest would wait four hours for the next run.
+ */
+export const maxDuration = 300;
+
+/**
  * Vercel cron sends `Authorization: Bearer $CRON_SECRET`. Without a configured
  * secret the endpoint is refused outright rather than left open — it spends
  * money on every call.

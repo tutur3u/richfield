@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  MagnifyingGlass,
-  NewspaperClipping,
-  Plus,
-} from "@phosphor-icons/react";
+import { ImagesSquare, MagnifyingGlass, NewspaperClipping, Plus } from "@phosphor-icons/react";
 import { type InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -13,11 +9,9 @@ import {
   fetchContentPage,
   type RichfieldContentPage,
 } from "@/lib/admin/content-queries";
-import type {
-  RichfieldAdminCollectionKey,
-  RichfieldAdminContentItem,
-} from "@/lib/richfield-admin-content-model";
+import type { RichfieldAdminCollectionKey } from "@/lib/richfield-admin-content-model";
 import { SkeletonBlock, SkeletonLine } from "./RichfieldAdminSkeleton";
+import { AdminContentItemCard } from "./AdminContentItemCard";
 
 /** Debounce so typing a search term does not fire a request per keystroke. */
 function useDebounced(value: string, delayMs = 300) {
@@ -78,65 +72,6 @@ function useInfiniteScroll(
   return sentinelRef;
 }
 
-function statusTone(status: string) {
-  if (status === "published") return "bg-green/12 text-forest";
-  if (status === "archived") return "bg-ink/8 text-muted";
-  return "bg-gold/18 text-gold-strong";
-}
-
-function ContentRow({
-  item,
-  onOpen,
-  selected,
-}: {
-  item: RichfieldAdminContentItem;
-  onOpen: (id: string) => void;
-  selected: boolean;
-}) {
-  const t = useTranslations("admin.common");
-  const statusLabel =
-    item.status === "published"
-      ? t("live")
-      : item.status === "archived"
-        ? t("hidden")
-        : item.status === "scheduled"
-          ? t("scheduled")
-          : t("draft");
-
-  return (
-    <button
-      aria-current={selected ? "true" : undefined}
-      className={`grid w-full gap-1.5 rounded-xl border p-4 text-left transition-all ${
-        selected
-          ? "border-admin-gold bg-admin-gold/[0.08] shadow-[0_0_0_3px_rgb(217_167_91_/_0.08)]"
-          : "border-admin-rule bg-admin-surface hover:-translate-y-px hover:border-admin-gold hover:shadow-sm"
-      }`}
-      onClick={() => onOpen(item.id)}
-      type="button"
-    >
-      <span className="flex items-start justify-between gap-3">
-        <span className="font-display text-lg leading-tight text-admin-ink">
-          {item.title || t("untitled")}
-        </span>
-        <span
-          className={`shrink-0 px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.14em] ${statusTone(
-            item.status,
-          )}`}
-        >
-          {statusLabel}
-        </span>
-      </span>
-      {item.slug ? (
-        <span className="truncate text-xs text-muted">/{item.slug}</span>
-      ) : null}
-      <span className="mt-1 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-admin-ink-soft">
-        <span>EN · {item.localeStatuses.en === "published" ? t("live") : t("draft")}</span>
-        <span>VI · {item.localeStatuses.vi === "published" ? t("live") : t("draft")}</span>
-      </span>
-    </button>
-  );
-}
-
 /**
  * Searchable, infinitely-scrolling list for one collection.
  *
@@ -195,6 +130,7 @@ export function AdminContentList({
     [query.data],
   );
   const total = query.data?.pages[0]?.total ?? 0;
+  const isGallery = collectionKey === "image-library";
 
   const sentinelRef = useInfiniteScroll(
     () => {
@@ -283,7 +219,11 @@ export function AdminContentList({
         <div className="grid min-h-52 place-items-center rounded-2xl border border-admin-rule bg-admin-surface px-6 py-9 text-center shadow-[0_1px_0_rgb(12_31_52_/_0.03)]">
           <div className="grid max-w-md justify-items-center">
             <span className="mb-5 grid size-12 place-items-center rounded-full bg-admin-gold/12 text-admin-copper">
-              <NewspaperClipping aria-hidden size={24} />
+              {isGallery ? (
+                <ImagesSquare aria-hidden size={24} />
+              ) : (
+                <NewspaperClipping aria-hidden size={24} />
+              )}
             </span>
           <p className="font-display text-2xl text-admin-ink">
             {debouncedSearch ? t("nothingMatches") : t("nothingHere")}
@@ -316,9 +256,16 @@ export function AdminContentList({
       ) : null}
 
       {items.length > 0 ? (
-        <div className="grid gap-2">
+        <div
+          className={
+            isGallery
+              ? "grid gap-3 sm:grid-cols-2 xl:grid-cols-3"
+              : "grid gap-2"
+          }
+        >
           {items.map((item) => (
-            <ContentRow
+            <AdminContentItemCard
+              collectionKey={collectionKey}
               item={item}
               key={item.id}
               onOpen={(id) => onOpen(id)}

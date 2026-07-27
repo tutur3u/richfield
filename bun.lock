@@ -8,7 +8,7 @@
         "@base-ui/react": "^1.6.0",
         "@phosphor-icons/react": "^2.1.10",
         "@tanstack/react-query": "^5.101.4",
-        "@tuturuuu/editor": "0.3.0",
+        "@tuturuuu/editor": "0.4.0",
         "@vercel/analytics": "^2.0.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -529,7 +529,7 @@
 
     "@tuturuuu/devbox": ["@tuturuuu/devbox@0.3.1", "", {}, "sha512-VJ6iy5smAztU5AP/oK7V3eoS2IqA8CXPAbJ4agEiEYdPnJr7qnEvgtLWhw7tCvwq4jtW1dMOOexCIPwHhFQ9Ww=="],
 
-    "@tuturuuu/editor": ["@tuturuuu/editor@0.3.0", "", { "dependencies": { "@tiptap/extension-image": "3.28.0", "@tiptap/extension-link": "3.28.0", "@tiptap/extension-placeholder": "3.28.0", "@tiptap/react": "3.28.0", "@tiptap/starter-kit": "3.28.0", "lucide-react": "^1.26.0" }, "peerDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0" } }, "sha512-3uqg/TcfY2zaYOCuzTSRmMqp82wHVRx731WXc4YJcu6imUfT5LvtX6wT0aiWSJ9/GtCrU9mXnKI5H51bQWqD9Q=="],
+    "@tuturuuu/editor": ["@tuturuuu/editor@0.4.0", "", { "dependencies": { "@tiptap/extension-image": "3.28.0", "@tiptap/extension-link": "3.28.0", "@tiptap/extension-placeholder": "3.28.0", "@tiptap/react": "3.28.0", "@tiptap/starter-kit": "3.28.0", "lucide-react": "^1.26.0" }, "peerDependencies": { "react": "^19.2.0", "react-dom": "^19.2.0" } }, "sha512-MQ2+BXE4lwrqN4zMPAYP0yX1oCSDxf9rMGCDzS0Vg4hTO4qL0LCTxI6BehBeY+44mNaY2JkvbPXnLI1fakngEA=="],
 
     "@tuturuuu/google": ["@tuturuuu/google@0.1.0", "", { "dependencies": { "google-auth-library": "10.9.0", "googleapis": "^173.0.0" } }, "sha512-14LWAhJyJhD997aSMPhuYSn88K9XWdmTbGJHOVU6U9bjfdzd/r/AlccN6vs0BnjLMpztg6HP4ExXtXFDpitJLA=="],
 

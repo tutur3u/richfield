@@ -282,9 +282,9 @@
         "title": "People"
       },
       "photos": {
-        "description": "Photos used across the website.",
-        "empty": "Upload a photo to use it on the site.",
-        "title": "Photos"
+        "description": "Images and captions used across the website.",
+        "empty": "Upload an image to add it to the website gallery.",
+        "title": "Gallery"
       },
       "responses": {
         "description": "Messages sent through the contact form.",

@@ -122,12 +122,12 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     collectionKey: "image-library",
-    description: "Photos used across the website.",
-    emptyHint: "Upload a photo to use it on the site.",
+    description: "Images and captions used across the website.",
+    emptyHint: "Upload an image to add it to the website gallery.",
     group: "media",
     tab: "image-library",
     slug: "photos",
-    title: "Photos",
+    title: "Gallery",
   },
   {
     description: "Files and storage used by the website.",

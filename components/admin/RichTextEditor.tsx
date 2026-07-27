@@ -60,7 +60,7 @@ export function RichTextEditor({
       </span>
       <div
         aria-disabled={disabled || undefined}
-        className="richfield-tuturuuu-editor overflow-hidden rounded-xl border border-admin-rule-strong bg-admin-panel shadow-sm"
+        className="richfield-tuturuuu-editor overflow-visible rounded-xl border border-admin-rule-strong bg-admin-panel shadow-sm"
       >
         <TuturuuuRichTextEditor
           content={content}

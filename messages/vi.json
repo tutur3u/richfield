@@ -282,9 +282,9 @@
         "title": "Thành viên"
       },
       "photos": {
-        "description": "Hình ảnh được sử dụng trên trang web.",
-        "empty": "Tải ảnh lên để sử dụng trên trang web.",
-        "title": "Hình ảnh"
+        "description": "Hình ảnh và chú thích được sử dụng trên trang web.",
+        "empty": "Tải hình ảnh lên để thêm vào thư viện của trang web.",
+        "title": "Thư viện"
       },
       "responses": {
         "description": "Tin nhắn được gửi từ biểu mẫu liên hệ.",

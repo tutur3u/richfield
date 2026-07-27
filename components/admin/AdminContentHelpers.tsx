@@ -216,12 +216,32 @@ export function collectionSupportsImage(collectionKey: RichfieldAdminCollectionK
   );
 }
 
-export function ContentCardCover({ item }: { item: RichfieldAdminContentItem }) {
+/**
+ * Card thumbnail.
+ *
+ * Logos are contained rather than cropped. `bg-cover` fills the tile by
+ * overflowing the shorter axis, which for a wide wordmark in a narrow portrait
+ * tile meant a zoomed fragment — Mars \u00b7 Wrigley read as "ARS RIGL" and BiC
+ * as a single letter. Photographs still crop, because for them filling the
+ * frame is the point.
+ *
+ * bg-no-repeat matters once the image no longer covers: the CSS default would
+ * tile the leftover space.
+ */
+export function ContentCardCover({
+  collectionKey,
+  item,
+}: {
+  collectionKey?: RichfieldAdminCollectionKey;
+  item: RichfieldAdminContentItem;
+}) {
+  const isLogo = collectionKey === "brands";
+
   return (
     <span
-      className={`relative block min-h-28 overflow-hidden border border-[rgba(184,112,81,0.34)] bg-[rgba(239,207,178,0.55)] bg-cover bg-center ${
-        item.imageUrl ? "" : "grid place-items-center"
-      }`}
+      className={`relative block min-h-28 overflow-hidden border border-[rgba(184,112,81,0.34)] bg-[rgba(239,207,178,0.55)] bg-center bg-no-repeat ${
+        isLogo ? "bg-contain" : "bg-cover"
+      } ${item.imageUrl ? "" : "grid place-items-center"}`}
       style={
         item.imageUrl
           ? {

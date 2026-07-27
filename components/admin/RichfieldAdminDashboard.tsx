@@ -166,7 +166,7 @@ function ContentList({
               type="button"
             >
               <div className="grid min-w-0 gap-4 sm:grid-cols-[112px_minmax(0,1fr)]">
-                <ContentCardCover item={item} />
+                <ContentCardCover collectionKey={collectionKey} item={item} />
                 <div className="grid min-w-0 content-start gap-3">
                   <div className="flex flex-wrap items-center gap-2">
                     <span

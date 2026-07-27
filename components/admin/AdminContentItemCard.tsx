@@ -9,16 +9,10 @@ import type {
 } from "@/lib/richfield-admin-content-model";
 
 function statusTone(status: string) {
-  if (status === "published") {
-    return "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300";
-  }
-  if (status === "archived") {
-    return "bg-admin-ink/8 text-admin-ink-soft";
-  }
-  if (status === "scheduled") {
-    return "bg-sky-500/12 text-sky-700 dark:text-sky-300";
-  }
-  return "bg-amber-500/12 text-amber-700 dark:text-amber-300";
+  if (status === "published") return "admin-status-published";
+  if (status === "archived") return "admin-status-archived";
+  if (status === "scheduled") return "admin-status-scheduled";
+  return "admin-status-draft";
 }
 
 function GalleryThumbnail({ item }: { item: RichfieldAdminContentItem }) {

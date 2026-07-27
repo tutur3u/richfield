@@ -646,6 +646,58 @@ button:focus-visible {
   --copper: var(--color-gold-strong);
   --copper-dark: var(--color-gold-strong);
   --gold: var(--color-gold);
+  --admin-status-archived-bg: rgb(36 31 26 / 8%);
+  --admin-status-archived-fg: #6f6557;
+  --admin-status-draft-bg: rgb(217 167 91 / 18%);
+  --admin-status-draft-fg: #76521b;
+  --admin-status-published-bg: rgb(22 163 74 / 12%);
+  --admin-status-published-fg: #17643a;
+  --admin-status-scheduled-bg: rgb(2 132 199 / 12%);
+  --admin-status-scheduled-fg: #075b82;
+}
+
+[data-admin-theme="dark"] {
+  --admin-status-archived-bg: rgb(255 255 255 / 8%);
+  --admin-status-archived-fg: #c4bbad;
+  --admin-status-draft-bg: rgb(245 158 11 / 18%);
+  --admin-status-draft-fg: #f8cf77;
+  --admin-status-published-bg: rgb(52 211 153 / 16%);
+  --admin-status-published-fg: #8ce6bd;
+  --admin-status-scheduled-bg: rgb(56 189 248 / 16%);
+  --admin-status-scheduled-fg: #9edcf8;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-admin-theme="system"] {
+    --admin-status-archived-bg: rgb(255 255 255 / 8%);
+    --admin-status-archived-fg: #c4bbad;
+    --admin-status-draft-bg: rgb(245 158 11 / 18%);
+    --admin-status-draft-fg: #f8cf77;
+    --admin-status-published-bg: rgb(52 211 153 / 16%);
+    --admin-status-published-fg: #8ce6bd;
+    --admin-status-scheduled-bg: rgb(56 189 248 / 16%);
+    --admin-status-scheduled-fg: #9edcf8;
+  }
+}
+
+.admin-status-archived {
+  color: var(--admin-status-archived-fg);
+  background: var(--admin-status-archived-bg);
+}
+
+.admin-status-draft {
+  color: var(--admin-status-draft-fg);
+  background: var(--admin-status-draft-bg);
+}
+
+.admin-status-published {
+  color: var(--admin-status-published-fg);
+  background: var(--admin-status-published-bg);
+}
+
+.admin-status-scheduled {
+  color: var(--admin-status-scheduled-fg);
+  background: var(--admin-status-scheduled-bg);
 }
 
 /* Same reason: the legacy dashboard paints panels with literal white washes,

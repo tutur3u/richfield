@@ -53,7 +53,9 @@ function MemberCard({ member }: { member: RichfieldAdminMember }) {
         </span>
         <div className="min-w-0">
           <strong className="block truncate text-ink">{member.name}</strong>
-          {member.email ? (
+          {/* Someone who has not accepted yet has no display name, so name
+              falls back to their email — printing both just repeats it. */}
+          {member.email && member.email !== member.name ? (
             <span className="mt-0.5 block truncate text-sm text-muted">
               {member.email}
             </span>

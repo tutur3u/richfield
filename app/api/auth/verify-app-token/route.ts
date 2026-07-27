@@ -31,6 +31,44 @@ async function readExchangeError(response: Response) {
   return payload?.error || fallback;
 }
 
+/**
+ * A pending workspace invitation is not an authentication failure.
+ *
+ * Someone invited to the Richfield workspace but not yet a member gets a 403
+ * from the exchange. Reporting that as "we could not sign you in" strands them
+ * at a dead end with an invitation sitting unaccepted — so the invitation is
+ * handed back to the client instead, with the token needed to accept it.
+ */
+type RichfieldPendingInvitation = {
+  code: "PENDING_WORKSPACE_INVITE";
+  invitation?: unknown;
+  invitationActionToken: string;
+  workspaceId: string;
+};
+
+function readPendingInvitation(
+  payload: unknown,
+): RichfieldPendingInvitation | null {
+  if (!payload || typeof payload !== "object") return null;
+
+  const body = payload as Record<string, unknown>;
+
+  if (
+    body.code !== "PENDING_WORKSPACE_INVITE" ||
+    typeof body.invitationActionToken !== "string" ||
+    typeof body.workspaceId !== "string"
+  ) {
+    return null;
+  }
+
+  return {
+    code: "PENDING_WORKSPACE_INVITE",
+    invitation: body.invitation,
+    invitationActionToken: body.invitationActionToken,
+    workspaceId: body.workspaceId,
+  };
+}
+
 async function exchangeCrossAppToken(token: string) {
   const response = await fetchWithRichfieldTimeout(`${normalizeApiBaseUrl()}/auth/app-token/exchange`, {
     body: JSON.stringify({
@@ -49,6 +87,13 @@ async function exchangeCrossAppToken(token: string) {
   });
 
   if (!response.ok) {
+    const payload = await response.clone().json().catch(() => null);
+    const pendingInvitation = readPendingInvitation(payload);
+
+    if (pendingInvitation) {
+      return { pendingInvitation };
+    }
+
     throw new TokenExchangeError(await readExchangeError(response), response.status);
   }
 
@@ -64,9 +109,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing required parameter: token" }, { status: 400 });
     }
 
-    const session = createRichfieldSessionFromExchangePayload(
-      await exchangeCrossAppToken(token),
-    );
+    const exchange = await exchangeCrossAppToken(token);
+
+    // Invited but not yet a member: hand the invitation to the client so it can
+    // be accepted here, rather than reporting a sign-in failure.
+    if ("pendingInvitation" in exchange) {
+      return NextResponse.json(
+        { pendingInvitation: exchange.pendingInvitation, valid: false },
+        { status: 200 },
+      );
+    }
+
+    const session = createRichfieldSessionFromExchangePayload(exchange);
     const response = NextResponse.json({
       expiresAt: session.expiresAt,
       refreshEarlySeconds: session.refreshEarlySeconds,

@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { sanitizeRichfieldNextPath } from "@/lib/richfield-url-utils";
 
-type VerificationState = "failed" | "loading" | "success";
+type VerificationState = "failed" | "invited" | "loading" | "success";
 
 type VerificationResponse = {
   error?: string;
@@ -18,6 +18,10 @@ export function VerifyTokenClient() {
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [state, setState] = useState<VerificationState>("loading");
+  const [pendingInvitation, setPendingInvitation] = useState<{
+    invitationActionToken: string;
+  } | null>(null);
+  const [decisionPending, setDecisionPending] = useState(false);
   const nextPath = useMemo(
     () =>
       sanitizeRichfieldNextPath(
@@ -50,6 +54,18 @@ export function VerifyTokenClient() {
         });
         const data = (await response.json().catch(() => null)) as VerificationResponse | null;
 
+        // Invited but not yet a member: offer to accept rather than reporting
+        // a sign-in failure they cannot act on.
+        const invitation = (data as { pendingInvitation?: { invitationActionToken?: string } } | null)
+          ?.pendingInvitation;
+
+        if (response.ok && invitation?.invitationActionToken) {
+          if (cancelled) return;
+          setPendingInvitation({ invitationActionToken: invitation.invitationActionToken });
+          setState("invited");
+          return;
+        }
+
         if (!response.ok || !data?.valid || !data.userId) {
           throw new Error(data?.error || "Token verification failed.");
         }
@@ -79,6 +95,84 @@ export function VerifyTokenClient() {
       cancelled = true;
     };
   }, [nextPath, router, searchParams]);
+
+  async function decideInvitation(action: "accept" | "reject") {
+    if (!pendingInvitation || decisionPending) return;
+
+    setDecisionPending(true);
+    setError(null);
+
+    try {
+      const response = await fetch("/api/auth/pending-invitation", {
+        body: JSON.stringify({
+          action,
+          invitationActionToken: pendingInvitation.invitationActionToken,
+        }),
+        headers: { "Content-Type": "application/json" },
+        method: "POST",
+      });
+      const payload = (await response.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+
+      if (!response.ok) {
+        throw new Error(payload?.error || "Could not update the invitation.");
+      }
+
+      // Declining is a decision, not a failure: send them back to the site
+      // rather than into a retry loop on a workspace they just left.
+      router.replace(action === "accept" ? "/admin/login?next=library" : "/");
+      router.refresh();
+    } catch (decisionError) {
+      setError(
+        decisionError instanceof Error
+          ? decisionError.message
+          : "Could not update the invitation.",
+      );
+      setDecisionPending(false);
+    }
+  }
+
+  if (state === "invited") {
+    return (
+      <>
+        <span aria-hidden className="block h-px w-12 bg-admin-gold opacity-80" />
+        <h1 className="mt-5 font-display text-[clamp(1.9rem,3.4vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-admin-gold">
+          You have been invited
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-admin-parchment/72">
+          Accept your invitation to the Richfield workspace to open the content
+          dashboard.
+        </p>
+        {error ? (
+          <p
+            className="mt-3 border-l-2 border-red-300/50 pl-3 text-sm leading-6 text-admin-parchment/80"
+            role="alert"
+          >
+            {error}
+          </p>
+        ) : null}
+        <div className="mt-7 grid gap-2.5">
+          <button
+            className="button-primary w-full"
+            disabled={decisionPending}
+            onClick={() => void decideInvitation("accept")}
+            type="button"
+          >
+            {decisionPending ? "Joining…" : "Accept and continue"}
+          </button>
+          <button
+            className="button-secondary w-full"
+            disabled={decisionPending}
+            onClick={() => void decideInvitation("reject")}
+            type="button"
+          >
+            Decline
+          </button>
+        </div>
+      </>
+    );
+  }
 
   if (state === "failed") {
     return (

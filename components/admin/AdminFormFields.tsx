@@ -1,6 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type {
   RichfieldAdminEditorDraft,
   RichfieldEditorStepId,
@@ -119,6 +127,7 @@ export function NumberField<TName extends keyof Draft>({
 
 export function SelectField<TName extends keyof Draft>({
   disabled,
+  error,
   label,
   name,
   onChange,
@@ -127,6 +136,7 @@ export function SelectField<TName extends keyof Draft>({
   value,
 }: {
   disabled?: boolean;
+  error?: string;
   label: string;
   name: TName;
   onChange: (name: TName, value: string) => void;
@@ -139,24 +149,38 @@ export function SelectField<TName extends keyof Draft>({
     value.trim() && !options.some((option) => option.value === value);
 
   return (
-    <label className="grid min-w-0 gap-2">
+    <div className="grid min-w-0 gap-2">
       <span className={FIELD_LABEL}>{label}</span>
-      <select
-        className={`${FIELD_INPUT} border-line`}
+      <Select
         disabled={disabled}
-        name={name}
-        onChange={(event) => onChange(name, event.currentTarget.value)}
+        onValueChange={(nextValue) => onChange(name, String(nextValue))}
         value={value}
       >
-        <option value="">{placeholder ?? t("chooseOne")}</option>
-        {hasCurrentValue ? <option value={value}>{value}</option> : null}
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
+        <SelectTrigger
+          aria-invalid={Boolean(error)}
+          aria-label={label}
+          className="h-11 w-full rounded-lg border-line bg-paper px-3 text-ink shadow-none focus-visible:border-gold dark:bg-paper"
+        >
+          <SelectValue placeholder={placeholder ?? t("chooseOne")} />
+        </SelectTrigger>
+        <SelectContent
+          alignItemWithTrigger={false}
+          className="border border-line bg-paper text-ink"
+        >
+          <SelectGroup>
+            {hasCurrentValue ? <SelectItem value={value}>{value}</SelectItem> : null}
+            {options.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+      {error ? (
+        <span className="text-xs text-red-600 dark:text-red-400">{error}</span>
+      ) : null}
+    </div>
   );
 }
 

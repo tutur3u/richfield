@@ -332,29 +332,31 @@ export function EditorCoverSummary({
         : "No cover yet";
 
   return (
-    <aside className="grid min-w-0 gap-2 border border-[rgba(184,112,81,0.38)] bg-white p-3">
-      <span
-        className={`relative block min-h-36 overflow-hidden border border-[rgba(184,112,81,0.28)] bg-[rgba(239,207,178,0.55)] bg-cover ${
-          hasVisibleCover ? "" : "grid place-items-center"
-        }`}
-        style={
-          hasVisibleCover && item?.imageUrl
-            ? {
-                backgroundImage: `url(${JSON.stringify(item.imageUrl)})`,
-                backgroundPosition: draft.objectPosition?.trim() || "center",
-              }
-            : undefined
-        }
-      >
+    <aside className="grid min-w-0 gap-2 rounded-xl border border-admin-rule bg-admin-surface p-2.5">
+      <span className={`relative block aspect-[16/10] min-h-28 overflow-hidden rounded-lg bg-admin-parchment ${
+        hasVisibleCover ? "" : "grid place-items-center border border-dashed border-admin-rule"
+      }`}>
         {hasVisibleCover ? (
-          <span className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,31,52,0.02),rgba(12,31,52,0.14))]" />
+          <>
+            {/* The linked CMS asset is shown directly here instead of a CSS
+                background, so failures have image semantics and useful alt
+                text while remote/public URLs remain supported. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              alt={draft.imageAlt || item?.title || "Cover preview"}
+              className="h-full w-full object-cover"
+              src={item?.imageUrl ?? undefined}
+              style={{ objectPosition: draft.objectPosition?.trim() || "center" }}
+            />
+            <span className="absolute inset-0 bg-[linear-gradient(180deg,transparent,rgba(12,31,52,0.12))]" />
+          </>
         ) : (
-          <span className="px-3 text-center text-xs font-bold uppercase tracking-[0.14em] text-[var(--ink-soft)]">
+          <span className="px-3 text-center text-xs font-semibold text-admin-ink-soft">
             Cover preview
           </span>
         )}
       </span>
-      <span className="truncate text-xs font-bold uppercase tracking-[0.14em] text-[var(--clay)]">
+      <span className="truncate px-1 text-xs font-semibold text-admin-ink-soft">
         {status}
       </span>
       {imageFileLabel ? (

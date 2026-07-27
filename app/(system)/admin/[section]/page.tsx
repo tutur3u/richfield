@@ -11,6 +11,12 @@ import { ADMIN_CONTENT_PAGE_SIZE } from "@/lib/admin/content-queries";
 import { ADMIN_LOCALE_COOKIE, toAdminLocale } from "@/lib/admin/locales";
 import { getRichfieldAdminSession } from "@/lib/richfield-admin-api";
 import { refreshRichfieldAdminContent } from "@/lib/richfield-admin-content";
+import {
+  buildRichfieldAdminLinks,
+  buildRichfieldDriveUrl,
+} from "@/lib/richfield-config";
+import { getRichfieldStorageAnalytics } from "@/lib/richfield-admin-storage";
+import { getRichfieldStorageFiles } from "@/lib/richfield-storage-files";
 
 async function loadInitialContentPage(
   collectionKey: NonNullable<
@@ -91,11 +97,30 @@ export default async function AdminSectionPage({
   const initialPagePromise = section.collectionKey
     ? loadInitialContentPage(section.collectionKey)
     : undefined;
+  const session = section.collectionKey ? null : await getRichfieldAdminSession();
+  const membersHref =
+    section.slug === "people"
+      ? buildRichfieldAdminLinks().find((link) => link.key === "members")?.cmsHref
+      : undefined;
+  const driveHref =
+    section.slug === "files" ? buildRichfieldDriveUrl() : undefined;
+  const [storageAnalytics, storageFiles] =
+    section.slug === "files" && session
+      ? await Promise.all([
+          getRichfieldStorageAnalytics(session.accessToken),
+          getRichfieldStorageFiles(session.accessToken),
+        ])
+      : [undefined, undefined];
 
   return (
     <AdminSectionScreen
+      driveHref={driveHref}
       initialPagePromise={initialPagePromise}
+      membersHref={membersHref}
       section={section}
+      storageAnalytics={storageAnalytics}
+      storageFiles={storageFiles}
+      userEmail={session?.user.email}
     />
   );
 }

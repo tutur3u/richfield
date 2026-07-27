@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { ArrowSquareOut, UserPlus, UsersThree } from "@phosphor-icons/react";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import type {
   RichfieldAdminMember,
@@ -8,6 +10,11 @@ import type {
 } from "@/lib/richfield-admin-members";
 import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
 import { adminFetch } from "./richfield-admin-session-client";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { buttonVariants } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 type MembersResponse = {
   context?: RichfieldAdminMembersContext;
@@ -40,43 +47,48 @@ function MemberCard({ member }: { member: RichfieldAdminMember }) {
   const invited = member.status === "Invited";
 
   return (
-    <div className="grid min-w-0 gap-3 border border-line bg-paper p-4">
+    <Card className="gap-3 border border-admin-rule bg-admin-panel py-4 shadow-none ring-0">
+      <CardContent className="grid min-w-0 gap-3 px-4">
       <div className="flex min-w-0 items-center gap-3">
-        <span
-          className={`grid size-11 shrink-0 place-items-center font-display text-xl ${
-            invited
-              ? "border border-line border-dashed text-muted"
-              : "bg-ink text-paper"
-          }`}
-        >
-          {member.initials}
-        </span>
+        <Avatar className="size-11" size="lg">
+          <AvatarFallback
+            className={
+              invited
+                ? "border border-dashed border-admin-rule bg-admin-surface text-admin-ink-soft"
+                : "bg-admin-navy font-display text-white"
+            }
+          >
+            {member.initials}
+          </AvatarFallback>
+        </Avatar>
         <div className="min-w-0">
-          <strong className="block truncate text-ink">{member.name}</strong>
+          <strong className="block truncate text-admin-ink">{member.name}</strong>
           {/* Someone who has not accepted yet has no display name, so name
               falls back to their email — printing both just repeats it. */}
           {member.email && member.email !== member.name ? (
-            <span className="mt-0.5 block truncate text-sm text-muted">
+            <span className="mt-0.5 block truncate text-sm text-admin-ink-soft">
               {member.email}
             </span>
           ) : null}
         </div>
       </div>
       <div className="flex flex-wrap gap-2">
-        <span
-          className={`px-2 py-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] ${
+        <Badge
+          className={`uppercase tracking-[0.08em] ${
             invited
-              ? "border border-gold/40 bg-gold/10 text-gold-strong"
-              : "border border-line bg-cream text-muted"
+              ? "border-admin-gold/35 bg-admin-gold/10 text-admin-gold"
+              : "border-emerald-500/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
           }`}
+          variant="outline"
         >
           {member.status}
-        </span>
-        <span className="border border-line bg-cream px-2 py-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-muted">
+        </Badge>
+        <Badge className="border-admin-rule text-admin-ink-soft" variant="outline">
           {member.role}
-        </span>
+        </Badge>
       </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -121,6 +133,7 @@ function MemberGroup({
  * notice. They are grouped separately so the two states are never confused.
  */
 export function MembersPanel({ membersHref }: { membersHref: string }) {
+  const t = useTranslations("admin.members");
   const [members, setMembers] = useState<RichfieldAdminMember[]>([]);
   const [context, setContext] = useState<RichfieldAdminMembersContext | null>(
     null,
@@ -177,35 +190,55 @@ export function MembersPanel({ membersHref }: { membersHref: string }) {
 
   return (
     <section className="grid min-w-0 gap-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="script-label">{RICHFIELD_ADMIN_COPY.members.title}</p>
-          <h2 className="break-words font-display text-4xl leading-none text-ink sm:text-5xl">
-            {context?.boundProjectName ?? "Site team"}
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted">
-            {RICHFIELD_ADMIN_COPY.members.description}
-          </p>
-        </div>
+      <Card className="border border-admin-rule bg-admin-panel py-0 shadow-none ring-0">
+        <CardHeader className="gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-full bg-admin-clay/12 text-admin-clay">
+              <UsersThree aria-hidden size={21} />
+            </span>
+            <div className="min-w-0">
+              <CardTitle className="truncate font-display text-2xl text-admin-ink">
+                {context?.boundProjectName ?? t("team")}
+              </CardTitle>
+              <p className="mt-1 text-sm leading-6 text-admin-ink-soft">
+                {t("description")}
+              </p>
+            </div>
+          </div>
         <Link
-          className="button-primary w-full sm:w-auto"
+          className={cn(
+            buttonVariants({ size: "lg" }),
+            "h-10 w-full rounded-lg bg-admin-navy text-white hover:bg-admin-navy/90 sm:w-auto",
+          )}
           href={membersHref}
           rel="noreferrer"
           target="_blank"
         >
-          {RICHFIELD_ADMIN_COPY.members.manage}
+          <UserPlus aria-hidden data-icon="inline-start" size={17} />
+          {t("manage")}
+          <ArrowSquareOut aria-hidden data-icon="inline-end" size={15} />
         </Link>
-      </div>
+        </CardHeader>
+      </Card>
 
-      {status === "loading" || status === "error" ? (
-        <div className="border border-line bg-paper px-4 py-3 text-sm text-muted">
+      {status === "loading" ? (
+        <div className="grid gap-3 sm:grid-cols-2" aria-label={t("loading")}>
+          {[0, 1].map((item) => (
+            <div
+              className="h-28 animate-pulse rounded-xl border border-admin-rule bg-admin-panel"
+              key={item}
+            />
+          ))}
+        </div>
+      ) : status === "error" ? (
+        <div className="rounded-xl border border-red-500/25 bg-red-500/8 px-4 py-3 text-sm text-red-700 dark:text-red-300">
           {message}
         </div>
       ) : null}
 
       {status === "ready" && members.length === 0 ? (
-        <p className="border border-line border-dashed bg-paper p-6 text-sm leading-6 text-muted">
-          {RICHFIELD_ADMIN_COPY.members.empty}
+        <p className="rounded-xl border border-dashed border-admin-rule bg-admin-panel p-6 text-sm leading-6 text-admin-ink-soft">
+          {t("empty")}
         </p>
       ) : null}
 

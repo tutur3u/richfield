@@ -28,6 +28,7 @@ import {
   adminSectionsByGroup,
 } from "@/lib/admin/sections";
 import { AdminThemeToggle } from "./AdminTheme";
+import { AdminLocaleSelect } from "./AdminLocaleSelect";
 
 const SECTION_ICONS = {
   account: UserCircle,
@@ -142,7 +143,7 @@ export function AdminShell({
               {menuOpen ? <X aria-hidden size={18} /> : <List aria-hidden size={18} />}
             </button>
             <Link
-              className="flex min-w-0 items-baseline gap-2 text-admin-ink"
+              className="flex min-w-0 items-center gap-2 text-admin-ink"
               href="/admin"
             >
               <span className="font-display text-xl leading-none">
@@ -151,28 +152,19 @@ export function AdminShell({
               <span aria-hidden className="text-admin-rule-strong">
                 |
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-admin-ink-soft">
+              <span className="text-[10px] font-bold uppercase leading-none tracking-[0.18em] text-admin-ink-soft">
                 {t("shell.admin")}
               </span>
             </Link>
           </div>
           <div className="flex min-w-0 items-center justify-end gap-2 px-3 sm:px-6 lg:px-8">
-            <form action="/api/admin/locale" method="post">
-              <input name="next" type="hidden" value={pathname ?? "/admin"} />
-              <label className="sr-only" htmlFor="admin-locale">
-                {t("locale.label")}
-              </label>
-              <select
-                className="min-h-9 rounded-full border border-admin-rule bg-admin-surface px-3 text-xs font-semibold text-admin-ink outline-none focus:border-admin-gold"
-                defaultValue={locale}
-                id="admin-locale"
-                name="locale"
-                onChange={(event) => event.currentTarget.form?.requestSubmit()}
-              >
-                <option value="en">{t("locale.english")}</option>
-                <option value="vi">{t("locale.vietnamese")}</option>
-              </select>
-            </form>
+            <AdminLocaleSelect
+              englishLabel={t("locale.english")}
+              label={t("locale.label")}
+              locale={locale}
+              nextPath={pathname ?? "/admin"}
+              vietnameseLabel={t("locale.vietnamese")}
+            />
             {userEmail ? (
               <div className="hidden min-w-0 items-center gap-2 border-l border-admin-rule pl-3 xl:flex">
                 <span

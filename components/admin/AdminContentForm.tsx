@@ -135,7 +135,7 @@ export function ContentForm({
   const isFirstStep = visibleStepIndex === 0;
   const isLastStep = visibleStepIndex === editorSteps.length - 1;
   const sectionSurfaceClass =
-    "grid gap-4 border border-[rgba(184,112,81,0.42)] bg-white p-4 shadow-[0_12px_34px_rgba(82,40,37,0.08)] sm:p-5";
+    "grid gap-5 rounded-xl border border-admin-rule bg-admin-panel p-5 shadow-sm sm:p-6";
   const isDirty = hasRichfieldEditorDirtyChanges({
     draft,
     hasPendingImageFile: Boolean(imageFile),
@@ -514,7 +514,7 @@ export function ContentForm({
 
   return (
     <form className="grid min-w-0 gap-6" onSubmit={submit}>
-      <div className="grid gap-4 border-b border-[rgba(184,112,81,0.28)] pb-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
+      <div className="grid gap-5 rounded-xl border border-admin-rule bg-admin-panel p-5 shadow-sm lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center sm:p-6">
         <div
           className={`grid min-w-0 gap-4 ${
             supportsImage ? "lg:grid-cols-[minmax(0,1fr)_220px]" : ""
@@ -526,7 +526,7 @@ export function ContentForm({
                 ? t("editItem", { item: copy.singular })
                 : copy.newLabel}
             </p>
-            <h2 className="break-words font-display text-4xl leading-none text-[var(--navy)] sm:text-5xl">
+            <h2 className="mt-1 break-words font-display text-3xl leading-tight text-admin-ink sm:text-4xl">
               {draft.title || t("untitledItem", { item: copy.singular })}
             </h2>
           </div>
@@ -579,31 +579,30 @@ export function ContentForm({
 
       <nav
         aria-label={t("editorSections")}
-        className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5"
+        className="flex gap-2 overflow-x-auto pb-1"
       >
         {editorSteps.map((step, index) => {
           const isActive = step === visibleStep;
 
           return (
             <button
-              className={`grid min-h-16 min-w-0 border px-3 py-2 text-left transition disabled:cursor-not-allowed disabled:opacity-55 ${
+              className={`flex min-h-10 min-w-max items-center gap-2 rounded-full border px-3.5 py-2 text-left text-sm transition disabled:cursor-not-allowed disabled:opacity-55 ${
                 isActive
-                  ? "border-[var(--gold)] bg-[var(--navy)] text-[var(--parchment)]"
-                  : "border-[rgba(184,112,81,0.38)] bg-white text-[var(--ink)] hover:border-[var(--copper)]"
+                  ? "border-admin-navy bg-admin-navy text-white"
+                  : "border-admin-rule bg-admin-panel text-admin-ink-soft hover:border-admin-gold hover:text-admin-ink"
               }`}
               disabled={isBusy}
               key={step}
               onClick={() => setActiveStep(step)}
               type="button"
             >
-              <span className="text-[0.65rem] font-black uppercase tracking-[0.16em] opacity-75">
-                {t("stepNumber", { number: index + 1 })}
+              <span className={`grid size-5 place-items-center rounded-full text-[10px] font-black ${
+                isActive ? "bg-white/15 text-white" : "bg-admin-surface text-admin-ink-soft"
+              }`}>
+                {index + 1}
               </span>
-              <span className="truncate text-sm font-black">
+              <span className="font-semibold">
                 {t(`steps.${step}.label`)}
-              </span>
-              <span className="truncate text-xs opacity-75">
-                {t(`steps.${step}.description`)}
               </span>
             </button>
           );
@@ -623,34 +622,18 @@ export function ContentForm({
               required
               value={draft.title}
             />
-            <label className="grid gap-2">
-              <span className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--clay)]">
-                {t("fields.visibility")}
-              </span>
-              <select
-                className={`min-h-11 w-full min-w-0 border bg-white px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] ${
-                  fieldErrors.status
-                    ? "border-red-400"
-                    : "border-[rgba(184,112,81,0.42)]"
-                } disabled:cursor-not-allowed disabled:bg-[var(--parchment)] disabled:text-[var(--ink-soft)]`}
-                disabled={isBusy}
-                onChange={(event) =>
-                  updateDraft("status", event.currentTarget.value)
-                }
-                value={draft.status}
-              >
-                {statusOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {t(`statuses.${option.value}`)}
-                  </option>
-                ))}
-              </select>
-              {fieldErrors.status ? (
-                <span className="text-xs text-red-700">
-                  {fieldErrors.status}
-                </span>
-              ) : null}
-            </label>
+            <SelectField
+              disabled={isBusy}
+              error={fieldErrors.status}
+              label={t("fields.visibility")}
+              name="status"
+              onChange={updateDraft}
+              options={statusOptions.map((option) => ({
+                label: t(`statuses.${option.value}`),
+                value: option.value,
+              }))}
+              value={draft.status}
+            />
             <TextField
               disabled={isBusy}
               label={t("fields.websiteLink")}

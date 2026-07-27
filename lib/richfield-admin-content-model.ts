@@ -420,7 +420,12 @@ export function readRichfieldAdminContent(
           "",
         imageAssetId: imageAsset ? String(imageAsset.id) : null,
         imageStoragePath: getAssetStoragePath(imageAsset),
-        imageUrl: getAssetUrl(imageAsset),
+        imageUrl:
+          getAssetUrl(imageAsset) ??
+          readString(profileData, "imageUrl") ??
+          readString(profileData, "coverImage") ??
+          readString(metadata, "imageUrl") ??
+          readString(metadata, "coverImage"),
         inquiryType: readString(profileData, "inquiryType") ?? "",
         kind: readString(profileData, "kind") ?? "",
         location: readString(profileData, "location") ?? "",

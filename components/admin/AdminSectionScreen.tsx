@@ -1,13 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense, use } from "react";
 import type { AdminSection } from "@/lib/admin/sections";
 import type { RichfieldContentPage } from "@/lib/admin/content-queries";
 import { AdminContentList } from "./AdminContentList";
 import { AdminCollectionSkeleton } from "./RichfieldAdminSkeleton";
+import type { RichfieldStorageAnalyticsState } from "@/lib/richfield-admin-storage";
+import type { RichfieldStorageFilesState } from "@/lib/richfield-storage-files";
+
+const AdminAccountPanel = dynamic(() =>
+  import("./AdminAccountPanel").then((module) => module.AdminAccountPanel),
+);
+const MembersPanel = dynamic(() =>
+  import("./AdminMembersPanel").then((module) => module.MembersPanel),
+);
+const StoragePanel = dynamic(() =>
+  import("./AdminStoragePanel").then((module) => module.StoragePanel),
+);
 
 function AdminCollectionContent({
   emptyHint,
@@ -46,11 +58,21 @@ function AdminCollectionContent({
  * as broken, a signpost does not.
  */
 export function AdminSectionScreen({
+  driveHref,
   initialPagePromise,
+  membersHref,
   section,
+  storageAnalytics,
+  storageFiles,
+  userEmail,
 }: {
+  driveHref?: string;
   initialPagePromise?: Promise<RichfieldContentPage | undefined>;
+  membersHref?: string;
   section: AdminSection;
+  storageAnalytics?: RichfieldStorageAnalyticsState;
+  storageFiles?: RichfieldStorageFilesState;
+  userEmail?: string | null;
 }) {
   const t = useTranslations("admin");
   const sectionTitleKey =
@@ -89,14 +111,23 @@ export function AdminSectionScreen({
             title={title}
           />
         </Suspense>
+      ) : section.slug === "people" && membersHref ? (
+        <MembersPanel membersHref={membersHref} />
+      ) : section.slug === "account" ? (
+        <AdminAccountPanel userEmail={userEmail ?? null} />
+      ) : section.slug === "files" &&
+        driveHref &&
+        storageAnalytics &&
+        storageFiles ? (
+        <StoragePanel
+          driveHref={driveHref}
+          onResourcesChanged={async () => undefined}
+          storageAnalytics={storageAnalytics}
+          storageFiles={storageFiles}
+        />
       ) : (
-        <section className="parchment-card grid gap-3 p-6">
-          <p className="text-sm leading-6 text-muted">
-            {emptyHint}
-          </p>
-          <Link className="button-secondary w-fit" href="/admin/news">
-            {t("sections.news.title")}
-          </Link>
+        <section className="rounded-xl border border-admin-rule bg-admin-panel p-6 text-sm leading-6 text-admin-ink-soft">
+          {emptyHint}
         </section>
       )}
     </div>

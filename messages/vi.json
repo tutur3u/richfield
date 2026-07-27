@@ -19,7 +19,14 @@
       "signInAgain": "Vui lòng đăng nhập lại"
     },
     "account": {
+      "access": "Quyền truy cập không gian biên tập",
+      "active": "Đang hoạt động",
       "description": "Bạn có thể chỉnh sửa trang web và chọn nội dung khách truy cập nhìn thấy.",
+      "editorFallback": "Biên tập viên website",
+      "language": "Ngôn ngữ quản trị",
+      "preferencesHint": "Tùy chọn ngôn ngữ và giao diện được lưu trên trình duyệt này và áp dụng cho mọi trang quản trị.",
+      "quickActions": "Thao tác nhanh",
+      "quickActionsDescription": "Mở trang web công khai hoặc kết thúc phiên đăng nhập an toàn.",
       "signedIn": "Đã đăng nhập",
       "signOut": "Đăng xuất",
       "title": "Tài khoản",
@@ -205,6 +212,13 @@
       "english": "English",
       "label": "Ngôn ngữ quản trị",
       "vietnamese": "Tiếng Việt"
+    },
+    "members": {
+      "description": "Xem những người có quyền truy cập và quản lý lời mời trong không gian làm việc Tuturuuu.",
+      "empty": "Không tìm thấy thành viên nào trong không gian làm việc.",
+      "loading": "Đang tải thành viên",
+      "manage": "Quản lý thành viên",
+      "team": "Nhóm quản trị website"
     },
     "metadata": {
       "dashboard": "Trang quản trị",

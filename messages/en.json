@@ -19,7 +19,14 @@
       "signInAgain": "Please sign in again"
     },
     "account": {
+      "access": "Editorial workspace access",
+      "active": "Active",
       "description": "You can edit the website and choose what visitors can see.",
+      "editorFallback": "Website editor",
+      "language": "Admin language",
+      "preferencesHint": "Language and theme preferences are saved for this browser and applied across every admin page.",
+      "quickActions": "Quick actions",
+      "quickActionsDescription": "Open the public website or securely end this session.",
       "signedIn": "Signed in",
       "signOut": "Sign out",
       "title": "Account",
@@ -205,6 +212,13 @@
       "english": "English",
       "label": "Admin language",
       "vietnamese": "Tiếng Việt"
+    },
+    "members": {
+      "description": "Review everyone with access and manage invitations in the Tuturuuu workspace.",
+      "empty": "No workspace members were returned.",
+      "loading": "Loading workspace members",
+      "manage": "Manage people",
+      "team": "Site team"
     },
     "metadata": {
       "dashboard": "Dashboard",

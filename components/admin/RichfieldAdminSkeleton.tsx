@@ -36,29 +36,30 @@ function SkeletonListRow() {
 }
 
 /**
- * Section-body skeleton.
+ * Collection-only skeleton.
  *
- * Deliberately only the body. The shell already renders the header, sidebar and
- * theme switch, so the earlier version — which also drew a placeholder header
- * and four rows of fake tabs — stacked ghost chrome on top of the real chrome.
- * That is what made it look broken rather than loading.
+ * The shell and section heading are already useful, stable UI. Only the remote
+ * collection suspends, so only the controls and rows that depend on it get
+ * placeholders. This keeps navigation interactive and prevents a route change
+ * from masquerading as a full-page reload.
  */
-export function RichfieldAdminSkeleton() {
+export function AdminCollectionSkeleton() {
   return (
-    <div aria-busy="true" className="grid min-w-0 gap-8">
+    <section aria-busy="true" className="grid min-w-0 gap-5">
       <span className="sr-only">Loading…</span>
 
-      <div className="grid gap-3 border-b border-admin-rule pb-7">
-        <SkeletonLine className="h-2" width="72px" />
-        <SkeletonBlock className="h-11 w-[min(260px,60%)]" />
-        <SkeletonLine width="min(380px, 75%)" />
+      <div className="flex items-center justify-between gap-4">
+        <SkeletonLine width="72px" />
+        <SkeletonBlock className="h-10 w-24" />
       </div>
 
+      <SkeletonBlock className="h-12 w-full rounded-xl" />
+
       <div className="grid gap-2">
-        {Array.from({ length: 6 }, (_, index) => (
+        {Array.from({ length: 4 }, (_, index) => (
           <SkeletonListRow key={`skeleton-row-${index}`} />
         ))}
       </div>
-    </div>
+    </section>
   );
 }

@@ -279,6 +279,7 @@
       }
     },
     "shell": {
+      "admin": "Admin",
       "dashboardSections": "Dashboard sections",
       "richfield": "Richfield",
       "skipToContent": "Skip to content"

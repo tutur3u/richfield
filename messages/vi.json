@@ -279,6 +279,7 @@
       }
     },
     "shell": {
+      "admin": "Admin",
       "dashboardSections": "Các khu vực quản trị",
       "richfield": "Richfield",
       "skipToContent": "Chuyển đến nội dung"

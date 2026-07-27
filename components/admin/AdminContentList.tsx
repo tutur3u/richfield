@@ -280,7 +280,7 @@ export function AdminContentList({
       ) : null}
 
       {!query.isPending && items.length === 0 && !query.isError ? (
-        <div className="grid min-h-64 place-items-center rounded-2xl border border-admin-rule bg-admin-surface px-6 py-10 text-center shadow-[0_1px_0_rgb(12_31_52_/_0.03)]">
+        <div className="grid min-h-52 place-items-center rounded-2xl border border-admin-rule bg-admin-surface px-6 py-9 text-center shadow-[0_1px_0_rgb(12_31_52_/_0.03)]">
           <div className="grid max-w-md justify-items-center">
             <span className="mb-5 grid size-12 place-items-center rounded-full bg-admin-gold/12 text-admin-copper">
               <NewspaperClipping aria-hidden size={24} />

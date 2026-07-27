@@ -1,19 +1,18 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
-import { ADMIN_THEME_BOOTSTRAP } from "@/components/admin/AdminTheme";
+import { ADMIN_THEME_BOOTSTRAP } from "@/lib/admin/theme";
 
 const globalsCss = readFileSync(
   join(process.cwd(), "app/globals.css"),
   "utf8",
 );
 
-describe("admin theming stays scoped to the dashboard", () => {
-  test("dark tokens hang off the shell attribute, never html or :root", () => {
+describe("admin theming stays scoped to the system layout", () => {
+  test("dark tokens hang off the admin theme attribute, never :root", () => {
     // The public magazine has a fixed cream identity. If a staff member's dark
     // preference could reach <html>, the marketing site would flip with it.
     expect(globalsCss).toContain('[data-admin-theme="dark"]');
-    expect(globalsCss).not.toMatch(/html\[data-admin-theme/);
     expect(globalsCss).not.toMatch(/:root\[data-admin-theme/);
   });
 
@@ -60,10 +59,9 @@ describe("theme bootstrap script", () => {
     expect(ADMIN_THEME_BOOTSTRAP).toContain("catch(e){}");
   });
 
-  test("targets its own parent rather than the document root", () => {
-    // Writing to documentElement here would leak the dashboard theme onto every
-    // public page rendered by the same layout tree.
-    expect(ADMIN_THEME_BOOTSTRAP).toContain("document.currentScript.parentElement");
-    expect(ADMIN_THEME_BOOTSTRAP).not.toContain("documentElement");
+  test("targets the system layout root before the body paints", () => {
+    // The public site uses a different root layout, so setting documentElement
+    // here prevents a flash without changing the magazine theme.
+    expect(ADMIN_THEME_BOOTSTRAP).toContain("document.documentElement");
   });
 });

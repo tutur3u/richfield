@@ -7,6 +7,7 @@ import {
   ADMIN_LOCALE_COOKIE,
   toAdminLocale,
 } from "@/lib/admin/locales";
+import { ADMIN_THEME_BOOTSTRAP } from "@/lib/admin/theme";
 
 // Root layout for the non-localized system surfaces (admin, login,
 // verify-token). These routes intentionally omit localized public chrome:
@@ -34,7 +35,19 @@ export default async function SystemLayout({
   const messages = (await import(`../../messages/${locale}.json`)).default;
 
   return (
-    <html lang={locale} className={fontVariables} data-scroll-behavior="smooth">
+    <html
+      lang={locale}
+      className={fontVariables}
+      data-admin-theme="system"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
+      <head>
+        <script
+          // biome-ignore lint/security/noDangerouslySetInnerHtml: pre-paint theme restore
+          dangerouslySetInnerHTML={{ __html: ADMIN_THEME_BOOTSTRAP }}
+        />
+      </head>
       <BodyChrome>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AdminQueryProvider>{children}</AdminQueryProvider>

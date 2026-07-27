@@ -3,9 +3,39 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
+import { Suspense, use } from "react";
 import type { AdminSection } from "@/lib/admin/sections";
 import type { RichfieldContentPage } from "@/lib/admin/content-queries";
 import { AdminContentList } from "./AdminContentList";
+import { AdminCollectionSkeleton } from "./RichfieldAdminSkeleton";
+
+function AdminCollectionContent({
+  emptyHint,
+  initialPagePromise,
+  section,
+  title,
+}: {
+  emptyHint: string;
+  initialPagePromise: Promise<RichfieldContentPage | undefined>;
+  section: AdminSection & { collectionKey: NonNullable<AdminSection["collectionKey"]> };
+  title: string;
+}) {
+  const initialPage = use(initialPagePromise);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  return (
+    <AdminContentList
+      collectionKey={section.collectionKey}
+      emptyHint={emptyHint}
+      initialPage={initialPage}
+      onOpen={(id) =>
+        router.push(`${pathname}/${id === null ? "new" : encodeURIComponent(id)}`)
+      }
+      title={title}
+    />
+  );
+}
 
 /**
  * The body of one dashboard section.
@@ -16,14 +46,12 @@ import { AdminContentList } from "./AdminContentList";
  * as broken, a signpost does not.
  */
 export function AdminSectionScreen({
-  initialPage,
+  initialPagePromise,
   section,
 }: {
-  initialPage?: RichfieldContentPage;
+  initialPagePromise?: Promise<RichfieldContentPage | undefined>;
   section: AdminSection;
 }) {
-  const pathname = usePathname();
-  const router = useRouter();
   const t = useTranslations("admin");
   const sectionTitleKey =
     `sections.${section.slug}.title` as Parameters<typeof t>[0];
@@ -36,12 +64,12 @@ export function AdminSectionScreen({
   const emptyHint = t(sectionEmptyKey);
 
   return (
-    <div className="grid min-w-0 gap-8">
-      <header className="grid gap-2 border-b border-admin-rule pb-7">
+    <div className="grid min-w-0 gap-7">
+      <header className="grid gap-2 border-b border-admin-rule pb-6">
         <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-admin-clay">
           {t(`groups.${section.group}`)}
         </p>
-        <h1 className="font-display text-[clamp(2.5rem,4vw,3.75rem)] leading-none tracking-[-0.025em] text-admin-ink">
+        <h1 className="font-display text-[clamp(2.35rem,3.5vw,3.35rem)] leading-none tracking-[-0.025em] text-admin-ink">
           {title}
         </h1>
         <p className="max-w-[62ch] text-[15px] leading-6 text-admin-ink-soft">
@@ -49,16 +77,18 @@ export function AdminSectionScreen({
         </p>
       </header>
 
-      {section.collectionKey ? (
-        <AdminContentList
-          collectionKey={section.collectionKey}
-          emptyHint={emptyHint}
-          initialPage={initialPage}
-          onOpen={(id) =>
-            router.push(`${pathname}/${id === null ? "new" : encodeURIComponent(id)}`)
-          }
-          title={title}
-        />
+      {section.collectionKey && initialPagePromise ? (
+        <Suspense fallback={<AdminCollectionSkeleton />}>
+          <AdminCollectionContent
+            emptyHint={emptyHint}
+            initialPagePromise={initialPagePromise}
+            section={{
+              ...section,
+              collectionKey: section.collectionKey,
+            }}
+            title={title}
+          />
+        </Suspense>
       ) : (
         <section className="parchment-card grid gap-3 p-6">
           <p className="text-sm leading-6 text-muted">

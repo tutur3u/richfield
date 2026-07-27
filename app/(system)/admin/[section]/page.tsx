@@ -12,6 +12,34 @@ import { ADMIN_LOCALE_COOKIE, toAdminLocale } from "@/lib/admin/locales";
 import { getRichfieldAdminSession } from "@/lib/richfield-admin-api";
 import { refreshRichfieldAdminContent } from "@/lib/richfield-admin-content";
 
+async function loadInitialContentPage(
+  collectionKey: NonNullable<
+    ReturnType<typeof findAdminSection>
+  >["collectionKey"],
+) {
+  if (!collectionKey) return undefined;
+
+  const session = await getRichfieldAdminSession();
+  if (!session) return undefined;
+
+  const locale = toAdminLocale(
+    (await cookies()).get(ADMIN_LOCALE_COOKIE)?.value,
+  );
+  const items = await refreshRichfieldAdminContent(
+    session.accessToken,
+    collectionKey,
+    locale,
+  );
+  const firstItems = items.slice(0, ADMIN_CONTENT_PAGE_SIZE);
+
+  return {
+    items: firstItems,
+    nextPage: firstItems.length < items.length ? 2 : null,
+    page: 1,
+    total: items.length,
+  };
+}
+
 /**
  * One route per dashboard section.
  *
@@ -60,29 +88,14 @@ export default async function AdminSectionPage({
     redirect(`/admin/${DEFAULT_ADMIN_SECTION_SLUG}`);
   }
 
-  let initialPage;
-  const session = section.collectionKey
-    ? await getRichfieldAdminSession()
-    : null;
+  const initialPagePromise = section.collectionKey
+    ? loadInitialContentPage(section.collectionKey)
+    : undefined;
 
-  if (session && section.collectionKey) {
-    const locale = toAdminLocale(
-      (await cookies()).get(ADMIN_LOCALE_COOKIE)?.value,
-    );
-    const items = await refreshRichfieldAdminContent(
-      session.accessToken,
-      section.collectionKey,
-      locale,
-    );
-    const firstItems = items.slice(0, ADMIN_CONTENT_PAGE_SIZE);
-    initialPage = {
-      items: firstItems,
-      nextPage:
-        firstItems.length < items.length ? 2 : null,
-      page: 1,
-      total: items.length,
-    };
-  }
-
-  return <AdminSectionScreen initialPage={initialPage} section={section} />;
+  return (
+    <AdminSectionScreen
+      initialPagePromise={initialPagePromise}
+      section={section}
+    />
+  );
 }

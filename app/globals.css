@@ -514,9 +514,10 @@ button:focus-visible {
 /* -----------------------------------------------------------------------
    Admin theming (light / dark / system)
 
-   Scoped to [data-admin-theme] on the admin shell, never on <html>, so the
-   public magazine keeps its fixed cream identity — a marketing site that
-   flipped dark because a staff member set a preference would be a bug.
+   Scoped to [data-admin-theme] on the system root layout. The public magazine
+   uses a separate root layout without that attribute, so it keeps its fixed
+   cream identity while admin/login can establish the stored theme before the
+   body paints.
 
    Dark values re-point the same tokens the admin utilities already use, so
    every admin surface inverts together with no component changes.

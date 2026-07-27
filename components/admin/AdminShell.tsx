@@ -28,7 +28,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 
         return (
           <div className="grid gap-1.5" key={group.id}>
-            <p className="px-3 text-[11px] font-black uppercase tracking-[0.22em] text-admin-ink-soft/70">
+            <p className="px-3 text-[11px] font-black uppercase tracking-[0.22em] text-muted/70">
               {group.label}
             </p>
             {sections.map((section) => {
@@ -41,8 +41,8 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                   aria-current={active ? "page" : undefined}
                   className={`min-h-11 px-3 py-2 text-sm font-bold transition-colors ${
                     active
-                      ? "border-l-2 border-admin-clay bg-admin-clay/10 text-admin-clay"
-                      : "border-l-2 border-transparent text-admin-ink-soft hover:bg-white/60 hover:text-admin-navy"
+                      ? "border-l-2 border-gold-strong bg-gold-strong/10 text-gold-strong"
+                      : "border-l-2 border-transparent text-muted hover:bg-paper hover:text-ink"
                   }`}
                   href={href}
                   key={section.slug}
@@ -70,7 +70,7 @@ export function AdminShell({
 
   return (
     <div className="section-band min-h-screen">
-      <header className="border-b border-admin-rule bg-white/50">
+      <header className="border-b border-line bg-paper">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             {/* The sidebar collapses on small screens; without this the only
@@ -85,7 +85,7 @@ export function AdminShell({
               {menuOpen ? "Close" : "Menu"}
             </button>
             <Link
-              className="font-display text-lg leading-none text-admin-navy"
+              className="font-display text-lg leading-none text-ink"
               href="/admin"
             >
               Richfield
@@ -93,7 +93,7 @@ export function AdminShell({
           </div>
           <div className="flex items-center gap-2">
             {userEmail ? (
-              <span className="hidden text-xs text-admin-ink-soft sm:block">
+              <span className="hidden text-xs text-muted sm:block">
                 {userEmail}
               </span>
             ) : null}

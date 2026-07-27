@@ -43,17 +43,17 @@ export function RichfieldAdminSessionRestorer({ loginHref }: { loginHref: string
       <section className="parchment-card w-full max-w-[460px] p-7 sm:p-9">
         <span
           aria-hidden
-          className="block h-px w-12 bg-admin-gold opacity-80"
+          className="block h-px w-12 bg-gold opacity-80"
         />
         <p className="script-label mt-5">
           {failed ? "Session ended" : "One moment"}
         </p>
-        <h1 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-admin-navy">
+        <h1 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-ink">
           {failed ? "Please sign in again" : "Restoring your access"}
         </h1>
         <p
           aria-live="polite"
-          className="mt-3 max-w-[38ch] text-sm leading-6 text-admin-ink-soft"
+          className="mt-3 max-w-[38ch] text-sm leading-6 text-muted"
         >
           {failed
             ? "Your session has expired. Signing in again will bring you straight back here."

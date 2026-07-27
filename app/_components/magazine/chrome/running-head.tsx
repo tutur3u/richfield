@@ -4,9 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-// `/admin` lives outside the `[locale]` segment, so it must bypass the i18n
-// Link (which would prefix a locale and 404) while still routing client-side.
-import NextLink from "next/link";
 import { createPortal } from "react-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { useFocusTrap } from "@/app/_hooks/use-focus-trap";
@@ -145,7 +142,6 @@ export function RunningHead({
                 </NavTopLink>
               );
             })}
-            <AdminNavLink label={t("admin")} />
             <LanguageSwitcher className="ml-2" />
           </nav>
 
@@ -172,7 +168,6 @@ export function RunningHead({
         locale={locale}
         nav={nav}
         strings={{
-          admin: t("admin"),
           closeMenu: t("closeMenu"),
           drawerAria: t("drawerAria"),
           homeAria: t("homeAria"),
@@ -219,25 +214,6 @@ function NavTopLink({
     <a href={hashHref(locale, href)} aria-current={active ? "location" : undefined} className={cls}>
       {inner}
     </a>
-  );
-}
-
-/**
- * Staff entry point to the content dashboard. `/admin` lives outside the
- * `[locale]` segment, so it is a plain anchor — the i18n Link would prefix a
- * locale and 404. Set apart from the marketing items by a hairline rule and a
- * lighter weight: it is a tool, not a destination we are selling.
- */
-function AdminNavLink({ label }: { label: string }) {
-  return (
-    <NextLink
-      href="/admin"
-      // border-current rather than a fixed ink tone: the bar turns transparent
-      // with cream type over dark image heroes, where an ink divider vanishes.
-      className="v2-mono v2-size-folio ml-1 border-l border-current pl-[clamp(16px,1.6vw,28px)] opacity-45 transition-opacity duration-200 hover:opacity-80"
-    >
-      {label}
-    </NextLink>
   );
 }
 
@@ -351,7 +327,6 @@ function MobileNav({
   locale: string;
   nav: NavItem[];
   strings: {
-    admin: string;
     closeMenu: string;
     drawerAria: string;
     homeAria: string;
@@ -454,14 +429,6 @@ function MobileNav({
             ),
           )}
 
-          {/* Staff entry point; /admin sits outside [locale], so no i18n Link. */}
-          <NextLink
-            href="/admin"
-            onClick={onClose}
-            className="border-b border-line py-5 font-display text-[clamp(20px,4.4vw,28px)] text-ink/45 transition-colors hover:text-gold"
-          >
-            {strings.admin}
-          </NextLink>
         </nav>
 
         <div className="flex flex-col gap-4 border-t border-line bg-paper/60 px-5 py-6 sm:px-7">

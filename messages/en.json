@@ -48,8 +48,7 @@
     "closeMenu": "Close menu",
     "homeAria": "Richfield — home",
     "drawerAria": "Site navigation",
-    "countriesLine": "Vietnam · Malaysia · China",
-    "admin": "Admin"
+    "countriesLine": "Vietnam · Malaysia · China"
   },
   "langSwitcher": {
     "aria": "Switch language"
@@ -165,7 +164,7 @@
     "applyNow": "Apply now ↗"
   },
   "insightsPage": {
-    "eyebrow": "News & updates",
+    "eyebrow": "News",
     "heading": "Perspective from across our *markets*.",
     "intro": "Company news, partnership stories, and observations from more than three decades of building brands in Southeast Asia.",
     "emptyTitle": "The next story is being prepared.",

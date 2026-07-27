@@ -48,8 +48,7 @@
     "closeMenu": "Đóng menu",
     "homeAria": "Richfield — trang chủ",
     "drawerAria": "Điều hướng trang",
-    "countriesLine": "Việt Nam · Malaysia · Trung Quốc",
-    "admin": "Quản trị"
+    "countriesLine": "Việt Nam · Malaysia · Trung Quốc"
   },
   "langSwitcher": {
     "aria": "Chuyển ngôn ngữ"
@@ -165,7 +164,7 @@
     "applyNow": "Ứng tuyển ngay ↗"
   },
   "insightsPage": {
-    "eyebrow": "Tin tức & cập nhật",
+    "eyebrow": "Tin Tức",
     "heading": "Góc nhìn từ khắp các *thị trường* của chúng tôi.",
     "intro": "Tin tức công ty, câu chuyện hợp tác và những quan sát từ hơn ba thập kỷ xây dựng thương hiệu tại Đông Nam Á.",
     "emptyTitle": "Câu chuyện tiếp theo đang được chuẩn bị.",

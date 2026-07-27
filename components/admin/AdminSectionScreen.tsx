@@ -19,10 +19,10 @@ export function AdminSectionScreen({ section }: { section: AdminSection }) {
   return (
     <div className="grid min-w-0 gap-6">
       <header className="grid gap-1">
-        <h1 className="font-display text-[clamp(1.8rem,3vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-admin-navy">
+        <h1 className="font-display text-[clamp(1.8rem,3vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-ink">
           {section.title}
         </h1>
-        <p className="max-w-[60ch] text-sm leading-6 text-admin-ink-soft">
+        <p className="max-w-[60ch] text-sm leading-6 text-muted">
           {section.description}
         </p>
       </header>
@@ -34,10 +34,10 @@ export function AdminSectionScreen({ section }: { section: AdminSection }) {
               opening a panel that cannot save. */}
           {selectedId !== null ? (
             <div
-              className="flex flex-wrap items-center justify-between gap-3 border border-admin-rule bg-white/60 p-4"
+              className="flex flex-wrap items-center justify-between gap-3 border border-line bg-paper p-4"
               role="status"
             >
-              <p className="text-sm text-admin-ink-soft">
+              <p className="text-sm text-muted">
                 Editing opens in the full dashboard for now.
               </p>
               <div className="flex gap-2">
@@ -64,7 +64,7 @@ export function AdminSectionScreen({ section }: { section: AdminSection }) {
         </>
       ) : (
         <section className="parchment-card grid gap-3 p-6">
-          <p className="text-sm leading-6 text-admin-ink-soft">
+          <p className="text-sm leading-6 text-muted">
             {section.emptyHint || "Manage this from your Tuturuuu workspace."}
           </p>
           <Link className="button-secondary w-fit" href="/admin">

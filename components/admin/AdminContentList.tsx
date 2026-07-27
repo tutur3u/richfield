@@ -74,8 +74,8 @@ function useInfiniteScroll(
 
 function statusTone(status: string) {
   if (status === "published") return "bg-green/12 text-forest";
-  if (status === "archived") return "bg-admin-ink-soft/12 text-admin-ink-soft";
-  return "bg-admin-gold/18 text-admin-copper-dark";
+  if (status === "archived") return "bg-ink/8 text-muted";
+  return "bg-gold/18 text-gold-strong";
 }
 
 function statusLabel(status: string) {
@@ -98,14 +98,14 @@ function ContentRow({
       aria-current={selected ? "true" : undefined}
       className={`grid w-full gap-1.5 border p-4 text-left transition-colors ${
         selected
-          ? "border-admin-clay bg-admin-clay/8"
-          : "border-admin-rule bg-white/45 hover:border-admin-rule-strong hover:bg-white/75"
+          ? "border-gold-strong bg-gold-strong/[0.08]"
+          : "border-line bg-paper hover:border-ink/25 hover:bg-paper"
       }`}
       onClick={() => onOpen(item.id)}
       type="button"
     >
       <span className="flex items-start justify-between gap-3">
-        <span className="font-display text-lg leading-tight text-admin-navy">
+        <span className="font-display text-lg leading-tight text-ink">
           {item.title || "Untitled"}
         </span>
         <span
@@ -117,7 +117,7 @@ function ContentRow({
         </span>
       </span>
       {item.slug ? (
-        <span className="truncate text-xs text-admin-ink-soft">/{item.slug}</span>
+        <span className="truncate text-xs text-muted">/{item.slug}</span>
       ) : null}
     </button>
   );
@@ -187,10 +187,10 @@ export function AdminContentList({
     <section className="grid min-w-0 gap-4">
       <header className="grid gap-3 sm:flex sm:items-end sm:justify-between">
         <div className="min-w-0">
-          <h2 className="font-display text-2xl leading-tight text-admin-navy">
+          <h2 className="font-display text-2xl leading-tight text-ink">
             {title}
           </h2>
-          <p className="mt-1 text-sm text-admin-ink-soft">
+          <p className="mt-1 text-sm text-muted">
             {query.isPending
               ? "Loading…"
               : `${total} ${total === 1 ? "item" : "items"}${
@@ -212,7 +212,7 @@ export function AdminContentList({
           Search {title}
         </label>
         <input
-          className="min-h-11 w-full border border-admin-rule bg-white/70 px-3 text-sm text-admin-ink placeholder:text-admin-ink-soft/70 focus:border-admin-clay focus:outline-none"
+          className="min-h-11 w-full border border-line bg-paper px-3 text-sm text-ink placeholder:text-muted/70 focus:border-gold-strong focus:outline-none"
           id={searchId}
           onChange={(event) => setSearch(event.target.value)}
           placeholder={`Search ${title.toLowerCase()}…`}
@@ -223,7 +223,7 @@ export function AdminContentList({
 
       {query.isError ? (
         <div className="border border-red-300/60 bg-red-50/60 p-4" role="alert">
-          <p className="text-sm text-admin-ink">
+          <p className="text-sm text-ink">
             {query.error instanceof Error
               ? query.error.message
               : "Something went wrong."}
@@ -243,7 +243,7 @@ export function AdminContentList({
           <span className="sr-only">Loading {title}…</span>
           {Array.from({ length: 5 }, (_, index) => (
             <div
-              className="grid gap-2 border border-admin-rule bg-white/45 p-4"
+              className="grid gap-2 border border-line bg-paper p-4"
               key={`content-skeleton-${index}`}
             >
               <div className="flex items-center justify-between gap-4">
@@ -257,11 +257,11 @@ export function AdminContentList({
       ) : null}
 
       {!query.isPending && items.length === 0 && !query.isError ? (
-        <div className="border border-dashed border-admin-rule-strong bg-white/40 p-8 text-center">
-          <p className="font-display text-xl text-admin-navy">
+        <div className="border border-dashed border-ink/25 bg-paper p-8 text-center">
+          <p className="font-display text-xl text-ink">
             {debouncedSearch ? "Nothing matches that search" : "Nothing here yet"}
           </p>
-          <p className="mx-auto mt-2 max-w-[42ch] text-sm leading-6 text-admin-ink-soft">
+          <p className="mx-auto mt-2 max-w-[42ch] text-sm leading-6 text-muted">
             {debouncedSearch
               ? "Try a different word, or clear the search to see everything."
               : emptyHint}

@@ -429,73 +429,71 @@ button:focus-visible {
 /* -----------------------------------------------------------------------
    Admin surface (/admin, /admin/login, /verify-token)
 
-   These class names were used throughout the admin components but never
-   defined anywhere, so every one was a no-op: cards rendered with no surface
-   or border, and the sign-in call to action was an unstyled link.
+   Built from the site's own tokens — cream, paper, ink, gold, line — and its
+   type voices, rather than the separate navy/parchment palette the dashboard
+   used to carry. The tool an editor uses should look like the magazine it
+   edits; two visual languages in one product only made the admin feel like a
+   different, older application.
 
-   Authored as Tailwind v4 `@utility` rules so they compose with variants
-   (hover:, sm:, focus-visible:) and resolve against the theme tokens above
-   rather than duplicating literals. Only the gradient, inset highlight, and
-   keyframes drop to raw CSS — Tailwind has no utility for those.
+   Tailwind v4 @utility rules so they compose with variants and resolve through
+   the theme scales. Only the gradient and keyframes drop to raw CSS.
    ----------------------------------------------------------------------- */
 
-/* Page band the admin screens sit on: warm paper, not the site's cream, so the
-   tool reads as a distinct surface from the published magazine. */
+/* Same paper→cream wash the public spreads sit on. */
 @utility section-band {
-  @apply text-admin-ink;
-  background:
-    radial-gradient(
-      120% 90% at 50% 0%,
-      --alpha(var(--color-admin-gold) / 10%) 0%,
-      transparent 62%
-    ),
-    linear-gradient(180deg, #fbf6ec 0%, var(--color-admin-parchment) 100%);
+  @apply text-ink;
+  background: linear-gradient(180deg, var(--color-paper) 0%, var(--color-cream) 100%);
 }
 
-/* The one surface primitive. A hairline copper rule and a low, wide shadow —
-   paper on a desk, not a floating material card. Square by intent: the whole
-   site is built on right angles. */
+/* The one surface primitive: paper on cream, a hairline rule, square corners.
+   No shadow — the site builds depth from rules and space, not elevation. */
 @utility parchment-card {
-  @apply border border-admin-rule bg-admin-surface;
-  box-shadow:
-    0 1px 0 rgb(255 255 255 / 70%) inset,
-    0 18px 44px -28px rgb(36 31 26 / 42%);
+  @apply border border-line bg-paper;
 }
 
-/* Small tracked eyebrow above a display heading. */
+/* The site's eyebrow treatment, matched to the Eyebrow primitive so a label in
+   the dashboard reads exactly like a label on a spread. */
 @utility script-label {
-  @apply text-[clamp(11px,0.9vw,13px)] font-bold uppercase tracking-[0.24em] text-admin-clay;
+  @apply text-[11px] font-medium uppercase tracking-[0.32em] text-gold;
 }
 
-/* Shared button geometry. Sized for touch (44px) and never below it. */
 @utility button-base {
-  @apply inline-flex min-h-11 items-center justify-center gap-2 px-5
-    text-center text-sm font-extrabold tracking-[0.04em]
-    transition-colors duration-200
-    focus-visible:outline-2 focus-visible:outline-offset-2
-    focus-visible:outline-admin-gold
-    disabled:cursor-not-allowed disabled:opacity-55;
+  /* v2-mono / v2-size-folio are plain CSS classes, not Tailwind utilities, so
+     their declarations are inlined rather than @applied. */
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: clamp(11px, 0.9vw, 13px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  @apply inline-flex min-h-11 w-fit items-center justify-center gap-2 border
+    px-[clamp(16px,1.6vw,24px)] py-[clamp(9px,1vw,12px)]
+    transition-[color,background-color,border-color,scale] duration-300 ease-out
+    focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold
+    disabled:cursor-not-allowed disabled:opacity-55
+    motion-safe:active:scale-[0.96];
 }
 
+/* The site's CTA: outlined in gold, filling on hover rather than shouting by
+   default. Editorial, not a SaaS button. */
 @utility button-primary {
-  @apply button-base border border-admin-copper-dark bg-admin-copper
-    text-[#fffdf8] hover:bg-admin-copper-dark;
+  @apply button-base border-gold-strong bg-gold-strong/[0.06] text-gold-strong
+    hover:bg-gold-strong hover:text-cream
+    focus-visible:bg-gold-strong focus-visible:text-cream;
 }
 
 @utility button-secondary {
-  @apply button-base border border-admin-rule-strong bg-white/50
-    text-admin-navy hover:border-admin-clay/70 hover:bg-white/90;
+  @apply button-base border-line bg-transparent text-ink/70
+    hover:border-ink/30 hover:text-ink;
 }
 
-/* Skeleton shimmer for the dashboard's loading state. Reduced-motion users get
-   a still block rather than a pulsing one — the layout still communicates what
-   is coming. */
+/* Skeleton shimmer. Reduced-motion users get a still block — the layout still
+   says what is coming. */
 @utility admin-skeleton {
   background: linear-gradient(
     90deg,
-    rgb(184 112 81 / 13%) 0%,
-    rgb(184 112 81 / 20%) 50%,
-    rgb(184 112 81 / 13%) 100%
+    oklch(0.86 0.018 82 / 0.5) 0%,
+    oklch(0.86 0.018 82 / 0.85) 50%,
+    oklch(0.86 0.018 82 / 0.5) 100%
   );
   background-size: 200% 100%;
 

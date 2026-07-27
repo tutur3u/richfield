@@ -18,12 +18,12 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
       <section className="parchment-card grid w-full max-w-[880px] overflow-hidden md:grid-cols-[1.05fr_1fr]">
         {/* Masthead. Hidden below md: on a phone it would push the action
             below the fold for no gain. */}
-        <div className="relative hidden flex-col justify-between bg-admin-navy p-8 text-admin-parchment md:flex lg:p-10">
+        <div className="relative hidden flex-col justify-between bg-ink p-8 text-cream md:flex lg:p-10">
           <div
             aria-hidden
-            className="absolute inset-x-8 top-0 h-px bg-admin-gold opacity-70 lg:inset-x-10"
+            className="absolute inset-x-8 top-0 h-px bg-gold opacity-70 lg:inset-x-10"
           />
-          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-admin-gold">
+          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-gold">
             Richfield
           </p>
           <div className="py-10">
@@ -32,12 +32,12 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
               <br />
               the magazine.
             </h1>
-            <p className="mt-5 max-w-[34ch] text-sm leading-7 text-admin-parchment/70">
+            <p className="mt-5 max-w-[34ch] text-sm leading-7 text-cream/70">
               Write company updates, open and close positions, and read what
               visitors send you — all from one place.
             </p>
           </div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-admin-parchment/45">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-cream/45">
             Staff access only
           </p>
         </div>
@@ -52,10 +52,10 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
             width={44}
           />
           <p className="script-label">Sign in</p>
-          <h2 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-admin-navy">
+          <h2 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-ink">
             Continue with Tuturuuu
           </h2>
-          <p className="mt-3 max-w-[36ch] text-sm leading-6 text-admin-ink-soft">
+          <p className="mt-3 max-w-[36ch] text-sm leading-6 text-muted">
             Your Tuturuuu account carries your access. You will come straight
             back here once you have signed in.
           </p>
@@ -69,7 +69,7 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
             </Link>
           </div>
 
-          <p className="mt-6 border-t border-admin-rule pt-4 text-xs leading-5 text-admin-ink-soft">
+          <p className="mt-6 border-t border-line pt-4 text-xs leading-5 text-muted">
             Need access? Ask a Richfield administrator to add you to the
             workspace.
           </p>

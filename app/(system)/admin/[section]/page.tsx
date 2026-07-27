@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { RichfieldAdminDashboard } from "@/components/admin/RichfieldAdminDashboard";
-import { RichfieldAdminLoginPanel } from "@/components/admin/RichfieldAdminLoginPanel";
-import { RichfieldAdminSessionRestorer } from "@/components/admin/RichfieldAdminSessionRestorer";
 import { RichfieldAdminSkeleton } from "@/components/admin/RichfieldAdminSkeleton";
 import {
   type AdminSection,
@@ -22,7 +20,6 @@ import {
   buildRichfieldDriveUrl,
   buildRichfieldWorkspaceUrl,
 } from "@/lib/richfield-config";
-import { getRichfieldCentralizedLoginHref } from "../login-link";
 
 export const dynamic = "force-dynamic";
 
@@ -128,15 +125,12 @@ export default async function AdminSectionPage({
     redirect(`/admin/${DEFAULT_ADMIN_SECTION_SLUG}`);
   }
 
-  const loginHref = await getRichfieldCentralizedLoginHref("dashboard");
+  // The layout has already established there is a session; without one it
+  // renders the sign-in screen and this never runs.
   const sessionState = await getRichfieldAdminSessionReadState();
 
-  if (sessionState.status === "unauthenticated") {
-    return <RichfieldAdminLoginPanel loginHref={loginHref} />;
-  }
-
-  if (sessionState.status === "refreshable") {
-    return <RichfieldAdminSessionRestorer loginHref={loginHref} />;
+  if (sessionState.status !== "authenticated") {
+    return null;
   }
 
   return (

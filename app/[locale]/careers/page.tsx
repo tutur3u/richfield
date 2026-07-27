@@ -59,6 +59,27 @@ export default async function CareersPage({
       <main className="v2-bg-morph text-ink">
         <CareersHero photos={careerHeroImages} locale={locale} />
 
+        {/* Jump straight to the roles. The vacancies list closes the page,
+            which reads well as a narrative but buried the one thing most
+            visitors came for behind five sections of scrolling. */}
+        <div className="v2-display border-y border-current/12 px-6 sm:px-10 lg:px-12">
+          <div className="mx-auto flex max-w-[1500px] flex-wrap items-center justify-between gap-4 py-5">
+            <p className="v2-mono v2-size-folio opacity-70">
+              {t("vacanciesEyebrow")}
+            </p>
+            <a
+              className="v2-mono v2-size-folio w-fit text-gold-strong underline decoration-gold-strong underline-offset-[6px]"
+              href="#vacancies"
+            >
+              {openPositions.length === 0
+                ? t("jumpToRolesNone")
+                : openPositions.length === 1
+                  ? t("jumpToRolesOne")
+                  : t("jumpToRolesMany", { count: openPositions.length })}
+            </a>
+          </div>
+        </div>
+
         {/* Life at Richfield — intro + core values (thumb-index foldout) */}
         <LifeValues locale={locale} />
 
@@ -196,8 +217,12 @@ export default async function CareersPage({
           </div>
         </section>
 
-        {/* Vacancies */}
-        <section className="v2-display px-6 py-[var(--v2-section)] sm:px-10 lg:px-12 text-ink">
+        {/* Vacancies. scroll-mt clears the fixed running head so the heading is
+            not hidden under the bar when the jump link lands here. */}
+        <section
+          className="v2-display scroll-mt-[var(--v2-runhead)] px-6 py-[var(--v2-section)] text-ink sm:px-10 lg:px-12"
+          id="vacancies"
+        >
           <RevealOnScroll className="mx-auto flex max-w-[1500px] flex-col gap-y-[var(--v2-flow)]">
             <Eyebrow>{t("vacanciesEyebrow")}</Eyebrow>
             {openPositions.length === 0 ? (

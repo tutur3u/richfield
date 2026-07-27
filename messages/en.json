@@ -32,7 +32,7 @@
         "href": "/brands"
       },
       {
-        "label": "Insights",
+        "label": "News",
         "href": "/insights"
       },
       {
@@ -99,8 +99,8 @@
       "description": "Richfield is a place where people stay. Core values, people-first leadership, community impact, and life across our offices."
     },
     "insights": {
-      "title": "Insights",
-      "description": "News, market perspectives, partnership stories, and updates from Richfield Group."
+      "title": "News",
+      "description": "Company news, market perspectives, partnership stories, and updates from Richfield Group."
     },
     "contact": {
       "title": "Contact",
@@ -147,7 +147,10 @@
     "workMode": "Work mode",
     "viewPosition": "View position →",
     "videoTitle": "Richfield áo dài cultural-heritage film",
-    "videoCaption": "Cultural preservation — the áo dài association"
+    "videoCaption": "Cultural preservation — the áo dài association",
+    "jumpToRolesOne": "View the open position",
+    "jumpToRolesMany": "View all {count} open positions",
+    "jumpToRolesNone": "No open positions right now — get in touch"
   },
   "careerDetailPage": {
     "allOpportunities": "← All opportunities",
@@ -162,13 +165,13 @@
     "applyNow": "Apply now ↗"
   },
   "insightsPage": {
-    "eyebrow": "Insights & updates",
+    "eyebrow": "News & updates",
     "heading": "Perspective from across our *markets*.",
-    "intro": "Partnership stories, company news, and practical observations from more than three decades of building brands in Southeast Asia.",
+    "intro": "Company news, partnership stories, and observations from more than three decades of building brands in Southeast Asia.",
     "emptyTitle": "The next story is being prepared.",
     "emptyBody": "New Richfield updates will appear here as they are published.",
     "readStory": "Read story →",
-    "allInsights": "← All insights"
+    "allInsights": "← All news"
   },
   "contactPage": {
     "eyebrow": "Contact",

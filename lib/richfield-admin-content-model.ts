@@ -254,7 +254,12 @@ function getBlockType(block: Record<string, unknown>) {
 function getAssetUrl(asset: Record<string, unknown> | undefined) {
   if (!asset) return null;
 
+  // publicPath first, for the same reason the public site prefers it: the
+  // delivery asset endpoint only redirects back to this path, and next/image
+  // rejects a remote host absent from remotePatterns — so preferring the
+  // endpoint turns a working local image into a broken preview.
   return (
+    readString(readRecord(asset.metadata), "publicPath") ??
     readString(asset, "asset_url") ??
     readString(asset, "assetUrl") ??
     readString(asset, "source_url") ??

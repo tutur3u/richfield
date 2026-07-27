@@ -335,12 +335,26 @@ function getLeadImage(entry: DeliveryEntry | null | undefined) {
   );
 }
 
+/**
+ * The path this asset was published from, when the CMS still records it.
+ *
+ * Preferred over the delivery asset endpoint because that endpoint answers with
+ * a 307 straight back to this same path, and `next/image` refuses a remote src
+ * whose host is not listed in `remotePatterns` — so routing a local file
+ * through it turns a working image into a broken one, and adds a redirect per
+ * request on the way.
+ */
+function getPublicPath(image: DeliveryAsset | null) {
+  return sourceUrlToImageSrc(asString(asRecord(image?.metadata).publicPath));
+}
+
 function getImageUrl(entry: DeliveryEntry, apiBaseUrl: string) {
   const image = getLeadImage(entry);
   return (
+    getPublicPath(image) ??
     sourceUrlToImageSrc(image?.assetUrl) ??
-    absolutizeUrl(apiBaseUrl, image?.assetUrl ?? null) ??
     sourceUrlToImageSrc(image?.source_url) ??
+    absolutizeUrl(apiBaseUrl, image?.assetUrl ?? null) ??
     absolutizeUrl(apiBaseUrl, image?.source_url ?? null)
   );
 }

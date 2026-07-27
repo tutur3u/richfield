@@ -32,7 +32,7 @@
         "href": "/brands"
       },
       {
-        "label": "Góc nhìn",
+        "label": "Tin Tức",
         "href": "/insights"
       },
       {
@@ -99,8 +99,8 @@
       "description": "Richfield là nơi mọi người gắn bó lâu dài. Giá trị cốt lõi, lãnh đạo đặt con người lên trước, đóng góp cộng đồng và cuộc sống tại các văn phòng của chúng tôi."
     },
     "insights": {
-      "title": "Góc nhìn",
-      "description": "Tin tức, góc nhìn thị trường, câu chuyện hợp tác và cập nhật từ Richfield Group."
+      "title": "Tin Tức",
+      "description": "Tin tức công ty, góc nhìn thị trường, câu chuyện hợp tác và cập nhật từ Richfield Group."
     },
     "contact": {
       "title": "Liên hệ",
@@ -147,7 +147,10 @@
     "workMode": "Hình thức làm việc",
     "viewPosition": "Xem vị trí →",
     "videoTitle": "Phim về di sản văn hóa áo dài của Richfield",
-    "videoCaption": "Gìn giữ văn hóa — hội áo dài"
+    "videoCaption": "Gìn giữ văn hóa — hội áo dài",
+    "jumpToRolesOne": "Xem vị trí đang tuyển",
+    "jumpToRolesMany": "Xem tất cả {count} vị trí đang tuyển",
+    "jumpToRolesNone": "Hiện chưa có vị trí tuyển dụng — hãy liên hệ với chúng tôi"
   },
   "careerDetailPage": {
     "allOpportunities": "← Tất cả cơ hội",
@@ -162,13 +165,13 @@
     "applyNow": "Ứng tuyển ngay ↗"
   },
   "insightsPage": {
-    "eyebrow": "Góc nhìn & cập nhật",
+    "eyebrow": "Tin tức & cập nhật",
     "heading": "Góc nhìn từ khắp các *thị trường* của chúng tôi.",
-    "intro": "Câu chuyện hợp tác, tin tức công ty và những quan sát thực tiễn từ hơn ba thập kỷ xây dựng thương hiệu tại Đông Nam Á.",
+    "intro": "Tin tức công ty, câu chuyện hợp tác và những quan sát từ hơn ba thập kỷ xây dựng thương hiệu tại Đông Nam Á.",
     "emptyTitle": "Câu chuyện tiếp theo đang được chuẩn bị.",
     "emptyBody": "Các cập nhật mới từ Richfield sẽ xuất hiện tại đây khi được xuất bản.",
     "readStory": "Đọc bài viết →",
-    "allInsights": "← Tất cả góc nhìn"
+    "allInsights": "← Tất cả tin tức"
   },
   "contactPage": {
     "eyebrow": "Liên hệ",

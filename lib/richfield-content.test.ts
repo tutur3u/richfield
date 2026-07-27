@@ -568,3 +568,89 @@ describe("Richfield public content", () => {
     expect(content.brands[0]?.logoSrc).toBe("/photos/logos/mars-wrigley.webp");
   });
 });
+
+describe("delivery image resolution", () => {
+  function buildWithAsset(asset: Record<string, unknown>) {
+    return buildRichfieldContent(
+      {
+        adapter: "richfield",
+        canonicalProjectId: "richfield",
+        generatedAt: new Date("2026-07-27").toISOString(),
+        loadingData: null,
+        profileData: {},
+        workspaceId: "workspace-1",
+        collections: [
+          {
+            collection_type: "brands",
+            config: null,
+            description: null,
+            id: "collection-brands",
+            slug: "brands",
+            title: "Brands",
+            entries: [
+              {
+                assets: [
+                  {
+                    alt_text: "Mars Wrigley logo",
+                    assetUrl: null,
+                    asset_type: "image",
+                    block_id: null,
+                    entry_id: "brand-1",
+                    id: "asset-brand-1",
+                    metadata: {},
+                    sort_order: 0,
+                    source_url: null,
+                    storage_path: null,
+                    ...asset,
+                  },
+                ],
+                blocks: [],
+                id: "brand-1",
+                metadata: {},
+                profile_data: { category: "Food", country: "Vietnam", year: 2026 },
+                published_at: null,
+                slug: "mars-wrigley",
+                status: "published",
+                subtitle: "Food",
+                summary: "Published brand story.",
+                title: "Mars Wrigley",
+              },
+            ],
+          },
+        ],
+      },
+      { apiBaseUrl: "https://platform.example.com/api/v1" },
+    );
+  }
+
+  test("prefers the published public path over the delivery asset endpoint", () => {
+    // The endpoint only 307s back to this same path, and next/image rejects a
+    // remote host absent from remotePatterns — preferring it broke every brand
+    // logo on the live site.
+    const content = buildWithAsset({
+      assetUrl:
+        "https://tuturuuu.com/api/v1/workspaces/ws/external-projects/assets/asset-brand-1",
+      metadata: { publicPath: "/photos/logos/mars-wrigley.webp" },
+    });
+
+    expect(content.brands[0]?.logoSrc).toBe("/photos/logos/mars-wrigley.webp");
+  });
+
+  test("falls back to the asset endpoint when no public path is recorded", () => {
+    const content = buildWithAsset({
+      assetUrl: "/photos/logos/fallback.webp",
+      metadata: {},
+    });
+
+    expect(content.brands[0]?.logoSrc).toBe("/photos/logos/fallback.webp");
+  });
+
+  test("ignores a blank public path rather than yielding an empty src", () => {
+    const content = buildWithAsset({
+      assetUrl: "/photos/logos/fallback.webp",
+      metadata: { publicPath: "   " },
+    });
+
+    expect(content.brands[0]?.logoSrc).toBe("/photos/logos/fallback.webp");
+  });
+});

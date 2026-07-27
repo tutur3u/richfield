@@ -4,7 +4,7 @@ import { AdminSectionScreen } from "@/components/admin/AdminSectionScreen";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { RichfieldAdminLoginPanel } from "@/components/admin/RichfieldAdminLoginPanel";
 import { RichfieldAdminSessionRestorer } from "@/components/admin/RichfieldAdminSessionRestorer";
-import { ADMIN_SECTIONS, findAdminSection } from "@/lib/admin/sections";
+import { findAdminSection } from "@/lib/admin/sections";
 import { getRichfieldAdminSessionReadState } from "@/lib/richfield-admin-api";
 import { getRichfieldCentralizedLoginHref } from "../login-link";
 
@@ -17,11 +17,11 @@ export const dynamic = "force-dynamic";
  * land back on it after a refresh, and use Back the way they expect. Every
  * section renders the same screen, so this stays a single dynamic route instead
  * of a dozen near-identical files.
+ *
+ * No generateStaticParams: the page reads the session, so it renders per
+ * request regardless, and declaring params it never prerenders left an unknown
+ * section answering 200 with not-found content instead of a real 404.
  */
-export function generateStaticParams() {
-  return ADMIN_SECTIONS.map((section) => ({ section: section.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: {

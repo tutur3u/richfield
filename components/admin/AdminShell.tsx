@@ -7,6 +7,7 @@ import {
   ADMIN_SECTION_GROUPS,
   adminSectionsByGroup,
 } from "@/lib/admin/sections";
+import { ADMIN_THEME_BOOTSTRAP, AdminThemeToggle } from "./AdminTheme";
 
 /**
  * Dashboard chrome: a persistent sidebar plus the page body.
@@ -69,7 +70,13 @@ export function AdminShell({
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="section-band min-h-screen">
+    <div className="section-band min-h-screen" data-admin-theme="system">
+      {/* Applies the stored theme before paint, so a dark-mode editor never
+          sees a flash of the light shell. */}
+      <script
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: pre-paint theme restore
+        dangerouslySetInnerHTML={{ __html: ADMIN_THEME_BOOTSTRAP }}
+      />
       <header className="border-b border-line bg-paper">
         <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
@@ -97,6 +104,7 @@ export function AdminShell({
                 {userEmail}
               </span>
             ) : null}
+            <AdminThemeToggle />
             <Link className="button-secondary px-3" href="/">
               View site
             </Link>

@@ -506,3 +506,43 @@ button:focus-visible {
   from { background-position: 200% 0; }
   to   { background-position: -200% 0; }
 }
+
+/* -----------------------------------------------------------------------
+   Admin theming (light / dark / system)
+
+   Scoped to [data-admin-theme] on the admin shell, never on <html>, so the
+   public magazine keeps its fixed cream identity — a marketing site that
+   flipped dark because a staff member set a preference would be a bug.
+
+   Dark values re-point the same tokens the admin utilities already use, so
+   every admin surface inverts together with no component changes.
+   ----------------------------------------------------------------------- */
+
+[data-admin-theme="dark"],
+[data-admin-theme="system"] {
+  color-scheme: light;
+}
+
+[data-admin-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: oklch(0.24 0.012 250);
+  --color-cream: oklch(0.19 0.012 250);
+  --color-ink: oklch(0.95 0.008 82);
+  --color-muted: oklch(0.72 0.016 250);
+  --color-line: oklch(0.36 0.014 250);
+  --color-gold: oklch(0.78 0.14 78);
+  --color-gold-strong: oklch(0.74 0.14 76);
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-admin-theme="system"] {
+    color-scheme: dark;
+    --color-paper: oklch(0.24 0.012 250);
+    --color-cream: oklch(0.19 0.012 250);
+    --color-ink: oklch(0.95 0.008 82);
+    --color-muted: oklch(0.72 0.016 250);
+    --color-line: oklch(0.36 0.014 250);
+    --color-gold: oklch(0.78 0.14 78);
+    --color-gold-strong: oklch(0.74 0.14 76);
+  }
+}

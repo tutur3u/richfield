@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { AdminSectionScreen } from "@/components/admin/AdminSectionScreen";
 import { AdminShell } from "@/components/admin/AdminShell";
 import { RichfieldAdminLoginPanel } from "@/components/admin/RichfieldAdminLoginPanel";
 import { RichfieldAdminSessionRestorer } from "@/components/admin/RichfieldAdminSessionRestorer";
-import { findAdminSection } from "@/lib/admin/sections";
+import {
+  DEFAULT_ADMIN_SECTION_SLUG,
+  findAdminSection,
+} from "@/lib/admin/sections";
 import { getRichfieldAdminSessionReadState } from "@/lib/richfield-admin-api";
 import { getRichfieldCentralizedLoginHref } from "../login-link";
 
@@ -41,8 +44,12 @@ export default async function AdminSectionPage({
   const { section: slug } = await params;
   const section = findAdminSection(slug);
 
+  // Redirect rather than notFound(): in this setup notFound() renders the
+  // not-found page but still answers 200, so a mistyped URL read as a working
+  // page to anything checking status codes. A redirect carries an honest status
+  // and puts a signed-in editor somewhere useful instead of a dead end.
   if (!section) {
-    notFound();
+    redirect(`/admin/${DEFAULT_ADMIN_SECTION_SLUG}`);
   }
 
   const loginHref = await getRichfieldCentralizedLoginHref("dashboard");

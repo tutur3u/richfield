@@ -90,10 +90,33 @@ export async function getRichfieldAdminSessionReadState() {
   return getRichfieldSessionReadStateFromCookies();
 }
 
+/**
+ * Load the studio, provisioning the content model only if it is missing.
+ *
+ * This used to POST the whole sync manifest to /setup and await it before
+ * every single read, so opening any dashboard section paid for a serialized
+ * write-path round trip that re-declared nine collections and their fields —
+ * work that is idempotent and, in practice, already done. That was the bulk of
+ * the multi-second wait on each navigation.
+ *
+ * The guarantee it provided is kept: an unprovisioned workspace comes back
+ * with no collections, and that is the case where setup actually needs to run.
+ * The cron at /api/cron/ensure-content-model covers the same ground in the
+ * background, so the common path is now a single read.
+ */
 export async function getRichfieldAdminStudio(accessToken: string) {
-  await setupRichfieldAdminStudio(accessToken);
   const client = createRichfieldExternalProjectsClient(accessToken);
-  return client.getStudio(getRichfieldWorkspaceId()) as Promise<RichfieldAdminStudioPayload>;
+  const workspaceId = getRichfieldWorkspaceId();
+  const studio = (await client.getStudio(
+    workspaceId,
+  )) as RichfieldAdminStudioPayload;
+
+  if (studio.collections.length > 0) {
+    return studio;
+  }
+
+  await setupRichfieldAdminStudio(accessToken);
+  return client.getStudio(workspaceId) as Promise<RichfieldAdminStudioPayload>;
 }
 
 export function revalidateRichfieldContent() {

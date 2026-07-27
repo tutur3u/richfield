@@ -83,10 +83,15 @@ export const RICHFIELD_ADMIN_COPY = {
     save: "We could not save this item. Please try again.",
   },
   members: {
+    activeCaption: "Can sign in and edit the site now.",
+    activeTitle: "Active",
     description:
       "See who can help edit this site. Manage invitations and access in Tuturuuu.",
     empty: "No team members were returned.",
     loading: "Loading team members...",
+    invitedCaption:
+      "Invitation sent. They appear as active once they accept it.",
+    invitedTitle: "Invited",
     manage: "Manage in Tuturuuu",
     title: "Team members",
     unavailable: "Team members are not available right now.",

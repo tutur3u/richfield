@@ -15,16 +15,13 @@ import type {
   RichfieldAdminContentItem,
   RichfieldContentStatus,
 } from "@/lib/richfield-admin-content-model";
-import type {
-  RichfieldAdminMember,
-  RichfieldAdminMembersContext,
-} from "@/lib/richfield-admin-members";
 import { slugifyRichfieldContent } from "@/lib/richfield-admin-content-model";
 import type { RichfieldStorageAnalyticsState } from "@/lib/richfield-admin-storage";
 import type { RichfieldStorageFilesState } from "@/lib/richfield-storage-files";
 import { getRichfieldGalleryPlacementLabel } from "@/lib/richfield-gallery";
 import { RichfieldGalleryPanel } from "./RichfieldGalleryPanel";
 import { RichTextEditor } from "./RichTextEditor";
+import { getInitials, MembersPanel } from "./AdminMembersPanel";
 import {
   ResponseForwardingPanel,
   StoragePanel,
@@ -59,12 +56,6 @@ type DashboardContent = Record<
 >;
 
 type Draft = RichfieldAdminEditorDraft;
-
-type MembersResponse = {
-  context?: RichfieldAdminMembersContext;
-  error?: string;
-  members?: RichfieldAdminMember[];
-};
 
 type EditorTarget = {
   collectionKey: RichfieldAdminCollectionKey;
@@ -224,144 +215,6 @@ const contactKindOptions = [
   { label: "Facebook", value: "facebook" },
 ];
 
-function getInitials(email: string | null) {
-  if (!email) return "R";
-
-  const [name] = email.split("@");
-  const initials =
-    name
-      ?.split(/[._-]+/)
-      .filter(Boolean)
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2) ?? "";
-
-  return initials.toUpperCase() || "R";
-}
-
-function MembersPanel({ membersHref }: { membersHref: string }) {
-  const [members, setMembers] = useState<RichfieldAdminMember[]>([]);
-  const [context, setContext] = useState<RichfieldAdminMembersContext | null>(
-    null,
-  );
-  const [status, setStatus] = useState<"error" | "loading" | "ready">(
-    "loading",
-  );
-  const [message, setMessage] = useState<string>(
-    RICHFIELD_ADMIN_COPY.members.loading,
-  );
-
-  useEffect(() => {
-    let active = true;
-
-    const loadMembers = async () => {
-      setStatus("loading");
-      setMessage(RICHFIELD_ADMIN_COPY.members.loading);
-
-      try {
-        const response = await adminFetch("/api/admin/members", {
-          cache: "no-store",
-        });
-        const payload = (await response
-          .json()
-          .catch(() => ({}))) as MembersResponse;
-
-        if (!active) return;
-
-        if (!response.ok || !payload.members) {
-          setStatus("error");
-          setMessage(payload.error ?? RICHFIELD_ADMIN_COPY.members.unavailable);
-          return;
-        }
-
-        setMembers(payload.members);
-        setContext(payload.context ?? null);
-        setStatus("ready");
-      } catch {
-        if (!active) return;
-        setStatus("error");
-        setMessage(RICHFIELD_ADMIN_COPY.members.unavailable);
-      }
-    };
-
-    void loadMembers();
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  return (
-    <section className="parchment-card grid min-w-0 gap-5 p-4 sm:p-5">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-          <p className="script-label">{RICHFIELD_ADMIN_COPY.members.title}</p>
-          <h2 className="break-words font-display text-4xl leading-none text-[var(--navy)] sm:text-5xl">
-            {context?.boundProjectName ?? "Site team"}
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--ink-soft)]">
-            {RICHFIELD_ADMIN_COPY.members.description}
-          </p>
-        </div>
-        <Link
-          className="button-primary w-full sm:w-auto"
-          href={membersHref}
-          rel="noreferrer"
-          target="_blank"
-        >
-          {RICHFIELD_ADMIN_COPY.members.manage}
-        </Link>
-      </div>
-
-      {status === "loading" || status === "error" ? (
-        <div className="border border-[rgba(184,112,81,0.34)] bg-white/68 px-4 py-3 text-sm text-[var(--ink-soft)]">
-          {message}
-        </div>
-      ) : null}
-
-      {status === "ready" && members.length === 0 ? (
-        <p className="border border-dashed border-[rgba(184,112,81,0.5)] bg-white/58 p-6 text-sm leading-6 text-[var(--ink-soft)]">
-          {RICHFIELD_ADMIN_COPY.members.empty}
-        </p>
-      ) : null}
-
-      {members.length > 0 ? (
-        <div className="grid gap-3 lg:grid-cols-2">
-          {members.map((member) => (
-            <div
-              className="grid min-w-0 gap-2 border border-[rgba(184,112,81,0.34)] bg-white/68 p-4"
-              key={member.id}
-            >
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="grid size-11 shrink-0 place-items-center bg-[var(--navy)] font-display text-xl text-[var(--parchment)]">
-                  {member.initials}
-                </span>
-                <div className="min-w-0">
-                  <strong className="block truncate text-[var(--ink)]">
-                    {member.name}
-                  </strong>
-                  {member.email ? (
-                    <span className="mt-1 block truncate text-sm text-[var(--ink-soft)]">
-                      {member.email}
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <span className="border border-[rgba(184,112,81,0.34)] bg-white/72 px-2 py-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-[var(--clay)]">
-                  {member.status}
-                </span>
-                <span className="border border-[rgba(31,107,115,0.22)] bg-[rgba(31,107,115,0.08)] px-2 py-1 text-[0.68rem] font-bold uppercase tracking-[0.12em] text-[var(--teal)]">
-                  {member.role}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : null}
-    </section>
-  );
-}
 
 function statusLabel(status: RichfieldContentStatus) {
   return RICHFIELD_ADMIN_COPY.visibility[status];

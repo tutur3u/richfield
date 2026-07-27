@@ -145,7 +145,10 @@ export async function getRichfieldAdminMembers(
   };
   const [contextResponse, membersResponse] = await Promise.all([
     fetchWithRichfieldTimeout(baseEndpoint, { cache: "no-store", headers }),
-    fetchWithRichfieldTimeout(`${baseEndpoint}/enhanced?status=joined`, {
+    // status=all, not joined: pending invitations are members-in-waiting and the
+    // roster is the only place anyone would notice an invite that was never
+    // accepted. normalizeMember already labels them "Invited".
+    fetchWithRichfieldTimeout(`${baseEndpoint}/enhanced?status=all`, {
       cache: "no-store",
       headers,
     }),

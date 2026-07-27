@@ -15,6 +15,8 @@ import type { RichfieldAdminCollectionKey } from "@/lib/richfield-admin-content-
 export type AdminSectionGroup = "content" | "contact" | "media" | "team";
 
 export type AdminSection = {
+  /** Tab id the existing dashboard uses for this surface. */
+  tab: string;
   /** Collection this section edits; absent for pages that are not a list. */
   collectionKey?: RichfieldAdminCollectionKey;
   description: string;
@@ -41,6 +43,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Company news, partnership stories, and updates.",
     emptyHint: "Write your first story and it will appear on the News page.",
     group: "content",
+    tab: "articles",
     slug: "news",
     title: "News",
   },
@@ -50,6 +53,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     emptyHint:
       "Add a position and it will show on the Careers page straight away.",
     group: "content",
+    tab: "jobs",
     slug: "careers",
     title: "Careers",
   },
@@ -58,6 +62,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "The brands Richfield distributes.",
     emptyHint: "Add a brand to show it on the Brands page.",
     group: "content",
+    tab: "brands",
     slug: "brands",
     title: "Brands",
   },
@@ -66,6 +71,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Leadership profiles and quotes.",
     emptyHint: "Add a leader to show them on the site.",
     group: "content",
+    tab: "leadership",
     slug: "leadership",
     title: "Leadership",
   },
@@ -74,6 +80,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "The company timeline.",
     emptyHint: "Add a milestone to build out the timeline.",
     group: "content",
+    tab: "milestones",
     slug: "milestones",
     title: "Milestones",
   },
@@ -82,6 +89,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Messages sent through the contact form.",
     emptyHint: "Messages from the website will land here.",
     group: "contact",
+    tab: "contact-submissions",
     slug: "responses",
     title: "Responses",
   },
@@ -90,6 +98,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Contact page heading, map, and imagery.",
     emptyHint: "Set up the contact page copy here.",
     group: "contact",
+    tab: "contact-page",
     slug: "contact-page",
     title: "Contact page",
   },
@@ -98,6 +107,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Form fields, enquiry types, and where responses are sent.",
     emptyHint: "Configure the contact form here.",
     group: "contact",
+    tab: "contact-form",
     slug: "contact-form",
     title: "Form settings",
   },
@@ -106,6 +116,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Phone numbers, addresses, and other ways to reach you.",
     emptyHint: "Add a phone number or address for the contact page.",
     group: "contact",
+    tab: "contact-channels",
     slug: "channels",
     title: "Channels",
   },
@@ -114,6 +125,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Photos used across the website.",
     emptyHint: "Upload a photo to use it on the site.",
     group: "media",
+    tab: "image-library",
     slug: "photos",
     title: "Photos",
   },
@@ -121,6 +133,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Files and storage used by the website.",
     emptyHint: "Files you upload will be listed here.",
     group: "media",
+    tab: "storage",
     slug: "files",
     title: "Files",
   },
@@ -128,6 +141,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Who can edit this website.",
     emptyHint: "Invite a colleague from the Tuturuuu workspace.",
     group: "team",
+    tab: "members",
     slug: "people",
     title: "People",
   },
@@ -135,6 +149,7 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     description: "Your account and sign-in.",
     emptyHint: "",
     group: "team",
+    tab: "account",
     slug: "account",
     title: "Account",
   },

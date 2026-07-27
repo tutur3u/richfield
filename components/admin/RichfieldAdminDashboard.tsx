@@ -2849,24 +2849,33 @@ function ContentForm({
 
 export function RichfieldAdminDashboard({
   driveHref,
+  // Which surface to open on. Supplied by the route when the dashboard is
+  // mounted inside the section shell, so the URL — not internal state — decides
+  // what you are looking at.
+  initialTab = "image-library",
   initialContent,
   membersHref,
   sessionExpiresAt,
   sessionRefreshEarlySeconds,
+  // The shell already provides navigation and the account actions; rendering
+  // the dashboard's own tab row and header underneath would duplicate both.
+  showChrome = true,
   storageAnalytics,
   storageFiles,
   userEmail,
 }: {
   driveHref: string;
+  initialTab?: AdminTab;
   initialContent: DashboardContent;
   membersHref: string;
   sessionExpiresAt: string;
   sessionRefreshEarlySeconds?: number;
+  showChrome?: boolean;
   storageAnalytics: RichfieldStorageAnalyticsState;
   storageFiles: RichfieldStorageFilesState;
   userEmail: string | null;
 }) {
-  const [activeTab, setActiveTab] = useState<AdminTab>("image-library");
+  const [activeTab, setActiveTab] = useState<AdminTab>(initialTab);
   const [content, setContent] = useState(initialContent);
   const [editorTarget, setEditorTarget] = useState<EditorTarget | null>(null);
   const [editorBusy, setEditorBusy] = useState(false);
@@ -3058,6 +3067,7 @@ export function RichfieldAdminDashboard({
   return (
     <main className="section-band min-h-screen px-3 py-6 sm:px-6 sm:py-8 lg:px-8">
       <div className="mx-auto grid min-w-0 max-w-7xl gap-6">
+        {showChrome ? (
         <header className="parchment-card overflow-hidden p-5 sm:p-6">
           <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
             <div className="min-w-0">
@@ -3083,7 +3093,9 @@ export function RichfieldAdminDashboard({
             </div>
           </div>
         </header>
+        ) : null}
 
+        {showChrome ? (
         <nav
           aria-label="Dashboard areas"
           className="flex flex-col gap-4 border-b border-[rgba(184,112,81,0.34)] pb-4 sm:flex-row sm:flex-wrap sm:gap-x-8 sm:gap-y-4"
@@ -3113,6 +3125,7 @@ export function RichfieldAdminDashboard({
             </div>
           ))}
         </nav>
+        ) : null}
 
         {contentTabs.includes(activeTab as RichfieldAdminCollectionKey)
           ? renderContentTab(activeTab as RichfieldAdminCollectionKey)

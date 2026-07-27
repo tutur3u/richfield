@@ -3064,9 +3064,26 @@ export function RichfieldAdminDashboard({
       ? (editorItems.find((item) => item.id === editorTarget.itemId) ?? null)
       : null;
 
+  // Inside the section shell the page band, min-height and max width are
+  // already owned by the shell; repeating them here stacked a second
+  // full-height surface inside the first and reintroduced the old page look.
+  const Frame = showChrome ? "main" : "div";
+
   return (
-    <main className="section-band min-h-screen px-3 py-6 sm:px-6 sm:py-8 lg:px-8">
-      <div className="mx-auto grid min-w-0 max-w-7xl gap-6">
+    <Frame
+      className={
+        showChrome
+          ? "section-band min-h-screen px-3 py-6 sm:px-6 sm:py-8 lg:px-8"
+          : ""
+      }
+    >
+      <div
+        className={
+          showChrome
+            ? "mx-auto grid min-w-0 max-w-7xl gap-6"
+            : "grid min-w-0 gap-6"
+        }
+      >
         {showChrome ? (
         <header className="parchment-card overflow-hidden p-5 sm:p-6">
           <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
@@ -3272,6 +3289,6 @@ export function RichfieldAdminDashboard({
           </section>
         ) : null}
       </div>
-    </main>
+    </Frame>
   );
 }

@@ -36,12 +36,15 @@ export function AdminSectionScreen({
   const emptyHint = t(sectionEmptyKey);
 
   return (
-    <div className="grid min-w-0 gap-6">
-      <header className="grid gap-2 border-b border-admin-rule pb-6">
-        <h1 className="font-display text-[clamp(2.6rem,5vw,4.8rem)] leading-[0.95] tracking-[-0.025em] text-admin-navy">
+    <div className="grid min-w-0 gap-8">
+      <header className="grid gap-2 border-b border-admin-rule pb-7">
+        <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-admin-clay">
+          {t(`groups.${section.group}`)}
+        </p>
+        <h1 className="font-display text-[clamp(2.5rem,4vw,3.75rem)] leading-none tracking-[-0.025em] text-admin-ink">
           {title}
         </h1>
-        <p className="max-w-[60ch] text-sm leading-6 text-admin-ink-soft">
+        <p className="max-w-[62ch] text-[15px] leading-6 text-admin-ink-soft">
           {description}
         </p>
       </header>

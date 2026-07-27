@@ -282,6 +282,12 @@
       "dashboardSections": "Dashboard sections",
       "richfield": "Richfield",
       "skipToContent": "Skip to content"
+    },
+    "theme": {
+      "dark": "Dark",
+      "label": "Theme",
+      "light": "Light",
+      "system": "System"
     }
   },
   "nav": {

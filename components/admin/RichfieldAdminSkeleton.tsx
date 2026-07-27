@@ -14,18 +14,18 @@ export function SkeletonLine({
   width?: string;
 }) {
   return (
-    <span className={`admin-skeleton block h-3 ${className}`} style={{ width }} />
+    <span className={`admin-skeleton block h-3 rounded-full ${className}`} style={{ width }} />
   );
 }
 
 export function SkeletonBlock({ className = "" }: { className?: string }) {
-  return <span className={`admin-skeleton block ${className}`} />;
+  return <span className={`admin-skeleton block rounded-full ${className}`} />;
 }
 
 /** One row of the content list: title, meta line, and a status chip. */
 function SkeletonListRow() {
   return (
-    <div className="grid gap-2 border border-line bg-paper p-4">
+    <div className="grid gap-2 rounded-xl border border-admin-rule bg-admin-surface p-4">
       <div className="flex items-center justify-between gap-4">
         <SkeletonLine className="h-4" width="42%" />
         <SkeletonBlock className="h-5 w-16" />
@@ -45,15 +45,16 @@ function SkeletonListRow() {
  */
 export function RichfieldAdminSkeleton() {
   return (
-    <div aria-busy="true" className="grid min-w-0 gap-6">
+    <div aria-busy="true" className="grid min-w-0 gap-8">
       <span className="sr-only">Loading…</span>
 
-      <div className="grid gap-2">
-        <SkeletonBlock className="h-8 w-[min(280px,60%)]" />
-        <SkeletonLine width="min(420px, 80%)" />
+      <div className="grid gap-3 border-b border-admin-rule pb-7">
+        <SkeletonLine className="h-2" width="72px" />
+        <SkeletonBlock className="h-11 w-[min(260px,60%)]" />
+        <SkeletonLine width="min(380px, 75%)" />
       </div>
 
-      <div className="grid gap-2.5">
+      <div className="grid gap-2">
         {Array.from({ length: 6 }, (_, index) => (
           <SkeletonListRow key={`skeleton-row-${index}`} />
         ))}

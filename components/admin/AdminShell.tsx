@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  ArrowSquareOut,
+  List,
+  SignOut,
+  X,
+} from "@phosphor-icons/react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
@@ -23,15 +29,15 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const t = useTranslations("admin");
 
   return (
-    <nav aria-label={t("shell.dashboardSections")} className="grid gap-7">
+    <nav aria-label={t("shell.dashboardSections")} className="grid gap-5">
       {ADMIN_SECTION_GROUPS.map((group) => {
         const sections = adminSectionsByGroup(group.id);
 
         if (sections.length === 0) return null;
 
         return (
-          <div className="grid gap-1.5" key={group.id}>
-            <p className="px-3 text-[10px] font-black uppercase tracking-[0.24em] text-admin-gold">
+          <div className="grid gap-1" key={group.id}>
+            <p className="mb-1 px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-admin-gold/80">
               {t(`groups.${group.id}`)}
             </p>
             {sections.map((section) => {
@@ -42,10 +48,10 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               return (
                 <Link
                   aria-current={active ? "page" : undefined}
-                  className={`min-h-11 border-l-2 px-3 py-2 text-sm font-bold transition-colors ${
+                  className={`flex min-h-9 items-center gap-2.5 border-l-2 px-3 py-1.5 text-[13px] font-semibold transition-colors ${
                     active
-                      ? "border-admin-gold bg-white/10 text-white"
-                      : "border-transparent text-white/72 hover:bg-white/6 hover:text-white"
+                      ? "border-admin-gold bg-white/8 text-white"
+                      : "border-transparent text-white/68 hover:bg-white/5 hover:text-white"
                   }`}
                   href={href}
                   key={section.slug}
@@ -77,10 +83,7 @@ export function AdminShell({
   const t = useTranslations("admin");
 
   return (
-    <div
-      className="min-h-screen bg-admin-parchment"
-      data-admin-theme="system"
-    >
+    <div className="min-h-screen bg-admin-parchment text-admin-ink" data-admin-theme="system">
       {/* Applies the stored theme before paint, so a dark-mode editor never
           sees a flash of the light shell. */}
       <script
@@ -93,35 +96,36 @@ export function AdminShell({
       >
         {t("shell.skipToContent")}
       </a>
-      <header className="border-b border-admin-rule bg-white/82 backdrop-blur">
-        <div className="flex items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:pl-[calc(16.5rem+1.5rem)]">
+      <header className="sticky top-0 z-30 border-b border-admin-rule bg-admin-surface backdrop-blur-xl">
+        <div className="flex min-h-16 items-center justify-between gap-3 px-4 sm:px-6 lg:pl-[calc(15rem+2rem)] lg:pr-8">
           <div className="flex items-center gap-3">
             {/* The sidebar collapses on small screens; without this the only
                 way to change section on a phone would be the browser URL. */}
             <button
               aria-controls="admin-sidebar"
               aria-expanded={menuOpen}
-              className="button-secondary px-3 lg:hidden"
+              aria-label={menuOpen ? t("common.close") : t("common.menu")}
+              className="grid size-10 place-items-center border border-admin-rule text-admin-ink lg:hidden"
               onClick={() => setMenuOpen((open) => !open)}
               type="button"
             >
-              {menuOpen ? t("common.close") : t("common.menu")}
+              {menuOpen ? <X aria-hidden size={18} /> : <List aria-hidden size={18} />}
             </button>
             <Link
-              className="font-display text-lg leading-none text-admin-navy lg:hidden"
+              className="font-display text-xl leading-none text-admin-ink lg:hidden"
               href="/admin"
             >
               {t("shell.richfield")}
             </Link>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex min-w-0 items-center gap-2">
             <form action="/api/admin/locale" method="post">
               <input name="next" type="hidden" value={pathname ?? "/admin"} />
               <label className="sr-only" htmlFor="admin-locale">
                 {t("locale.label")}
               </label>
               <select
-                className="min-h-10 border border-admin-rule bg-transparent px-2 text-xs font-bold text-admin-ink outline-none focus:border-admin-gold"
+                className="min-h-9 rounded-full border border-admin-rule bg-admin-surface px-3 text-xs font-semibold text-admin-ink outline-none focus:border-admin-gold"
                 defaultValue={locale}
                 id="admin-locale"
                 name="locale"
@@ -132,31 +136,48 @@ export function AdminShell({
               </select>
             </form>
             {userEmail ? (
-              <span className="hidden max-w-48 truncate text-xs text-admin-ink-soft xl:block">
-                {userEmail}
-              </span>
+              <div className="hidden min-w-0 items-center gap-2 border-l border-admin-rule pl-3 xl:flex">
+                <span
+                  aria-hidden
+                  className="grid size-8 shrink-0 place-items-center rounded-full bg-admin-navy text-xs font-bold uppercase text-white"
+                >
+                  {userEmail.slice(0, 1)}
+                </span>
+                <span className="max-w-44 truncate text-xs text-admin-ink-soft">
+                  {userEmail}
+                </span>
+              </div>
             ) : null}
             <AdminThemeToggle />
-            <Link className="button-secondary px-3" href="/">
-              {t("account.viewSite")}
+            <Link
+              className="hidden min-h-9 items-center gap-2 rounded-full border border-admin-rule px-3 text-xs font-semibold text-admin-ink transition hover:border-admin-gold sm:inline-flex"
+              href="/"
+            >
+              <ArrowSquareOut aria-hidden size={15} />
+              <span>{t("account.viewSite")}</span>
             </Link>
             <form action="/api/auth/logout" method="post">
-              <button className="button-secondary px-3" type="submit">
-                {t("account.signOut")}
+              <button
+                aria-label={t("account.signOut")}
+                className="grid size-9 place-items-center rounded-full border border-admin-rule text-admin-ink-soft transition hover:border-admin-gold hover:text-admin-ink"
+                title={t("account.signOut")}
+                type="submit"
+              >
+                <SignOut aria-hidden size={16} />
               </button>
             </form>
           </div>
         </div>
       </header>
 
-      <div className="grid min-h-[calc(100vh-65px)] lg:grid-cols-[16.5rem_minmax(0,1fr)]">
+      <div className="grid min-h-[calc(100vh-65px)] lg:grid-cols-[15rem_minmax(0,1fr)]">
         <aside
-          className={`${menuOpen ? "block" : "hidden"} fixed inset-x-0 bottom-0 top-[65px] z-40 overflow-y-auto bg-admin-navy px-4 py-6 lg:sticky lg:inset-auto lg:top-0 lg:block lg:h-[calc(100vh-65px)]`}
+          className={`${menuOpen ? "block" : "hidden"} fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto border-r border-white/8 bg-admin-navy px-4 py-5 lg:sticky lg:inset-auto lg:top-16 lg:block lg:h-[calc(100vh-64px)]`}
           id="admin-sidebar"
         >
-          <div className="grid gap-9">
+          <div className="grid gap-7">
             <Link
-              className="hidden font-display text-3xl text-admin-parchment lg:block"
+              className="hidden border-b border-white/10 px-3 pb-5 font-display text-2xl text-white lg:block"
               href="/admin"
             >
               {t("shell.richfield")}
@@ -166,10 +187,10 @@ export function AdminShell({
         </aside>
 
         <main
-          className="min-w-0 px-4 py-7 sm:px-7 lg:px-10 lg:py-10"
+          className="min-w-0 px-4 py-7 sm:px-7 lg:px-12 lg:py-10"
           id="admin-main"
         >
-          <div className="mx-auto max-w-[1180px]">{children}</div>
+          <div className="mx-auto max-w-[1120px]">{children}</div>
         </main>
       </div>
     </div>

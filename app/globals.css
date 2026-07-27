@@ -495,9 +495,9 @@ button:focus-visible {
      against the dark shell. */
   background: linear-gradient(
     90deg,
-    var(--color-line) 0%,
-    var(--color-muted) 50%,
-    var(--color-line) 100%
+    rgb(12 31 52 / 0.06) 0%,
+    rgb(184 112 81 / 0.14) 50%,
+    rgb(12 31 52 / 0.06) 100%
   );
   background-size: 200% 100%;
 
@@ -536,6 +536,17 @@ button:focus-visible {
   --color-line: oklch(0.36 0.014 250);
   --color-gold: oklch(0.78 0.14 78);
   --color-gold-strong: oklch(0.74 0.14 76);
+  --color-admin-navy: #101a26;
+  --color-admin-ink: #f3eee5;
+  --color-admin-ink-soft: #aaa296;
+  --color-admin-parchment: #131a22;
+  --color-admin-clay: #d08b68;
+  --color-admin-copper: #d08b68;
+  --color-admin-copper-dark: #b97050;
+  --color-admin-gold: #dfa951;
+  --color-admin-surface: rgb(27 35 44 / 88%);
+  --color-admin-rule: rgb(255 255 255 / 10%);
+  --color-admin-rule-strong: rgb(255 255 255 / 16%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -548,6 +559,39 @@ button:focus-visible {
     --color-line: oklch(0.36 0.014 250);
     --color-gold: oklch(0.78 0.14 78);
     --color-gold-strong: oklch(0.74 0.14 76);
+    --color-admin-navy: #101a26;
+    --color-admin-ink: #f3eee5;
+    --color-admin-ink-soft: #aaa296;
+    --color-admin-parchment: #131a22;
+    --color-admin-clay: #d08b68;
+    --color-admin-copper: #d08b68;
+    --color-admin-copper-dark: #b97050;
+    --color-admin-gold: #dfa951;
+    --color-admin-surface: rgb(27 35 44 / 88%);
+    --color-admin-rule: rgb(255 255 255 / 10%);
+    --color-admin-rule-strong: rgb(255 255 255 / 16%);
+  }
+}
+
+[data-admin-theme="dark"] .admin-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(255 255 255 / 0.06) 0%,
+    rgb(223 169 81 / 0.13) 50%,
+    rgb(255 255 255 / 0.06) 100%
+  );
+  background-size: 200% 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  [data-admin-theme="system"] .admin-skeleton {
+    background: linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.06) 0%,
+      rgb(223 169 81 / 0.13) 50%,
+      rgb(255 255 255 / 0.06) 100%
+    );
+    background-size: 200% 100%;
   }
 }
 

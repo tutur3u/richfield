@@ -1,5 +1,7 @@
 "use client";
 
+import { Desktop, Moon, Sun } from "@phosphor-icons/react";
+import { useTranslations } from "next-intl";
 import { useSyncExternalStore } from "react";
 
 export type AdminTheme = "dark" | "light" | "system";
@@ -69,36 +71,42 @@ export function useAdminTheme() {
   return { setTheme, theme };
 }
 
-const LABELS: Record<AdminTheme, string> = {
-  dark: "Dark",
-  light: "Light",
-  system: "System",
+const ICONS = {
+  dark: Moon,
+  light: Sun,
+  system: Desktop,
 };
 
 export function AdminThemeToggle() {
   const { setTheme, theme } = useAdminTheme();
+  const t = useTranslations("admin.theme");
 
   return (
     <div
-      aria-label="Theme"
-      className="flex items-center border border-line"
+      aria-label={t("label")}
+      className="hidden items-center rounded-full border border-admin-rule bg-admin-surface p-0.5 md:flex"
       role="group"
     >
-      {THEMES.map((option) => (
-        <button
-          aria-pressed={theme === option}
-          className={`min-h-9 px-2.5 text-[11px] font-medium uppercase tracking-[0.14em] transition-colors ${
-            theme === option
-              ? "bg-gold-strong/12 text-gold-strong"
-              : "text-muted hover:text-ink"
-          }`}
-          key={option}
-          onClick={() => setTheme(option)}
-          type="button"
-        >
-          {LABELS[option]}
-        </button>
-      ))}
+      {THEMES.map((option) => {
+        const Icon = ICONS[option];
+        return (
+          <button
+            aria-label={t(option)}
+            aria-pressed={theme === option}
+            className={`grid size-8 place-items-center rounded-full transition-colors ${
+              theme === option
+                ? "bg-admin-navy text-white"
+                : "text-admin-ink-soft hover:text-admin-ink"
+            }`}
+            key={option}
+            onClick={() => setTheme(option)}
+            title={t(option)}
+            type="button"
+          >
+            <Icon aria-hidden size={15} />
+          </button>
+        );
+      })}
     </div>
   );
 }

@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  MagnifyingGlass,
+  NewspaperClipping,
+  Plus,
+} from "@phosphor-icons/react";
 import { type InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -101,16 +106,16 @@ function ContentRow({
   return (
     <button
       aria-current={selected ? "true" : undefined}
-      className={`grid w-full gap-1.5 border p-4 text-left transition-colors ${
+      className={`grid w-full gap-1.5 rounded-xl border p-4 text-left transition-all ${
         selected
-          ? "border-gold-strong bg-gold-strong/[0.08]"
-          : "border-line bg-paper hover:border-ink/25 hover:bg-paper"
+          ? "border-admin-gold bg-admin-gold/[0.08] shadow-[0_0_0_3px_rgb(217_167_91_/_0.08)]"
+          : "border-admin-rule bg-admin-surface hover:-translate-y-px hover:border-admin-gold hover:shadow-sm"
       }`}
       onClick={() => onOpen(item.id)}
       type="button"
     >
       <span className="flex items-start justify-between gap-3">
-        <span className="font-display text-lg leading-tight text-ink">
+        <span className="font-display text-lg leading-tight text-admin-ink">
           {item.title || t("untitled")}
         </span>
         <span
@@ -124,7 +129,7 @@ function ContentRow({
       {item.slug ? (
         <span className="truncate text-xs text-muted">/{item.slug}</span>
       ) : null}
-      <span className="mt-1 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted">
+      <span className="mt-1 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-admin-ink-soft">
         <span>EN · {item.localeStatuses.en === "published" ? t("live") : t("draft")}</span>
         <span>VI · {item.localeStatuses.vi === "published" ? t("live") : t("draft")}</span>
       </span>
@@ -201,33 +206,36 @@ export function AdminContentList({
   );
 
   return (
-    <section className="grid min-w-0 gap-4">
-      <header className="grid gap-3 sm:flex sm:items-end sm:justify-between">
+    <section className="grid min-w-0 gap-5">
+      <header className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="font-display text-2xl leading-tight text-ink">
-            {title}
-          </h2>
-          <p className="mt-1 text-sm text-muted">
+          <p className="text-sm font-medium text-admin-ink-soft">
             {query.isPending
               ? t("loading")
               : t(debouncedSearch ? "itemsFound" : "items", { count: total })}
           </p>
         </div>
         <button
-          className="button-primary shrink-0"
+          className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full bg-admin-navy px-4 text-xs font-bold text-white transition hover:bg-admin-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-gold"
           onClick={() => onOpen(null)}
           type="button"
         >
-          {t("addNew")}
+          <Plus aria-hidden size={15} weight="bold" />
+          <span>{t("addNew")}</span>
         </button>
       </header>
 
-      <div className="grid gap-1.5">
+      <div className="relative">
         <label className="sr-only" htmlFor={searchId}>
           {t("search", { title })}
         </label>
+        <MagnifyingGlass
+          aria-hidden
+          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-admin-ink-soft"
+          size={18}
+        />
         <input
-          className="min-h-11 w-full border border-line bg-paper px-3 text-sm text-ink placeholder:text-muted/70 focus:border-gold-strong focus:outline-none"
+          className="min-h-12 w-full rounded-xl border border-admin-rule bg-admin-surface py-3 pl-11 pr-4 text-sm text-admin-ink shadow-[0_1px_0_rgb(12_31_52_/_0.03)] outline-none placeholder:text-admin-ink-soft/65 focus:border-admin-gold focus:ring-3 focus:ring-admin-gold/10"
           id={searchId}
           onChange={(event) => setSearch(event.target.value)}
           placeholder={t("search", { title })}
@@ -237,7 +245,7 @@ export function AdminContentList({
       </div>
 
       {query.isError ? (
-        <div className="border border-red-300/60 bg-red-50/60 p-4" role="alert">
+        <div className="rounded-xl border border-red-300/60 bg-red-50/60 p-4" role="alert">
           <p className="text-sm text-ink">
             {query.error instanceof Error
               ? query.error.message
@@ -254,11 +262,11 @@ export function AdminContentList({
       ) : null}
 
       {query.isPending ? (
-        <div aria-busy="true" className="grid gap-3">
+        <div aria-busy="true" className="grid gap-2">
           <span className="sr-only">{t("loading")}</span>
           {Array.from({ length: 5 }, (_, index) => (
             <div
-              className="grid gap-2 border border-line bg-paper p-4"
+              className="grid gap-2 rounded-xl border border-admin-rule bg-admin-surface p-4"
               key={`content-skeleton-${index}`}
             >
               <div className="flex items-center justify-between gap-4">
@@ -272,18 +280,22 @@ export function AdminContentList({
       ) : null}
 
       {!query.isPending && items.length === 0 && !query.isError ? (
-        <div className="border border-dashed border-ink/25 bg-paper p-8 text-center">
-          <p className="font-display text-xl text-ink">
+        <div className="grid min-h-64 place-items-center rounded-2xl border border-admin-rule bg-admin-surface px-6 py-10 text-center shadow-[0_1px_0_rgb(12_31_52_/_0.03)]">
+          <div className="grid max-w-md justify-items-center">
+            <span className="mb-5 grid size-12 place-items-center rounded-full bg-admin-gold/12 text-admin-copper">
+              <NewspaperClipping aria-hidden size={24} />
+            </span>
+          <p className="font-display text-2xl text-admin-ink">
             {debouncedSearch ? t("nothingMatches") : t("nothingHere")}
           </p>
-          <p className="mx-auto mt-2 max-w-[42ch] text-sm leading-6 text-muted">
+          <p className="mx-auto mt-2 max-w-[42ch] text-sm leading-6 text-admin-ink-soft">
             {debouncedSearch
               ? t("searchHelp")
               : emptyHint}
           </p>
           {debouncedSearch ? (
             <button
-              className="button-secondary mt-4"
+              className="mt-6 min-h-10 rounded-full border border-admin-rule px-4 text-xs font-bold text-admin-ink transition hover:border-admin-gold"
               onClick={() => setSearch("")}
               type="button"
             >
@@ -291,18 +303,20 @@ export function AdminContentList({
             </button>
           ) : (
             <button
-              className="button-primary mt-4"
+              className="mt-6 inline-flex min-h-10 items-center gap-2 rounded-full bg-admin-navy px-4 text-xs font-bold text-white transition hover:bg-admin-copper"
               onClick={() => onOpen(null)}
               type="button"
             >
-              {t("addFirst")}
+              <Plus aria-hidden size={15} weight="bold" />
+              <span>{t("addFirst")}</span>
             </button>
           )}
+          </div>
         </div>
       ) : null}
 
       {items.length > 0 ? (
-        <div className="grid gap-2.5">
+        <div className="grid gap-2">
           {items.map((item) => (
             <ContentRow
               item={item}

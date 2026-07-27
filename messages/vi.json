@@ -282,6 +282,12 @@
       "dashboardSections": "Các khu vực quản trị",
       "richfield": "Richfield",
       "skipToContent": "Chuyển đến nội dung"
+    },
+    "theme": {
+      "dark": "Tối",
+      "label": "Giao diện",
+      "light": "Sáng",
+      "system": "Hệ thống"
     }
   },
   "nav": {

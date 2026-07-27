@@ -568,8 +568,14 @@ button:focus-visible {
 }
 
 /* Same reason: the legacy dashboard paints panels with literal white washes,
-   which stay light whatever the theme. Re-point them at the themed surface. */
+   which stay light whatever the theme. Re-point them at the themed surface.
+
+   Matches bare `bg-white` as well as `bg-white/<alpha>`. The earlier pattern
+   required the slash, so it caught translucent panels but missed every solid
+   one — including the rich-text editor and the remaining inputs, which paint
+   their text with --ink. In dark mode that resolves to near-white, leaving
+   those surfaces white-on-white: the text was there, and unreadable. */
 [data-admin-theme] .parchment-card,
-[data-admin-theme] [class*="bg-white/"] {
+[data-admin-theme] [class*="bg-white"] {
   background-color: var(--color-paper);
 }

@@ -140,7 +140,7 @@ export const RICHFIELD_ADMIN_COPY = {
   },
   tabs: {
     account: "Account",
-    articles: "Insights",
+    articles: "News",
     brands: "Brands",
     contactChannels: "Channels",
     contactForm: "Form fields",

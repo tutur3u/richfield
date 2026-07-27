@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { AdminShell } from "@/components/admin/AdminShell";
 import { RichfieldAdminDashboard } from "@/components/admin/RichfieldAdminDashboard";
 import { RichfieldAdminLoginPanel } from "@/components/admin/RichfieldAdminLoginPanel";
 import { RichfieldAdminSessionRestorer } from "@/components/admin/RichfieldAdminSessionRestorer";
@@ -141,10 +140,8 @@ export default async function AdminSectionPage({
   }
 
   return (
-    <AdminShell userEmail={sessionState.session.user.email}>
-      <Suspense fallback={<RichfieldAdminSkeleton />}>
-        <SectionBody section={section} session={sessionState.session} />
-      </Suspense>
-    </AdminShell>
+    <Suspense fallback={<RichfieldAdminSkeleton />}>
+      <SectionBody section={section} session={sessionState.session} />
+    </Suspense>
   );
 }

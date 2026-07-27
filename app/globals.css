@@ -546,3 +546,26 @@ button:focus-visible {
     --color-gold-strong: oklch(0.74 0.14 76);
   }
 }
+
+/* The original dashboard is authored against its own token names (--navy,
+   --ink-soft, --parchment, --clay). Inside the themed shell those must resolve
+   to the theme's tokens, or its type stays dark navy on a dark background —
+   legible in light mode, unreadable in dark. Mapping them here themes the whole
+   legacy surface without touching its markup. */
+[data-admin-theme] {
+  --navy: var(--color-ink);
+  --ink: var(--color-ink);
+  --ink-soft: var(--color-muted);
+  --parchment: var(--color-cream);
+  --clay: var(--color-gold-strong);
+  --copper: var(--color-gold-strong);
+  --copper-dark: var(--color-gold-strong);
+  --gold: var(--color-gold);
+}
+
+/* Same reason: the legacy dashboard paints panels with literal white washes,
+   which stay light whatever the theme. Re-point them at the themed surface. */
+[data-admin-theme] .parchment-card,
+[data-admin-theme] [class*="bg-white/"] {
+  background-color: var(--color-paper);
+}

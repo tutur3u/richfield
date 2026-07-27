@@ -1,6 +1,7 @@
 "use client";
 
 import { type InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   contentKeys,
@@ -78,12 +79,6 @@ function statusTone(status: string) {
   return "bg-gold/18 text-gold-strong";
 }
 
-function statusLabel(status: string) {
-  if (status === "published") return "Live";
-  if (status === "archived") return "Hidden";
-  return "Draft";
-}
-
 function ContentRow({
   item,
   onOpen,
@@ -93,6 +88,16 @@ function ContentRow({
   onOpen: (id: string) => void;
   selected: boolean;
 }) {
+  const t = useTranslations("admin.common");
+  const statusLabel =
+    item.status === "published"
+      ? t("live")
+      : item.status === "archived"
+        ? t("hidden")
+        : item.status === "scheduled"
+          ? t("scheduled")
+          : t("draft");
+
   return (
     <button
       aria-current={selected ? "true" : undefined}
@@ -106,19 +111,23 @@ function ContentRow({
     >
       <span className="flex items-start justify-between gap-3">
         <span className="font-display text-lg leading-tight text-ink">
-          {item.title || "Untitled"}
+          {item.title || t("untitled")}
         </span>
         <span
           className={`shrink-0 px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.14em] ${statusTone(
             item.status,
           )}`}
         >
-          {statusLabel(item.status)}
+          {statusLabel}
         </span>
       </span>
       {item.slug ? (
         <span className="truncate text-xs text-muted">/{item.slug}</span>
       ) : null}
+      <span className="mt-1 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-muted">
+        <span>EN · {item.localeStatuses.en === "published" ? t("live") : t("draft")}</span>
+        <span>VI · {item.localeStatuses.vi === "published" ? t("live") : t("draft")}</span>
+      </span>
     </button>
   );
 }
@@ -133,17 +142,21 @@ function ContentRow({
 export function AdminContentList({
   collectionKey,
   emptyHint,
+  initialPage,
   onOpen,
   selectedId,
   title,
 }: {
   collectionKey: RichfieldAdminCollectionKey;
   emptyHint: string;
+  initialPage?: RichfieldContentPage;
   onOpen: (id: string | null) => void;
   selectedId?: string | null;
   title: string;
 }) {
   const [search, setSearch] = useState("");
+  const locale = useLocale() === "vi" ? "vi" : "en";
+  const t = useTranslations("admin.common");
   const debouncedSearch = useDebounced(search);
   const searchId = useId();
 
@@ -158,14 +171,18 @@ export function AdminContentList({
   >({
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 1,
+    initialData: initialPage
+      ? { pageParams: [1], pages: [initialPage] }
+      : undefined,
     queryFn: ({ pageParam, signal }) =>
       fetchContentPage({
         collectionKey,
+        locale,
         page: pageParam,
         search: debouncedSearch,
         signal,
       }),
-    queryKey: contentKeys.list(collectionKey, debouncedSearch),
+    queryKey: contentKeys.list(collectionKey, debouncedSearch, locale),
   });
 
   const items = useMemo(
@@ -192,10 +209,8 @@ export function AdminContentList({
           </h2>
           <p className="mt-1 text-sm text-muted">
             {query.isPending
-              ? "Loading…"
-              : `${total} ${total === 1 ? "item" : "items"}${
-                  debouncedSearch ? " found" : ""
-                }`}
+              ? t("loading")
+              : t(debouncedSearch ? "itemsFound" : "items", { count: total })}
           </p>
         </div>
         <button
@@ -203,19 +218,19 @@ export function AdminContentList({
           onClick={() => onOpen(null)}
           type="button"
         >
-          Add new
+          {t("addNew")}
         </button>
       </header>
 
       <div className="grid gap-1.5">
         <label className="sr-only" htmlFor={searchId}>
-          Search {title}
+          {t("search", { title })}
         </label>
         <input
           className="min-h-11 w-full border border-line bg-paper px-3 text-sm text-ink placeholder:text-muted/70 focus:border-gold-strong focus:outline-none"
           id={searchId}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder={`Search ${title.toLowerCase()}…`}
+          placeholder={t("search", { title })}
           type="search"
           value={search}
         />
@@ -226,21 +241,21 @@ export function AdminContentList({
           <p className="text-sm text-ink">
             {query.error instanceof Error
               ? query.error.message
-              : "Something went wrong."}
+              : t("tryAgain")}
           </p>
           <button
             className="button-secondary mt-3"
             onClick={() => void query.refetch()}
             type="button"
           >
-            Try again
+            {t("tryAgain")}
           </button>
         </div>
       ) : null}
 
       {query.isPending ? (
         <div aria-busy="true" className="grid gap-3">
-          <span className="sr-only">Loading {title}…</span>
+          <span className="sr-only">{t("loading")}</span>
           {Array.from({ length: 5 }, (_, index) => (
             <div
               className="grid gap-2 border border-line bg-paper p-4"
@@ -259,11 +274,11 @@ export function AdminContentList({
       {!query.isPending && items.length === 0 && !query.isError ? (
         <div className="border border-dashed border-ink/25 bg-paper p-8 text-center">
           <p className="font-display text-xl text-ink">
-            {debouncedSearch ? "Nothing matches that search" : "Nothing here yet"}
+            {debouncedSearch ? t("nothingMatches") : t("nothingHere")}
           </p>
           <p className="mx-auto mt-2 max-w-[42ch] text-sm leading-6 text-muted">
             {debouncedSearch
-              ? "Try a different word, or clear the search to see everything."
+              ? t("searchHelp")
               : emptyHint}
           </p>
           {debouncedSearch ? (
@@ -272,7 +287,7 @@ export function AdminContentList({
               onClick={() => setSearch("")}
               type="button"
             >
-              Clear search
+              {t("clearSearch")}
             </button>
           ) : (
             <button
@@ -280,7 +295,7 @@ export function AdminContentList({
               onClick={() => onOpen(null)}
               type="button"
             >
-              Add the first one
+              {t("addFirst")}
             </button>
           )}
         </div>
@@ -308,12 +323,12 @@ export function AdminContentList({
           onClick={() => void query.fetchNextPage()}
           type="button"
         >
-          {query.isFetchingNextPage ? "Loading…" : "Load more"}
+          {query.isFetchingNextPage ? t("loading") : t("loadMore")}
         </button>
       ) : null}
 
       <p aria-live="polite" className="sr-only">
-        {query.isFetchingNextPage ? "Loading more items" : ""}
+        {query.isFetchingNextPage ? t("loadingMore") : ""}
       </p>
     </section>
   );

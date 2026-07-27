@@ -579,3 +579,96 @@ button:focus-visible {
 [data-admin-theme] [class*="bg-white"] {
   background-color: var(--color-paper);
 }
+
+/* Shared Tuturuuu editor, visually integrated with the editorial admin.
+   Its runtime is dynamically imported only by editor routes. */
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--color-admin-rule);
+  background: var(--color-admin-parchment);
+  padding: 0.5rem;
+}
+
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar button,
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar label {
+  display: inline-flex;
+  min-height: 2.25rem;
+  cursor: pointer;
+  align-items: center;
+  border: 1px solid transparent;
+  padding: 0.25rem 0.625rem;
+  color: var(--color-admin-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar button:hover,
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar button:focus-visible,
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar label:hover,
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar [aria-pressed="true"] {
+  border-color: var(--color-admin-gold);
+  background: var(--color-paper);
+  outline: none;
+}
+
+.richfield-tuturuuu-editor .tiptap {
+  min-height: 18rem;
+  padding: 1rem;
+  color: var(--color-admin-ink);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  outline: none;
+}
+
+.richfield-tuturuuu-editor .tiptap > * + * {
+  margin-top: 0.75rem;
+}
+
+.richfield-tuturuuu-editor .tiptap h2 {
+  color: var(--color-admin-navy);
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.richfield-tuturuuu-editor .tiptap ul,
+.richfield-tuturuuu-editor .tiptap ol {
+  padding-left: 1.5rem;
+}
+
+.richfield-tuturuuu-editor .tiptap ul {
+  list-style: disc;
+}
+
+.richfield-tuturuuu-editor .tiptap ol {
+  list-style: decimal;
+}
+
+.richfield-tuturuuu-editor .tiptap blockquote {
+  border-left: 3px solid var(--color-admin-gold);
+  padding-left: 1rem;
+  color: var(--color-admin-ink-soft);
+}
+
+.richfield-tuturuuu-editor .tiptap p.is-editor-empty:first-child::before {
+  float: left;
+  height: 0;
+  color: var(--color-admin-ink-soft);
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
+.richfield-tuturuuu-editor .tuturuuu-editor-word-count {
+  display: block;
+  border-top: 1px solid var(--color-admin-rule);
+  padding: 0.5rem 0.75rem;
+  color: var(--color-admin-ink-soft);
+  font-size: 0.75rem;
+  text-align: right;
+}
+
+.richfield-tuturuuu-editor[aria-disabled="true"] {
+  opacity: 0.65;
+}

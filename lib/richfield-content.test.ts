@@ -653,4 +653,76 @@ describe("delivery image resolution", () => {
 
     expect(content.brands[0]?.logoSrc).toBe("/photos/logos/fallback.webp");
   });
+
+  test("publishes locale variants independently without leaking English", () => {
+    const delivery = {
+      adapter: "richfield",
+      canonicalProjectId: "richfield",
+      generatedAt: new Date("2026-07-27").toISOString(),
+      loadingData: null,
+      profileData: {},
+      workspaceId: "workspace-1",
+      collections: [
+        {
+          collection_type: "articles",
+          config: null,
+          description: null,
+          id: "articles",
+          slug: "articles",
+          title: "News",
+          entries: [
+            {
+              assets: [],
+              blocks: [],
+              id: "article-1",
+              metadata: {
+                richfieldLocalization: {
+                  defaultLocale: "en",
+                  locales: {
+                    en: {
+                      body: "English body",
+                      status: "published",
+                      summary: "English summary",
+                      title: "English story",
+                    },
+                    vi: {
+                      body: "Nội dung tiếng Việt",
+                      status: "draft",
+                      summary: "Tóm tắt tiếng Việt",
+                      title: "Tin tiếng Việt",
+                    },
+                  },
+                  sourceLocale: "en",
+                  supportedLocales: ["en", "vi"],
+                  version: 1,
+                },
+              },
+              profile_data: {},
+              published_at: null,
+              slug: "localized-story",
+              status: "published",
+              subtitle: null,
+              summary: "Legacy summary",
+              title: "Legacy title",
+            },
+          ],
+        },
+      ],
+    };
+
+    const english = buildRichfieldContent(delivery, {
+      apiBaseUrl: "https://platform.example.com/api/v1",
+      locale: "en",
+    });
+    const vietnamese = buildRichfieldContent(delivery, {
+      apiBaseUrl: "https://platform.example.com/api/v1",
+      locale: "vi",
+    });
+
+    expect(english.articles[0]).toMatchObject({
+      body: "English body",
+      title: "English story",
+    });
+    expect(vietnamese.articles).toEqual([]);
+  });
 });

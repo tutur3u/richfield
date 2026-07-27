@@ -1,4 +1,159 @@
 {
+  "admin": {
+    "login": {
+      "back": "Back to the site",
+      "continue": "Continue with Tuturuuu",
+      "description": "Your Tuturuuu account carries your access. You will come straight back here once you have signed in.",
+      "eyebrow": "Sign in",
+      "help": "Need access? Ask a Richfield administrator to add you to the workspace.",
+      "masthead": "The desk behind the magazine.",
+      "mastheadDescription": "Write company updates, open and close positions, and read what visitors send you — all from one place.",
+      "staffOnly": "Staff access only"
+    },
+    "session": {
+      "checking": "Checking your Tuturuuu session before the dashboard opens.",
+      "ended": "Session ended",
+      "expired": "Your session has expired. Signing in again will bring you straight back here.",
+      "moment": "One moment",
+      "restore": "Restoring your access",
+      "signInAgain": "Please sign in again"
+    },
+    "account": {
+      "description": "You can edit the website and choose what visitors can see.",
+      "signedIn": "Signed in",
+      "signOut": "Sign out",
+      "title": "Account",
+      "viewSite": "View site"
+    },
+    "common": {
+      "addFirst": "Add the first one",
+      "addNew": "Add new",
+      "cancel": "Cancel",
+      "clearSearch": "Clear search",
+      "close": "Close",
+      "draft": "Draft",
+      "hidden": "Hidden",
+      "items": "{count, plural, one {# item} other {# items}}",
+      "itemsFound": "{count, plural, one {# item found} other {# items found}}",
+      "live": "Live",
+      "loadMore": "Load more",
+      "loading": "Loading…",
+      "loadingMore": "Loading more items",
+      "menu": "Menu",
+      "nothingHere": "Nothing here yet",
+      "nothingMatches": "Nothing matches that search",
+      "scheduled": "Scheduled",
+      "search": "Search {title}…",
+      "searchHelp": "Try a different word, or clear the search to see everything.",
+      "tryAgain": "Try again",
+      "untitled": "Untitled"
+    },
+    "editor": {
+      "allChangesSaved": "All changes saved",
+      "back": "Back",
+      "contentLanguage": "Content language",
+      "completion": "English complete · Vietnamese needs review",
+      "createTitle": "Create {item}",
+      "editTitle": "Edit {item}",
+      "english": "English",
+      "localeLabel": "Content language",
+      "preview": "Preview",
+      "saveDraft": "Save draft",
+      "unsavedTitle": "Discard unsaved changes?",
+      "unsavedDescription": "Your latest edits have not been saved.",
+      "keepEditing": "Keep editing",
+      "discard": "Discard changes",
+      "vietnamese": "Tiếng Việt"
+    },
+    "groups": {
+      "content": "Content",
+      "contact": "Enquiries",
+      "media": "Media",
+      "team": "Workspace"
+    },
+    "locale": {
+      "english": "English",
+      "label": "Admin language",
+      "vietnamese": "Tiếng Việt"
+    },
+    "metadata": {
+      "dashboard": "Dashboard",
+      "loginDescription": "Tuturuuu login for the Richfield editorial dashboard.",
+      "loginTitle": "Admin login"
+    },
+    "sections": {
+      "account": {
+        "description": "Your account and sign-in.",
+        "empty": "",
+        "title": "Account"
+      },
+      "brands": {
+        "description": "The brands Richfield distributes.",
+        "empty": "Add a brand to show it on the Brands page.",
+        "title": "Brands"
+      },
+      "careers": {
+        "description": "Open positions shown on the Careers page.",
+        "empty": "Add a position and it will show on the Careers page.",
+        "title": "Careers"
+      },
+      "channels": {
+        "description": "Phone numbers, addresses, and other ways to reach you.",
+        "empty": "Add a phone number or address for the contact page.",
+        "title": "Channels"
+      },
+      "contact-form": {
+        "description": "Form fields, enquiry types, and where responses are sent.",
+        "empty": "Configure the contact form here.",
+        "title": "Form settings"
+      },
+      "contact-page": {
+        "description": "Contact page heading, map, and imagery.",
+        "empty": "Set up the contact page copy here.",
+        "title": "Contact page"
+      },
+      "files": {
+        "description": "Files and storage used by the website.",
+        "empty": "Files you upload will be listed here.",
+        "title": "Files"
+      },
+      "leadership": {
+        "description": "Leadership profiles and quotes.",
+        "empty": "Add a leader to show them on the site.",
+        "title": "Leadership"
+      },
+      "milestones": {
+        "description": "The company timeline.",
+        "empty": "Add a milestone to build out the timeline.",
+        "title": "Milestones"
+      },
+      "news": {
+        "description": "Company news, partnership stories, and updates.",
+        "empty": "Write your first story and it will appear on the News page.",
+        "title": "News"
+      },
+      "people": {
+        "description": "Who can edit this website.",
+        "empty": "Invite a colleague from the Tuturuuu workspace.",
+        "title": "People"
+      },
+      "photos": {
+        "description": "Photos used across the website.",
+        "empty": "Upload a photo to use it on the site.",
+        "title": "Photos"
+      },
+      "responses": {
+        "description": "Messages sent through the contact form.",
+        "empty": "Messages from the website will land here.",
+        "title": "Responses"
+      }
+    },
+    "shell": {
+      "dashboardSections": "Dashboard sections",
+      "richfield": "Richfield",
+      "skipToContent": "Skip to content"
+    }
+  },
   "nav": {
     "items": [
       {

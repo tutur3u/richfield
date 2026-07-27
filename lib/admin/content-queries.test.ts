@@ -27,7 +27,7 @@ describe("contentKeys", () => {
     // collection after a mutation would silently miss the searched lists.
     const listKey = contentKeys.list("articles", "vietnam");
     expect(listKey.slice(0, 3)).toEqual(contentKeys.collection("articles"));
-    expect(listKey.at(-1)).toEqual({ search: "vietnam" });
+    expect(listKey.at(-1)).toEqual({ locale: "en", search: "vietnam" });
   });
 
   test("separates searches so one does not serve another's cache", () => {

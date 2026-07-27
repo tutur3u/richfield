@@ -44,6 +44,7 @@ function readPageParams(request: Request) {
       ? Math.min(Math.max(limit, 1), MAX_PAGE_SIZE)
       : DEFAULT_PAGE_SIZE,
     page: Number.isFinite(page) && page > 0 ? page : 1,
+    locale: url.searchParams.get("locale") === "vi" ? "vi" as const : "en" as const,
     search,
   };
 }
@@ -75,28 +76,37 @@ export async function GET(
 
   try {
     const startedAt = performance.now();
+    const { limit, locale, page, search } = readPageParams(request);
     const allItems = await refreshRichfieldAdminContent(
       session.accessToken,
       collectionKey,
+      locale,
     );
-    const { limit, page, search } = readPageParams(request);
     const filtered = search
       ? allItems.filter((item) => matchesSearch(item, search))
       : allItems;
     const offset = (page - 1) * limit;
     const items = filtered.slice(offset, offset + limit);
-    const response = NextResponse.json({
+    const payload = {
       items,
       // Null rather than page + 1 at the end, so the client gets an explicit
       // stop signal instead of inferring one from a short page.
       nextPage: offset + items.length < filtered.length ? page + 1 : null,
       page,
       total: filtered.length,
-    });
+    };
+    const serializedBytes = new TextEncoder().encode(
+      JSON.stringify(payload),
+    ).byteLength;
+    const response = NextResponse.json(payload);
     response.headers.set(
       "Server-Timing",
-      `richfield-content-refresh;dur=${Math.max(0, performance.now() - startedAt).toFixed(1)}`,
+      [
+        `richfield-content-refresh;dur=${Math.max(0, performance.now() - startedAt).toFixed(1)}`,
+        `richfield-content-payload;desc="${serializedBytes} bytes"`,
+      ].join(", "),
     );
+    response.headers.set("X-Richfield-Payload-Bytes", String(serializedBytes));
     return response;
   } catch (error) {
     return NextResponse.json({ error: readErrorMessage(error) }, { status: 500 });

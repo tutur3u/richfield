@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { cookies } from "next/headers";
 import { BodyChrome, fontVariables } from "@/app/_components/root-chrome";
 import { AdminQueryProvider } from "@/components/admin/admin-query-provider";
+import {
+  ADMIN_LOCALE_COOKIE,
+  toAdminLocale,
+} from "@/lib/admin/locales";
 
 // Root layout for the non-localized system surfaces (admin, login,
 // verify-token). These routes intentionally omit localized public chrome:
@@ -17,15 +23,22 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function SystemLayout({
+export default async function SystemLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = toAdminLocale(
+    (await cookies()).get(ADMIN_LOCALE_COOKIE)?.value,
+  );
+  const messages = (await import(`../../messages/${locale}.json`)).default;
+
   return (
-    <html lang="en" className={fontVariables} data-scroll-behavior="smooth">
+    <html lang={locale} className={fontVariables} data-scroll-behavior="smooth">
       <BodyChrome>
-        <AdminQueryProvider>{children}</AdminQueryProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <AdminQueryProvider>{children}</AdminQueryProvider>
+        </NextIntlClientProvider>
       </BodyChrome>
     </html>
   );

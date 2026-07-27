@@ -1,17 +1,18 @@
 import type { ExternalProjectsClient } from "tuturuuu/external-projects";
 import {
   RICHFIELD_ADMIN_COLLECTIONS,
+  normalizeRichfieldContentStatus,
   readRichfieldAdminContent,
   type RichfieldAdminCollectionKey,
   type RichfieldAdminContentItem,
   type RichfieldAdminStudioPayload,
+  type RichfieldContentStatus,
   type RichfieldContentMutationInput,
 } from "./richfield-admin-content-model";
 import {
-  createRichfieldExternalProjectsClient,
+  getRichfieldAdminCollectionStudio,
   revalidateRichfieldContent,
 } from "./richfield-admin-api";
-import { getRichfieldWorkspaceId } from "./richfield-config";
 import { getRichfieldManifestCollectionSchema } from "./richfield-external-project-manifest";
 
 type RichfieldCrudClient = Pick<
@@ -271,23 +272,118 @@ function getSubtitle(input: RichfieldContentMutationInput) {
   return input.role || null;
 }
 
-function buildEntryPayload(collectionId: string, input: RichfieldContentMutationInput) {
-  return {
-    collection_id: collectionId,
-    metadata: {},
-    profile_data: buildProfileData(input),
-    slug: input.slug,
+const LOCALIZABLE_PROFILE_KEYS: Partial<
+  Record<RichfieldAdminCollectionKey, string[]>
+> = {
+  articles: ["category"],
+  brands: ["category", "featureCaption"],
+  "contact-channels": ["cta", "secondary"],
+  "contact-form": ["inquiryTypes", "submitLabel", "successMessage"],
+  "contact-page": ["headline", "intro"],
+  "image-library": ["category", "credit", "productName"],
+  jobs: ["department", "employmentType", "location", "workMode"],
+  leadership: ["role"],
+};
+
+function buildLocalizedProfileData(input: RichfieldContentMutationInput) {
+  const profileData = buildProfileData(input);
+  const keys = LOCALIZABLE_PROFILE_KEYS[input.collectionKey] ?? [];
+  return Object.fromEntries(
+    keys.map((key) => [key, (profileData as Record<string, unknown>)[key] ?? null]),
+  );
+}
+
+function buildLocalizationMetadata(
+  input: RichfieldContentMutationInput,
+  current: RichfieldAdminContentItem | null,
+) {
+  const existingMetadata = current?.metadata ?? {};
+  const existingLocalization = readRecord(
+    existingMetadata.richfieldLocalization,
+  );
+  const existingLocales = readRecord(existingLocalization.locales);
+  const variant = {
+    body: input.body,
+    imageAlt: input.imageAlt,
+    profileData: buildLocalizedProfileData(input),
     status: input.status,
     subtitle: getSubtitle(input),
+    summary: input.summary,
+    title: input.title,
+  };
+
+  return {
+    ...existingMetadata,
+    richfieldLocalization: {
+      defaultLocale: "en",
+      locales: {
+        ...existingLocales,
+        [input.locale]: variant,
+      },
+      sourceLocale:
+        typeof existingLocalization.sourceLocale === "string"
+          ? existingLocalization.sourceLocale
+          : input.locale,
+      supportedLocales: ["en", "vi"],
+      version: 1,
+    },
+  };
+}
+
+function buildSharedProfileData(
+  input: RichfieldContentMutationInput,
+  current: RichfieldAdminContentItem | null,
+) {
+  const next = buildProfileData(input) as Record<string, unknown>;
+
+  if (input.locale === "en" || !current) return next;
+
+  for (const key of LOCALIZABLE_PROFILE_KEYS[input.collectionKey] ?? []) {
+    next[key] = current.profileData[key] ?? null;
+  }
+
+  return next;
+}
+
+function buildEntryPayload(
+  collectionId: string,
+  input: RichfieldContentMutationInput,
+  current: RichfieldAdminContentItem | null = null,
+) {
+  const metadata = buildLocalizationMetadata(input, current);
+  const locales = readRecord(
+    readRecord(metadata.richfieldLocalization).locales,
+  );
+  const statuses = Object.values(locales).map((value) =>
+    normalizeRichfieldContentStatus(readString(readRecord(value), "status")),
+  );
+  const aggregateStatus: RichfieldContentStatus = statuses.includes("published")
+    ? "published"
+    : statuses.includes("scheduled")
+      ? "scheduled"
+      : statuses.every((status) => status === "archived")
+        ? "archived"
+        : "draft";
+  const preserveCore = input.locale !== "en" && current;
+
+  return {
+    collection_id: collectionId,
+    metadata: metadata as never,
+    profile_data: buildSharedProfileData(input, current) as never,
+    slug: input.slug,
+    status: aggregateStatus,
+    subtitle: preserveCore ? current.subtitle || null : getSubtitle(input),
     summary:
-      input.collectionKey === "contact-channels"
+      preserveCore
+        ? current.summary || null
+        : input.collectionKey === "contact-channels"
         ? input.summary || null
         : input.collectionKey === "jobs"
           ? input.summary || null
           : input.collectionKey === "image-library"
             ? input.imageAlt || input.summary || null
             : input.summary || null,
-    title: input.title,
+    title: preserveCore ? current.title || input.title : input.title,
   };
 }
 
@@ -324,6 +420,10 @@ async function saveBodyBlock({
     input.collectionKey !== "contact-page" &&
     input.collectionKey !== "contact-submissions"
   ) return;
+
+  // Non-default locale bodies live in the entry localization envelope. The
+  // legacy Markdown block remains the English/backward-compatible mirror.
+  if (input.locale !== "en") return;
 
   const payload =
     input.collectionKey === "leadership"
@@ -552,7 +652,11 @@ export async function updateRichfieldContentItem(
     percent: 24,
     step: "save-details",
   });
-  await client.updateEntry(workspaceId, entryId, buildEntryPayload(String(collection.id), input));
+  await client.updateEntry(
+    workspaceId,
+    entryId,
+    buildEntryPayload(String(collection.id), input, current),
+  );
   await reportProgress(options, {
     label: input.imageFile ? "Uploading image" : "Checking image",
     percent: 52,
@@ -608,10 +712,13 @@ export async function deleteRichfieldContentItem(
 export async function refreshRichfieldAdminContent(
   accessToken: string,
   collectionKey: RichfieldAdminCollectionKey,
+  locale: "en" | "vi" = "en",
 ) {
-  const workspaceId = getRichfieldWorkspaceId();
-  const client = createRichfieldExternalProjectsClient(accessToken);
-  const studio = await client.getStudio(workspaceId);
-  revalidateRichfieldContent();
-  return readRichfieldAdminContent(studio as RichfieldAdminStudioPayload, collectionKey);
+  const collectionSlug =
+    RICHFIELD_ADMIN_COLLECTIONS[collectionKey].collectionSlug;
+  const studio = await getRichfieldAdminCollectionStudio(
+    accessToken,
+    collectionSlug,
+  );
+  return readRichfieldAdminContent(studio, collectionKey, locale);
 }

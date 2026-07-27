@@ -1,4 +1,159 @@
 {
+  "admin": {
+    "login": {
+      "back": "Quay lại trang web",
+      "continue": "Tiếp tục với Tuturuuu",
+      "description": "Tài khoản Tuturuuu của bạn xác nhận quyền truy cập. Sau khi đăng nhập, bạn sẽ quay lại đây.",
+      "eyebrow": "Đăng nhập",
+      "help": "Bạn cần quyền truy cập? Hãy nhờ quản trị viên Richfield thêm bạn vào workspace.",
+      "masthead": "Bàn biên tập phía sau tạp chí.",
+      "mastheadDescription": "Viết tin công ty, quản lý vị trí tuyển dụng và đọc phản hồi của khách truy cập — tất cả tại một nơi.",
+      "staffOnly": "Chỉ dành cho nhân viên"
+    },
+    "session": {
+      "checking": "Đang kiểm tra phiên Tuturuuu trước khi mở trang quản trị.",
+      "ended": "Phiên đã kết thúc",
+      "expired": "Phiên của bạn đã hết hạn. Đăng nhập lại sẽ đưa bạn trở về đây.",
+      "moment": "Vui lòng chờ",
+      "restore": "Đang khôi phục quyền truy cập",
+      "signInAgain": "Vui lòng đăng nhập lại"
+    },
+    "account": {
+      "description": "Bạn có thể chỉnh sửa trang web và chọn nội dung khách truy cập nhìn thấy.",
+      "signedIn": "Đã đăng nhập",
+      "signOut": "Đăng xuất",
+      "title": "Tài khoản",
+      "viewSite": "Xem trang web"
+    },
+    "common": {
+      "addFirst": "Thêm mục đầu tiên",
+      "addNew": "Thêm mới",
+      "cancel": "Hủy",
+      "clearSearch": "Xóa tìm kiếm",
+      "close": "Đóng",
+      "draft": "Bản nháp",
+      "hidden": "Đã ẩn",
+      "items": "{count} mục",
+      "itemsFound": "Tìm thấy {count} mục",
+      "live": "Đang hiển thị",
+      "loadMore": "Tải thêm",
+      "loading": "Đang tải…",
+      "loadingMore": "Đang tải thêm nội dung",
+      "menu": "Menu",
+      "nothingHere": "Chưa có nội dung",
+      "nothingMatches": "Không có kết quả phù hợp",
+      "scheduled": "Đã lên lịch",
+      "search": "Tìm trong {title}…",
+      "searchHelp": "Hãy thử từ khóa khác hoặc xóa tìm kiếm để xem tất cả.",
+      "tryAgain": "Thử lại",
+      "untitled": "Chưa đặt tiêu đề"
+    },
+    "editor": {
+      "allChangesSaved": "Mọi thay đổi đã được lưu",
+      "back": "Quay lại",
+      "contentLanguage": "Ngôn ngữ nội dung",
+      "completion": "Tiếng Anh hoàn tất · Tiếng Việt cần xem lại",
+      "createTitle": "Tạo {item}",
+      "editTitle": "Chỉnh sửa {item}",
+      "english": "English",
+      "localeLabel": "Ngôn ngữ nội dung",
+      "preview": "Xem trước",
+      "saveDraft": "Lưu bản nháp",
+      "unsavedTitle": "Hủy các thay đổi chưa lưu?",
+      "unsavedDescription": "Các chỉnh sửa mới nhất của bạn chưa được lưu.",
+      "keepEditing": "Tiếp tục chỉnh sửa",
+      "discard": "Hủy thay đổi",
+      "vietnamese": "Tiếng Việt"
+    },
+    "groups": {
+      "content": "Nội dung",
+      "contact": "Liên hệ",
+      "media": "Thư viện",
+      "team": "Không gian làm việc"
+    },
+    "locale": {
+      "english": "English",
+      "label": "Ngôn ngữ quản trị",
+      "vietnamese": "Tiếng Việt"
+    },
+    "metadata": {
+      "dashboard": "Trang quản trị",
+      "loginDescription": "Đăng nhập bằng Tuturuuu để truy cập trang biên tập Richfield.",
+      "loginTitle": "Đăng nhập quản trị"
+    },
+    "sections": {
+      "account": {
+        "description": "Tài khoản và phiên đăng nhập của bạn.",
+        "empty": "",
+        "title": "Tài khoản"
+      },
+      "brands": {
+        "description": "Các thương hiệu do Richfield phân phối.",
+        "empty": "Thêm thương hiệu để hiển thị trên trang Thương hiệu.",
+        "title": "Thương hiệu"
+      },
+      "careers": {
+        "description": "Các vị trí đang tuyển trên trang Tuyển dụng.",
+        "empty": "Thêm vị trí để hiển thị trên trang Tuyển dụng.",
+        "title": "Tuyển dụng"
+      },
+      "channels": {
+        "description": "Số điện thoại, địa chỉ và các phương thức liên hệ khác.",
+        "empty": "Thêm số điện thoại hoặc địa chỉ cho trang Liên hệ.",
+        "title": "Kênh liên hệ"
+      },
+      "contact-form": {
+        "description": "Trường biểu mẫu, loại yêu cầu và nơi nhận phản hồi.",
+        "empty": "Thiết lập biểu mẫu liên hệ tại đây.",
+        "title": "Cài đặt biểu mẫu"
+      },
+      "contact-page": {
+        "description": "Tiêu đề, bản đồ và hình ảnh của trang Liên hệ.",
+        "empty": "Thiết lập nội dung trang Liên hệ tại đây.",
+        "title": "Trang Liên hệ"
+      },
+      "files": {
+        "description": "Tệp và dung lượng được trang web sử dụng.",
+        "empty": "Các tệp tải lên sẽ xuất hiện tại đây.",
+        "title": "Tệp"
+      },
+      "leadership": {
+        "description": "Hồ sơ và trích dẫn của ban lãnh đạo.",
+        "empty": "Thêm thành viên lãnh đạo để hiển thị trên trang web.",
+        "title": "Ban lãnh đạo"
+      },
+      "milestones": {
+        "description": "Dòng thời gian của công ty.",
+        "empty": "Thêm cột mốc để hoàn thiện dòng thời gian.",
+        "title": "Cột mốc"
+      },
+      "news": {
+        "description": "Tin công ty, câu chuyện hợp tác và các cập nhật.",
+        "empty": "Viết bài đầu tiên để hiển thị trên trang Tin tức.",
+        "title": "Tin tức"
+      },
+      "people": {
+        "description": "Những người có thể chỉnh sửa trang web này.",
+        "empty": "Mời đồng nghiệp từ không gian làm việc Tuturuuu.",
+        "title": "Thành viên"
+      },
+      "photos": {
+        "description": "Hình ảnh được sử dụng trên trang web.",
+        "empty": "Tải ảnh lên để sử dụng trên trang web.",
+        "title": "Hình ảnh"
+      },
+      "responses": {
+        "description": "Tin nhắn được gửi từ biểu mẫu liên hệ.",
+        "empty": "Tin nhắn từ trang web sẽ xuất hiện tại đây.",
+        "title": "Phản hồi"
+      }
+    },
+    "shell": {
+      "dashboardSections": "Các khu vực quản trị",
+      "richfield": "Richfield",
+      "skipToContent": "Chuyển đến nội dung"
+    }
+  },
   "nav": {
     "items": [
       {

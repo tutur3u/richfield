@@ -22,25 +22,31 @@ export const contentKeys = {
   all: ["admin", "content"] as const,
   collection: (collectionKey: RichfieldAdminCollectionKey) =>
     [...contentKeys.all, collectionKey] as const,
-  list: (collectionKey: RichfieldAdminCollectionKey, search: string) =>
-    [...contentKeys.collection(collectionKey), { search }] as const,
+  list: (
+    collectionKey: RichfieldAdminCollectionKey,
+    search: string,
+    locale: "en" | "vi" = "en",
+  ) => [...contentKeys.collection(collectionKey), { locale, search }] as const,
 };
 
 export async function fetchContentPage({
   collectionKey,
   limit = ADMIN_CONTENT_PAGE_SIZE,
+  locale = "en",
   page,
   search,
   signal,
 }: {
   collectionKey: RichfieldAdminCollectionKey;
   limit?: number;
+  locale?: "en" | "vi";
   page: number;
   search: string;
   signal?: AbortSignal;
 }): Promise<RichfieldContentPage> {
   const params = new URLSearchParams({
     limit: String(limit),
+    locale,
     page: String(page),
   });
 

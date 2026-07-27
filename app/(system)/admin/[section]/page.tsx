@@ -1,27 +1,16 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
-import { RichfieldAdminDashboard } from "@/components/admin/RichfieldAdminDashboard";
-import { RichfieldAdminSkeleton } from "@/components/admin/RichfieldAdminSkeleton";
+import { getTranslations } from "next-intl/server";
+import { AdminSectionScreen } from "@/components/admin/AdminSectionScreen";
 import {
-  type AdminSection,
   DEFAULT_ADMIN_SECTION_SLUG,
   findAdminSection,
 } from "@/lib/admin/sections";
-import {
-  getRichfieldAdminSessionReadState,
-  getRichfieldAdminStudio,
-} from "@/lib/richfield-admin-api";
-import {
-  readRichfieldAdminContent,
-  type RichfieldAdminStudioPayload,
-} from "@/lib/richfield-admin-content-model";
-import {
-  buildRichfieldDriveUrl,
-  buildRichfieldWorkspaceUrl,
-} from "@/lib/richfield-config";
-
-export const dynamic = "force-dynamic";
+import { ADMIN_CONTENT_PAGE_SIZE } from "@/lib/admin/content-queries";
+import { ADMIN_LOCALE_COOKIE, toAdminLocale } from "@/lib/admin/locales";
+import { getRichfieldAdminSession } from "@/lib/richfield-admin-api";
+import { refreshRichfieldAdminContent } from "@/lib/richfield-admin-content";
 
 /**
  * One route per dashboard section.
@@ -36,11 +25,6 @@ export const dynamic = "force-dynamic";
  * and the dashboard is told which surface to open with its own chrome
  * suppressed — one dashboard, not a second one beside the old.
  */
-type AuthenticatedSession = Extract<
-  Awaited<ReturnType<typeof getRichfieldAdminSessionReadState>>,
-  { status: "authenticated" }
->["session"];
-
 export async function generateMetadata({
   params,
 }: {
@@ -48,65 +32,16 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { section: slug } = await params;
   const section = findAdminSection(slug);
-
-  return { title: section ? `${section.title} · Dashboard` : "Dashboard" };
-}
-
-function emptyStudio(): RichfieldAdminStudioPayload {
-  return { assets: [], blocks: [], collections: [], entries: [] };
-}
-
-async function SectionBody({
-  section,
-  session,
-}: {
-  section: AdminSection;
-  session: AuthenticatedSession;
-}) {
-  const studio = await getRichfieldAdminStudio(session.accessToken).catch(
-    (error) => {
-      console.error("[richfield:admin] failed to load studio", error);
-      return emptyStudio();
-    },
+  const locale = toAdminLocale(
+    (await cookies()).get(ADMIN_LOCALE_COOKIE)?.value,
   );
+  const t = await getTranslations({ locale, namespace: "admin" });
 
-  return (
-    <RichfieldAdminDashboard
-      driveHref={buildRichfieldDriveUrl()}
-      initialContent={{
-        articles: readRichfieldAdminContent(studio, "articles"),
-        brands: readRichfieldAdminContent(studio, "brands"),
-        "contact-channels": readRichfieldAdminContent(
-          studio,
-          "contact-channels",
-        ),
-        "contact-form": readRichfieldAdminContent(studio, "contact-form"),
-        "contact-page": readRichfieldAdminContent(studio, "contact-page"),
-        "contact-submissions": readRichfieldAdminContent(
-          studio,
-          "contact-submissions",
-        ),
-        "image-library": readRichfieldAdminContent(studio, "image-library"),
-        jobs: readRichfieldAdminContent(studio, "jobs"),
-        leadership: readRichfieldAdminContent(studio, "leadership"),
-        milestones: readRichfieldAdminContent(studio, "milestones"),
-      }}
-      initialTab={section.tab as never}
-      membersHref={buildRichfieldWorkspaceUrl({ targetKey: "members" })}
-      sessionExpiresAt={session.expiresAt}
-      sessionRefreshEarlySeconds={session.refreshEarlySeconds}
-      showChrome={false}
-      storageAnalytics={{
-        message: "Storage details load when you open Files.",
-        status: "unavailable",
-      }}
-      storageFiles={{
-        message: "Files load when you open Files.",
-        status: "unavailable",
-      }}
-      userEmail={session.user.email}
-    />
-  );
+  return {
+    title: section
+      ? `${t(`sections.${section.slug}.title` as Parameters<typeof t>[0])} · ${t("metadata.dashboard")}`
+      : t("metadata.dashboard"),
+  };
 }
 
 export default async function AdminSectionPage({
@@ -125,17 +60,29 @@ export default async function AdminSectionPage({
     redirect(`/admin/${DEFAULT_ADMIN_SECTION_SLUG}`);
   }
 
-  // The layout has already established there is a session; without one it
-  // renders the sign-in screen and this never runs.
-  const sessionState = await getRichfieldAdminSessionReadState();
+  let initialPage;
+  const session = section.collectionKey
+    ? await getRichfieldAdminSession()
+    : null;
 
-  if (sessionState.status !== "authenticated") {
-    return null;
+  if (session && section.collectionKey) {
+    const locale = toAdminLocale(
+      (await cookies()).get(ADMIN_LOCALE_COOKIE)?.value,
+    );
+    const items = await refreshRichfieldAdminContent(
+      session.accessToken,
+      section.collectionKey,
+      locale,
+    );
+    const firstItems = items.slice(0, ADMIN_CONTENT_PAGE_SIZE);
+    initialPage = {
+      items: firstItems,
+      nextPage:
+        firstItems.length < items.length ? 2 : null,
+      page: 1,
+      total: items.length,
+    };
   }
 
-  return (
-    <Suspense fallback={<RichfieldAdminSkeleton />}>
-      <SectionBody section={section} session={sessionState.session} />
-    </Suspense>
-  );
+  return <AdminSectionScreen initialPage={initialPage} section={section} />;
 }

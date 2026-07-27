@@ -119,6 +119,32 @@ export async function getRichfieldAdminStudio(accessToken: string) {
   return client.getStudio(workspaceId) as Promise<RichfieldAdminStudioPayload>;
 }
 
+/**
+ * Read just one collection and the blocks/assets required to render it.
+ *
+ * The platform keeps the unscoped studio endpoint for compatibility, but list
+ * and editor routes must not download unrelated collections.
+ */
+export async function getRichfieldAdminCollectionStudio(
+  accessToken: string,
+  collectionSlug: string,
+) {
+  const client = createRichfieldExternalProjectsClient(accessToken);
+  const workspaceId = getRichfieldWorkspaceId();
+  const read = () =>
+    client.getStudio(workspaceId, {
+      collectionSlugs: [collectionSlug],
+    }) as Promise<RichfieldAdminStudioPayload>;
+  let studio = await read();
+
+  if (studio.collections.length === 0) {
+    await setupRichfieldAdminStudio(accessToken);
+    studio = await read();
+  }
+
+  return studio;
+}
+
 export function revalidateRichfieldContent() {
   revalidatePath("/", "layout");
   revalidatePath("/");

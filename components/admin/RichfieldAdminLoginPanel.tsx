@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 const TUTURUUU_LOGO_URL = "/media/branding/tuturuuu.svg";
 
@@ -13,6 +14,8 @@ const TUTURUUU_LOGO_URL = "/media/branding/tuturuuu.svg";
  * offering a form it cannot honour.
  */
 export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
+  const t = useTranslations("admin.login");
+
   return (
     <main className="section-band grid min-h-screen place-items-center px-4 py-10 sm:px-6">
       <section className="parchment-card grid w-full max-w-[880px] overflow-hidden md:grid-cols-[1.05fr_1fr]">
@@ -28,17 +31,14 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
           </p>
           <div className="py-10">
             <h1 className="font-display text-[clamp(2.5rem,4.6vw,3.6rem)] leading-[0.98] tracking-[-0.02em]">
-              The desk behind
-              <br />
-              the magazine.
+              {t("masthead")}
             </h1>
             <p className="mt-5 max-w-[34ch] text-sm leading-7 text-cream/70">
-              Write company updates, open and close positions, and read what
-              visitors send you — all from one place.
+              {t("mastheadDescription")}
             </p>
           </div>
           <p className="text-[11px] uppercase tracking-[0.2em] text-cream/45">
-            Staff access only
+            {t("staffOnly")}
           </p>
         </div>
 
@@ -51,27 +51,49 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
             src={TUTURUUU_LOGO_URL}
             width={44}
           />
-          <p className="script-label">Sign in</p>
+          <p className="script-label">{t("eyebrow")}</p>
           <h2 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-ink">
-            Continue with Tuturuuu
+            {t("continue")}
           </h2>
           <p className="mt-3 max-w-[36ch] text-sm leading-6 text-muted">
-            Your Tuturuuu account carries your access. You will come straight
-            back here once you have signed in.
+            {t("description")}
           </p>
 
           <div className="mt-7 grid gap-2.5">
             <a className="button-primary w-full" href={loginHref}>
-              Continue with Tuturuuu
+              {t("continue")}
             </a>
             <Link className="button-secondary w-full" href="/">
-              Back to the site
+              {t("back")}
             </Link>
           </div>
+          <form
+            action="/api/admin/locale"
+            className="mt-4 flex justify-center gap-2 text-xs"
+            method="post"
+          >
+            <input name="next" type="hidden" value="/admin/news" />
+            <button
+              className="px-2 py-1 font-bold text-muted hover:text-ink"
+              name="locale"
+              type="submit"
+              value="en"
+            >
+              English
+            </button>
+            <span aria-hidden className="py-1 text-line">/</span>
+            <button
+              className="px-2 py-1 font-bold text-muted hover:text-ink"
+              name="locale"
+              type="submit"
+              value="vi"
+            >
+              Tiếng Việt
+            </button>
+          </form>
 
           <p className="mt-6 border-t border-line pt-4 text-xs leading-5 text-muted">
-            Need access? Ask a Richfield administrator to add you to the
-            workspace.
+            {t("help")}
           </p>
         </div>
       </section>

@@ -306,6 +306,70 @@ function getCollection(delivery: RichfieldDeliveryPayload, slug: string) {
   return delivery.collections.find((collection) => collection.slug === slug) ?? null;
 }
 
+/**
+ * Apply the locale variant before any public-content mapping happens.
+ *
+ * Legacy entries have no envelope and keep the previous locale-specific source
+ * fallback. Once an entry has opted into localization, an absent/unpublished
+ * variant is deliberately hidden so English copy cannot leak into Vietnamese.
+ */
+function localizeDelivery(
+  delivery: RichfieldDeliveryPayload,
+  locale: Locale,
+): RichfieldDeliveryPayload {
+  return {
+    ...delivery,
+    collections: delivery.collections.map((collection) => ({
+      ...collection,
+      entries: collection.entries.map((entry) => {
+        const localization = asRecord(
+          asRecord(entry.metadata).richfieldLocalization,
+        );
+        if (Object.keys(localization).length === 0) return entry;
+
+        const variant = asRecord(asRecord(localization.locales)[locale]);
+        const variantStatus = asString(variant.status) ?? "draft";
+        const body = asString(variant.body);
+        const imageAlt = asString(variant.imageAlt);
+
+        return {
+          ...entry,
+          assets: entry.assets.map((asset) => ({
+            ...asset,
+            alt_text: imageAlt ?? asset.alt_text,
+          })),
+          blocks: body
+            ? entry.blocks.some((block) => block.block_type === "markdown")
+              ? entry.blocks.map((block) =>
+                  block.block_type === "markdown"
+                    ? { ...block, content: { markdown: body } }
+                    : block,
+                )
+              : [
+                  ...entry.blocks,
+                  {
+                    block_type: "markdown",
+                    content: { markdown: body },
+                    id: `${entry.id}-${locale}-body`,
+                    sort_order: 0,
+                    title: "Body",
+                  },
+                ]
+            : entry.blocks,
+          profile_data: {
+            ...entry.profile_data,
+            ...asRecord(variant.profileData),
+          },
+          status: variantStatus,
+          subtitle: asString(variant.subtitle),
+          summary: asString(variant.summary),
+          title: asString(variant.title) ?? "",
+        };
+      }),
+    })),
+  };
+}
+
 function getPublishedEntries(delivery: RichfieldDeliveryPayload, slug: string) {
   return (getCollection(delivery, slug)?.entries ?? []).filter(
     (entry) => entry.status === "published",
@@ -829,24 +893,25 @@ export function buildRichfieldContent(
     return defaults;
   }
 
-  const nextImageLibrary = buildImageLibrary(delivery, apiBaseUrl, defaults.imageLibrary);
-  const nextBrands = buildBrands(delivery, apiBaseUrl, nextImageLibrary, defaults.brands, locale);
-  const nextMilestones = buildMilestones(delivery, defaults.milestones, locale);
+  const localizedDelivery = localizeDelivery(delivery, locale);
+  const nextImageLibrary = buildImageLibrary(localizedDelivery, apiBaseUrl, defaults.imageLibrary);
+  const nextBrands = buildBrands(localizedDelivery, apiBaseUrl, nextImageLibrary, defaults.brands, locale);
+  const nextMilestones = buildMilestones(localizedDelivery, defaults.milestones, locale);
 
   return {
     ...defaults,
-    articles: buildArticles(delivery, apiBaseUrl),
+    articles: buildArticles(localizedDelivery, apiBaseUrl),
     brands: nextBrands,
     homepageBrands: nextBrands,
     brandTimeline: deriveBrandTimeline(nextBrands),
-    contactChannels: buildContactChannels(delivery, locale),
-    contactForm: buildContactForm(delivery, defaults.contactForm),
-    contactPage: buildContactPage(delivery, apiBaseUrl, nextImageLibrary, defaults.contactPage, locale),
+    contactChannels: buildContactChannels(localizedDelivery, locale),
+    contactForm: buildContactForm(localizedDelivery, defaults.contactForm),
+    contactPage: buildContactPage(localizedDelivery, apiBaseUrl, nextImageLibrary, defaults.contactPage, locale),
     imageLibrary: nextImageLibrary,
-    leaders: buildLeaders(delivery, apiBaseUrl, defaults.leaders, locale),
+    leaders: buildLeaders(localizedDelivery, apiBaseUrl, defaults.leaders, locale),
     milestones: nextMilestones,
     homepageMilestones: nextMilestones.filter((m) => !m.aboutOnly),
-    openPositions: buildOpenPositions(delivery, defaults.openPositions),
+    openPositions: buildOpenPositions(localizedDelivery, defaults.openPositions),
     shelfCategories: buildShelfCategoriesFromImages(nextImageLibrary, defaults.shelfCategories),
   };
 }

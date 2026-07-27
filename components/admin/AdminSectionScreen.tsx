@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { usePathname, useRouter } from "next/navigation";
 import type { AdminSection } from "@/lib/admin/sections";
+import type { RichfieldContentPage } from "@/lib/admin/content-queries";
 import { AdminContentList } from "./AdminContentList";
 
 /**
@@ -13,62 +15,54 @@ import { AdminContentList } from "./AdminContentList";
  * that work happens rather than rendering an empty shell — a dead panel reads
  * as broken, a signpost does not.
  */
-export function AdminSectionScreen({ section }: { section: AdminSection }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+export function AdminSectionScreen({
+  initialPage,
+  section,
+}: {
+  initialPage?: RichfieldContentPage;
+  section: AdminSection;
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const t = useTranslations("admin");
+  const sectionTitleKey =
+    `sections.${section.slug}.title` as Parameters<typeof t>[0];
+  const sectionDescriptionKey =
+    `sections.${section.slug}.description` as Parameters<typeof t>[0];
+  const sectionEmptyKey =
+    `sections.${section.slug}.empty` as Parameters<typeof t>[0];
+  const title = t(sectionTitleKey);
+  const description = t(sectionDescriptionKey);
+  const emptyHint = t(sectionEmptyKey);
 
   return (
     <div className="grid min-w-0 gap-6">
-      <header className="grid gap-1">
-        <h1 className="font-display text-[clamp(1.8rem,3vw,2.4rem)] leading-[1.05] tracking-[-0.015em] text-ink">
-          {section.title}
+      <header className="grid gap-2 border-b border-admin-rule pb-6">
+        <h1 className="font-display text-[clamp(2.6rem,5vw,4.8rem)] leading-[0.95] tracking-[-0.025em] text-admin-navy">
+          {title}
         </h1>
-        <p className="max-w-[60ch] text-sm leading-6 text-muted">
-          {section.description}
+        <p className="max-w-[60ch] text-sm leading-6 text-admin-ink-soft">
+          {description}
         </p>
       </header>
 
       {section.collectionKey ? (
-        <>
-          {/* Editing still lives in the original dashboard until the editor is
-              lifted out of it. Say so plainly and link there, rather than
-              opening a panel that cannot save. */}
-          {selectedId !== null ? (
-            <div
-              className="flex flex-wrap items-center justify-between gap-3 border border-line bg-paper p-4"
-              role="status"
-            >
-              <p className="text-sm text-muted">
-                Editing opens in the full dashboard for now.
-              </p>
-              <div className="flex gap-2">
-                <Link className="button-primary px-4" href="/admin">
-                  Open editor
-                </Link>
-                <button
-                  className="button-secondary px-4"
-                  onClick={() => setSelectedId(null)}
-                  type="button"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : null}
-          <AdminContentList
-            collectionKey={section.collectionKey}
-            emptyHint={section.emptyHint}
-            onOpen={setSelectedId}
-            selectedId={selectedId}
-            title={section.title}
-          />
-        </>
+        <AdminContentList
+          collectionKey={section.collectionKey}
+          emptyHint={emptyHint}
+          initialPage={initialPage}
+          onOpen={(id) =>
+            router.push(`${pathname}/${id === null ? "new" : encodeURIComponent(id)}`)
+          }
+          title={title}
+        />
       ) : (
         <section className="parchment-card grid gap-3 p-6">
           <p className="text-sm leading-6 text-muted">
-            {section.emptyHint || "Manage this from your Tuturuuu workspace."}
+            {emptyHint}
           </p>
-          <Link className="button-secondary w-fit" href="/admin">
-            Back to the dashboard
+          <Link className="button-secondary w-fit" href="/admin/news">
+            {t("sections.news.title")}
           </Link>
         </section>
       )}

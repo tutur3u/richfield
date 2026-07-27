@@ -63,6 +63,7 @@ import {
  */
 export function ContentForm({
   collectionKey,
+  contentLocale = "en",
   initialDraft,
   item,
   onClose,
@@ -73,6 +74,7 @@ export function ContentForm({
   onSaved,
 }: {
   collectionKey: RichfieldAdminCollectionKey;
+  contentLocale?: "en" | "vi";
   initialDraft?: Partial<Draft>;
   item: RichfieldAdminContentItem | null;
   onClose: () => void;
@@ -239,6 +241,7 @@ export function ContentForm({
     });
 
     const body = new FormData();
+    body.set("locale", contentLocale);
     for (const [key, value] of Object.entries(draft)) {
       body.set(key, typeof value === "boolean" ? String(value) : value);
     }
@@ -978,19 +981,27 @@ export function ContentForm({
               />
             </div>
           ) : null}
-          <TextAreaField
-            disabled={isBusy}
-            label={
-              collectionKey === "brands"
-                ? "Story"
-                : collectionKey === "contact-channels"
+          {collectionKey === "brands" || collectionKey === "milestones" ? (
+            <RichTextEditor
+              disabled={isBusy}
+              label={collectionKey === "brands" ? "Story" : "Milestone copy"}
+              locale={contentLocale}
+              onChange={(value) => updateDraft("summary", value)}
+              value={draft.summary}
+            />
+          ) : (
+            <TextAreaField
+              disabled={isBusy}
+              label={
+                collectionKey === "contact-channels"
                   ? "Primary text"
                   : "Summary"
-            }
-            name="summary"
-            onChange={updateDraft}
-            value={draft.summary}
-          />
+              }
+              name="summary"
+              onChange={updateDraft}
+              value={draft.summary}
+            />
+          )}
           {collectionKey === "brands" ? (
             <div className="grid gap-4">
               <CheckboxField
@@ -1028,12 +1039,11 @@ export function ContentForm({
           <EditorStepHeader step="writing" />
           {collectionKey === "leadership" ? (
             <div className="grid gap-4">
-              <TextAreaField
+              <RichTextEditor
                 disabled={isBusy}
                 label="Bio"
-                name="body"
-                onChange={updateDraft}
-                rows={8}
+                locale={contentLocale}
+                onChange={(value) => updateDraft("body", value)}
                 value={draft.body}
               />
               <TextAreaField
@@ -1046,12 +1056,14 @@ export function ContentForm({
             </div>
           ) : null}
           {collectionKey === "contact-page" ? (
-            <TextAreaField
+            <RichTextEditor
               disabled={isBusy}
               label="Intro"
-              name="body"
-              onChange={updateDraft}
-              rows={8}
+              locale={contentLocale}
+              onChange={(value) => {
+                updateDraft("body", value);
+                updateDraft("summary", value);
+              }}
               value={draft.body || draft.summary}
             />
           ) : null}
@@ -1059,6 +1071,7 @@ export function ContentForm({
             <RichTextEditor
               disabled={isBusy}
               label="Success message"
+              locale={contentLocale}
               onChange={(value) => {
                 updateDraft("body", value);
                 updateDraft("summary", value);
@@ -1067,12 +1080,14 @@ export function ContentForm({
             />
           ) : null}
           {collectionKey === "contact-submissions" ? (
-            <TextAreaField
+            <RichTextEditor
               disabled={isBusy}
               label="Message"
-              name="body"
-              onChange={updateDraft}
-              rows={8}
+              locale={contentLocale}
+              onChange={(value) => {
+                updateDraft("body", value);
+                updateDraft("summary", value);
+              }}
               value={draft.body || draft.summary}
             />
           ) : null}
@@ -1080,6 +1095,7 @@ export function ContentForm({
             <RichTextEditor
               disabled={isBusy}
               label={collectionKey === "jobs" ? "Position description" : "Article"}
+              locale={contentLocale}
               onChange={(value) => updateDraft("body", value)}
               value={draft.body}
             />

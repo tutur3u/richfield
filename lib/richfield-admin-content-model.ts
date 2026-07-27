@@ -10,6 +10,7 @@ export type RichfieldAdminStudioPayload = {
 };
 
 export type RichfieldContentStatus = "archived" | "draft" | "published" | "scheduled";
+export type RichfieldContentLocale = "en" | "vi";
 export type RichfieldAdminCollectionKey =
   | "articles"
   | "brands"
@@ -57,13 +58,18 @@ export type RichfieldAdminContentItem = {
   inquiryType: string;
   kind: string;
   location: string;
+  locale: RichfieldContentLocale;
+  localeComplete: boolean;
+  localeStatuses: Record<RichfieldContentLocale, RichfieldContentStatus>;
   mapQuery: string;
+  metadata: Record<string, unknown>;
   name: string;
   objectPosition: string;
   pageSection: string;
   placement: string;
   positions: string;
   productName: string;
+  profileData: Record<string, unknown>;
   publishedAt: string;
   ratio: string;
   receivedAt: string;
@@ -106,6 +112,7 @@ export type RichfieldContentMutationInput = {
   inquiryType: string;
   kind: string;
   location: string;
+  locale: RichfieldContentLocale;
   mapQuery: string;
   name: string;
   objectPosition: string;
@@ -314,6 +321,7 @@ export function resolveRichfieldAdminCollectionKey(
 export function readRichfieldAdminContent(
   studio: RichfieldAdminStudioPayload,
   collectionKey: RichfieldAdminCollectionKey,
+  locale: RichfieldContentLocale = "en",
 ) {
   const config = RICHFIELD_ADMIN_COLLECTIONS[collectionKey];
   const collectionById = new Map(
@@ -329,12 +337,54 @@ export function readRichfieldAdminContent(
   return studio.entries
     .filter((entry) => getEntryCollectionSlug(entry, collectionById) === config.collectionSlug)
     .map<RichfieldAdminContentItem>((entry) => {
-      const profileData = readRecord(entry.profile_data ?? entry.profileData);
+      const metadata = readRecord(entry.metadata);
+      const localization = readRecord(metadata.richfieldLocalization);
+      const localeVariants = readRecord(localization.locales);
+      const requestedVariant = readRecord(localeVariants[locale]);
+      const englishVariant = readRecord(localeVariants.en);
+      const vietnameseVariant = readRecord(localeVariants.vi);
+      const sourceLocale = localization.sourceLocale === "vi" ? "vi" : "en";
+      const hasLocalization = Object.keys(localization).length > 0;
+      const mayUseLegacy = !hasLocalization || sourceLocale === locale;
+      const baseProfileData = readRecord(entry.profile_data ?? entry.profileData);
+      const localizedProfileData = readRecord(requestedVariant.profileData);
+      const profileData = {
+        ...baseProfileData,
+        ...localizedProfileData,
+      };
       const entryId = String(entry.id);
       const imageAsset = imageAssets.find((asset) => getAssetEntryId(asset) === entryId);
       const markdownBlock = markdownBlocks.find((block) => getBlockEntryId(block) === entryId);
       const yearValue = readNumber(profileData, "year");
       const stringList = profileData.inquiryTypes ?? profileData.usageTags;
+
+      const title =
+        readString(requestedVariant, "title") ??
+        (mayUseLegacy ? readString(entry, "title") : null) ??
+        "";
+      const summary =
+        readString(requestedVariant, "summary") ??
+        (mayUseLegacy ? readString(entry, "summary") : null) ??
+        "";
+      const body =
+        readString(requestedVariant, "body") ??
+        (mayUseLegacy ? getBlockMarkdown(markdownBlock) : "");
+      const requestedStatus = normalizeRichfieldContentStatus(
+        readString(requestedVariant, "status") ??
+          (mayUseLegacy ? readString(entry, "status") : null),
+      );
+      const localeStatuses = {
+        en: normalizeRichfieldContentStatus(
+          readString(englishVariant, "status") ??
+            (!hasLocalization || sourceLocale === "en"
+              ? readString(entry, "status")
+              : null),
+        ),
+        vi: normalizeRichfieldContentStatus(
+          readString(vietnameseVariant, "status") ??
+            (sourceLocale === "vi" ? readString(entry, "status") : null),
+        ),
+      };
 
       return {
         aboutOnly: readBoolean(profileData, "aboutOnly"),
@@ -342,7 +392,7 @@ export function readRichfieldAdminContent(
         applyEmail: readString(profileData, "applyEmail") ?? "",
         author: readString(profileData, "author") ?? "",
         blockId: markdownBlock ? String(markdownBlock.id) : null,
-        body: getBlockMarkdown(markdownBlock),
+        body,
         brand: readString(profileData, "brand") ?? readString(entry, "title") ?? "",
         category: readString(profileData, "category") ?? readString(entry, "subtitle") ?? "",
         collectionKey,
@@ -361,14 +411,24 @@ export function readRichfieldAdminContent(
         featureCaption: readString(profileData, "featureCaption") ?? "",
         href: readString(profileData, "href") ?? "",
         id: entryId,
-        imageAlt: readString(imageAsset ?? {}, "alt_text") ?? readString(imageAsset ?? {}, "altText") ?? "",
+        imageAlt:
+          readString(requestedVariant, "imageAlt") ??
+          (mayUseLegacy
+            ? readString(imageAsset ?? {}, "alt_text") ??
+              readString(imageAsset ?? {}, "altText")
+            : null) ??
+          "",
         imageAssetId: imageAsset ? String(imageAsset.id) : null,
         imageStoragePath: getAssetStoragePath(imageAsset),
         imageUrl: getAssetUrl(imageAsset),
         inquiryType: readString(profileData, "inquiryType") ?? "",
         kind: readString(profileData, "kind") ?? "",
         location: readString(profileData, "location") ?? "",
+        locale,
+        localeComplete: Boolean(title && (body || summary || collectionKey === "image-library")),
+        localeStatuses,
         mapQuery: readString(profileData, "mapQuery") ?? "",
+        metadata,
         name: readString(profileData, "name") ?? "",
         objectPosition: readString(profileData, "objectPosition") ?? "",
         pageSection: readString(profileData, "pageSection") ?? "",
@@ -380,18 +440,19 @@ export function readRichfieldAdminContent(
               ? String(readNumber(profileData, "positions"))
               : "",
         productName: readString(profileData, "productName") ?? "",
+        profileData: baseProfileData,
         publishedAt: readString(profileData, "publishedAt") ?? readString(entry, "published_at") ?? "",
         ratio: readNumber(profileData, "ratio") !== null ? String(readNumber(profileData, "ratio")) : "",
         receivedAt: readString(profileData, "receivedAt") ?? "",
         role: readString(profileData, "role") ?? readString(entry, "subtitle") ?? "",
         slug: readString(entry, "slug") ?? slugifyRichfieldContent(readString(entry, "title") ?? entryId),
         sortOrder: readNumber(profileData, "sortOrder") !== null ? String(readNumber(profileData, "sortOrder")) : "",
-        status: normalizeRichfieldContentStatus(readString(entry, "status")),
+        status: requestedStatus,
         submissionStatus: readString(profileData, "submissionStatus") ?? "",
         subtitle: readString(entry, "subtitle") ?? "",
-        summary: readString(entry, "summary") ?? "",
+        summary,
         shelfWeight: readString(profileData, "shelfWeight") ?? "",
-        title: readString(entry, "title") ?? "Untitled",
+        title,
         usageTags: Array.isArray(stringList)
           ? stringList
               .filter((item: unknown): item is string => typeof item === "string")
@@ -476,6 +537,7 @@ export function parseRichfieldContentFormData(
       inquiryType: String(formData.get("inquiryType") ?? "").trim(),
       kind: String(formData.get("kind") ?? "").trim(),
       location: String(formData.get("location") ?? "").trim(),
+      locale: formData.get("locale") === "vi" ? "vi" : "en",
       mapQuery: String(formData.get("mapQuery") ?? "").trim(),
       name: String(formData.get("name") ?? "").trim(),
       objectPosition: String(formData.get("objectPosition") ?? "").trim(),

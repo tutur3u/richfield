@@ -11,6 +11,7 @@ export type RichfieldSyncField = {
   description?: string | null;
   key: string;
   label: string;
+  localizable?: boolean;
   options?: string[];
   required?: boolean;
   type:
@@ -55,6 +56,13 @@ export type RichfieldExternalProjectManifest = {
       title: string;
     }>;
   };
+  localization: {
+    assetAltText: boolean;
+    blockContent: boolean;
+    defaultLocale: "en";
+    entryFields: Array<"subtitle" | "summary" | "title">;
+    supportedLocales: ["en", "vi"];
+  };
   schema: {
     collections: Array<{
       assetTypes?: string[];
@@ -73,6 +81,17 @@ export type RichfieldExternalProjectManifest = {
 };
 
 const PUBLISHED_STATUS = "published" as const;
+
+function localizeFields(
+  fields: RichfieldSyncField[],
+  keys: readonly string[],
+) {
+  const localizableKeys = new Set(keys);
+  return fields.map((field) => ({
+    ...field,
+    localizable: localizableKeys.has(field.key),
+  }));
+}
 
 function slugify(value: string) {
   return value
@@ -642,6 +661,13 @@ export const richfieldExternalProjectManifest = {
       ...curatedImageSeeds.map(imageLibraryEntry),
     ],
   },
+  localization: {
+    assetAltText: true,
+    blockContent: true,
+    defaultLocale: "en",
+    entryFields: ["title", "subtitle", "summary"],
+    supportedLocales: ["en", "vi"],
+  },
   schema: {
     collections: [
       {
@@ -649,7 +675,7 @@ export const richfieldExternalProjectManifest = {
         collection_type: "brands",
         description:
           "Partner brands in the Richfield portfolio with country, category, and story copy.",
-        profileFields: brandFields,
+        profileFields: localizeFields(brandFields, ["featureCaption"]),
         slug: "brands",
         title: "Brands",
       },
@@ -658,14 +684,14 @@ export const richfieldExternalProjectManifest = {
         blockTypes: ["markdown", "quote"],
         collection_type: "leadership",
         description: "Richfield leadership profiles, bios, and quotes.",
-        profileFields: leadershipFields,
+        profileFields: localizeFields(leadershipFields, ["role"]),
         slug: "leadership",
         title: "Leadership",
       },
       {
         collection_type: "milestones",
         description: "Company timeline milestones from founding to the present day.",
-        profileFields: milestoneFields,
+        profileFields: localizeFields(milestoneFields, []),
         slug: "milestones",
         title: "Milestones",
       },
@@ -674,14 +700,14 @@ export const richfieldExternalProjectManifest = {
         blockTypes: ["markdown"],
         collection_type: "contact-page",
         description: "Public contact page hero copy, map details, and imagery.",
-        profileFields: contactPageFields,
+        profileFields: localizeFields(contactPageFields, ["headline", "intro"]),
         slug: "contact-page",
         title: "Contact Page",
       },
       {
         collection_type: "contact-channels",
         description: "Public contact methods shown on the contact page.",
-        profileFields: contactChannelFields,
+        profileFields: localizeFields(contactChannelFields, ["secondary", "cta"]),
         slug: "contact-channels",
         title: "Contact Channels",
       },
@@ -690,7 +716,11 @@ export const richfieldExternalProjectManifest = {
         collection_type: "contact-form",
         description:
           "Public form fields, inquiry choices, recipient routing, and success messaging.",
-        profileFields: contactFormFields,
+        profileFields: localizeFields(contactFormFields, [
+          "submitLabel",
+          "successMessage",
+          "inquiryTypes",
+        ]),
         slug: "contact-form",
         title: "Contact Form",
       },
@@ -698,7 +728,7 @@ export const richfieldExternalProjectManifest = {
         blockTypes: ["markdown"],
         collection_type: "contact-submissions",
         description: "Private inbound contact form messages saved for Richfield admins.",
-        profileFields: contactSubmissionFields,
+        profileFields: localizeFields(contactSubmissionFields, []),
         slug: "contact-submissions",
         title: "Contact Inbox",
       },
@@ -708,7 +738,7 @@ export const richfieldExternalProjectManifest = {
         collection_type: "articles",
         description:
           "Self-serve Richfield news, stories, and company updates published to the public feed.",
-        profileFields: articleFields,
+        profileFields: localizeFields(articleFields, ["category"]),
         slug: "articles",
         title: "News",
       },
@@ -718,7 +748,12 @@ export const richfieldExternalProjectManifest = {
         collection_type: "jobs",
         description:
           "Careers vacancies, application details, and rich position descriptions shown on the public site.",
-        profileFields: jobFields,
+        profileFields: localizeFields(jobFields, [
+          "department",
+          "employmentType",
+          "workMode",
+          "location",
+        ]),
         slug: "jobs",
         title: "Jobs",
       },
@@ -726,7 +761,11 @@ export const richfieldExternalProjectManifest = {
         assetTypes: ["image"],
         collection_type: "image-library",
         description: "Reusable Richfield images grouped by page section.",
-        profileFields: imageLibraryFields,
+        profileFields: localizeFields(imageLibraryFields, [
+          "category",
+          "productName",
+          "credit",
+        ]),
         slug: "image-library",
         title: "Images",
       },

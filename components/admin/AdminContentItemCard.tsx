@@ -9,9 +9,16 @@ import type {
 } from "@/lib/richfield-admin-content-model";
 
 function statusTone(status: string) {
-  if (status === "published") return "bg-green/12 text-forest";
-  if (status === "archived") return "bg-ink/8 text-muted";
-  return "bg-gold/18 text-gold-strong";
+  if (status === "published") {
+    return "bg-emerald-500/12 text-emerald-700 dark:text-emerald-300";
+  }
+  if (status === "archived") {
+    return "bg-admin-ink/8 text-admin-ink-soft";
+  }
+  if (status === "scheduled") {
+    return "bg-sky-500/12 text-sky-700 dark:text-sky-300";
+  }
+  return "bg-amber-500/12 text-amber-700 dark:text-amber-300";
 }
 
 function GalleryThumbnail({ item }: { item: RichfieldAdminContentItem }) {
@@ -86,7 +93,7 @@ export function AdminContentItemCard({
             {item.title || t("untitled")}
           </span>
           <span
-            className={`shrink-0 px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.14em] ${statusTone(
+            className={`shrink-0 rounded-full px-2 py-0.5 text-[11px] font-black uppercase tracking-[0.14em] ${statusTone(
               item.status,
             )}`}
           >

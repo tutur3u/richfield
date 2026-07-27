@@ -15,7 +15,7 @@ const TuturuuuRichTextEditor = dynamic(
     loading: () => (
       <div
         aria-busy="true"
-        className="min-h-72 animate-pulse bg-[rgba(239,207,178,0.28)]"
+        className="admin-skeleton min-h-72 bg-admin-panel"
       />
     ),
     ssr: false,
@@ -60,7 +60,7 @@ export function RichTextEditor({
       </span>
       <div
         aria-disabled={disabled || undefined}
-        className="richfield-tuturuuu-editor overflow-hidden border border-[rgba(184,112,81,0.42)] bg-white"
+        className="richfield-tuturuuu-editor overflow-hidden rounded-xl border border-admin-rule-strong bg-admin-panel shadow-sm"
       >
         <TuturuuuRichTextEditor
           content={content}

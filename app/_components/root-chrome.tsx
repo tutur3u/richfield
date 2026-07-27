@@ -1,5 +1,6 @@
 import { Analytics } from "@vercel/analytics/next";
 import { Geist, Fraunces } from "next/font/google";
+import "@tuturuuu/editor/styles.css";
 import "@/app/globals.css";
 import { RouteAnnouncerPatch } from "@/app/_components/route-announcer-patch";
 import { RichfieldToaster } from "@/components/RichfieldToaster";

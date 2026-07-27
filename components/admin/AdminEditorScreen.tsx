@@ -122,10 +122,10 @@ export function AdminEditorScreen({
             value={contentLocale}
           >
             <TabsList className="h-9 rounded-lg border border-admin-rule bg-admin-panel p-1">
-              <TabsTrigger className="h-7 px-3 text-xs data-active:bg-admin-navy data-active:text-white" value="en">
+              <TabsTrigger className="h-7 px-3 text-xs text-admin-ink-soft hover:bg-admin-surface hover:text-admin-ink data-active:bg-admin-navy data-active:text-white dark:text-admin-ink-soft dark:hover:text-admin-ink dark:data-active:text-white" value="en">
                 {t("english")}
               </TabsTrigger>
-              <TabsTrigger className="h-7 px-3 text-xs data-active:bg-admin-navy data-active:text-white" value="vi">
+              <TabsTrigger className="h-7 px-3 text-xs text-admin-ink-soft hover:bg-admin-surface hover:text-admin-ink data-active:bg-admin-navy data-active:text-white dark:text-admin-ink-soft dark:hover:text-admin-ink dark:data-active:text-white" value="vi">
                 {t("vietnamese")}
               </TabsTrigger>
             </TabsList>

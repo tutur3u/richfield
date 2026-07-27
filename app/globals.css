@@ -575,15 +575,15 @@ button:focus-visible {
   --color-gold-strong: oklch(0.74 0.14 76);
   --color-admin-navy: #101a26;
   --color-admin-ink: #f3eee5;
-  --color-admin-ink-soft: #aaa296;
+  --color-admin-ink-soft: #c4bbad;
   --color-admin-parchment: #131a22;
   --color-admin-clay: #d08b68;
   --color-admin-copper: #d08b68;
   --color-admin-copper-dark: #b97050;
   --color-admin-gold: #dfa951;
   --color-admin-surface: rgb(27 35 44 / 88%);
-  --color-admin-rule: rgb(255 255 255 / 10%);
-  --color-admin-rule-strong: rgb(255 255 255 / 16%);
+  --color-admin-rule: rgb(255 255 255 / 14%);
+  --color-admin-rule-strong: rgb(255 255 255 / 22%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -598,15 +598,15 @@ button:focus-visible {
     --color-gold-strong: oklch(0.74 0.14 76);
     --color-admin-navy: #101a26;
     --color-admin-ink: #f3eee5;
-    --color-admin-ink-soft: #aaa296;
+    --color-admin-ink-soft: #c4bbad;
     --color-admin-parchment: #131a22;
     --color-admin-clay: #d08b68;
     --color-admin-copper: #d08b68;
     --color-admin-copper-dark: #b97050;
     --color-admin-gold: #dfa951;
     --color-admin-surface: rgb(27 35 44 / 88%);
-    --color-admin-rule: rgb(255 255 255 / 10%);
-    --color-admin-rule-strong: rgb(255 255 255 / 16%);
+    --color-admin-rule: rgb(255 255 255 / 14%);
+    --color-admin-rule-strong: rgb(255 255 255 / 22%);
   }
 }
 
@@ -666,7 +666,7 @@ button:focus-visible {
 .richfield-tuturuuu-editor .tuturuuu-editor-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.25rem;
+  gap: 0.375rem;
   border-bottom: 1px solid var(--color-admin-rule);
   background: var(--color-admin-parchment);
   padding: 0.5rem;
@@ -675,11 +675,14 @@ button:focus-visible {
 .richfield-tuturuuu-editor .tuturuuu-editor-toolbar button,
 .richfield-tuturuuu-editor .tuturuuu-editor-toolbar label {
   display: inline-flex;
-  min-height: 2.25rem;
+  width: 2.5rem;
+  min-height: 2.5rem;
   cursor: pointer;
   align-items: center;
   border: 1px solid transparent;
-  padding: 0.25rem 0.625rem;
+  justify-content: center;
+  border-radius: 0.5rem;
+  padding: 0;
   color: var(--color-admin-ink);
   font-size: 0.75rem;
   font-weight: 700;
@@ -692,6 +695,20 @@ button:focus-visible {
   border-color: var(--color-admin-gold);
   background: var(--color-paper);
   outline: none;
+}
+
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar button:focus-visible,
+.richfield-tuturuuu-editor .tuturuuu-editor-toolbar label:focus-within {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-admin-gold) 24%, transparent);
+}
+
+.richfield-tuturuuu-editor {
+  --tuturuuu-editor-tooltip-background: var(--color-admin-ink);
+  --tuturuuu-editor-tooltip-foreground: var(--color-admin-parchment);
+  --tuturuuu-editor-popover-background: var(--color-paper);
+  --tuturuuu-editor-popover-border: var(--color-admin-rule-strong);
+  --tuturuuu-editor-error-background: #991b1b;
+  --tuturuuu-editor-error-foreground: #fff;
 }
 
 .richfield-tuturuuu-editor .tiptap {
@@ -708,7 +725,7 @@ button:focus-visible {
 }
 
 .richfield-tuturuuu-editor .tiptap h2 {
-  color: var(--color-admin-navy);
+  color: var(--color-admin-ink);
   font-family: var(--font-display);
   font-size: 1.75rem;
   line-height: 1.2;

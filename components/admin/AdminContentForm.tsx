@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   useEffect,
   useRef,
@@ -38,7 +39,6 @@ import {
   type Draft,
 } from "./AdminContentHelpers";
 import { RichTextEditor } from "./RichTextEditor";
-import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
 import { adminFetch } from "./richfield-admin-session-client";
 import {
   canSaveRichfieldEditor,
@@ -87,6 +87,7 @@ export function ContentForm({
     item: RichfieldAdminContentItem | null,
   ) => void;
 }) {
+  const t = useTranslations("admin.form");
   const copy = sectionCopy[collectionKey];
   const [savedItem, setSavedItem] = useState<RichfieldAdminContentItem | null>(
     null,
@@ -190,7 +191,7 @@ export function ContentForm({
     }
 
     if (file.size > MAX_ADMIN_IMAGE_UPLOAD_BYTES) {
-      setMessage("Choose an image smaller than 12MB.");
+      setMessage(t("imageTooLarge"));
       return;
     }
 
@@ -234,7 +235,7 @@ export function ContentForm({
     setFieldErrors({});
     setMessage(null);
     setSaveProgress({
-      label: "Checking content",
+      label: t("checkingContent"),
       percent: 2,
       status: "running",
       step: "validate",
@@ -283,26 +284,26 @@ export function ContentForm({
         percent: 0,
         status: "idle",
       });
-      toast.success(RICHFIELD_ADMIN_COPY.editor.saved);
+      toast.success(t("saved"));
     } catch (error) {
       const saveError = error as SaveFlowError;
       const fallback =
         saveError instanceof Error
           ? saveError.message
-          : RICHFIELD_ADMIN_COPY.errors.save;
+          : t("saveError");
       setFieldErrors(saveError.errors ?? {});
       setSaveProgress((current) => ({
         error: readFriendlyError(
           { error: fallback, errors: saveError.errors },
-          RICHFIELD_ADMIN_COPY.errors.save,
+          t("saveError"),
         ),
-        label: saveError.label ?? current.label ?? "Save failed",
+        label: saveError.label ?? current.label ?? t("saveFailed"),
         percent: Math.max(current.percent, 1),
         status: "error",
         statusCode: saveError.statusCode,
         step: saveError.step ?? current.step,
       }));
-      toast.error(RICHFIELD_ADMIN_COPY.errors.save);
+      toast.error(t("saveError"));
     } finally {
       setSubmitting(false);
     }
@@ -326,14 +327,14 @@ export function ContentForm({
         .catch(() => ({}))) as MutationResponse;
 
       if (!response.ok) {
-        setMessage(RICHFIELD_ADMIN_COPY.errors.delete);
+        setMessage(t("deleteError"));
         return;
       }
 
       onDeleted(payload.items ?? []);
       onClose();
     } catch {
-      setMessage(RICHFIELD_ADMIN_COPY.errors.delete);
+      setMessage(t("deleteError"));
     } finally {
       setDeleting(false);
     }
@@ -350,10 +351,10 @@ export function ContentForm({
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[rgba(184,112,81,0.28)] pb-4">
           <div className="min-w-0">
             <p className="script-label">
-              {effectiveItem ? "Edit image" : copy.newLabel}
+              {effectiveItem ? t("editImage") : copy.newLabel}
             </p>
             <h2 className="break-words font-display text-3xl leading-none text-[var(--navy)] sm:text-4xl">
-              {draft.title || `Untitled ${copy.singular}`}
+              {draft.title || t("untitledItem", { item: copy.singular })}
             </h2>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -364,7 +365,7 @@ export function ContentForm({
                 rel="noreferrer"
                 target="_blank"
               >
-                {RICHFIELD_ADMIN_COPY.editor.openPreview}
+                {t("openPreview")}
               </Link>
             ) : null}
             <button
@@ -373,16 +374,14 @@ export function ContentForm({
               onClick={onCloseRequest}
               type="button"
             >
-              Close
+              {t("close")}
             </button>
             <button
               className="button-primary disabled:cursor-not-allowed disabled:opacity-50"
               disabled={!canSave || imageProcessing}
               type="submit"
             >
-              {submitting
-                ? RICHFIELD_ADMIN_COPY.actions.saving
-                : RICHFIELD_ADMIN_COPY.actions.save}
+              {submitting ? t("saving") : t("save")}
             </button>
           </div>
         </div>
@@ -398,7 +397,7 @@ export function ContentForm({
         ) : null}
 
         <div
-          aria-label="Replace image"
+          aria-label={t("replaceImage")}
           className={`group relative aspect-[16/10] w-full overflow-hidden border-2 border-dashed transition ${
             imageDragActive
               ? "border-[var(--gold)]"
@@ -429,30 +428,30 @@ export function ContentForm({
           {showImagePreview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              alt={draft.imageAlt || effectiveItem?.title || "Image"}
+              alt={draft.imageAlt || effectiveItem?.title || t("image")}
               className="h-full w-full object-cover"
               src={previewImageSrc as string}
               style={{ objectPosition: draft.objectPosition?.trim() || "center" }}
             />
           ) : (
             <div className="grid h-full place-items-center px-4 text-center text-sm text-[var(--ink-soft)]">
-              No image yet.
+              {t("noImage")}
             </div>
           )}
           {imageFile ? (
             <span className="absolute left-3 top-3 border border-[var(--gold)] bg-[var(--navy)] px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.14em] text-[var(--parchment)]">
-              New
+              {t("new")}
             </span>
           ) : null}
           <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 bg-[rgba(12,31,52,0.74)] px-3 py-2 text-xs text-[var(--parchment)]">
             <span className="font-bold">
               {imageProcessing
-                ? "Optimizing…"
+                ? t("optimizing")
                 : showImagePreview
-                  ? "Drag or click to replace"
-                  : "Drag or click to add"}
+                  ? t("dragReplace")
+                  : t("dragAdd")}
             </span>
-            <span className="opacity-80">WebP · up to 12MB</span>
+            <span className="opacity-80">{t("imageLimit")}</span>
           </div>
         </div>
         <input
@@ -478,7 +477,7 @@ export function ContentForm({
         {effectiveItem ? (
           confirmDelete ? (
             <div className="flex flex-wrap items-center gap-3 border border-red-300 bg-red-500/10 px-3 py-2 text-sm text-red-800">
-              <span>Remove &ldquo;{effectiveItem.title}&rdquo; from the site?</span>
+              <span>{t("removeConfirm", { title: effectiveItem.title })}</span>
               <div className="flex gap-2">
                 <button
                   className="min-h-9 bg-red-800 px-3 text-sm font-bold text-white disabled:opacity-50"
@@ -486,7 +485,7 @@ export function ContentForm({
                   onClick={() => void deleteItem()}
                   type="button"
                 >
-                  {deleting ? "Removing" : RICHFIELD_ADMIN_COPY.actions.delete}
+                  {deleting ? t("removing") : t("delete")}
                 </button>
                 <button
                   className="button-secondary min-h-9"
@@ -494,7 +493,7 @@ export function ContentForm({
                   onClick={() => setConfirmDelete(false)}
                   type="button"
                 >
-                  {RICHFIELD_ADMIN_COPY.actions.keep}
+                  {t("keep")}
                 </button>
               </div>
             </div>
@@ -505,7 +504,7 @@ export function ContentForm({
               onClick={() => setConfirmDelete(true)}
               type="button"
             >
-              Remove image
+              {t("removeImage")}
             </button>
           )
         ) : null}
@@ -523,10 +522,12 @@ export function ContentForm({
         >
           <div className="min-w-0">
             <p className="script-label">
-              {effectiveItem ? `Edit ${copy.singular}` : copy.newLabel}
+              {effectiveItem
+                ? t("editItem", { item: copy.singular })
+                : copy.newLabel}
             </p>
             <h2 className="break-words font-display text-4xl leading-none text-[var(--navy)] sm:text-5xl">
-              {draft.title || `Untitled ${copy.singular}`}
+              {draft.title || t("untitledItem", { item: copy.singular })}
             </h2>
           </div>
           {supportsImage ? (
@@ -545,7 +546,7 @@ export function ContentForm({
               rel="noreferrer"
               target="_blank"
             >
-              {RICHFIELD_ADMIN_COPY.editor.openPreview}
+              {t("openPreview")}
             </Link>
           ) : null}
           <button
@@ -554,16 +555,14 @@ export function ContentForm({
             onClick={onCloseRequest}
             type="button"
           >
-            Close
+            {t("close")}
           </button>
           <button
             className="button-primary min-w-28 w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             disabled={!canSave || imageProcessing}
             type="submit"
           >
-            {submitting
-              ? RICHFIELD_ADMIN_COPY.actions.saving
-              : RICHFIELD_ADMIN_COPY.actions.save}
+            {submitting ? t("saving") : t("save")}
           </button>
         </div>
       </div>
@@ -579,11 +578,10 @@ export function ContentForm({
       ) : null}
 
       <nav
-        aria-label="Editor sections"
+        aria-label={t("editorSections")}
         className="grid gap-2 sm:grid-cols-2 lg:grid-cols-5"
       >
         {editorSteps.map((step, index) => {
-          const stepCopy = RICHFIELD_ADMIN_COPY.editor.steps[step];
           const isActive = step === visibleStep;
 
           return (
@@ -599,13 +597,13 @@ export function ContentForm({
               type="button"
             >
               <span className="text-[0.65rem] font-black uppercase tracking-[0.16em] opacity-75">
-                Step {index + 1}
+                {t("stepNumber", { number: index + 1 })}
               </span>
               <span className="truncate text-sm font-black">
-                {stepCopy.label}
+                {t(`steps.${step}.label`)}
               </span>
               <span className="truncate text-xs opacity-75">
-                {stepCopy.description}
+                {t(`steps.${step}.description`)}
               </span>
             </button>
           );
@@ -619,7 +617,7 @@ export function ContentForm({
             <TextField
               disabled={isBusy}
               error={fieldErrors.title}
-              label={collectionKey === "milestones" ? "Brand" : "Name"}
+              label={collectionKey === "milestones" ? t("fields.brand") : t("fields.name")}
               name="title"
               onChange={updateDraft}
               required
@@ -627,7 +625,7 @@ export function ContentForm({
             />
             <label className="grid gap-2">
               <span className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--clay)]">
-                {RICHFIELD_ADMIN_COPY.editor.visibility}
+                {t("fields.visibility")}
               </span>
               <select
                 className={`min-h-11 w-full min-w-0 border bg-white px-3 text-sm text-[var(--ink)] outline-none transition focus:border-[var(--gold)] ${
@@ -643,7 +641,7 @@ export function ContentForm({
               >
                 {statusOptions.map((option) => (
                   <option key={option.value} value={option.value}>
-                    {option.label}
+                    {t(`statuses.${option.value}`)}
                   </option>
                 ))}
               </select>
@@ -655,7 +653,7 @@ export function ContentForm({
             </label>
             <TextField
               disabled={isBusy}
-              label="Website link"
+              label={t("fields.websiteLink")}
               name="slug"
               onChange={(name, value) => {
                 setSlugTouched(true);
@@ -674,21 +672,21 @@ export function ContentForm({
             <div className="grid gap-4 md:grid-cols-2">
               <TextField
                 disabled={isBusy}
-                label="Author"
+                label={t("fields.author")}
                 name="author"
                 onChange={updateDraft}
                 value={draft.author}
               />
               <TextField
                 disabled={isBusy}
-                label="Topic"
+                label={t("fields.topic")}
                 name="category"
                 onChange={updateDraft}
                 value={draft.category}
               />
               <TextField
                 disabled={isBusy}
-                label="Publish date"
+                label={t("fields.publishDate")}
                 name="publishedAt"
                 onChange={updateDraft}
                 placeholder="2026-07-23"
@@ -696,15 +694,15 @@ export function ContentForm({
               />
               <NumberField
                 disabled={isBusy}
-                label="Sort order"
+                label={t("fields.sortOrder")}
                 name="sortOrder"
                 onChange={updateDraft}
                 value={draft.sortOrder}
               />
               <CheckboxField
-                description="Pin this story to the top of the news feed."
+                description={t("descriptions.pinStory")}
                 disabled={isBusy}
-                label="Featured story"
+                label={t("fields.featuredStory")}
                 name="feature"
                 onChange={updateDraft}
                 value={draft.feature}
@@ -715,30 +713,30 @@ export function ContentForm({
             <div className="grid gap-4 md:grid-cols-2">
               <SelectField
                 disabled={isBusy}
-                label="Category"
+                label={t("fields.category")}
                 name="category"
                 onChange={updateDraft}
                 options={categoryOptions}
-                placeholder="Choose a category"
+                placeholder={t("placeholders.category")}
                 value={draft.category}
               />
               <TextField
                 disabled={isBusy}
-                label="Country"
+                label={t("fields.country")}
                 name="country"
                 onChange={updateDraft}
                 value={draft.country}
               />
               <NumberField
                 disabled={isBusy}
-                label="Year"
+                label={t("fields.year")}
                 name="year"
                 onChange={updateDraft}
                 value={draft.year}
               />
               <TextField
                 disabled={isBusy}
-                label="Accent color"
+                label={t("fields.accentColor")}
                 name="accent"
                 onChange={updateDraft}
                 placeholder="#000000"
@@ -749,7 +747,7 @@ export function ContentForm({
           {collectionKey === "leadership" ? (
             <TextField
               disabled={isBusy}
-              label="Role"
+              label={t("fields.role")}
               name="role"
               onChange={updateDraft}
               value={draft.role}
@@ -759,14 +757,14 @@ export function ContentForm({
             <div className="grid gap-4 md:grid-cols-2">
               <TextField
                 disabled={isBusy}
-                label="Country"
+                label={t("fields.country")}
                 name="country"
                 onChange={updateDraft}
                 value={draft.country}
               />
               <NumberField
                 disabled={isBusy}
-                label="Year"
+                label={t("fields.year")}
                 name="year"
                 onChange={updateDraft}
                 value={draft.year}
@@ -777,7 +775,7 @@ export function ContentForm({
             <div className="grid gap-4">
               <TextField
                 disabled={isBusy}
-                label="Map query"
+                label={t("fields.mapQuery")}
                 name="mapQuery"
                 onChange={updateDraft}
                 value={draft.mapQuery}
@@ -788,31 +786,31 @@ export function ContentForm({
             <div className="grid gap-4 md:grid-cols-2">
               <TextField
                 disabled={isBusy}
-                label="Recipient email"
+                label={t("fields.recipientEmail")}
                 name="email"
                 onChange={updateDraft}
                 value={draft.email}
               />
               <TextField
                 disabled={isBusy}
-                label="Submit button label"
+                label={t("fields.submitLabel")}
                 name="cta"
                 onChange={updateDraft}
                 value={draft.cta}
               />
               <NumberField
                 disabled={isBusy}
-                label="Maximum message length"
+                label={t("fields.maximumMessageLength")}
                 name="positions"
                 onChange={updateDraft}
                 value={draft.positions}
               />
               <TextField
                 disabled={isBusy}
-                label="Inquiry types"
+                label={t("fields.inquiryTypes")}
                 name="usageTags"
                 onChange={updateDraft}
-                placeholder="Brand partnership, Careers, Press"
+                placeholder={t("placeholders.inquiryTypes")}
                 value={draft.usageTags}
               />
             </div>
@@ -821,45 +819,45 @@ export function ContentForm({
             <div className="grid gap-4 md:grid-cols-2">
               <SelectField
                 disabled={isBusy}
-                label="Kind"
+                label={t("fields.kind")}
                 name="kind"
                 onChange={updateDraft}
                 options={contactKindOptions}
-                placeholder="Choose a kind"
+                placeholder={t("placeholders.kind")}
                 value={draft.kind}
               />
               <TextField
                 disabled={isBusy}
-                label="Link"
+                label={t("fields.link")}
                 name="href"
                 onChange={updateDraft}
                 value={draft.href}
               />
               <TextField
                 disabled={isBusy}
-                label="Secondary text"
+                label={t("fields.secondaryText")}
                 name="subtitle"
                 onChange={updateDraft}
                 value={draft.subtitle}
               />
               <TextField
                 disabled={isBusy}
-                label="CTA"
+                label={t("fields.cta")}
                 name="cta"
                 onChange={updateDraft}
                 value={draft.cta}
               />
               <NumberField
                 disabled={isBusy}
-                label="Sort order"
+                label={t("fields.sortOrder")}
                 name="sortOrder"
                 onChange={updateDraft}
                 value={draft.sortOrder}
               />
               <CheckboxField
-                description="Open this contact channel in a new tab."
+                description={t("descriptions.externalChannel")}
                 disabled={isBusy}
-                label="External link"
+                label={t("fields.externalLink")}
                 name="feature"
                 onChange={updateDraft}
                 value={draft.feature}
@@ -870,42 +868,42 @@ export function ContentForm({
             <div className="grid gap-4 md:grid-cols-2">
               <TextField
                 disabled={isBusy}
-                label="Name"
+                label={t("fields.name")}
                 name="name"
                 onChange={updateDraft}
                 value={draft.name}
               />
               <TextField
                 disabled={isBusy}
-                label="Company"
+                label={t("fields.company")}
                 name="brand"
                 onChange={updateDraft}
                 value={draft.brand}
               />
               <TextField
                 disabled={isBusy}
-                label="Email"
+                label={t("fields.email")}
                 name="email"
                 onChange={updateDraft}
                 value={draft.email}
               />
               <TextField
                 disabled={isBusy}
-                label="Inquiry type"
+                label={t("fields.inquiryType")}
                 name="inquiryType"
                 onChange={updateDraft}
                 value={draft.inquiryType}
               />
               <TextField
                 disabled={isBusy}
-                label="Submission status"
+                label={t("fields.submissionStatus")}
                 name="submissionStatus"
                 onChange={updateDraft}
                 value={draft.submissionStatus}
               />
               <TextField
                 disabled={isBusy}
-                label="Email notification"
+                label={t("fields.emailNotification")}
                 name="emailNotificationStatus"
                 onChange={updateDraft}
                 value={draft.emailNotificationStatus}
@@ -916,65 +914,65 @@ export function ContentForm({
             <div className="grid gap-4 md:grid-cols-2">
               <TextField
                 disabled={isBusy}
-                label="Department"
+                label={t("fields.department")}
                 name="department"
                 onChange={updateDraft}
                 value={draft.department}
               />
               <TextField
                 disabled={isBusy}
-                label="Employment type"
+                label={t("fields.employmentType")}
                 name="employmentType"
                 onChange={updateDraft}
-                placeholder="Full-time"
+                placeholder={t("placeholders.employmentType")}
                 value={draft.employmentType}
               />
               <TextField
                 disabled={isBusy}
-                label="Work mode"
+                label={t("fields.workMode")}
                 name="workMode"
                 onChange={updateDraft}
-                placeholder="On-site, hybrid, or remote"
+                placeholder={t("placeholders.workMode")}
                 value={draft.workMode}
               />
               <NumberField
                 disabled={isBusy}
-                label="Positions"
+                label={t("fields.positions")}
                 name="positions"
                 onChange={updateDraft}
                 value={draft.positions}
               />
               <TextField
                 disabled={isBusy}
-                label="Location"
+                label={t("fields.location")}
                 name="location"
                 onChange={updateDraft}
                 value={draft.location}
               />
               <TextField
                 disabled={isBusy}
-                label="Deadline"
+                label={t("fields.deadline")}
                 name="deadline"
                 onChange={updateDraft}
                 value={draft.deadline}
               />
               <TextField
                 disabled={isBusy}
-                label="External link"
+                label={t("fields.externalLink")}
                 name="href"
                 onChange={updateDraft}
                 value={draft.href}
               />
               <TextField
                 disabled={isBusy}
-                label="Applications email"
+                label={t("fields.applicationsEmail")}
                 name="applyEmail"
                 onChange={updateDraft}
                 value={draft.applyEmail}
               />
               <NumberField
                 disabled={isBusy}
-                label="Sort order"
+                label={t("fields.sortOrder")}
                 name="sortOrder"
                 onChange={updateDraft}
                 value={draft.sortOrder}
@@ -984,7 +982,7 @@ export function ContentForm({
           {collectionKey === "brands" || collectionKey === "milestones" ? (
             <RichTextEditor
               disabled={isBusy}
-              label={collectionKey === "brands" ? "Story" : "Milestone copy"}
+              label={collectionKey === "brands" ? t("fields.story") : t("fields.milestoneCopy")}
               locale={contentLocale}
               onChange={(value) => updateDraft("summary", value)}
               value={draft.summary}
@@ -994,8 +992,8 @@ export function ContentForm({
               disabled={isBusy}
               label={
                 collectionKey === "contact-channels"
-                  ? "Primary text"
-                  : "Summary"
+                  ? t("fields.primaryText")
+                  : t("fields.summary")
               }
               name="summary"
               onChange={updateDraft}
@@ -1005,16 +1003,16 @@ export function ContentForm({
           {collectionKey === "brands" ? (
             <div className="grid gap-4">
               <CheckboxField
-                description="Highlight this brand on the homepage."
+                description={t("descriptions.featureBrand")}
                 disabled={isBusy}
-                label="Feature this brand"
+                label={t("fields.featureBrand")}
                 name="feature"
                 onChange={updateDraft}
                 value={draft.feature}
               />
               <TextField
                 disabled={isBusy}
-                label="Feature caption"
+                label={t("fields.featureCaption")}
                 name="featureCaption"
                 onChange={updateDraft}
                 value={draft.featureCaption}
@@ -1023,9 +1021,9 @@ export function ContentForm({
           ) : null}
           {collectionKey === "milestones" ? (
             <CheckboxField
-              description="Show this milestone on the About page only, not the homepage."
+              description={t("descriptions.aboutOnly")}
               disabled={isBusy}
-              label="About page only"
+              label={t("fields.aboutOnly")}
               name="aboutOnly"
               onChange={updateDraft}
               value={draft.aboutOnly}
@@ -1041,14 +1039,14 @@ export function ContentForm({
             <div className="grid gap-4">
               <RichTextEditor
                 disabled={isBusy}
-                label="Bio"
+                label={t("fields.bio")}
                 locale={contentLocale}
                 onChange={(value) => updateDraft("body", value)}
                 value={draft.body}
               />
               <TextAreaField
                 disabled={isBusy}
-                label="Quote"
+                label={t("fields.quote")}
                 name="subtitle"
                 onChange={updateDraft}
                 value={draft.subtitle}
@@ -1058,7 +1056,7 @@ export function ContentForm({
           {collectionKey === "contact-page" ? (
             <RichTextEditor
               disabled={isBusy}
-              label="Intro"
+              label={t("fields.intro")}
               locale={contentLocale}
               onChange={(value) => {
                 updateDraft("body", value);
@@ -1070,7 +1068,7 @@ export function ContentForm({
           {collectionKey === "contact-form" ? (
             <RichTextEditor
               disabled={isBusy}
-              label="Success message"
+              label={t("fields.successMessage")}
               locale={contentLocale}
               onChange={(value) => {
                 updateDraft("body", value);
@@ -1082,7 +1080,7 @@ export function ContentForm({
           {collectionKey === "contact-submissions" ? (
             <RichTextEditor
               disabled={isBusy}
-              label="Message"
+              label={t("fields.message")}
               locale={contentLocale}
               onChange={(value) => {
                 updateDraft("body", value);
@@ -1094,7 +1092,7 @@ export function ContentForm({
           {collectionKey === "articles" || collectionKey === "jobs" ? (
             <RichTextEditor
               disabled={isBusy}
-              label={collectionKey === "jobs" ? "Position description" : "Article"}
+              label={collectionKey === "jobs" ? t("fields.positionDescription") : t("fields.article")}
               locale={contentLocale}
               onChange={(value) => updateDraft("body", value)}
               value={draft.body}
@@ -1107,7 +1105,7 @@ export function ContentForm({
         <section className={sectionSurfaceClass}>
           <EditorStepHeader step="image" />
           <p className="text-sm leading-6 text-[var(--ink-soft)]">
-            {RICHFIELD_ADMIN_COPY.editor.imageHelp}
+            {t("imageHelp")}
           </p>
           <div className="grid min-w-0 gap-5 lg:grid-cols-2">
             <div className="grid content-start gap-2">
@@ -1118,7 +1116,7 @@ export function ContentForm({
                 {showImagePreview ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    alt={draft.imageAlt || effectiveItem?.title || "Preview"}
+                    alt={draft.imageAlt || effectiveItem?.title || t("preview")}
                     className="h-full w-full object-cover"
                     src={previewImageSrc as string}
                     style={{
@@ -1139,7 +1137,7 @@ export function ContentForm({
             </div>
             <div className="grid min-w-0 content-start gap-4">
               <div
-                aria-label="Upload image"
+                aria-label={t("uploadImage")}
                 className={`grid min-h-44 cursor-pointer place-items-center gap-2 border border-dashed px-4 py-6 text-center transition ${
                   imageDragActive
                     ? "border-[var(--gold)] bg-[rgba(217,167,91,0.14)]"
@@ -1168,7 +1166,7 @@ export function ContentForm({
                 <span className="text-sm font-bold text-[var(--copper-dark)]">
                   {imageProcessing
                     ? "Optimizing image…"
-                    : "Drag an image here or click to browse"}
+                    : t("dragBrowse")}
                 </span>
                 <span className="text-xs text-[var(--ink-soft)]">
                   Converted to WebP automatically · up to 12MB
@@ -1195,7 +1193,7 @@ export function ContentForm({
               ) : null}
               <TextField
                 disabled={isBusy}
-                label="Image description"
+                label={t("fields.imageDescription")}
                 name="imageAlt"
                 onChange={updateDraft}
                 value={draft.imageAlt}
@@ -1234,7 +1232,7 @@ export function ContentForm({
                   onClick={() => void deleteItem()}
                   type="button"
                 >
-                  {deleting ? "Deleting" : RICHFIELD_ADMIN_COPY.actions.delete}
+                  {deleting ? t("deleting") : t("delete")}
                 </button>
                 <button
                   className="button-secondary min-h-10"
@@ -1242,7 +1240,7 @@ export function ContentForm({
                   onClick={() => setConfirmDelete(false)}
                   type="button"
                 >
-                  {RICHFIELD_ADMIN_COPY.actions.keep}
+                  {t("keep")}
                 </button>
               </div>
             </div>

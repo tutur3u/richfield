@@ -1,6 +1,6 @@
 "use client";
 
-import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
+import { useTranslations } from "next-intl";
 import type {
   RichfieldAdminEditorDraft,
   RichfieldEditorStepId,
@@ -31,14 +31,16 @@ const FIELD_BASE =
 const FIELD_INPUT = `min-h-11 ${FIELD_BASE}`;
 
 export function EditorStepHeader({ step }: { step: RichfieldEditorStepId }) {
-  const copy = RICHFIELD_ADMIN_COPY.editor.steps[step];
+  const t = useTranslations("admin.form.steps");
 
   return (
     <div>
       <p className="text-xs font-black uppercase tracking-[0.18em] text-gold-strong">
-        {copy.label}
+        {t(`${step}.label`)}
       </p>
-      <p className="mt-2 text-sm leading-6 text-muted">{copy.description}</p>
+      <p className="mt-2 text-sm leading-6 text-muted">
+        {t(`${step}.description`)}
+      </p>
     </div>
   );
 }
@@ -121,7 +123,7 @@ export function SelectField<TName extends keyof Draft>({
   name,
   onChange,
   options,
-  placeholder = "Choose one",
+  placeholder,
   value,
 }: {
   disabled?: boolean;
@@ -132,6 +134,7 @@ export function SelectField<TName extends keyof Draft>({
   placeholder?: string;
   value: string;
 }) {
+  const t = useTranslations("admin.form");
   const hasCurrentValue =
     value.trim() && !options.some((option) => option.value === value);
 
@@ -145,7 +148,7 @@ export function SelectField<TName extends keyof Draft>({
         onChange={(event) => onChange(name, event.currentTarget.value)}
         value={value}
       >
-        <option value="">{placeholder}</option>
+        <option value="">{placeholder ?? t("chooseOne")}</option>
         {hasCurrentValue ? <option value={value}>{value}</option> : null}
         {options.map((option) => (
           <option key={option.value} value={option.value}>

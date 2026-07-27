@@ -22,8 +22,43 @@ async function readCollectionKey(context: { params: Promise<{ collection: string
   return resolveRichfieldAdminCollectionKey(collection);
 }
 
+const DEFAULT_PAGE_SIZE = 20;
+const MAX_PAGE_SIZE = 100;
+
+/**
+ * Page the response rather than returning a whole collection at once.
+ *
+ * The dashboard rendered every entry the moment a tab opened, which is fine at
+ * a dozen and unusable at a few hundred. Paging keeps the payload — and the
+ * amount of DOM the browser builds up front — bounded, and lets the list fill
+ * in as the editor scrolls.
+ */
+function readPageParams(request: Request) {
+  const url = new URL(request.url);
+  const page = Number.parseInt(url.searchParams.get("page") ?? "", 10);
+  const limit = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
+  const search = (url.searchParams.get("search") ?? "").trim().toLowerCase();
+
+  return {
+    limit: Number.isFinite(limit)
+      ? Math.min(Math.max(limit, 1), MAX_PAGE_SIZE)
+      : DEFAULT_PAGE_SIZE,
+    page: Number.isFinite(page) && page > 0 ? page : 1,
+    search,
+  };
+}
+
+function matchesSearch(
+  item: { slug?: string | null; title?: string | null },
+  search: string,
+) {
+  if (!search) return true;
+
+  return `${item.title ?? ""} ${item.slug ?? ""}`.toLowerCase().includes(search);
+}
+
 export async function GET(
-  _request: Request,
+  request: Request,
   context: { params: Promise<{ collection: string }> },
 ) {
   const session = await getRichfieldAdminSession();
@@ -40,8 +75,24 @@ export async function GET(
 
   try {
     const startedAt = performance.now();
-    const items = await refreshRichfieldAdminContent(session.accessToken, collectionKey);
-    const response = NextResponse.json({ items });
+    const allItems = await refreshRichfieldAdminContent(
+      session.accessToken,
+      collectionKey,
+    );
+    const { limit, page, search } = readPageParams(request);
+    const filtered = search
+      ? allItems.filter((item) => matchesSearch(item, search))
+      : allItems;
+    const offset = (page - 1) * limit;
+    const items = filtered.slice(offset, offset + limit);
+    const response = NextResponse.json({
+      items,
+      // Null rather than page + 1 at the end, so the client gets an explicit
+      // stop signal instead of inferring one from a short page.
+      nextPage: offset + items.length < filtered.length ? page + 1 : null,
+      page,
+      total: filtered.length,
+    });
     response.headers.set(
       "Server-Timing",
       `richfield-content-refresh;dur=${Math.max(0, performance.now() - startedAt).toFixed(1)}`,

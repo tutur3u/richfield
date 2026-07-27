@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { BodyChrome, fontVariables } from "@/app/_components/root-chrome";
+import { AdminQueryProvider } from "@/components/admin/admin-query-provider";
 
 // Root layout for the non-localized system surfaces (admin, login,
 // verify-token). These routes intentionally omit localized public chrome:
@@ -23,7 +24,9 @@ export default function SystemLayout({
 }) {
   return (
     <html lang="en" className={fontVariables} data-scroll-behavior="smooth">
-      <BodyChrome>{children}</BodyChrome>
+      <BodyChrome>
+        <AdminQueryProvider>{children}</AdminQueryProvider>
+      </BodyChrome>
     </html>
   );
 }

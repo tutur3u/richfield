@@ -191,7 +191,7 @@ export function MembersPanel({ membersHref }: { membersHref: string }) {
   return (
     <section className="grid min-w-0 gap-6">
       <Card className="border border-admin-rule bg-admin-panel py-0 shadow-none ring-0">
-        <CardHeader className="gap-4 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+        <CardHeader className="gap-4 px-5 py-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-6">
           <div className="flex min-w-0 items-center gap-3">
             <span className="grid size-10 shrink-0 place-items-center rounded-full bg-admin-clay/12 text-admin-clay">
               <UsersThree aria-hidden size={21} />

@@ -147,6 +147,9 @@ export function SelectField<TName extends keyof Draft>({
   const t = useTranslations("admin.form");
   const hasCurrentValue =
     value.trim() && !options.some((option) => option.value === value);
+  const selectedLabel =
+    options.find((option) => option.value === value)?.label ??
+    (hasCurrentValue ? value : undefined);
 
   return (
     <div className="grid min-w-0 gap-2">
@@ -161,7 +164,9 @@ export function SelectField<TName extends keyof Draft>({
           aria-label={label}
           className="h-11 w-full rounded-lg border-line bg-paper px-3 text-ink shadow-none focus-visible:border-gold dark:bg-paper"
         >
-          <SelectValue placeholder={placeholder ?? t("chooseOne")} />
+          <SelectValue placeholder={placeholder ?? t("chooseOne")}>
+            {selectedLabel}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent
           alignItemWithTrigger={false}

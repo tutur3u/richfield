@@ -41,7 +41,9 @@ export function AdminLocaleSelect({
           aria-label={label}
           className="h-9 min-w-32 rounded-full border-admin-rule bg-admin-surface px-3 text-xs font-semibold text-admin-ink shadow-none hover:border-admin-gold dark:bg-admin-surface"
         >
-          <SelectValue />
+          <SelectValue>
+            {locale === "vi" ? vietnameseLabel : englishLabel}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent
           align="end"

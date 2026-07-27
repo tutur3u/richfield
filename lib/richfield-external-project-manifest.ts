@@ -707,10 +707,10 @@ export const richfieldExternalProjectManifest = {
         blockTypes: ["markdown"],
         collection_type: "articles",
         description:
-          "Self-serve Richfield news, insights, and company updates published to the public feed.",
+          "Self-serve Richfield news, stories, and company updates published to the public feed.",
         profileFields: articleFields,
         slug: "articles",
-        title: "Insights",
+        title: "News",
       },
       {
         assetTypes: ["image"],

@@ -154,9 +154,9 @@ const sectionCopy: Record<
 > = {
   articles: {
     empty: RICHFIELD_ADMIN_COPY.empty.articles,
-    listTitle: "Insights and updates",
+    listTitle: "News and updates",
     newLabel: RICHFIELD_ADMIN_COPY.actions.newArticle,
-    singular: "article",
+    singular: "story",
   },
   brands: {
     empty: RICHFIELD_ADMIN_COPY.empty.brands,
@@ -2278,7 +2278,7 @@ function ContentForm({
                 value={draft.sortOrder}
               />
               <CheckboxField
-                description="Pin this article to the top of the insights feed."
+                description="Pin this story to the top of the news feed."
                 disabled={isBusy}
                 label="Featured story"
                 name="feature"

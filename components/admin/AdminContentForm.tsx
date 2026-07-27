@@ -34,7 +34,6 @@ import {
   draftWithPreset,
   EditorCoverSummary,
   readFriendlyError,
-  sectionCopy,
   statusOptions,
   type Draft,
 } from "./AdminContentHelpers";
@@ -88,7 +87,7 @@ export function ContentForm({
   ) => void;
 }) {
   const t = useTranslations("admin.form");
-  const copy = sectionCopy[collectionKey];
+  const itemName = t(`itemNames.${collectionKey}`);
   const [savedItem, setSavedItem] = useState<RichfieldAdminContentItem | null>(
     null,
   );
@@ -351,10 +350,12 @@ export function ContentForm({
         <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[rgba(184,112,81,0.28)] pb-4">
           <div className="min-w-0">
             <p className="script-label">
-              {effectiveItem ? t("editImage") : copy.newLabel}
+              {effectiveItem
+                ? t("editImage")
+                : t("createItem", { item: itemName })}
             </p>
             <h2 className="break-words font-display text-3xl leading-none text-[var(--navy)] sm:text-4xl">
-              {draft.title || t("untitledItem", { item: copy.singular })}
+              {draft.title || t("untitledItem", { item: itemName })}
             </h2>
           </div>
           <div className="flex flex-wrap items-center gap-2">
@@ -523,11 +524,11 @@ export function ContentForm({
           <div className="min-w-0">
             <p className="script-label">
               {effectiveItem
-                ? t("editItem", { item: copy.singular })
-                : copy.newLabel}
+                ? t("editItem", { item: itemName })
+                : t("createItem", { item: itemName })}
             </p>
             <h2 className="mt-1 break-words font-display text-3xl leading-tight text-admin-ink sm:text-4xl">
-              {draft.title || t("untitledItem", { item: copy.singular })}
+              {draft.title || t("untitledItem", { item: itemName })}
             </h2>
           </div>
           {supportsImage ? (
@@ -699,7 +700,10 @@ export function ContentForm({
                 label={t("fields.category")}
                 name="category"
                 onChange={updateDraft}
-                options={categoryOptions}
+                options={categoryOptions.map((option) => ({
+                  label: t(`categories.${option.value}`),
+                  value: option.value,
+                }))}
                 placeholder={t("placeholders.category")}
                 value={draft.category}
               />
@@ -805,7 +809,10 @@ export function ContentForm({
                 label={t("fields.kind")}
                 name="kind"
                 onChange={updateDraft}
-                options={contactKindOptions}
+                options={contactKindOptions.map((option) => ({
+                  label: t(`contactKinds.${option.value}`),
+                  value: option.value,
+                }))}
                 placeholder={t("placeholders.kind")}
                 value={draft.kind}
               />
@@ -1206,7 +1213,7 @@ export function ContentForm({
           {confirmDelete ? (
             <div className="grid gap-3 border border-red-300 bg-red-500/10 p-4">
               <p className="text-sm text-red-800">
-                Delete &ldquo;{effectiveItem.title}&rdquo; from this website area?
+                {t("removeItemConfirm", { title: effectiveItem.title })}
               </p>
               <div className="flex flex-wrap gap-2">
                 <button
@@ -1234,7 +1241,7 @@ export function ContentForm({
               onClick={() => setConfirmDelete(true)}
               type="button"
             >
-              Delete this {copy.singular}
+              {t("removeItem", { item: itemName })}
             </button>
           )}
         </section>
@@ -1247,10 +1254,13 @@ export function ContentForm({
           onClick={() => goToStep(-1)}
           type="button"
         >
-          Back
+          {t("back")}
         </button>
         <span className="text-center text-xs font-bold uppercase tracking-[0.14em] text-[var(--ink-soft)]">
-          Step {visibleStepIndex + 1} of {editorSteps.length}
+          {t("stepProgress", {
+            current: visibleStepIndex + 1,
+            total: editorSteps.length,
+          })}
         </span>
         <button
           className="button-secondary min-w-28 disabled:cursor-not-allowed disabled:opacity-50"
@@ -1258,7 +1268,7 @@ export function ContentForm({
           onClick={() => goToStep(1)}
           type="button"
         >
-          Next
+          {t("next")}
         </button>
       </div>
     </form>

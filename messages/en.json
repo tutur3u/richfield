@@ -73,9 +73,11 @@
       "vietnamese": "Tiếng Việt"
     },
     "form": {
+      "back": "Back",
       "checkingContent": "Checking content",
       "chooseOne": "Choose one",
       "close": "Close",
+      "createItem": "Create {item}",
       "delete": "Delete",
       "deleteError": "We could not delete this item. Please try again.",
       "deleting": "Deleting",
@@ -91,12 +93,15 @@
       "imageTooLarge": "Choose an image smaller than 12MB.",
       "keep": "Keep it",
       "new": "New",
+      "next": "Next",
       "noImage": "No image yet.",
       "openPreview": "Open preview",
       "optimizing": "Optimizing…",
       "preview": "Preview",
       "removeConfirm": "Remove “{title}” from the site?",
       "removeImage": "Remove image",
+      "removeItem": "Remove this {item}",
+      "removeItemConfirm": "Remove “{title}” from this website area?",
       "removing": "Removing",
       "replaceImage": "Replace image",
       "save": "Save",
@@ -105,8 +110,20 @@
       "saved": "Saved.",
       "saving": "Saving",
       "stepNumber": "Step {number}",
+      "stepProgress": "Step {current} of {total}",
       "untitledItem": "Untitled {item}",
       "uploadImage": "Upload image",
+      "categories": {
+        "Beverages": "Beverages",
+        "Food": "Food",
+        "Non-Food": "Non-Food"
+      },
+      "contactKinds": {
+        "email": "Email",
+        "facebook": "Facebook",
+        "office": "Office",
+        "phone": "Phone"
+      },
       "descriptions": {
         "aboutOnly": "Show this milestone on the About page only, not the homepage.",
         "externalChannel": "Open this contact channel in a new tab.",
@@ -165,6 +182,18 @@
         "websiteLink": "Website link",
         "workMode": "Work mode",
         "year": "Year"
+      },
+      "itemNames": {
+        "articles": "story",
+        "brands": "brand",
+        "contact-channels": "contact channel",
+        "contact-form": "form configuration",
+        "contact-page": "contact page",
+        "contact-submissions": "message",
+        "image-library": "image",
+        "jobs": "job",
+        "leadership": "leader",
+        "milestones": "milestone"
       },
       "placeholders": {
         "category": "Choose a category",

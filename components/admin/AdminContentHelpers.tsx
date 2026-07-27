@@ -98,18 +98,18 @@ export const statusOptions: Array<{ label: string; value: RichfieldContentStatus
   { label: RICHFIELD_ADMIN_COPY.visibility.scheduled, value: "scheduled" },
 ];
 
-export const categoryOptions: Array<{ label: string; value: string }> = [
+export const categoryOptions = [
   { label: "Food", value: "Food" },
   { label: "Beverages", value: "Beverages" },
   { label: "Non-Food", value: "Non-Food" },
-];
+] as const;
 
 export const contactKindOptions = [
   { label: "Office", value: "office" },
   { label: "Phone", value: "phone" },
   { label: "Email", value: "email" },
   { label: "Facebook", value: "facebook" },
-];
+] as const;
 export function statusLabel(status: RichfieldContentStatus) {
   return RICHFIELD_ADMIN_COPY.visibility[status];
 }

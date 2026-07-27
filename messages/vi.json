@@ -73,9 +73,11 @@
       "vietnamese": "Tiếng Việt"
     },
     "form": {
+      "back": "Quay lại",
       "checkingContent": "Đang kiểm tra nội dung",
       "chooseOne": "Chọn một mục",
       "close": "Đóng",
+      "createItem": "Tạo {item}",
       "delete": "Xóa",
       "deleteError": "Không thể xóa mục này. Vui lòng thử lại.",
       "deleting": "Đang xóa",
@@ -91,12 +93,15 @@
       "imageTooLarge": "Hãy chọn ảnh nhỏ hơn 12MB.",
       "keep": "Giữ lại",
       "new": "Mới",
+      "next": "Tiếp theo",
       "noImage": "Chưa có hình ảnh.",
       "openPreview": "Mở bản xem trước",
       "optimizing": "Đang tối ưu…",
       "preview": "Xem trước",
       "removeConfirm": "Xóa “{title}” khỏi trang web?",
       "removeImage": "Xóa ảnh",
+      "removeItem": "Xóa {item} này",
+      "removeItemConfirm": "Xóa “{title}” khỏi khu vực này trên trang web?",
       "removing": "Đang xóa",
       "replaceImage": "Thay ảnh",
       "save": "Lưu",
@@ -105,8 +110,20 @@
       "saved": "Đã lưu.",
       "saving": "Đang lưu",
       "stepNumber": "Bước {number}",
+      "stepProgress": "Bước {current} / {total}",
       "untitledItem": "{item} chưa đặt tên",
       "uploadImage": "Tải ảnh lên",
+      "categories": {
+        "Beverages": "Đồ uống",
+        "Food": "Thực phẩm",
+        "Non-Food": "Phi thực phẩm"
+      },
+      "contactKinds": {
+        "email": "Email",
+        "facebook": "Facebook",
+        "office": "Văn phòng",
+        "phone": "Điện thoại"
+      },
       "descriptions": {
         "aboutOnly": "Chỉ hiển thị cột mốc này trên trang Giới thiệu, không hiển thị ở trang chủ.",
         "externalChannel": "Mở kênh liên hệ này trong thẻ mới.",
@@ -165,6 +182,18 @@
         "websiteLink": "Liên kết trang web",
         "workMode": "Chế độ làm việc",
         "year": "Năm"
+      },
+      "itemNames": {
+        "articles": "bài viết",
+        "brands": "thương hiệu",
+        "contact-channels": "kênh liên hệ",
+        "contact-form": "cấu hình biểu mẫu",
+        "contact-page": "trang liên hệ",
+        "contact-submissions": "tin nhắn",
+        "image-library": "hình ảnh",
+        "jobs": "vị trí tuyển dụng",
+        "leadership": "hồ sơ lãnh đạo",
+        "milestones": "cột mốc"
       },
       "placeholders": {
         "category": "Chọn danh mục",

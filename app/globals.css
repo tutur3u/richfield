@@ -489,11 +489,15 @@ button:focus-visible {
 /* Skeleton shimmer. Reduced-motion users get a still block — the layout still
    says what is coming. */
 @utility admin-skeleton {
+  /* Two themed tokens straight into the gradient. Not color-mix(): Lightning
+     CSS folds that to a literal at build time using the root value, which
+     silently pinned the skeleton to its light tone and flashed pale blocks
+     against the dark shell. */
   background: linear-gradient(
     90deg,
-    oklch(0.86 0.018 82 / 0.5) 0%,
-    oklch(0.86 0.018 82 / 0.85) 50%,
-    oklch(0.86 0.018 82 / 0.5) 100%
+    var(--color-line) 0%,
+    var(--color-muted) 50%,
+    var(--color-line) 100%
   );
   background-size: 200% 100%;
 

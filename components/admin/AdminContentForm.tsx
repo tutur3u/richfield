@@ -131,8 +131,10 @@ export function ContentForm({
     collectionKey,
     hasItem: Boolean(effectiveItem),
   });
+  const editorStepKey = editorSteps.join(",");
+  const [activeStep, setActiveStep] = useState(editorSteps[0] ?? "basics");
   const sectionSurfaceClass =
-    "grid scroll-mt-32 gap-5 border-b border-admin-rule pb-8";
+    "grid scroll-mt-52 gap-5 rounded-xl border border-admin-rule bg-admin-panel p-5 shadow-sm sm:p-6";
   const isDirty = hasRichfieldEditorDirtyChanges({
     draft,
     hasPendingImageFile: Boolean(imageFile),
@@ -154,6 +156,35 @@ export function ContentForm({
   useEffect(() => {
     onDirtyChange(isDirty);
   }, [isDirty, onDirtyChange]);
+
+  useEffect(() => {
+    const sections = editorSteps
+      .map((step) => document.getElementById(`editor-${step}`))
+      .filter((section): section is HTMLElement => Boolean(section));
+
+    if (sections.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        const nextStep = visible?.target.id.replace("editor-", "");
+        if (nextStep && editorSteps.includes(nextStep as typeof activeStep)) {
+          setActiveStep(nextStep as typeof activeStep);
+        }
+      },
+      {
+        rootMargin: "-24% 0px -62% 0px",
+        threshold: [0, 0.15, 0.4],
+      },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+    // editorStepKey is the stable representation of this route's sections.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editorStepKey]);
 
   useEffect(() => {
     return () => {
@@ -526,15 +557,15 @@ export function ContentForm({
   }
 
   return (
-    <form className="grid min-w-0 gap-6 pb-24" onSubmit={submit}>
-      <div className="flex flex-col gap-5 border-b border-admin-rule pb-6 lg:flex-row lg:items-end lg:justify-between">
+    <form className="grid min-w-0 gap-5 pb-24" onSubmit={submit}>
+      <div className="flex flex-col gap-4 border-b border-admin-rule pb-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
           <p className="script-label">
             {effectiveItem
               ? t("editItem", { item: itemName })
               : t("createItem", { item: itemName })}
           </p>
-          <h2 className="mt-2 max-w-4xl break-words font-display text-4xl leading-[1.02] text-admin-ink sm:text-5xl">
+          <h2 className="mt-2 max-w-4xl break-words font-display text-3xl leading-[1.06] tracking-[-0.025em] text-admin-ink sm:text-4xl lg:text-[2.65rem]">
             {draft.title || t("untitledItem", { item: itemName })}
           </h2>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-admin-ink-soft">
@@ -583,21 +614,38 @@ export function ContentForm({
 
       <nav
         aria-label={t("editorSections")}
-        className="flex gap-1 overflow-x-auto border-b border-admin-rule pb-3"
+        className="sticky top-[8.15rem] z-10 -mx-1 flex gap-2 overflow-x-auto rounded-xl border border-admin-rule bg-admin-parchment/95 p-2 shadow-sm backdrop-blur-xl"
       >
-        {editorSteps.map((step) => (
+        {editorSteps.map((step, index) => (
             <a
-              className="min-w-max rounded-lg px-3 py-2 text-sm font-semibold text-admin-ink-soft transition hover:bg-admin-surface hover:text-admin-ink"
+              aria-current={activeStep === step ? "step" : undefined}
+              className={`group flex min-w-max items-center gap-2 rounded-lg border px-3 py-2 text-sm font-semibold transition ${
+                activeStep === step
+                  ? "border-admin-navy bg-admin-navy text-white shadow-sm"
+                  : "border-transparent text-admin-ink-soft hover:border-admin-rule hover:bg-admin-surface hover:text-admin-ink"
+              }`}
               href={`#editor-${step}`}
               key={step}
+              onClick={() => setActiveStep(step)}
+              title={t(`steps.${step}.description`)}
             >
+              <span
+                aria-hidden
+                className={`grid size-5 place-items-center rounded-full text-[10px] font-black ${
+                  activeStep === step
+                    ? "bg-white/15 text-white"
+                    : "bg-admin-surface text-admin-ink-soft group-hover:bg-admin-panel group-hover:text-admin-ink"
+                }`}
+              >
+                {index + 1}
+              </span>
               {t(`steps.${step}.label`)}
             </a>
           ))}
       </nav>
 
-      <div className="grid min-w-0 gap-10 xl:grid-cols-[minmax(0,1fr)_18rem]">
-        <div className="grid min-w-0 gap-8">
+      <div className="grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="grid min-w-0 gap-6">
       {editorSteps.includes("basics") ? (
         <section className={sectionSurfaceClass} id="editor-basics">
           <EditorStepHeader step="basics" />

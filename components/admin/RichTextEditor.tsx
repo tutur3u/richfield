@@ -23,8 +23,24 @@ const TuturuuuRichTextEditor = dynamic(
     loading: () => (
       <div
         aria-busy="true"
-        className="admin-skeleton min-h-72 bg-admin-panel"
-      />
+        className="overflow-hidden rounded-xl border border-admin-rule-strong bg-admin-panel"
+      >
+        <div className="flex flex-wrap gap-2 border-b border-admin-rule bg-admin-parchment p-2">
+          {Array.from({ length: 8 }, (_, index) => (
+            <span
+              className="admin-skeleton size-9 rounded-lg"
+              key={`editor-tool-${index}`}
+            />
+          ))}
+        </div>
+        <div className="grid min-h-72 content-start gap-3 p-4">
+          <span className="admin-skeleton h-4 w-[92%] rounded-full" />
+          <span className="admin-skeleton h-4 w-[84%] rounded-full" />
+          <span className="admin-skeleton h-4 w-[68%] rounded-full" />
+          <span className="admin-skeleton mt-4 h-4 w-[88%] rounded-full" />
+          <span className="admin-skeleton h-4 w-[74%] rounded-full" />
+        </div>
+      </div>
     ),
     ssr: false,
   },

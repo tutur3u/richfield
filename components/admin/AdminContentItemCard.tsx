@@ -15,9 +15,19 @@ function statusTone(status: string) {
   return "admin-status-draft";
 }
 
-function GalleryThumbnail({ item }: { item: RichfieldAdminContentItem }) {
+function ContentThumbnail({
+  compact = false,
+  item,
+}: {
+  compact?: boolean;
+  item: RichfieldAdminContentItem;
+}) {
   return (
-    <span className="relative block aspect-[4/3] overflow-hidden rounded-lg border border-admin-rule bg-admin-parchment">
+    <span
+      className={`relative block overflow-hidden rounded-lg border border-admin-rule bg-admin-parchment ${
+        compact ? "aspect-[4/3] w-full sm:w-[7.5rem]" : "aspect-[4/3]"
+      }`}
+    >
       {item.imageUrl ? (
         <Image
           alt={item.imageAlt || ""}
@@ -59,6 +69,7 @@ export function AdminContentItemCard({
           ? t("scheduled")
           : t("draft");
   const isGalleryItem = collectionKey === "image-library";
+  const showEditorialThumbnail = !isGalleryItem && Boolean(item.imageUrl);
   const galleryMeta = [item.pageSection, item.placement, item.category]
     .filter(Boolean)
     .join(" · ");
@@ -67,7 +78,11 @@ export function AdminContentItemCard({
     <button
       aria-current={selected ? "true" : undefined}
       className={`group grid w-full text-left transition-all ${
-        isGalleryItem ? "gap-3 rounded-2xl p-3" : "gap-1.5 rounded-xl p-4"
+        isGalleryItem
+          ? "gap-3 rounded-2xl p-3"
+          : showEditorialThumbnail
+            ? "gap-3 rounded-xl p-3 sm:grid-cols-[7.5rem_minmax(0,1fr)] sm:items-center"
+            : "gap-1.5 rounded-xl p-4"
       } border ${
         selected
           ? "border-admin-gold bg-admin-gold/[0.08] shadow-[0_0_0_3px_rgb(217_167_91_/_0.08)]"
@@ -76,8 +91,9 @@ export function AdminContentItemCard({
       onClick={() => onOpen(item.id)}
       type="button"
     >
-      {isGalleryItem ? <GalleryThumbnail item={item} /> : null}
-      <span className="grid min-w-0 gap-1.5 px-1">
+      {isGalleryItem ? <ContentThumbnail item={item} /> : null}
+      {showEditorialThumbnail ? <ContentThumbnail compact item={item} /> : null}
+      <span className={`grid min-w-0 gap-1.5 ${showEditorialThumbnail ? "px-1 py-1" : "px-1"}`}>
         <span className="flex items-start justify-between gap-3">
           <span
             className={`min-w-0 font-display leading-tight text-admin-ink ${

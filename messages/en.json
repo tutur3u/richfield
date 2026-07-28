@@ -120,8 +120,10 @@
       "stepNumber": "Step {number}",
       "stepProgress": "Step {current} of {total}",
       "untitledItem": "Untitled {item}",
+    "updateWebsiteLink": "Use English title",
     "uploadImage": "Upload image",
     "unsavedChanges": "Unsaved changes",
+    "websiteLinkHelp": "Shared by both languages. English titles create the suggestion; spaces become hyphens automatically.",
     "gallery": {
       "add": "Add photos",
       "alt": "Image description",

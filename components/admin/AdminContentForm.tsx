@@ -1,6 +1,12 @@
 "use client";
 
-import { Eye, FloppyDisk, Trash } from "@phosphor-icons/react";
+import {
+  ArrowClockwise,
+  Eye,
+  FloppyDisk,
+  LinkSimple,
+  Trash,
+} from "@phosphor-icons/react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
@@ -19,7 +25,10 @@ import type {
   RichfieldAdminCollectionKey,
   RichfieldAdminContentItem,
 } from "@/lib/richfield-admin-content-model";
-import { slugifyRichfieldContent } from "@/lib/richfield-admin-content-model";
+import {
+  normalizeRichfieldSlugInput,
+  slugifyRichfieldContent,
+} from "@/lib/richfield-admin-content-model";
 import {
   CheckboxField,
   EditorStepHeader,
@@ -97,7 +106,13 @@ export function ContentForm({
   );
   const effectiveItem = savedItem ?? item;
   const [draft, setDraft] = useState(() => draftWithPreset(item, initialDraft));
-  const [slugTouched, setSlugTouched] = useState(Boolean(item));
+  const [slugIsAutomatic, setSlugIsAutomatic] = useState(() => {
+    if (!item) return true;
+    const englishTitle =
+      item.englishTitle || (contentLocale === "en" ? item.title : "");
+    const suggestedSlug = slugifyRichfieldContent(englishTitle, "");
+    return Boolean(suggestedSlug && item.slug === suggestedSlug);
+  });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageFileLabel, setImageFileLabel] = useState("");
   const [imageDragActive, setImageDragActive] = useState(false);
@@ -149,6 +164,16 @@ export function ContentForm({
         slug: effectiveItem.slug,
       })
     : null;
+  const englishTitleForSlug =
+    contentLocale === "en"
+      ? draft.title
+      : (effectiveItem?.englishTitle ?? "");
+  const suggestedSlug = slugifyRichfieldContent(englishTitleForSlug, "");
+  const draftPreviewPath =
+    getRichfieldEditorPreviewHref({
+      collectionKey,
+      slug: draft.slug,
+    }) ?? (draft.slug ? `/${draft.slug}` : "/…");
   useEffect(() => {
     onBusyChange(isBusy);
   }, [isBusy, onBusyChange]);
@@ -209,10 +234,10 @@ export function ContentForm({
       if (
         name === "title" &&
         typeof value === "string" &&
-        !slugTouched &&
-        !effectiveItem
+        contentLocale === "en" &&
+        slugIsAutomatic
       ) {
-        next.slug = slugifyRichfieldContent(value);
+        next.slug = slugifyRichfieldContent(value, "");
       }
 
       return next;
@@ -331,7 +356,18 @@ export function ContentForm({
 
       if (payload.item) {
         setDraft(draftFromItem(payload.item));
-        setSlugTouched(true);
+        const savedEnglishTitle =
+          payload.item.englishTitle ||
+          (contentLocale === "en" ? payload.item.title : "");
+        const savedSuggestedSlug = slugifyRichfieldContent(
+          savedEnglishTitle,
+          "",
+        );
+        setSlugIsAutomatic(
+          Boolean(
+            savedSuggestedSlug && payload.item.slug === savedSuggestedSlug,
+          ),
+        );
       } else {
         setDraft((current) => ({ ...current, removeImage: false }));
       }
@@ -1398,17 +1434,50 @@ export function ContentForm({
 
             <div>
               <p className="script-label">{t("inspector.pageDetails")}</p>
-              <div className="mt-3">
+              <div className="mt-3 grid gap-3">
                 <TextField
                   disabled={isBusy}
                   label={t("fields.websiteLink")}
                   name="slug"
                   onChange={(name, value) => {
-                    setSlugTouched(true);
-                    updateDraft(name, slugifyRichfieldContent(value));
+                    setSlugIsAutomatic(false);
+                    updateDraft(name, normalizeRichfieldSlugInput(value));
                   }}
                   value={draft.slug}
                 />
+                <div className="grid gap-2 rounded-lg border border-admin-rule bg-admin-surface p-3">
+                  <div className="flex min-w-0 items-start gap-2 text-xs text-admin-ink-soft">
+                    <LinkSimple
+                      aria-hidden
+                      className="mt-0.5 shrink-0 text-admin-accent"
+                      size={15}
+                    />
+                    <span className="min-w-0 break-all font-mono leading-5">
+                      {draftPreviewPath}
+                    </span>
+                  </div>
+                  <p className="text-xs leading-5 text-admin-ink-soft">
+                    {t("websiteLinkHelp")}
+                  </p>
+                  <Button
+                    className="justify-self-start"
+                    disabled={
+                      isBusy ||
+                      !suggestedSlug ||
+                      draft.slug === suggestedSlug
+                    }
+                    onClick={() => {
+                      setSlugIsAutomatic(true);
+                      updateDraft("slug", suggestedSlug);
+                    }}
+                    size="sm"
+                    type="button"
+                    variant="outline"
+                  >
+                    <ArrowClockwise aria-hidden data-icon="inline-start" />
+                    {t("updateWebsiteLink")}
+                  </Button>
+                </div>
               </div>
               {effectiveItem ? (
                 <p className="mt-3 break-all text-xs leading-5 text-admin-ink-soft">

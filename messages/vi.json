@@ -120,8 +120,10 @@
       "stepNumber": "Bước {number}",
       "stepProgress": "Bước {current} / {total}",
       "untitledItem": "{item} chưa đặt tên",
+    "updateWebsiteLink": "Dùng tiêu đề tiếng Anh",
     "uploadImage": "Tải ảnh lên",
     "unsavedChanges": "Có thay đổi chưa lưu",
+    "websiteLinkHelp": "Dùng chung cho cả hai ngôn ngữ. Gợi ý lấy từ tiêu đề tiếng Anh; khoảng trắng tự động đổi thành dấu gạch nối.",
     "gallery": {
       "add": "Thêm ảnh",
       "alt": "Mô tả hình ảnh",

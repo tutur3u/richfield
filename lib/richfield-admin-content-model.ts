@@ -51,6 +51,7 @@ export type RichfieldAdminContentItem = {
   email: string;
   emailNotificationStatus: string;
   employmentType: string;
+  englishTitle: string;
   feature: boolean;
   featureCaption: string;
   href: string;
@@ -337,14 +338,21 @@ export function normalizeRichfieldContentStatus(value: string | null): Richfield
     : "draft";
 }
 
-export function slugifyRichfieldContent(value: string, fallback = "new-item") {
-  const normalized = value
-    .trim()
+export function normalizeRichfieldSlugInput(value: string) {
+  return value
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/&/g, " and ")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/-{2,}/g, "-")
+    .replace(/^-+/g, "")
     .slice(0, 80);
+}
+
+export function slugifyRichfieldContent(value: string, fallback = "new-item") {
+  const normalized = normalizeRichfieldSlugInput(value).replace(/-+$/g, "");
 
   return normalized || fallback;
 }
@@ -426,6 +434,12 @@ export function readRichfieldAdminContent(
         return details ? { ...image, ...details } : image;
       });
 
+      const englishTitle =
+        readString(englishVariant, "title") ??
+        (!hasLocalization || sourceLocale === "en"
+          ? readString(entry, "title")
+          : null) ??
+        "";
       const title =
         readString(requestedVariant, "title") ??
         (mayUseLegacy ? readString(entry, "title") : null) ??
@@ -484,6 +498,7 @@ export function readRichfieldAdminContent(
           "",
         emailNotificationStatus: readString(profileData, "emailNotificationStatus") ?? readString(readRecord(entry.metadata), "emailNotificationStatus") ?? "",
         employmentType: readString(profileData, "employmentType") ?? "",
+        englishTitle,
         feature: readBoolean(profileData, "feature"),
         featureCaption: readString(profileData, "featureCaption") ?? "",
         href: readString(profileData, "href") ?? "",

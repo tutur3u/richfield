@@ -92,6 +92,7 @@
     "imageLimit": "WebP · up to 12MB",
     "imageTooLarge": "Choose an image smaller than 12MB.",
     "addImagePrompt": "Add an image to see it here.",
+    "allChangesSaved": "All changes saved",
     "conversionHint": "Converted to WebP automatically · up to 12MB",
       "keep": "Keep it",
     "new": "New",
@@ -118,6 +119,7 @@
       "stepProgress": "Step {current} of {total}",
       "untitledItem": "Untitled {item}",
     "uploadImage": "Upload image",
+    "unsavedChanges": "Unsaved changes",
     "inspector": {
       "cover": "Cover image",
       "pageDetails": "Page details",

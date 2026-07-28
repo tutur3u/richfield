@@ -92,6 +92,7 @@
     "imageLimit": "WebP · tối đa 12MB",
     "imageTooLarge": "Hãy chọn ảnh nhỏ hơn 12MB.",
     "addImagePrompt": "Thêm hình ảnh để xem trước tại đây.",
+    "allChangesSaved": "Mọi thay đổi đã được lưu",
     "conversionHint": "Tự động chuyển sang WebP · tối đa 12MB",
       "keep": "Giữ lại",
     "new": "Mới",
@@ -118,6 +119,7 @@
       "stepProgress": "Bước {current} / {total}",
       "untitledItem": "{item} chưa đặt tên",
     "uploadImage": "Tải ảnh lên",
+    "unsavedChanges": "Có thay đổi chưa lưu",
     "inspector": {
       "cover": "Ảnh bìa",
       "pageDetails": "Chi tiết trang",

@@ -505,7 +505,7 @@ export function ContentForm({
   }
 
   return (
-    <form className="grid min-w-0 gap-6" onSubmit={submit}>
+    <form className="grid min-w-0 gap-6 pb-24" onSubmit={submit}>
       <div className="flex flex-col gap-5 border-b border-admin-rule pb-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
           <p className="script-label">
@@ -1279,6 +1279,44 @@ export function ContentForm({
             </div>
           </div>
         </aside>
+      </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-admin-rule bg-admin-surface backdrop-blur-xl lg:left-60">
+        <div className="mx-auto flex min-h-16 max-w-[1320px] items-center justify-between gap-3 px-4 sm:px-7 lg:px-12">
+          <div className="flex min-w-0 items-center gap-2 text-sm text-admin-ink-soft">
+            <span
+              aria-hidden
+              className={`size-2 shrink-0 rounded-full ${
+                isDirty ? "bg-amber-500" : "bg-emerald-500"
+              }`}
+            />
+            <span className="truncate">
+              {isDirty ? t("unsavedChanges") : t("allChangesSaved")}
+            </span>
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            {previewHref ? (
+              <Button
+                render={
+                  <Link href={previewHref} rel="noreferrer" target="_blank" />
+                }
+                size="sm"
+                variant="outline"
+              >
+                <Eye aria-hidden data-icon="inline-start" />
+                <span className="hidden sm:inline">{t("openPreview")}</span>
+              </Button>
+            ) : null}
+            <Button
+              disabled={!canSave || imageProcessing}
+              size="sm"
+              type="submit"
+            >
+              <FloppyDisk aria-hidden data-icon="inline-start" />
+              {submitting ? t("saving") : t("save")}
+            </Button>
+          </div>
+        </div>
       </div>
     </form>
   );

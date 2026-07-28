@@ -62,6 +62,19 @@
 - Fix made: replace ambiguous `text-muted` utilities across admin/system surfaces with the explicit `text-admin-ink-soft` token, including field help, disabled values, login/session copy, member captions, and item slugs.
 - Post-fix visual evidence: pending deployment of the contrast correction.
 
+### Pass 3 — blocked
+
+- Visual evidence:
+  - `/private/tmp/richfield-design-qa-full.png`
+  - `/private/tmp/richfield-design-qa-menu.png`
+  - `/private/tmp/richfield-editor-light-final.png`
+  - `/private/tmp/richfield-editor-dark-menu-final.png`
+  - `/private/tmp/richfield-editor-writing-final.png`
+- Post-fix result: explicit secondary-text tokens now compute to `rgb(111, 101, 87)` in light mode and `rgb(196, 187, 173)` in dark mode. The menu, sidebar, document grid, inspector, image preview, and icon toolbar are visually coherent with the selected source.
+- New P2 finding: the selected source keeps a Save action available while editing long-form copy, but the implementation scrolls its primary action out of view.
+- Fix made: add a compact theme-aware bottom action bar with saved/unsaved state, Preview, and Save controls while preserving the document and inspector layout.
+- Post-fix visual evidence: pending deployment of the persistent action bar.
+
 ## Primary interactions to verify
 
 - Open and keyboard-navigate the user dropdown.

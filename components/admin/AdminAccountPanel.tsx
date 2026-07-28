@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -87,16 +87,17 @@ export function AdminAccountPanel({ userEmail }: { userEmail: string | null }) {
             {t("viewSite")}
           </Link>
           <form action="/api/auth/logout" method="post">
-            <button
+            <Button
               className={cn(
-                buttonVariants({ size: "lg", variant: "outline" }),
                 "h-10 w-full border-admin-rule bg-admin-panel text-admin-ink hover:bg-admin-surface",
               )}
+              size="lg"
               type="submit"
+              variant="outline"
             >
               <SignOut aria-hidden data-icon="inline-start" size={17} />
               {t("signOut")}
-            </button>
+            </Button>
           </form>
         </CardFooter>
       </Card>

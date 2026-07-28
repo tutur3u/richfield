@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   ADMIN_SECTION_GROUPS,
   adminSectionsByGroup,
@@ -135,16 +136,18 @@ export function AdminShell({
           <div className="flex min-w-0 items-center gap-3 px-4 sm:px-6 lg:border-r lg:border-admin-rule">
             {/* The sidebar collapses on small screens; without this the only
                 way to change section on a phone would be the browser URL. */}
-            <button
+            <Button
               aria-controls="admin-sidebar"
               aria-expanded={menuOpen}
               aria-label={menuOpen ? t("common.close") : t("common.menu")}
-              className="grid size-10 place-items-center border border-admin-rule text-admin-ink lg:hidden"
+              className="border-admin-rule text-admin-ink lg:hidden"
               onClick={() => setMenuOpen((open) => !open)}
+              size="icon-lg"
               type="button"
+              variant="outline"
             >
               {menuOpen ? <X aria-hidden size={18} /> : <List aria-hidden size={18} />}
-            </button>
+            </Button>
             <Link
               className="flex min-w-0 items-center gap-2 text-admin-ink"
               href="/admin"

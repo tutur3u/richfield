@@ -22,6 +22,10 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import type { AdminTheme } from "@/lib/admin/theme";
@@ -67,6 +71,13 @@ export function AdminUserMenu({
   const localeFormRef = useRef<HTMLFormElement>(null);
   const { setTheme, theme } = useAdminTheme();
   const initial = userEmail.slice(0, 1).toUpperCase();
+  const localeName = locale === "vi" ? vietnameseLabel : englishLabel;
+  const themeName = {
+    dark: darkLabel,
+    light: lightLabel,
+    system: systemLabel,
+  }[theme];
+  const ThemeIcon = THEME_ICONS[theme];
 
   function updateLocale(value: string) {
     const input = localeFormRef.current?.elements.namedItem("locale");
@@ -101,7 +112,7 @@ export function AdminUserMenu({
 
         <DropdownMenuContent
           align="end"
-          className="w-72 rounded-xl p-1.5"
+          className="w-64 rounded-xl p-1.5"
           sideOffset={8}
         >
           <DropdownMenuGroup>
@@ -118,44 +129,64 @@ export function AdminUserMenu({
           <DropdownMenuSeparator />
 
           <DropdownMenuGroup>
-            <DropdownMenuLabel className="flex items-center gap-2 px-2">
-              <Languages aria-hidden />
-              {adminLanguageLabel}
-            </DropdownMenuLabel>
-            <DropdownMenuRadioGroup onValueChange={updateLocale} value={locale}>
-              <DropdownMenuRadioItem value="en">
-                {englishLabel}
-              </DropdownMenuRadioItem>
-              <DropdownMenuRadioItem value="vi">
-                {vietnameseLabel}
-              </DropdownMenuRadioItem>
-            </DropdownMenuRadioGroup>
-          </DropdownMenuGroup>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <Languages aria-hidden />
+                {adminLanguageLabel}
+                <DropdownMenuShortcut>{localeName}</DropdownMenuShortcut>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="min-w-44">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>{adminLanguageLabel}</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup
+                    onValueChange={updateLocale}
+                    value={locale}
+                  >
+                    <DropdownMenuRadioItem value="en">
+                      {englishLabel}
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="vi">
+                      {vietnameseLabel}
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
 
-          <DropdownMenuSeparator />
-
-          <DropdownMenuGroup>
-            <DropdownMenuLabel>{themeLabel}</DropdownMenuLabel>
-            <DropdownMenuRadioGroup
-              onValueChange={(value) => setTheme(value as AdminTheme)}
-              value={theme}
-            >
-              {(
-                [
-                  ["system", systemLabel],
-                  ["light", lightLabel],
-                  ["dark", darkLabel],
-                ] as const
-              ).map(([value, label]) => {
-                const Icon = THEME_ICONS[value];
-                return (
-                  <DropdownMenuRadioItem key={value} value={value}>
-                    <Icon aria-hidden />
-                    {label}
-                  </DropdownMenuRadioItem>
-                );
-              })}
-            </DropdownMenuRadioGroup>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>
+                <ThemeIcon aria-hidden />
+                {themeLabel}
+                <DropdownMenuShortcut>{themeName}</DropdownMenuShortcut>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="min-w-44">
+                <DropdownMenuGroup>
+                  <DropdownMenuLabel>{themeLabel}</DropdownMenuLabel>
+                  <DropdownMenuRadioGroup
+                    onValueChange={(value) =>
+                      setTheme(value as AdminTheme)
+                    }
+                    value={theme}
+                  >
+                    {(
+                      [
+                        ["system", systemLabel],
+                        ["light", lightLabel],
+                        ["dark", darkLabel],
+                      ] as const
+                    ).map(([value, label]) => {
+                      const Icon = THEME_ICONS[value];
+                      return (
+                        <DropdownMenuRadioItem key={value} value={value}>
+                          <Icon aria-hidden />
+                          {label}
+                        </DropdownMenuRadioItem>
+                      );
+                    })}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuGroup>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
           </DropdownMenuGroup>
 
           <DropdownMenuSeparator />

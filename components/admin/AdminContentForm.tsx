@@ -164,24 +164,34 @@ export function ContentForm({
 
     if (sections.length === 0) return;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        const nextStep = visible?.target.id.replace("editor-", "");
-        if (nextStep && editorSteps.includes(nextStep as typeof activeStep)) {
-          setActiveStep(nextStep as typeof activeStep);
-        }
-      },
-      {
-        rootMargin: "-24% 0px -62% 0px",
-        threshold: [0, 0.15, 0.4],
-      },
-    );
+    let animationFrame = 0;
+    const syncActiveStep = () => {
+      cancelAnimationFrame(animationFrame);
+      animationFrame = requestAnimationFrame(() => {
+        const railOffset = window.innerWidth >= 1024 ? 175 : 165;
+        const closest = sections
+          .map((section) => ({
+            distance: Math.abs(
+              section.getBoundingClientRect().top - railOffset,
+            ),
+            step: section.id.replace("editor-", ""),
+          }))
+          .sort((a, b) => a.distance - b.distance)[0]?.step;
 
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
+        if (closest && editorSteps.includes(closest as typeof activeStep)) {
+          setActiveStep(closest as typeof activeStep);
+        }
+      });
+    };
+
+    syncActiveStep();
+    window.addEventListener("resize", syncActiveStep);
+    window.addEventListener("scroll", syncActiveStep, { passive: true });
+    return () => {
+      cancelAnimationFrame(animationFrame);
+      window.removeEventListener("resize", syncActiveStep);
+      window.removeEventListener("scroll", syncActiveStep);
+    };
     // editorStepKey is the stable representation of this route's sections.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editorStepKey]);

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 import { Link } from "@/i18n/navigation";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
@@ -117,7 +118,11 @@ export default async function CareersPage({
                       {leader.role.toUpperCase()}
                     </p>
                   </div>
-                  <p className="v2-size-body text-justify opacity-90">{leader.bio}</p>
+                  <RichfieldProse
+                    compact
+                    content={leader.bio}
+                    structuredContent={leader.bioContent}
+                  />
                   {leader.quote ? (
                     <blockquote className="border-l-2 border-gold-strong pl-5">
                       <p className="v2-italic text-[clamp(1.2rem,1.8vw,1.5rem)] leading-[1.3] text-gold-strong">

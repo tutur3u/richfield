@@ -302,18 +302,30 @@ function buildLocalizationMetadata(
     existingMetadata.richfieldLocalization,
   );
   const existingLocales = readRecord(existingLocalization.locales);
+  const sharedGallery =
+    input.collectionKey === "articles"
+      ? input.gallery.map(({ id, url }) => ({ id, url }))
+      : existingMetadata.richfieldGallery;
   const variant = {
     body: input.body,
+    bodyContent: input.bodyContent,
+    gallery:
+      input.collectionKey === "articles"
+        ? input.gallery.map(({ alt, caption, id }) => ({ alt, caption, id }))
+        : undefined,
     imageAlt: input.imageAlt,
     profileData: buildLocalizedProfileData(input),
     status: input.status,
     subtitle: getSubtitle(input),
     summary: input.summary,
+    summaryContent: input.summaryContent,
     title: input.title,
+    richTextVersion: 1,
   };
 
   return {
     ...existingMetadata,
+    richfieldGallery: sharedGallery,
     richfieldLocalization: {
       defaultLocale: "en",
       locales: {
@@ -391,8 +403,10 @@ function buildBlockPayload(entryId: string, input: RichfieldContentMutationInput
   return {
     block_type: "markdown",
     content: {
+      json: input.bodyContent,
       markdown: input.body,
-    },
+      richTextVersion: 1,
+    } as never,
     entry_id: entryId,
     sort_order: 0,
     title: "Bio",
@@ -431,8 +445,10 @@ async function saveBodyBlock({
       : {
           block_type: "markdown",
           content: {
+            json: input.bodyContent ?? input.summaryContent,
             markdown: input.body || input.summary,
-          },
+            richTextVersion: 1,
+          } as never,
           entry_id: entryId,
           sort_order: 0,
           title:
@@ -479,6 +495,7 @@ function buildImageAssetPayload({
   upload?: { path: string } | null;
 }) {
   const metadata: Record<string, string | number | null> = {};
+  metadata.placement = "cover";
 
   if (input.imageFile) {
     metadata.contentType = input.imageFile.type || null;

@@ -800,6 +800,19 @@ button:focus-visible {
 }
 
 .richfield-tuturuuu-editor {
+  --tuturuuu-editor-background: var(--color-admin-panel);
+  --tuturuuu-editor-foreground: var(--color-admin-ink);
+  --tuturuuu-editor-border: var(--color-admin-rule-strong);
+  --tuturuuu-editor-muted: var(--color-admin-ink-soft);
+  --tuturuuu-editor-toolbar-background: var(--color-admin-parchment);
+  --tuturuuu-editor-active-background: var(--color-admin-surface);
+  --tuturuuu-editor-active-border: var(--color-admin-gold);
+  --tuturuuu-editor-primary: var(--color-admin-navy);
+  --tuturuuu-editor-primary-foreground: #fff;
+  --tuturuuu-editor-code-background: #0c1725;
+  --tuturuuu-editor-code-foreground: #f6efe1;
+  --tuturuuu-editor-focus: var(--color-admin-copper);
+  --tuturuuu-editor-focus-ring: color-mix(in srgb, var(--color-admin-gold) 28%, transparent);
   --tuturuuu-editor-tooltip-background: var(--color-paper);
   --tuturuuu-editor-tooltip-foreground: var(--color-admin-ink);
   --tuturuuu-editor-tooltip-border: var(--color-admin-rule-strong);
@@ -916,6 +929,86 @@ button:focus-visible {
 
 .richfield-tuturuuu-editor[aria-disabled="true"] {
   opacity: 0.65;
+}
+
+.richfield-prose {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.richfield-prose :where(h2, h3, h4) {
+  margin-top: 1.25em;
+  color: var(--ink);
+  font-family: var(--font-fraunces), serif;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+
+.richfield-prose h2 {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+}
+
+.richfield-prose h3 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.richfield-prose h4 {
+  font-size: 1.25rem;
+}
+
+.richfield-prose :where(ul, ol) {
+  display: grid;
+  gap: 0.65rem;
+  padding-left: 1.5rem;
+}
+
+.richfield-prose ul {
+  list-style: disc;
+}
+
+.richfield-prose ol {
+  list-style: decimal;
+}
+
+.richfield-prose blockquote {
+  border-left: 3px solid var(--gold-strong);
+  padding: 0.5rem 0 0.5rem 1.25rem;
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
+  font-family: var(--font-fraunces), serif;
+  font-size: 1.25em;
+}
+
+.richfield-prose a {
+  color: var(--gold-strong);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.richfield-prose hr {
+  border: 0;
+  border-top: 1px solid color-mix(in srgb, currentColor 18%, transparent);
+  margin-block: 1rem;
+}
+
+.richfield-prose img {
+  width: 100%;
+  max-height: min(70rem, 80vh);
+  border-radius: 0.25rem;
+  object-fit: contain;
+}
+
+.richfield-prose[data-compact] {
+  gap: 0.75rem;
+}
+
+.richfield-prose[data-compact] :where(h2, h3, h4) {
+  margin-top: 0.75em;
+  font-size: 1.15em;
+}
+
+.richfield-prose[data-compact] blockquote {
+  font-size: 1em;
 }
 
 @theme inline {

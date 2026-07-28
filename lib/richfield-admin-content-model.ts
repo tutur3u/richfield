@@ -1,3 +1,6 @@
+import type { JSONContent } from "@tuturuuu/editor";
+import { parseRichfieldJSONContent } from "./richfield-rich-text";
+
 export type RichfieldAdminStudioPayload = {
   assets: Array<Record<string, unknown>>;
   binding?: Record<string, unknown>;
@@ -36,6 +39,7 @@ export type RichfieldAdminContentItem = {
   author: string;
   blockId: string | null;
   body: string;
+  bodyContent: JSONContent | null;
   brand: string;
   category: string;
   collectionKey: RichfieldAdminCollectionKey;
@@ -55,6 +59,7 @@ export type RichfieldAdminContentItem = {
   imageAssetId: string | null;
   imageStoragePath: string | null;
   imageUrl: string | null;
+  gallery: RichfieldArticleGalleryItem[];
   inquiryType: string;
   kind: string;
   location: string;
@@ -80,11 +85,19 @@ export type RichfieldAdminContentItem = {
   submissionStatus: string;
   subtitle: string;
   summary: string;
+  summaryContent: JSONContent | null;
   shelfWeight: string;
   title: string;
   usageTags: string;
   workMode: string;
   year: string;
+};
+
+export type RichfieldArticleGalleryItem = {
+  alt: string;
+  caption: string;
+  id: string;
+  url: string;
 };
 
 export type RichfieldContentMutationInput = {
@@ -93,6 +106,7 @@ export type RichfieldContentMutationInput = {
   applyEmail: string;
   author: string;
   body: string;
+  bodyContent: JSONContent | null;
   brand: string;
   category: string;
   collectionKey: RichfieldAdminCollectionKey;
@@ -109,6 +123,7 @@ export type RichfieldContentMutationInput = {
   href: string;
   imageAlt: string;
   imageFile?: File | null;
+  gallery: RichfieldArticleGalleryItem[];
   inquiryType: string;
   kind: string;
   location: string;
@@ -131,6 +146,7 @@ export type RichfieldContentMutationInput = {
   submissionStatus: string;
   subtitle: string;
   summary: string;
+  summaryContent: JSONContent | null;
   shelfWeight: string;
   title: string;
   usageTags: string;
@@ -284,6 +300,37 @@ function getBlockMarkdown(block: Record<string, unknown> | undefined) {
   return readString(content, "markdown") ?? "";
 }
 
+function readGallery(value: unknown): RichfieldArticleGalleryItem[] {
+  if (!Array.isArray(value)) return [];
+
+  return value.flatMap((item) => {
+    const record = readRecord(item);
+    const url = readString(record, "url");
+    if (!url || (!/^https?:\/\//i.test(url) && !url.startsWith("/"))) return [];
+
+    return [{
+      alt: readString(record, "alt") ?? "",
+      caption: readString(record, "caption") ?? "",
+      id: readString(record, "id") ?? crypto.randomUUID(),
+      url,
+    }];
+  });
+}
+
+function readGalleryDetails(value: unknown) {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    const record = readRecord(item);
+    const id = readString(record, "id");
+    if (!id) return [];
+    return [{
+      alt: readString(record, "alt") ?? "",
+      caption: readString(record, "caption") ?? "",
+      id,
+    }];
+  });
+}
+
 export function normalizeRichfieldContentStatus(value: string | null): RichfieldContentStatus {
   return value && VALID_STATUSES.has(value as RichfieldContentStatus)
     ? (value as RichfieldContentStatus)
@@ -335,7 +382,15 @@ export function readRichfieldAdminContent(
     .sort((left, right) => getSortOrder(left) - getSortOrder(right));
 
   return studio.entries
-    .filter((entry) => getEntryCollectionSlug(entry, collectionById) === config.collectionSlug)
+    .filter(
+      (entry) =>
+        getEntryCollectionSlug(entry, collectionById) ===
+          config.collectionSlug &&
+        !(
+          collectionKey === "image-library" &&
+          readRecord(entry.metadata).editorMedia === true
+        ),
+    )
     .map<RichfieldAdminContentItem>((entry) => {
       const metadata = readRecord(entry.metadata);
       const localization = readRecord(metadata.richfieldLocalization);
@@ -357,6 +412,19 @@ export function readRichfieldAdminContent(
       const markdownBlock = markdownBlocks.find((block) => getBlockEntryId(block) === entryId);
       const yearValue = readNumber(profileData, "year");
       const stringList = profileData.inquiryTypes ?? profileData.usageTags;
+      const sharedGallery = readGallery(metadata.richfieldGallery);
+      const legacyLocalizedGallery = readGallery(requestedVariant.gallery);
+      const localizedGalleryDetails = readGalleryDetails(
+        requestedVariant.gallery,
+      );
+      const gallery = (
+        sharedGallery.length > 0 ? sharedGallery : legacyLocalizedGallery
+      ).map((image) => {
+        const details = localizedGalleryDetails.find(
+          (item) => item.id === image.id,
+        );
+        return details ? { ...image, ...details } : image;
+      });
 
       const title =
         readString(requestedVariant, "title") ??
@@ -369,6 +437,14 @@ export function readRichfieldAdminContent(
       const body =
         readString(requestedVariant, "body") ??
         (mayUseLegacy ? getBlockMarkdown(markdownBlock) : "");
+      const bodyContent =
+        parseRichfieldJSONContent(requestedVariant.bodyContent) ??
+        (mayUseLegacy
+          ? parseRichfieldJSONContent(readRecord(markdownBlock?.content).json)
+          : null);
+      const summaryContent = parseRichfieldJSONContent(
+        requestedVariant.summaryContent,
+      );
       const requestedStatus = normalizeRichfieldContentStatus(
         readString(requestedVariant, "status") ??
           (mayUseLegacy ? readString(entry, "status") : null),
@@ -393,6 +469,7 @@ export function readRichfieldAdminContent(
         author: readString(profileData, "author") ?? "",
         blockId: markdownBlock ? String(markdownBlock.id) : null,
         body,
+        bodyContent,
         brand: readString(profileData, "brand") ?? readString(entry, "title") ?? "",
         category: readString(profileData, "category") ?? readString(entry, "subtitle") ?? "",
         collectionKey,
@@ -426,6 +503,7 @@ export function readRichfieldAdminContent(
           readString(profileData, "coverImage") ??
           readString(metadata, "imageUrl") ??
           readString(metadata, "coverImage"),
+        gallery,
         inquiryType: readString(profileData, "inquiryType") ?? "",
         kind: readString(profileData, "kind") ?? "",
         location: readString(profileData, "location") ?? "",
@@ -456,6 +534,7 @@ export function readRichfieldAdminContent(
         submissionStatus: readString(profileData, "submissionStatus") ?? "",
         subtitle: readString(entry, "subtitle") ?? "",
         summary,
+        summaryContent,
         shelfWeight: readString(profileData, "shelfWeight") ?? "",
         title,
         usageTags: Array.isArray(stringList)
@@ -491,6 +570,19 @@ export function parseRichfieldContentFormData(
   const uploadedImage = formData.get("imageFile");
   const imageFile = uploadedImage instanceof File && uploadedImage.size > 0 ? uploadedImage : null;
   const errors: Record<string, string> = {};
+  const bodyContent = parseRichfieldJSONContent(formData.get("bodyContent"));
+  const summaryContent = parseRichfieldJSONContent(
+    formData.get("summaryContent"),
+  );
+  let gallery: RichfieldArticleGalleryItem[] = [];
+
+  try {
+    gallery = readGallery(
+      JSON.parse(String(formData.get("gallery") ?? "[]")),
+    );
+  } catch {
+    errors.gallery = "Check the article gallery and try again.";
+  }
 
   if (!title) {
     errors.title = "Add a title.";
@@ -523,6 +615,7 @@ export function parseRichfieldContentFormData(
       applyEmail: String(formData.get("applyEmail") ?? "").trim(),
       author: String(formData.get("author") ?? "").trim(),
       body: String(formData.get("body") ?? "").trim(),
+      bodyContent,
       brand: String(formData.get("brand") ?? "").trim(),
       category: String(formData.get("category") ?? "").trim(),
       collectionKey,
@@ -539,6 +632,7 @@ export function parseRichfieldContentFormData(
       href: String(formData.get("href") ?? "").trim(),
       imageAlt: String(formData.get("imageAlt") ?? "").trim(),
       imageFile,
+      gallery: collectionKey === "articles" ? gallery : [],
       inquiryType: String(formData.get("inquiryType") ?? "").trim(),
       kind: String(formData.get("kind") ?? "").trim(),
       location: String(formData.get("location") ?? "").trim(),
@@ -561,6 +655,7 @@ export function parseRichfieldContentFormData(
       submissionStatus: String(formData.get("submissionStatus") ?? "").trim(),
       subtitle: String(formData.get("subtitle") ?? "").trim(),
       summary: String(formData.get("summary") ?? "").trim(),
+      summaryContent,
       shelfWeight: String(formData.get("shelfWeight") ?? "").trim(),
       title,
       usageTags: String(formData.get("usageTags") ?? "").trim(),

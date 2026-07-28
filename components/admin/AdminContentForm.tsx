@@ -42,6 +42,7 @@ import {
   type Draft,
 } from "./AdminContentHelpers";
 import { RichTextEditor } from "./RichTextEditor";
+import { ArticleGalleryEditor } from "./ArticleGalleryEditor";
 import { adminFetch } from "./richfield-admin-session-client";
 import {
   canSaveRichfieldEditor,
@@ -102,6 +103,7 @@ export function ContentForm({
   const [imageDragActive, setImageDragActive] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
   const [imageProcessing, setImageProcessing] = useState(false);
+  const [sourceModeDirty, setSourceModeDirty] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [message, setMessage] = useState<string | null>(null);
@@ -135,8 +137,10 @@ export function ContentForm({
     draft,
     hasPendingImageFile: Boolean(imageFile),
     savedDraft,
+    sourceModeDirty,
   });
-  const canSave = canSaveRichfieldEditor({ isBusy, isDirty });
+  const canSave =
+    canSaveRichfieldEditor({ isBusy, isDirty }) && !sourceModeDirty;
   const previewHref = effectiveItem
     ? getRichfieldEditorPreviewHref({
         collectionKey,
@@ -174,10 +178,24 @@ export function ContentForm({
     });
   };
 
+  const updateRichText = (
+    markdownKey: "body" | "summary",
+    contentKey: "bodyContent" | "summaryContent",
+    markdown: string,
+    structuredValue: string,
+  ) => {
+    setDraft((current) => ({
+      ...current,
+      [contentKey]: structuredValue,
+      [markdownKey]: markdown,
+    }));
+  };
+
   const applyImageFile = async (file: File | null) => {
     if (!file) {
       setImageFile(null);
       setImageFileLabel("");
+      setSourceModeDirty(false);
       setImagePreviewUrl((previous) => {
         if (previous) URL.revokeObjectURL(previous);
         return null;
@@ -224,7 +242,10 @@ export function ContentForm({
 
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!canSave || imageProcessing) return;
+    if (!canSave || imageProcessing || sourceModeDirty) {
+      if (sourceModeDirty) toast.error(t("applySourceBeforeSaving"));
+      return;
+    }
 
     setSubmitting(true);
     setFieldErrors({});
@@ -917,9 +938,20 @@ export function ContentForm({
           {collectionKey === "brands" || collectionKey === "milestones" ? (
             <RichTextEditor
               disabled={isBusy}
+              enableHTMLSource
+              featurePreset="compact"
               label={collectionKey === "brands" ? t("fields.story") : t("fields.milestoneCopy")}
               locale={contentLocale}
-              onChange={(value) => updateDraft("summary", value)}
+              onChange={(markdown, structuredValue) =>
+                updateRichText(
+                  "summary",
+                  "summaryContent",
+                  markdown,
+                  structuredValue,
+                )
+              }
+              onSourceModeDirtyChange={setSourceModeDirty}
+              structuredValue={draft.summaryContent}
               value={draft.summary}
             />
           ) : (
@@ -974,9 +1006,20 @@ export function ContentForm({
             <div className="grid gap-4">
               <RichTextEditor
                 disabled={isBusy}
+                enableHTMLSource
+                featurePreset="compact"
                 label={t("fields.bio")}
                 locale={contentLocale}
-                onChange={(value) => updateDraft("body", value)}
+                onChange={(markdown, structuredValue) =>
+                  updateRichText(
+                    "body",
+                    "bodyContent",
+                    markdown,
+                    structuredValue,
+                  )
+                }
+                onSourceModeDirtyChange={setSourceModeDirty}
+                structuredValue={draft.bodyContent}
                 value={draft.body}
               />
               <TextAreaField
@@ -991,45 +1034,76 @@ export function ContentForm({
           {collectionKey === "contact-page" ? (
             <RichTextEditor
               disabled={isBusy}
+              enableHTMLSource
+              featurePreset="compact"
               label={t("fields.intro")}
               locale={contentLocale}
-              onChange={(value) => {
-                updateDraft("body", value);
-                updateDraft("summary", value);
+              onChange={(markdown, structuredValue) => {
+                setDraft((current) => ({
+                  ...current,
+                  body: markdown,
+                  bodyContent: structuredValue,
+                  summary: markdown,
+                  summaryContent: structuredValue,
+                }));
               }}
+              onSourceModeDirtyChange={setSourceModeDirty}
+              structuredValue={draft.bodyContent || draft.summaryContent}
               value={draft.body || draft.summary}
             />
           ) : null}
           {collectionKey === "contact-form" ? (
             <RichTextEditor
               disabled={isBusy}
+              enableHTMLSource
+              featurePreset="compact"
               label={t("fields.successMessage")}
               locale={contentLocale}
-              onChange={(value) => {
-                updateDraft("body", value);
-                updateDraft("summary", value);
+              onChange={(markdown, structuredValue) => {
+                setDraft((current) => ({
+                  ...current,
+                  body: markdown,
+                  bodyContent: structuredValue,
+                  summary: markdown,
+                  summaryContent: structuredValue,
+                }));
               }}
+              onSourceModeDirtyChange={setSourceModeDirty}
+              structuredValue={draft.bodyContent || draft.summaryContent}
               value={draft.body || draft.summary}
             />
           ) : null}
           {collectionKey === "contact-submissions" ? (
             <RichTextEditor
-              disabled={isBusy}
+              disabled
+              enableHTMLSource={false}
+              featurePreset="compact"
               label={t("fields.message")}
               locale={contentLocale}
-              onChange={(value) => {
-                updateDraft("body", value);
-                updateDraft("summary", value);
-              }}
+              onChange={() => undefined}
+              readOnly
+              structuredValue={draft.bodyContent || draft.summaryContent}
               value={draft.body || draft.summary}
             />
           ) : null}
           {collectionKey === "articles" || collectionKey === "jobs" ? (
             <RichTextEditor
               disabled={isBusy}
+              enableHTMLSource
+              enableImages={collectionKey === "articles"}
+              featurePreset="full"
               label={collectionKey === "jobs" ? t("fields.positionDescription") : t("fields.article")}
               locale={contentLocale}
-              onChange={(value) => updateDraft("body", value)}
+              onChange={(markdown, structuredValue) =>
+                updateRichText(
+                  "body",
+                  "bodyContent",
+                  markdown,
+                  structuredValue,
+                )
+              }
+              onSourceModeDirtyChange={setSourceModeDirty}
+              structuredValue={draft.bodyContent}
               value={draft.body}
             />
           ) : null}
@@ -1149,6 +1223,13 @@ export function ContentForm({
               ) : null}
             </div>
           </div>
+          {collectionKey === "articles" ? (
+            <ArticleGalleryEditor
+              disabled={isBusy}
+              onChange={(value) => updateDraft("gallery", value)}
+              value={draft.gallery}
+            />
+          ) : null}
         </section>
       ) : null}
 

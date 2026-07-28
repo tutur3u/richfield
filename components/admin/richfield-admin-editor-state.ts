@@ -9,6 +9,7 @@ export type RichfieldAdminEditorDraft = {
   applyEmail: string;
   author: string;
   body: string;
+  bodyContent: string;
   brand: string;
   category: string;
   country: string;
@@ -22,6 +23,7 @@ export type RichfieldAdminEditorDraft = {
   feature: boolean;
   featureCaption: string;
   href: string;
+  gallery: string;
   imageAlt: string;
   inquiryType: string;
   kind: string;
@@ -44,6 +46,7 @@ export type RichfieldAdminEditorDraft = {
   submissionStatus: string;
   subtitle: string;
   summary: string;
+  summaryContent: string;
   shelfWeight: string;
   title: string;
   usageTags: string;
@@ -65,6 +68,7 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "applyEmail",
   "author",
   "body",
+  "bodyContent",
   "brand",
   "category",
   "country",
@@ -78,6 +82,7 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "feature",
   "featureCaption",
   "href",
+  "gallery",
   "imageAlt",
   "inquiryType",
   "kind",
@@ -100,6 +105,7 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "submissionStatus",
   "subtitle",
   "summary",
+  "summaryContent",
   "shelfWeight",
   "title",
   "usageTags",
@@ -208,14 +214,17 @@ export function getRichfieldEditorPreviewHref({
 export function hasRichfieldEditorDirtyChanges({
   draft,
   hasPendingImageFile,
+  sourceModeDirty = false,
   savedDraft,
 }: {
   draft: RichfieldAdminEditorDraft;
   hasPendingImageFile: boolean;
+  sourceModeDirty?: boolean;
   savedDraft: RichfieldAdminEditorDraft;
 }) {
   return (
     hasPendingImageFile ||
+    sourceModeDirty ||
     draftKeys.some((key) => draft[key] !== savedDraft[key])
   );
 }

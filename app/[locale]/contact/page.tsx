@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { ContactForm } from "@/app/_components/forms/contact-form";
 import { Eyebrow } from "@/app/_components/primitives/eyebrow";
@@ -110,9 +111,13 @@ export default async function ContactPage({
             <DisplayHeading level={1} className="w-full text-[clamp(34px,4vw,56px)]!">
               {contactPage.headline}
             </DisplayHeading>
-            <p className="w-full text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-muted">
-              {contactPage.intro}
-            </p>
+            <div className="w-full text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-muted">
+              <RichfieldProse
+                compact
+                content={contactPage.intro}
+                structuredContent={contactPage.introContent}
+              />
+            </div>
           </RevealOnScroll>
 
           <div className="grid flex-1 gap-x-[var(--v2-col-gap)] gap-y-[var(--v2-flow)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">

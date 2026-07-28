@@ -1,3 +1,5 @@
+import type { JSONContent } from "@tuturuuu/editor";
+
 // Second-generation leadership — verbatim from the final content doc. Used in
 // the Careers "Why Richfield" section.
 export type Leader = {
@@ -5,6 +7,7 @@ export type Leader = {
   role: string;
   photo: string;
   bio: string;
+  bioContent?: JSONContent | null;
   quote?: string;
 };
 

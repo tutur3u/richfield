@@ -1,3 +1,5 @@
+import type { JSONContent } from "@tuturuuu/editor";
+
 export type CareerPillar = {
   heading: string;
   body: string;
@@ -28,6 +30,7 @@ export const heritageBlock =
 export type OpenPosition = {
   applyEmail?: string;
   body?: string;
+  bodyContent?: JSONContent | null;
   department?: string;
   title: string;
   slug: string;

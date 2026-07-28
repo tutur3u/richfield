@@ -669,6 +669,32 @@ export const richfieldExternalProjectManifest = {
     supportedLocales: ["en", "vi"],
   },
   schema: {
+    metadataFields: [
+      {
+        key: "bodyContent",
+        label: "Structured body",
+        localizable: true,
+        type: "json",
+      },
+      {
+        key: "summaryContent",
+        label: "Structured summary",
+        localizable: true,
+        type: "json",
+      },
+      {
+        key: "gallery",
+        label: "Article gallery",
+        localizable: true,
+        type: "json",
+      },
+      {
+        key: "richTextVersion",
+        label: "Rich text version",
+        localizable: false,
+        type: "number",
+      },
+    ],
     collections: [
       {
         assetTypes: ["image"],

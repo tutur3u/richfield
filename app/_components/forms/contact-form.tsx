@@ -6,6 +6,7 @@ import { submitContact, type ContactState } from "@/app/[locale]/contact/actions
 import { CTA_BOX } from "@/app/_components/magazine/primitives/cta-link";
 import { TurnstileWidget } from "@/app/_components/forms/turnstile-widget";
 import type { RichfieldContactForm } from "@/lib/richfield-content";
+import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 
 const initial: ContactState = { status: "idle" };
 
@@ -25,9 +26,13 @@ export function ContactForm({ config }: { config: RichfieldContactForm }) {
         aria-live="polite"
         className="border-t border-line pt-10"
       >
-        <p className="font-display text-[clamp(24px,2.5vw,32px)] text-ink">
-          {config.successMessage}
-        </p>
+        <div className="font-display text-[clamp(24px,2.5vw,32px)] text-ink">
+          <RichfieldProse
+            compact
+            content={config.successMessage}
+            structuredContent={config.successMessageContent}
+          />
+        </div>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import { partnerLogos } from "./photography";
 import type { Milestone } from "./milestones";
+import type { JSONContent } from "@tuturuuu/editor";
 
 export type BrandCategory = "Food" | "Beverages" | "Non-Food";
 
@@ -14,6 +15,7 @@ export type Brand = {
   accent?: string;
   /** One-line editorial caption — the role this brand plays in the portfolio. */
   story?: string;
+  storyContent?: JSONContent | null;
   /** When true, this brand appears on the homepage feature cell (2x1). */
   feature?: boolean;
   /** Caption beneath a feature cell. */

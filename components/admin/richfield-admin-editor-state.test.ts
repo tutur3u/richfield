@@ -16,6 +16,7 @@ const baseDraft: RichfieldAdminEditorDraft = {
   applyEmail: "",
   author: "",
   body: "",
+  bodyContent: "",
   brand: "Mars · Wrigley",
   category: "Food",
   country: "USA",
@@ -29,6 +30,7 @@ const baseDraft: RichfieldAdminEditorDraft = {
   feature: true,
   featureCaption: "Founding partner · Since 1994",
   href: "",
+  gallery: "[]",
   imageAlt: "Mars · Wrigley",
   inquiryType: "",
   kind: "",
@@ -51,6 +53,7 @@ const baseDraft: RichfieldAdminEditorDraft = {
   submissionStatus: "",
   subtitle: "Food",
   summary: "Our founding partner.",
+  summaryContent: "",
   shelfWeight: "",
   title: "Mars · Wrigley",
   usageTags: "",
@@ -84,6 +87,15 @@ describe("Richfield admin editor state", () => {
         draft: baseDraft,
         hasPendingImageFile: true,
         savedDraft: baseDraft,
+      }),
+    ).toBe(true);
+
+    expect(
+      hasRichfieldEditorDirtyChanges({
+        draft: baseDraft,
+        hasPendingImageFile: false,
+        savedDraft: baseDraft,
+        sourceModeDirty: true,
       }),
     ).toBe(true);
   });

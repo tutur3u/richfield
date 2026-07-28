@@ -155,8 +155,44 @@ export default async function InsightPage({ params }: InsightPageProps) {
             </div>
           ) : null}
           <div className="mt-12 border-t border-current/15 pt-12">
-            <RichfieldProse content={article.body} />
+            <RichfieldProse
+              content={article.body}
+              structuredContent={article.bodyContent}
+            />
           </div>
+          {article.gallery.length > 0 ? (
+            <section
+              aria-label={t("gallery")}
+              className="mt-16 border-t border-current/15 pt-12"
+            >
+              <div className="grid gap-5 sm:grid-cols-2">
+                {article.gallery.map((image, index) => (
+                  <figure
+                    className={
+                      article.gallery.length % 2 === 1 && index === 0
+                        ? "sm:col-span-2"
+                        : undefined
+                    }
+                    key={image.id}
+                  >
+                    {/* CMS media may be served from the Tuturuuu delivery host. */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      alt={image.alt}
+                      className="aspect-[4/3] w-full bg-black/5 object-cover"
+                      loading="lazy"
+                      src={image.url}
+                    />
+                    {image.caption ? (
+                      <figcaption className="v2-size-folio mt-3 text-ink/60">
+                        {image.caption}
+                      </figcaption>
+                    ) : null}
+                  </figure>
+                ))}
+              </div>
+            </section>
+          ) : null}
         </article>
       </main>
     </>

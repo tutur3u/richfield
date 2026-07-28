@@ -739,4 +739,102 @@ describe("delivery image resolution", () => {
     });
     expect(vietnamese.articles).toEqual([]);
   });
+
+  test("prefers localized structured article content and preserves its gallery", () => {
+    const bodyContent = {
+      type: "doc",
+      content: [
+        {
+          type: "paragraph",
+          content: [{ type: "text", text: "Structured article body" }],
+        },
+      ],
+    };
+    const delivery = {
+      adapter: "richfield",
+      canonicalProjectId: "richfield",
+      generatedAt: new Date("2026-07-28").toISOString(),
+      loadingData: null,
+      profileData: {},
+      workspaceId: "workspace-1",
+      collections: [
+        {
+          collection_type: "articles",
+          config: null,
+          description: null,
+          id: "articles",
+          slug: "articles",
+          title: "News",
+          entries: [
+            {
+              assets: [],
+              blocks: [
+                {
+                  block_type: "markdown",
+                  content: { markdown: "Legacy body" },
+                  id: "block-1",
+                  sort_order: 0,
+                  title: "Body",
+                },
+              ],
+              id: "article-structured",
+              metadata: {
+                richfieldGallery: [
+                  {
+                    id: "gallery-1",
+                    url: "https://platform.example.com/media/gallery.webp",
+                  },
+                ],
+                richfieldLocalization: {
+                  defaultLocale: "en",
+                  locales: {
+                    en: {
+                      body: "Structured article body",
+                      bodyContent,
+                      gallery: [
+                        {
+                          alt: "Richfield event",
+                          caption: "The team at launch",
+                          id: "gallery-1",
+                        },
+                      ],
+                      richTextVersion: 1,
+                      status: "published",
+                      summary: "Summary",
+                      title: "Structured story",
+                    },
+                  },
+                  sourceLocale: "en",
+                  supportedLocales: ["en", "vi"],
+                  version: 1,
+                },
+              },
+              profile_data: {},
+              published_at: null,
+              slug: "structured-story",
+              status: "published",
+              subtitle: null,
+              summary: "Legacy summary",
+              title: "Legacy title",
+            },
+          ],
+        },
+      ],
+    };
+
+    const content = buildRichfieldContent(delivery, {
+      apiBaseUrl: "https://platform.example.com/api/v1",
+      locale: "en",
+    });
+
+    expect(content.articles[0]?.bodyContent).toEqual(bodyContent);
+    expect(content.articles[0]?.gallery).toEqual([
+      {
+        alt: "Richfield event",
+        caption: "The team at launch",
+        id: "gallery-1",
+        url: "https://platform.example.com/media/gallery.webp",
+      },
+    ]);
+  });
 });

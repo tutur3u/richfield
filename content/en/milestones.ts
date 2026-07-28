@@ -1,8 +1,11 @@
+import type { JSONContent } from "@tuturuuu/editor";
+
 export type Milestone = {
   year: number;
   brand: string;
   country: string;
   body: string;
+  bodyContent?: JSONContent | null;
   /** When true, milestone shows on /about (extended) but not on the homepage strip. */
   aboutOnly?: boolean;
 };

@@ -137,6 +137,7 @@ export function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     applyEmail: item?.applyEmail ?? "",
     author: item?.author ?? "",
     body: item?.body ?? "",
+    bodyContent: item?.bodyContent ? JSON.stringify(item.bodyContent) : "",
     brand: item?.brand ?? "",
     category: item?.category ?? "",
     country: item?.country ?? "",
@@ -150,6 +151,7 @@ export function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     feature: item?.feature ?? false,
     featureCaption: item?.featureCaption ?? "",
     href: item?.href ?? "",
+    gallery: JSON.stringify(item?.gallery ?? []),
     imageAlt: item?.imageAlt ?? "",
     inquiryType: item?.inquiryType ?? "",
     kind: item?.kind ?? "",
@@ -172,6 +174,9 @@ export function draftFromItem(item: RichfieldAdminContentItem | null): Draft {
     submissionStatus: item?.submissionStatus ?? "",
     subtitle: item?.subtitle ?? "",
     summary: item?.summary ?? "",
+    summaryContent: item?.summaryContent
+      ? JSON.stringify(item.summaryContent)
+      : "",
     shelfWeight: item?.shelfWeight ?? "",
     title: item?.title ?? "",
     usageTags: item?.usageTags ?? "",

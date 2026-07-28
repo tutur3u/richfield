@@ -195,6 +195,7 @@ export default async function CareerPage({ params }: CareerPageProps) {
                 position.body ??
                 t("fallbackBody")
               }
+              structuredContent={position.bodyContent}
             />
             <aside className="h-fit border border-current/15 bg-paper p-6">
               <p className="font-display text-2xl">{t("interested")}</p>

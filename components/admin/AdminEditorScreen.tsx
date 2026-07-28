@@ -42,6 +42,9 @@ export function AdminEditorScreen({
   const [dirty, setDirty] = useState(false);
   const [busy, setBusy] = useState(false);
   const [confirmClose, setConfirmClose] = useState(false);
+  const [pendingLocale, setPendingLocale] = useState<"en" | "vi" | null>(
+    null,
+  );
   const contentLocale = searchParams.get("contentLocale") === "vi" ? "vi" : "en";
 
   useEffect(() => {
@@ -64,16 +67,27 @@ export function AdminEditorScreen({
   const requestClose = () => {
     if (busy) return;
     if (dirty) {
+      setPendingLocale(null);
       setConfirmClose(true);
       return;
     }
     close();
   };
 
-  const switchLocale = (locale: "en" | "vi") => {
+  const applyLocale = (locale: "en" | "vi") => {
     const next = new URLSearchParams(searchParams);
     next.set("contentLocale", locale);
     router.replace(`${pathname}?${next}`);
+  };
+
+  const switchLocale = (locale: "en" | "vi") => {
+    if (locale === contentLocale || busy) return;
+    if (dirty) {
+      setPendingLocale(locale);
+      setConfirmClose(true);
+      return;
+    }
+    applyLocale(locale);
   };
 
   return (
@@ -167,7 +181,13 @@ export function AdminEditorScreen({
         }}
       />
 
-      <AlertDialog onOpenChange={setConfirmClose} open={confirmClose}>
+      <AlertDialog
+        onOpenChange={(open) => {
+          setConfirmClose(open);
+          if (!open) setPendingLocale(null);
+        }}
+        open={confirmClose}
+      >
         <AlertDialogContent className="border border-admin-rule bg-admin-panel text-admin-ink">
           <AlertDialogHeader>
             <AlertDialogTitle className="font-display text-2xl">
@@ -181,7 +201,14 @@ export function AdminEditorScreen({
             <AlertDialogCancel>{t("keepEditing")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-admin-navy text-white hover:bg-admin-navy/90"
-              onClick={close}
+              onClick={() => {
+                if (pendingLocale) {
+                  applyLocale(pendingLocale);
+                  setDirty(false);
+                  return;
+                }
+                close();
+              }}
             >
               {t("discard")}
             </AlertDialogAction>

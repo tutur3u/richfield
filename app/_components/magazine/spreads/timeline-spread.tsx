@@ -3,6 +3,7 @@ import { PhotoCycle, type CyclePhoto } from "@/app/_components/magazine/media/ph
 import { Spread, Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import type { Milestone } from "@/content/en/milestones";
+import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 import { useTranslations } from "next-intl";
 import { getContent } from "@/content";
 import type { Locale } from "@/lib/locale";
@@ -63,7 +64,10 @@ export function TimelineSpread({
           <Eyebrow className="mb-[var(--v2-rhythm)]">
             {anniversary30.title.toUpperCase()}
           </Eyebrow>
-          <p className="v2-size-body opacity-90">{anniversary30.body}</p>
+          <RichfieldProse
+            compact
+            content={anniversary30.body}
+          />
         </RevealOnScroll>
         <RevealOnScroll delayMs={80} className="col-span-12 lg:col-span-6">
           <div className="relative aspect-[16/10] w-full overflow-hidden">

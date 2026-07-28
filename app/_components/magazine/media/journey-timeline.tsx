@@ -3,6 +3,7 @@ import Image from "next/image";
 import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { getContent } from "@/content";
 import type { Milestone } from "@/content/en/milestones";
+import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 import type { Locale } from "@/lib/locale";
 
 /**
@@ -117,9 +118,13 @@ export function JourneyTimeline({
                 <div className="v2-mono v2-size-folio mt-[10px] opacity-55 transition-opacity duration-300 ease-out group-hover/item:opacity-80">
                   {m.country}
                 </div>
-                <p className="v2-size-body mt-2 max-w-none text-pretty text-[clamp(13px,0.95vw,15px)] leading-[1.5] opacity-60 transition-opacity duration-300 ease-out group-hover/item:opacity-90 lg:max-w-[24ch]">
-                  {m.body}
-                </p>
+                <div className="v2-size-body mt-2 max-w-none text-pretty text-[clamp(13px,0.95vw,15px)] leading-[1.5] opacity-60 transition-opacity duration-300 ease-out group-hover/item:opacity-90 lg:max-w-[24ch]">
+                  <RichfieldProse
+                    compact
+                    content={m.body}
+                    structuredContent={m.bodyContent}
+                  />
+                </div>
               </div>
             </RevealOnScroll>
           );

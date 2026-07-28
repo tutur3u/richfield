@@ -12,6 +12,8 @@ import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import messagesEn from "@/messages/en.json";
 import messagesVi from "@/messages/vi.json";
 import { getRichfieldContactChannels } from "./richfield-contact-channels";
+import type { JSONContent } from "@tuturuuu/editor";
+import { parseRichfieldJSONContent } from "./richfield-rich-text";
 
 // The locale-selected content modules — the local fallback when the CMS is
 // unreachable or has no published entries for a collection.
@@ -96,19 +98,30 @@ export type RichfieldContent = {
 export type RichfieldArticle = {
   author: string | null;
   body: string;
+  bodyContent: JSONContent | null;
   category: string | null;
   featured: boolean;
+  gallery: RichfieldArticleGalleryItem[];
   imageUrl: string | null;
   publishedAt: string | null;
   slug: string;
   summary: string;
+  summaryContent: JSONContent | null;
   title: string;
+};
+
+export type RichfieldArticleGalleryItem = {
+  alt: string;
+  caption: string;
+  id: string;
+  url: string;
 };
 
 export type RichfieldContactPage = {
   backgroundImage: RichfieldImageLibraryItem | null;
   headline: string;
   intro: string;
+  introContent?: JSONContent | null;
   mapQuery: string;
 };
 
@@ -118,6 +131,7 @@ export type RichfieldContactForm = {
   recipientEmail: string;
   submitLabel: string;
   successMessage: string;
+  successMessageContent?: JSONContent | null;
 };
 
 export type RichfieldContactChannel = {
@@ -306,6 +320,28 @@ function getCollection(delivery: RichfieldDeliveryPayload, slug: string) {
   return delivery.collections.find((collection) => collection.slug === slug) ?? null;
 }
 
+function resolveLocalizedGallery(entry: DeliveryEntry, variant: JsonObject) {
+  const shared = Array.isArray(asRecord(entry.metadata).richfieldGallery)
+    ? (asRecord(entry.metadata).richfieldGallery as unknown[])
+    : [];
+  const localized = Array.isArray(variant.gallery)
+    ? variant.gallery
+    : [];
+  const base = shared.length > 0 ? shared : localized;
+
+  return base.map((item) => {
+    const image = asRecord(item);
+    const id = asString(image.id);
+    const details = localized
+      .map(asRecord)
+      .find((candidate) => id && asString(candidate.id) === id);
+    return {
+      ...image,
+      ...(details ?? {}),
+    };
+  });
+}
+
 /**
  * Apply the locale variant before any public-content mapping happens.
  *
@@ -330,26 +366,50 @@ function localizeDelivery(
         const variant = asRecord(asRecord(localization.locales)[locale]);
         const variantStatus = asString(variant.status) ?? "draft";
         const body = asString(variant.body);
+        const bodyContent = parseRichfieldJSONContent(variant.bodyContent);
+        const summaryContent = parseRichfieldJSONContent(
+          variant.summaryContent,
+        );
         const imageAlt = asString(variant.imageAlt);
 
         return {
           ...entry,
+          metadata: {
+            ...entry.metadata,
+            richfieldResolvedContent: {
+              bodyContent,
+              gallery: resolveLocalizedGallery(entry, variant),
+              richTextVersion: variant.richTextVersion,
+              summaryContent,
+            },
+          },
           assets: entry.assets.map((asset) => ({
             ...asset,
             alt_text: imageAlt ?? asset.alt_text,
           })),
-          blocks: body
+          blocks: body || bodyContent
             ? entry.blocks.some((block) => block.block_type === "markdown")
               ? entry.blocks.map((block) =>
                   block.block_type === "markdown"
-                    ? { ...block, content: { markdown: body } }
+                    ? {
+                        ...block,
+                        content: {
+                          json: bodyContent,
+                          markdown: body,
+                          richTextVersion: 1,
+                        },
+                      }
                     : block,
                 )
               : [
                   ...entry.blocks,
                   {
                     block_type: "markdown",
-                    content: { markdown: body },
+                    content: {
+                      json: bodyContent,
+                      markdown: body,
+                      richTextVersion: 1,
+                    },
                     id: `${entry.id}-${locale}-body`,
                     sort_order: 0,
                     title: "Body",
@@ -384,6 +444,34 @@ function getMarkdown(entry: DeliveryEntry | null | undefined) {
   return asString(markdown);
 }
 
+function getStructuredContent(entry: DeliveryEntry | null | undefined) {
+  const block = entry?.blocks
+    .filter((item) => item.block_type === "markdown")
+    .sort((left, right) => left.sort_order - right.sort_order)[0];
+  return parseRichfieldJSONContent(asRecord(block?.content).json);
+}
+
+function getResolvedContent(entry: DeliveryEntry) {
+  return asRecord(asRecord(entry.metadata).richfieldResolvedContent);
+}
+
+function getArticleGallery(entry: DeliveryEntry): RichfieldArticleGalleryItem[] {
+  const value = getResolvedContent(entry).gallery;
+  if (!Array.isArray(value)) return [];
+
+  return value.flatMap((item) => {
+    const record = asRecord(item);
+    const url = asString(record.url);
+    if (!url || (!/^https?:\/\//i.test(url) && !url.startsWith("/"))) return [];
+    return [{
+      alt: asString(record.alt) ?? "",
+      caption: asString(record.caption) ?? "",
+      id: asString(record.id) ?? url,
+      url,
+    }];
+  });
+}
+
 function getQuoteBlock(entry: DeliveryEntry | null | undefined) {
   const block = entry?.blocks
     .filter((item) => item.block_type === "quote")
@@ -392,10 +480,16 @@ function getQuoteBlock(entry: DeliveryEntry | null | undefined) {
 }
 
 function getLeadImage(entry: DeliveryEntry | null | undefined) {
-  return (
+  const images =
     entry?.assets
       .filter((item) => item.asset_type === "image")
-      .sort((left, right) => left.sort_order - right.sort_order)[0] ?? null
+      .sort((left, right) => left.sort_order - right.sort_order) ?? [];
+  return (
+    images.find(
+      (item) => asString(asRecord(item.metadata).placement) === "cover",
+    ) ??
+    images[0] ??
+    null
   );
 }
 
@@ -521,6 +615,9 @@ function buildBrands(
       category: isBrandCategory(category) ? category : fallback.category,
       accent: asString(profileData.accent) ?? fallback.accent,
       story: localizedText(locale, entry.summary, matched?.story) ?? fallback.story,
+      storyContent: parseRichfieldJSONContent(
+        getResolvedContent(entry).summaryContent,
+      ),
       feature:
         typeof profileData.feature === "boolean"
           ? profileData.feature
@@ -553,6 +650,7 @@ function buildLeaders(
       role: localizedText(locale, entry.subtitle, matched?.role) ?? fallback.role,
       photo: getImageUrl(entry, apiBaseUrl) ?? fallback.photo,
       bio: localizedText(locale, bio ?? entry.summary, matched?.bio) ?? fallback.bio,
+      bioContent: getStructuredContent(entry),
       quote: localizedText(locale, getQuoteBlock(entry), matched?.quote) ?? fallback.quote,
     };
   });
@@ -583,6 +681,9 @@ function buildMilestones(
         localizedText(locale, asString(profileData.country) ?? entry.subtitle, matched?.country) ??
         fallback.country,
       body: localizedText(locale, entry.summary, matched?.body) ?? fallback.body,
+      bodyContent: parseRichfieldJSONContent(
+        getResolvedContent(entry).summaryContent,
+      ),
       aboutOnly:
         typeof profileData.aboutOnly === "boolean"
           ? profileData.aboutOnly
@@ -600,6 +701,7 @@ function buildImageLibrary(
 ) {
   const mapped = getPublishedEntries(delivery, "image-library").map<RichfieldImageLibraryItem | null>(
     (entry) => {
+      if (asRecord(entry.metadata).editorMedia === true) return null;
       const profileData = asRecord(entry.profile_data);
       const imageUrl = getImageUrl(entry, apiBaseUrl);
 
@@ -736,6 +838,9 @@ function buildContactPage(
         getMarkdown(entry) ?? asString(profileData.intro) ?? entry.summary,
         defaultContactPage.intro,
       ) ?? defaultContactPage.intro,
+    introContent:
+      getStructuredContent(entry) ??
+      parseRichfieldJSONContent(getResolvedContent(entry).summaryContent),
     mapQuery: asString(profileData.mapQuery) ?? defaultContactPage.mapQuery,
   };
 }
@@ -802,6 +907,9 @@ function buildContactForm(
       asString(profileData.successMessage) ??
       entry.summary ??
       defaultContactForm.successMessage,
+    successMessageContent:
+      getStructuredContent(entry) ??
+      parseRichfieldJSONContent(getResolvedContent(entry).summaryContent),
   } satisfies RichfieldContactForm;
 }
 
@@ -818,6 +926,7 @@ function buildOpenPositions(
         item: {
           applyEmail: asString(profileData.applyEmail) ?? undefined,
           body: getMarkdown(entry) ?? undefined,
+          bodyContent: getStructuredContent(entry),
           deadline: asString(profileData.deadline) ?? "",
           department: asString(profileData.department) ?? undefined,
           employmentType: asString(profileData.employmentType) ?? undefined,
@@ -849,12 +958,17 @@ function buildArticles(
       return {
         author: asString(profileData.author),
         body: getMarkdown(entry) ?? entry.summary ?? "",
+        bodyContent: getStructuredContent(entry),
         category: asString(profileData.category) ?? entry.subtitle,
         featured: profileData.feature === true,
+        gallery: getArticleGallery(entry),
         imageUrl: getImageUrl(entry, apiBaseUrl),
         publishedAt: asString(profileData.publishedAt) ?? entry.published_at,
         slug: entry.slug,
         summary: entry.summary ?? "",
+        summaryContent: parseRichfieldJSONContent(
+          getResolvedContent(entry).summaryContent,
+        ),
         title: entry.title,
       };
     })
@@ -876,6 +990,7 @@ function deriveBrandTimeline(brandList: Brand[]): Milestone[] {
       brand: b.name,
       country: b.country,
       body: b.story ?? "",
+      bodyContent: b.storyContent,
     }));
 }
 

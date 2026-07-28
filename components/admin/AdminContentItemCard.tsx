@@ -99,7 +99,7 @@ export function AdminContentItemCard({
             {galleryMeta}
           </span>
         ) : item.slug ? (
-          <span className="truncate text-xs text-muted">/{item.slug}</span>
+          <span className="truncate text-xs text-admin-ink-soft">/{item.slug}</span>
         ) : null}
         <span className="mt-1 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-admin-ink-soft">
           <span>

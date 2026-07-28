@@ -56,7 +56,7 @@ export function RichfieldAdminSessionRestorer({ loginHref }: { loginHref: string
         </h1>
         <p
           aria-live="polite"
-          className="mt-3 max-w-[38ch] text-sm leading-6 text-muted"
+          className="mt-3 max-w-[38ch] text-sm leading-6 text-admin-ink-soft"
         >
           {failed
             ? t("expired")

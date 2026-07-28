@@ -10,7 +10,7 @@ function VerifyTokenFallback() {
       <h1 className="mt-5 font-display text-4xl leading-none text-gold">
         Connecting Richfield
       </h1>
-      <p className="mt-3 text-sm leading-6 text-muted">
+      <p className="mt-3 text-sm leading-6 text-admin-ink-soft">
         Finishing centralized Tuturuuu authentication.
       </p>
     </>

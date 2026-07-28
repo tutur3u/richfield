@@ -109,11 +109,11 @@ function MemberGroup({
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <h3 className="font-display text-2xl leading-none text-ink">
           {title}
-          <span className="ml-2 align-middle text-base text-muted">
+          <span className="ml-2 align-middle text-base text-admin-ink-soft">
             {members.length}
           </span>
         </h3>
-        <p className="text-sm text-muted">{caption}</p>
+        <p className="text-sm text-admin-ink-soft">{caption}</p>
       </div>
       <div className="grid gap-3 lg:grid-cols-2">
         {members.map((member) => (

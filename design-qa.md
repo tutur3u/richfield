@@ -51,6 +51,17 @@
 - Fixes made: one-document editor, sticky right inspector, compact user dropdown, theme-scoped sidebar/overlay tokens, global CMS image allowlist, complete public asset mapping, and expanded route invalidation.
 - Post-fix visual evidence: pending authenticated deployment capture at the matching viewport/state.
 
+### Pass 2 — blocked
+
+- Visual evidence:
+  - `/private/tmp/richfield-editor-dark-after.png`
+  - `/private/tmp/richfield-editor-menu-dark-after.png`
+  - `/private/tmp/richfield-editor-light-after.png`
+- Post-fix result: the document editor, inspector, compact account menu, and theme-aware sidebar match the selected direction and behave correctly.
+- New P1 finding: section descriptions and a small set of secondary labels resolve through the shadcn `--muted` surface token instead of the admin text token, producing near-background text in both themes.
+- Fix made: replace ambiguous `text-muted` utilities across admin/system surfaces with the explicit `text-admin-ink-soft` token, including field help, disabled values, login/session copy, member captions, and item slugs.
+- Post-fix visual evidence: pending deployment of the contrast correction.
+
 ## Primary interactions to verify
 
 - Open and keyboard-navigate the user dropdown.

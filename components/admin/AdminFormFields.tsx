@@ -33,8 +33,8 @@ const FIELD_LABEL =
 
 const FIELD_BASE =
   "w-full min-w-0 border bg-paper px-3 text-sm text-ink outline-none transition " +
-  "placeholder:text-muted/70 focus:border-gold " +
-  "disabled:cursor-not-allowed disabled:bg-cream disabled:text-muted";
+  "placeholder:text-admin-ink-soft/70 focus:border-gold " +
+  "disabled:cursor-not-allowed disabled:bg-cream disabled:text-admin-ink-soft";
 
 const FIELD_INPUT = `min-h-11 ${FIELD_BASE}`;
 
@@ -46,7 +46,7 @@ export function EditorStepHeader({ step }: { step: RichfieldEditorStepId }) {
       <p className="text-xs font-black uppercase tracking-[0.18em] text-gold-strong">
         {t(`${step}.label`)}
       </p>
-      <p className="mt-2 text-sm leading-6 text-muted">
+      <p className="mt-2 text-sm leading-6 text-admin-ink-soft">
         {t(`${step}.description`)}
       </p>
     </div>
@@ -249,7 +249,7 @@ export function CheckboxField<TName extends keyof Draft>({
       />
       <span className="grid gap-1">
         <span className={FIELD_LABEL}>{label}</span>
-        <span className="text-xs leading-5 text-muted">{description}</span>
+        <span className="text-xs leading-5 text-admin-ink-soft">{description}</span>
       </span>
     </label>
   );

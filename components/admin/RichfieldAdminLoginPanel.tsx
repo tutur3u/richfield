@@ -55,7 +55,7 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
           <h2 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-ink">
             {t("continue")}
           </h2>
-          <p className="mt-3 max-w-[36ch] text-sm leading-6 text-muted">
+          <p className="mt-3 max-w-[36ch] text-sm leading-6 text-admin-ink-soft">
             {t("description")}
           </p>
 
@@ -74,7 +74,7 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
           >
             <input name="next" type="hidden" value="/admin/news" />
             <button
-              className="px-2 py-1 font-bold text-muted hover:text-ink"
+              className="px-2 py-1 font-bold text-admin-ink-soft hover:text-ink"
               name="locale"
               type="submit"
               value="en"
@@ -83,7 +83,7 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
             </button>
             <span aria-hidden className="py-1 text-line">/</span>
             <button
-              className="px-2 py-1 font-bold text-muted hover:text-ink"
+              className="px-2 py-1 font-bold text-admin-ink-soft hover:text-ink"
               name="locale"
               type="submit"
               value="vi"
@@ -92,7 +92,7 @@ export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
             </button>
           </form>
 
-          <p className="mt-6 border-t border-line pt-4 text-xs leading-5 text-muted">
+          <p className="mt-6 border-t border-line pt-4 text-xs leading-5 text-admin-ink-soft">
             {t("help")}
           </p>
         </div>

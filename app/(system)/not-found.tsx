@@ -17,7 +17,7 @@ export default function SystemNotFound() {
         <h1 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-ink">
           That page does not exist
         </h1>
-        <p className="mt-3 max-w-[38ch] text-sm leading-6 text-muted">
+        <p className="mt-3 max-w-[38ch] text-sm leading-6 text-admin-ink-soft">
           The link may be out of date, or the section may have been renamed.
         </p>
         <div className="mt-7 grid gap-2.5">

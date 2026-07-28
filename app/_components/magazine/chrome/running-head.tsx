@@ -54,9 +54,13 @@ function navActive(item: NavItem, pathname: string): boolean {
  * reader scrolls past the hero (where light type would vanish on the cream body).
  */
 export function RunningHead({
+  languageAvailability,
+  languageHrefs,
   transparentOverHero = false,
 }: {
   locale?: Locale;
+  languageAvailability?: Partial<Record<Locale, boolean>>;
+  languageHrefs?: Partial<Record<Locale, string>>;
   transparentOverHero?: boolean;
 }) {
   const reduce = useReducedMotion();
@@ -142,12 +146,19 @@ export function RunningHead({
                 </NavTopLink>
               );
             })}
-            <LanguageSwitcher className="ml-2" />
+            <LanguageSwitcher
+              availability={languageAvailability}
+              className="ml-2"
+              hrefs={languageHrefs}
+            />
           </nav>
 
           {/* Mobile burger. */}
           <div className="flex items-center gap-4 lg:hidden">
-            <LanguageSwitcher />
+            <LanguageSwitcher
+              availability={languageAvailability}
+              hrefs={languageHrefs}
+            />
             <button
               type="button"
               aria-expanded={mobileOpen}

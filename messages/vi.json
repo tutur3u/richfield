@@ -399,7 +399,13 @@
     "countriesLine": "Việt Nam · Malaysia · Trung Quốc"
   },
   "langSwitcher": {
-    "aria": "Chuyển ngôn ngữ"
+    "aria": "Chuyển ngôn ngữ",
+    "available": "Bản {language}",
+    "unavailable": "Bản dịch {language} chưa được xuất bản",
+    "languages": {
+      "en": "tiếng Anh",
+      "vi": "tiếng Việt"
+    }
   },
   "footer": {
     "links": [
@@ -509,7 +515,13 @@
     "fallbackBody": "Chúng tôi tìm kiếm những người chu đáo, hợp tác và mong muốn xây dựng các mối quan hệ bền vững cùng Richfield.",
     "interested": "Bạn quan tâm?",
     "applyIntro": "Hãy gửi hồ sơ và chia sẻ vì sao vị trí này phù hợp với bạn.",
-    "applyNow": "Ứng tuyển ngay ↗"
+    "applyNow": "Ứng tuyển ngay ↗",
+    "translationEyebrow": "Ngôn ngữ bài đăng",
+    "translationTitle": "Vị trí này chưa có bản tiếng Việt.",
+    "translationDescription": "Vị trí đã được đăng bằng tiếng Anh. Bạn có thể đọc bản đó ngay hoặc xem các cơ hội hiện có bằng tiếng Việt.",
+    "translationAvailable": "Bản đã xuất bản",
+    "readAlternative": "Đọc bản tiếng Anh",
+    "browseCurrent": "Xem cơ hội tiếng Việt"
   },
   "insightsPage": {
     "eyebrow": "Tin Tức",
@@ -518,7 +530,14 @@
     "emptyTitle": "Câu chuyện tiếp theo đang được chuẩn bị.",
     "emptyBody": "Các cập nhật mới từ Richfield sẽ xuất hiện tại đây khi được xuất bản.",
     "readStory": "Đọc bài viết →",
-    "allInsights": "← Tất cả tin tức"
+    "allInsights": "← Tất cả tin tức",
+    "translationEyebrow": "Ngôn ngữ bài viết",
+    "translationTitle": "Bài viết này chưa có bản tiếng Việt.",
+    "translationDescription": "Bài viết đã được xuất bản bằng tiếng Anh. Bạn có thể đọc bản đó ngay hoặc xem các tin tức hiện có bằng tiếng Việt.",
+    "translationAvailable": "Bản đã xuất bản",
+    "readAlternative": "Đọc bản tiếng Anh",
+    "browseCurrent": "Xem tin tức tiếng Việt",
+    "translationMetaTitle": "Bản tiếng Việt chưa được xuất bản"
   },
   "contactPage": {
     "eyebrow": "Liên hệ",

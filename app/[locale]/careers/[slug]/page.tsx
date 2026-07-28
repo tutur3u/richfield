@@ -3,9 +3,12 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
+import { TranslationUnavailable } from "@/app/_components/magazine/translation-unavailable";
 import { Link } from "@/i18n/navigation";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
-import { localeAlternates, toLocale } from "@/lib/locale";
+import type { Locale } from "@/lib/locale";
+import { toLocale } from "@/lib/locale";
+import { publishedLocaleAlternates } from "@/lib/localized-route";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 type CareerPageProps = {
@@ -34,14 +37,44 @@ export async function generateMetadata({
 }: CareerPageProps): Promise<Metadata> {
   const { locale: localeParam, slug } = await params;
   const locale = toLocale(localeParam);
-  const { openPositions } = await getRichfieldContent(locale);
+  const alternateLocale: Locale = locale === "en" ? "vi" : "en";
+  const [{ openPositions }, alternateContent] = await Promise.all([
+    getRichfieldContent(locale),
+    getRichfieldContent(alternateLocale),
+  ]);
   const position = openPositions.find((item) => item.slug === slug);
-  if (!position) return {};
+  const alternatePosition = alternateContent.openPositions.find(
+    (item) => item.slug === slug,
+  );
+  if (!position && !alternatePosition) return {};
+  const availableLocales = [
+    ...(position ? [locale] : []),
+    ...(alternatePosition ? [alternateLocale] : []),
+  ];
+  const path = `/careers/${slug}`;
+
+  if (!position && alternatePosition) {
+    const t = await getTranslations({ locale, namespace: "careerDetailPage" });
+    return {
+      alternates: publishedLocaleAlternates({
+        availableLocales,
+        canonicalLocale: alternateLocale,
+        path,
+      }),
+      description: t("translationDescription"),
+      robots: { follow: true, index: false },
+      title: t("translationTitle"),
+    };
+  }
 
   return {
-    alternates: localeAlternates(`/careers/${position.slug}`),
-    description: position.summary,
-    title: position.title,
+    alternates: publishedLocaleAlternates({
+      availableLocales,
+      canonicalLocale: locale,
+      path,
+    }),
+    description: position?.summary,
+    title: position?.title,
   };
 }
 
@@ -50,8 +83,46 @@ export default async function CareerPage({ params }: CareerPageProps) {
   const locale = toLocale(localeParam);
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "careerDetailPage" });
-  const { openPositions } = await getRichfieldContent(locale);
+  const alternateLocale: Locale = locale === "en" ? "vi" : "en";
+  const [{ openPositions }, alternateContent] = await Promise.all([
+    getRichfieldContent(locale),
+    getRichfieldContent(alternateLocale),
+  ]);
   const position = openPositions.find((item) => item.slug === slug);
+  const alternatePosition = alternateContent.openPositions.find(
+    (item) => item.slug === slug,
+  );
+  if (!position && !alternatePosition) notFound();
+
+  const detailHref = `/careers/${slug}`;
+  const languageAvailability = {
+    [locale]: Boolean(position),
+    [alternateLocale]: Boolean(alternatePosition),
+  };
+
+  if (!position && alternatePosition) {
+    return (
+      <>
+        <RunningHead
+          locale={locale}
+          languageAvailability={languageAvailability}
+          languageHrefs={{ en: detailHref, vi: detailHref }}
+        />
+        <TranslationUnavailable
+          availableHref={detailHref}
+          availableLabel={t("translationAvailable")}
+          availableLocale={alternateLocale}
+          browseHref="/careers"
+          browseLabel={t("browseCurrent")}
+          description={t("translationDescription")}
+          eyebrow={t("translationEyebrow")}
+          heading={t("translationTitle")}
+          locale={locale}
+          readLabel={t("readAlternative")}
+        />
+      </>
+    );
+  }
   if (!position) notFound();
 
   const applyHref = getApplyHref({
@@ -63,7 +134,11 @@ export default async function CareerPage({ params }: CareerPageProps) {
 
   return (
     <>
-      <RunningHead locale={locale} />
+      <RunningHead
+        locale={locale}
+        languageAvailability={languageAvailability}
+        languageHrefs={{ en: detailHref, vi: detailHref }}
+      />
       <main className="v2-bg-morph min-h-screen px-6 pb-[var(--v2-section)] pt-[calc(var(--v2-runhead)+var(--v2-section))] text-ink sm:px-10 lg:px-12">
         <article className="mx-auto max-w-5xl">
           <Link className="v2-mono v2-size-folio text-gold-strong" href="/careers">

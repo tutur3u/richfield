@@ -399,7 +399,13 @@
     "countriesLine": "Vietnam · Malaysia · China"
   },
   "langSwitcher": {
-    "aria": "Switch language"
+    "aria": "Switch language",
+    "available": "{language} version",
+    "unavailable": "{language} translation is not published yet",
+    "languages": {
+      "en": "English",
+      "vi": "Vietnamese"
+    }
   },
   "footer": {
     "links": [
@@ -509,7 +515,13 @@
     "fallbackBody": "We are looking for thoughtful, collaborative people who want to build durable partnerships and grow with Richfield.",
     "interested": "Interested?",
     "applyIntro": "Share your profile and tell us why this role feels right for you.",
-    "applyNow": "Apply now ↗"
+    "applyNow": "Apply now ↗",
+    "translationEyebrow": "Language availability",
+    "translationTitle": "This opportunity isn’t available in English yet.",
+    "translationDescription": "The role is published in Vietnamese. You can read that version now or browse every opportunity currently available in English.",
+    "translationAvailable": "Published edition",
+    "readAlternative": "Read in Vietnamese",
+    "browseCurrent": "Browse English opportunities"
   },
   "insightsPage": {
     "eyebrow": "News",
@@ -518,7 +530,14 @@
     "emptyTitle": "The next story is being prepared.",
     "emptyBody": "New Richfield updates will appear here as they are published.",
     "readStory": "Read story →",
-    "allInsights": "← All news"
+    "allInsights": "← All news",
+    "translationEyebrow": "Language availability",
+    "translationTitle": "This story isn’t available in English yet.",
+    "translationDescription": "The story is published in Vietnamese. You can read that edition now or browse every story currently available in English.",
+    "translationAvailable": "Published edition",
+    "readAlternative": "Read in Vietnamese",
+    "browseCurrent": "Browse English news",
+    "translationMetaTitle": "English translation not yet available"
   },
   "contactPage": {
     "eyebrow": "Contact",

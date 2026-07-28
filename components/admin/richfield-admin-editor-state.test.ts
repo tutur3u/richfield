@@ -108,10 +108,10 @@ describe("Richfield admin editor state", () => {
   test("uses focused steps for each content type", () => {
     expect(
       getRichfieldEditorSteps({ collectionKey: "leadership", hasItem: true }),
-    ).toEqual(["basics", "details", "writing", "danger"]);
+    ).toEqual(["basics", "details", "writing", "image", "danger"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "brands", hasItem: true }),
-    ).toEqual(["basics", "details", "danger"]);
+    ).toEqual(["basics", "details", "image", "danger"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "milestones", hasItem: true }),
     ).toEqual(["basics", "details", "danger"]);
@@ -120,7 +120,7 @@ describe("Richfield admin editor state", () => {
     ).toEqual(["basics", "details"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "contact-page", hasItem: true }),
-    ).toEqual(["basics", "details", "writing", "danger"]);
+    ).toEqual(["basics", "details", "writing", "image", "danger"]);
     expect(
       getRichfieldEditorSteps({ collectionKey: "contact-submissions", hasItem: true }),
     ).toEqual(["basics", "details", "writing", "danger"]);

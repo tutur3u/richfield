@@ -807,6 +807,7 @@ function buildContactForm(
 
 function buildOpenPositions(
   delivery: RichfieldDeliveryPayload,
+  apiBaseUrl: string,
   openPositions: OpenPosition[],
 ) {
   const mapped = getPublishedEntries(delivery, "jobs")
@@ -821,6 +822,7 @@ function buildOpenPositions(
           department: asString(profileData.department) ?? undefined,
           employmentType: asString(profileData.employmentType) ?? undefined,
           href: asString(profileData.href) ?? undefined,
+          imageUrl: getImageUrl(entry, apiBaseUrl),
           location: asString(profileData.location) ?? entry.subtitle ?? "",
           positions: asNumber(profileData.positions) ?? 1,
           slug: entry.slug,
@@ -911,7 +913,11 @@ export function buildRichfieldContent(
     leaders: buildLeaders(localizedDelivery, apiBaseUrl, defaults.leaders, locale),
     milestones: nextMilestones,
     homepageMilestones: nextMilestones.filter((m) => !m.aboutOnly),
-    openPositions: buildOpenPositions(localizedDelivery, defaults.openPositions),
+    openPositions: buildOpenPositions(
+      localizedDelivery,
+      apiBaseUrl,
+      defaults.openPositions,
+    ),
     shelfCategories: buildShelfCategoriesFromImages(nextImageLibrary, defaults.shelfCategories),
   };
 }

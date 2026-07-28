@@ -226,7 +226,20 @@ describe("Richfield public content", () => {
             title: "Jobs",
             entries: [
               {
-                assets: [],
+                assets: [
+                  {
+                    alt_text: "Published career cover",
+                    assetUrl: "/storage/richfield/job-cover.webp",
+                    asset_type: "image",
+                    block_id: null,
+                    entry_id: "job-1",
+                    id: "asset-job-1",
+                    metadata: {},
+                    sort_order: 0,
+                    source_url: null,
+                    storage_path: null,
+                  },
+                ],
                 blocks: [],
                 id: "job-1",
                 metadata: {},
@@ -351,6 +364,7 @@ describe("Richfield public content", () => {
     expect(content.openPositions[0]).toEqual(
       expect.objectContaining({
         deadline: "31 Dec 2026",
+        imageUrl: "https://platform.example.com/storage/richfield/job-cover.webp",
         location: "Ho Chi Minh City",
         positions: 2,
         title: "Sales Executive",

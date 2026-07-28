@@ -32,8 +32,16 @@
   --color-admin-copper-dark: #8c4c30;
   --color-admin-gold: #d9a75b;
   --color-admin-surface: rgb(255 253 248 / 86%);
+  --color-admin-panel: #fffdf8;
   --color-admin-rule: rgb(184 112 81 / 28%);
   --color-admin-rule-strong: rgb(184 112 81 / 42%);
+  --color-admin-sidebar: #eee3d2;
+  --color-admin-sidebar-active: rgb(12 31 52 / 9%);
+  --color-admin-sidebar-hover: rgb(12 31 52 / 5%);
+  --color-admin-sidebar-ink: #302920;
+  --color-admin-sidebar-ink-soft: #6f665b;
+  --color-admin-sidebar-accent: #965637;
+  --color-admin-sidebar-rule: rgb(80 62 44 / 14%);
 
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-geist-sans);
@@ -582,8 +590,16 @@ button:focus-visible {
   --color-admin-copper-dark: #b97050;
   --color-admin-gold: #dfa951;
   --color-admin-surface: rgb(27 35 44 / 88%);
+  --color-admin-panel: #1b232c;
   --color-admin-rule: rgb(255 255 255 / 14%);
   --color-admin-rule-strong: rgb(255 255 255 / 22%);
+  --color-admin-sidebar: #0e1a27;
+  --color-admin-sidebar-active: rgb(255 255 255 / 8%);
+  --color-admin-sidebar-hover: rgb(255 255 255 / 5%);
+  --color-admin-sidebar-ink: #f3eee5;
+  --color-admin-sidebar-ink-soft: #aeb7c1;
+  --color-admin-sidebar-accent: #dfa951;
+  --color-admin-sidebar-rule: rgb(255 255 255 / 10%);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -605,8 +621,16 @@ button:focus-visible {
     --color-admin-copper-dark: #b97050;
     --color-admin-gold: #dfa951;
     --color-admin-surface: rgb(27 35 44 / 88%);
+    --color-admin-panel: #1b232c;
     --color-admin-rule: rgb(255 255 255 / 14%);
     --color-admin-rule-strong: rgb(255 255 255 / 22%);
+    --color-admin-sidebar: #0e1a27;
+    --color-admin-sidebar-active: rgb(255 255 255 / 8%);
+    --color-admin-sidebar-hover: rgb(255 255 255 / 5%);
+    --color-admin-sidebar-ink: #f3eee5;
+    --color-admin-sidebar-ink-soft: #aeb7c1;
+    --color-admin-sidebar-accent: #dfa951;
+    --color-admin-sidebar-rule: rgb(255 255 255 / 10%);
   }
 }
 
@@ -654,6 +678,27 @@ button:focus-visible {
   --admin-status-published-fg: #17643a;
   --admin-status-scheduled-bg: rgb(2 132 199 / 12%);
   --admin-status-scheduled-fg: #075b82;
+
+  /* Align shadcn/Base UI overlays with the editorial theme. Menus, selects,
+     dialogs, and buttons now invert from these semantic values instead of
+     relying on a separate `.dark` class that the admin theme does not use. */
+  --background: var(--color-admin-parchment);
+  --foreground: var(--color-admin-ink);
+  --card: var(--color-admin-panel);
+  --card-foreground: var(--color-admin-ink);
+  --popover: var(--color-admin-panel);
+  --popover-foreground: var(--color-admin-ink);
+  --primary: var(--color-admin-navy);
+  --primary-foreground: #fff;
+  --secondary: var(--color-admin-surface);
+  --secondary-foreground: var(--color-admin-ink);
+  --muted: var(--color-admin-surface);
+  --muted-foreground: var(--color-admin-ink-soft);
+  --accent: var(--color-admin-surface);
+  --accent-foreground: var(--color-admin-ink);
+  --border: var(--color-admin-rule);
+  --input: var(--color-admin-rule-strong);
+  --ring: var(--color-admin-gold);
 }
 
 [data-admin-theme="dark"] {

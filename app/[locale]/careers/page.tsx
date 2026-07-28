@@ -242,10 +242,22 @@ export default async function CareersPage({
                 {openPositions.map((position, index) => (
                   <RevealOnScroll
                     as="article"
-                    className="group relative flex flex-col border border-current/15 bg-paper/75 p-6 transition-colors hover:border-gold-strong sm:p-8"
+                    className="group relative flex flex-col overflow-hidden border border-current/15 bg-paper/75 transition-colors hover:border-gold-strong"
                     delayMs={index * 55}
                     key={position.slug}
                   >
+                    {position.imageUrl ? (
+                      <div className="relative aspect-[16/9] overflow-hidden">
+                        <Image
+                          alt=""
+                          className="object-cover transition-transform duration-500 group-hover:scale-[1.025]"
+                          fill
+                          sizes="(min-width:768px) 50vw, 100vw"
+                          src={position.imageUrl}
+                        />
+                      </div>
+                    ) : null}
+                    <div className="flex flex-1 flex-col p-6 sm:p-8">
                     <div className="v2-mono v2-size-folio flex flex-wrap gap-x-3 text-gold-strong">
                       <span>{(position.department ?? "Richfield Group").toUpperCase()}</span>
                       {position.employmentType ? (
@@ -286,6 +298,7 @@ export default async function CareersPage({
                     <span className="v2-mono v2-size-folio mt-7 text-gold-strong">
                       {t("viewPosition")}
                     </span>
+                    </div>
                   </RevealOnScroll>
                 ))}
               </div>

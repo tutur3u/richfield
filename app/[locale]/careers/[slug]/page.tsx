@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
@@ -101,6 +102,18 @@ export default async function CareerPage({ params }: CareerPageProps) {
               )}
             </dl>
           </div>
+          {position.imageUrl ? (
+            <div className="relative mt-10 aspect-[16/8] overflow-hidden">
+              <Image
+                alt={position.title}
+                className="object-cover"
+                fill
+                priority
+                sizes="(min-width:1024px) 1024px, 100vw"
+                src={position.imageUrl}
+              />
+            </div>
+          ) : null}
           <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_18rem]">
             <RichfieldProse
               content={

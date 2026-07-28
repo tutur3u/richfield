@@ -2,6 +2,17 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const withNextIntl = createNextIntlPlugin();
+const tuturuuuApiUrl = new URL(
+  process.env.TUTURUUU_API_BASE_URL ??
+    process.env.NEXT_PUBLIC_TUTURUUU_API_BASE_URL ??
+    "https://tuturuuu.com/api/v1",
+);
+const tuturuuuRemoteBase = {
+  hostname: tuturuuuApiUrl.hostname,
+  port: tuturuuuApiUrl.port,
+  protocol: tuturuuuApiUrl.protocol.slice(0, -1) as "http" | "https",
+};
+const tuturuuuApiPath = tuturuuuApiUrl.pathname.replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
   // Pin the workspace root: a stray lockfile in the parent directory makes
@@ -16,6 +27,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "i.ytimg.com",
         pathname: "/vi/**",
+      },
+      {
+        ...tuturuuuRemoteBase,
+        pathname: `${tuturuuuApiPath}/**`,
+      },
+      {
+        ...tuturuuuRemoteBase,
+        pathname: "/storage/**",
       },
     ],
   },

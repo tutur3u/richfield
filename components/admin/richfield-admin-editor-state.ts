@@ -264,7 +264,10 @@ export function getRichfieldEditorSteps({
   if (
     collectionKey === "image-library" ||
     collectionKey === "articles" ||
-    collectionKey === "jobs"
+    collectionKey === "jobs" ||
+    collectionKey === "brands" ||
+    collectionKey === "leadership" ||
+    collectionKey === "contact-page"
   ) {
     steps.push("image");
   }

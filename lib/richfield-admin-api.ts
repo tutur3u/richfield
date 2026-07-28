@@ -148,8 +148,19 @@ export async function getRichfieldAdminCollectionStudio(
 export function revalidateRichfieldContent() {
   revalidatePath("/", "layout");
   revalidatePath("/");
+  revalidatePath("/insights");
+  revalidatePath("/insights/[slug]", "page");
   revalidatePath("/brands");
   revalidatePath("/careers");
+  revalidatePath("/careers/[slug]", "page");
+  revalidatePath("/contact");
   revalidatePath("/about/our-story");
   revalidatePath("/about/who-we-are");
+  revalidatePath("/vi", "layout");
+  revalidatePath("/vi/insights");
+  revalidatePath("/vi/insights/[slug]", "page");
+  revalidatePath("/vi/brands");
+  revalidatePath("/vi/careers");
+  revalidatePath("/vi/careers/[slug]", "page");
+  revalidatePath("/vi/contact");
 }

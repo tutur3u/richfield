@@ -212,7 +212,10 @@ export function collectionSupportsImage(collectionKey: RichfieldAdminCollectionK
   return (
     collectionKey === "image-library" ||
     collectionKey === "articles" ||
-    collectionKey === "jobs"
+    collectionKey === "jobs" ||
+    collectionKey === "brands" ||
+    collectionKey === "leadership" ||
+    collectionKey === "contact-page"
   );
 }
 

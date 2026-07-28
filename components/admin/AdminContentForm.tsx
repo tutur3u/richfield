@@ -1,5 +1,6 @@
 "use client";
 
+import { Eye, FloppyDisk, Trash } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
@@ -11,6 +12,9 @@ import {
   type FormEvent,
 } from "react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import type {
   RichfieldAdminCollectionKey,
   RichfieldAdminContentItem,
@@ -44,7 +48,6 @@ import {
   getRichfieldEditorPreviewHref,
   getRichfieldEditorSteps,
   hasRichfieldEditorDirtyChanges,
-  type RichfieldEditorStepId,
 } from "./richfield-admin-editor-state";
 import {
   readContentSaveResponse,
@@ -110,7 +113,6 @@ export function ContentForm({
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [activeStep, setActiveStep] = useState<RichfieldEditorStepId>("basics");
   const savedDraft = draftFromItem(effectiveItem);
   const isBusy = submitting || deleting;
   const supportsImage = collectionSupportsImage(collectionKey);
@@ -127,14 +129,8 @@ export function ContentForm({
     collectionKey,
     hasItem: Boolean(effectiveItem),
   });
-  const visibleStep = editorSteps.includes(activeStep)
-    ? activeStep
-    : editorSteps[0] ?? "basics";
-  const visibleStepIndex = Math.max(editorSteps.indexOf(visibleStep), 0);
-  const isFirstStep = visibleStepIndex === 0;
-  const isLastStep = visibleStepIndex === editorSteps.length - 1;
   const sectionSurfaceClass =
-    "grid gap-5 rounded-xl border border-admin-rule bg-admin-panel p-5 shadow-sm sm:p-6";
+    "grid scroll-mt-32 gap-5 border-b border-admin-rule pb-8";
   const isDirty = hasRichfieldEditorDirtyChanges({
     draft,
     hasPendingImageFile: Boolean(imageFile),
@@ -339,11 +335,6 @@ export function ContentForm({
     }
   };
 
-  const goToStep = (offset: number) => {
-    const nextStep = editorSteps[visibleStepIndex + offset];
-    if (nextStep) setActiveStep(nextStep);
-  };
-
   if (imageOnly) {
     return (
       <form className="grid min-w-0 gap-5" onSubmit={submit}>
@@ -515,56 +506,47 @@ export function ContentForm({
 
   return (
     <form className="grid min-w-0 gap-6" onSubmit={submit}>
-      <div className="grid gap-5 rounded-xl border border-admin-rule bg-admin-panel p-5 shadow-sm lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center sm:p-6">
-        <div
-          className={`grid min-w-0 gap-4 ${
-            supportsImage ? "lg:grid-cols-[minmax(0,1fr)_220px]" : ""
-          }`}
-        >
-          <div className="min-w-0">
-            <p className="script-label">
-              {effectiveItem
-                ? t("editItem", { item: itemName })
-                : t("createItem", { item: itemName })}
-            </p>
-            <h2 className="mt-1 break-words font-display text-3xl leading-tight text-admin-ink sm:text-4xl">
-              {draft.title || t("untitledItem", { item: itemName })}
-            </h2>
+      <div className="flex flex-col gap-5 border-b border-admin-rule pb-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="min-w-0">
+          <p className="script-label">
+            {effectiveItem
+              ? t("editItem", { item: itemName })
+              : t("createItem", { item: itemName })}
+          </p>
+          <h2 className="mt-2 max-w-4xl break-words font-display text-4xl leading-[1.02] text-admin-ink sm:text-5xl">
+            {draft.title || t("untitledItem", { item: itemName })}
+          </h2>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-admin-ink-soft">
+            <Badge variant="outline">{t(`statuses.${draft.status}`)}</Badge>
+            <span aria-hidden>·</span>
+            <span>{contentLocale === "vi" ? "Tiếng Việt" : "English"}</span>
           </div>
-          {supportsImage ? (
-            <EditorCoverSummary
-              draft={draft}
-              imageFileLabel={imageFileLabel}
-              item={effectiveItem}
-            />
-          ) : null}
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap lg:justify-end">
+        <div className="flex flex-wrap gap-2">
           {previewHref ? (
-            <Link
-              className="button-secondary min-w-32 w-full text-center sm:w-auto"
-              href={previewHref}
-              rel="noreferrer"
-              target="_blank"
+            <Button
+              render={
+                <Link
+                  href={previewHref}
+                  rel="noreferrer"
+                  target="_blank"
+                />
+              }
+              size="lg"
+              variant="outline"
             >
+              <Eye aria-hidden data-icon="inline-start" />
               {t("openPreview")}
-            </Link>
+            </Button>
           ) : null}
-          <button
-            className="button-secondary min-w-28 w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-            disabled={isBusy}
-            onClick={onCloseRequest}
-            type="button"
-          >
-            {t("close")}
-          </button>
-          <button
-            className="button-primary min-w-28 w-full disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+          <Button
             disabled={!canSave || imageProcessing}
+            size="lg"
             type="submit"
           >
+            <FloppyDisk aria-hidden data-icon="inline-start" />
             {submitting ? t("saving") : t("save")}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -580,40 +562,25 @@ export function ContentForm({
 
       <nav
         aria-label={t("editorSections")}
-        className="flex gap-2 overflow-x-auto pb-1"
+        className="flex gap-1 overflow-x-auto border-b border-admin-rule pb-3"
       >
-        {editorSteps.map((step, index) => {
-          const isActive = step === visibleStep;
-
-          return (
-            <button
-              className={`flex min-h-10 min-w-max items-center gap-2 rounded-full border px-3.5 py-2 text-left text-sm transition disabled:cursor-not-allowed disabled:opacity-55 ${
-                isActive
-                  ? "border-admin-navy bg-admin-navy text-white"
-                  : "border-admin-rule bg-admin-panel text-admin-ink-soft hover:border-admin-gold hover:text-admin-ink"
-              }`}
-              disabled={isBusy}
+        {editorSteps.map((step) => (
+            <a
+              className="min-w-max rounded-lg px-3 py-2 text-sm font-semibold text-admin-ink-soft transition hover:bg-admin-surface hover:text-admin-ink"
+              href={`#editor-${step}`}
               key={step}
-              onClick={() => setActiveStep(step)}
-              type="button"
             >
-              <span className={`grid size-5 place-items-center rounded-full text-[10px] font-black ${
-                isActive ? "bg-white/15 text-white" : "bg-admin-surface text-admin-ink-soft"
-              }`}>
-                {index + 1}
-              </span>
-              <span className="font-semibold">
-                {t(`steps.${step}.label`)}
-              </span>
-            </button>
-          );
-        })}
+              {t(`steps.${step}.label`)}
+            </a>
+          ))}
       </nav>
 
-      {visibleStep === "basics" ? (
-        <section className={sectionSurfaceClass}>
+      <div className="grid min-w-0 gap-10 xl:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="grid min-w-0 gap-8">
+      {editorSteps.includes("basics") ? (
+        <section className={sectionSurfaceClass} id="editor-basics">
           <EditorStepHeader step="basics" />
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4">
             <TextField
               disabled={isBusy}
               error={fieldErrors.title}
@@ -623,34 +590,12 @@ export function ContentForm({
               required
               value={draft.title}
             />
-            <SelectField
-              disabled={isBusy}
-              error={fieldErrors.status}
-              label={t("fields.visibility")}
-              name="status"
-              onChange={updateDraft}
-              options={statusOptions.map((option) => ({
-                label: t(`statuses.${option.value}`),
-                value: option.value,
-              }))}
-              value={draft.status}
-            />
-            <TextField
-              disabled={isBusy}
-              label={t("fields.websiteLink")}
-              name="slug"
-              onChange={(name, value) => {
-                setSlugTouched(true);
-                updateDraft(name, slugifyRichfieldContent(value));
-              }}
-              value={draft.slug}
-            />
           </div>
         </section>
       ) : null}
 
-      {visibleStep === "details" ? (
-        <section className={sectionSurfaceClass}>
+      {editorSteps.includes("details") ? (
+        <section className={sectionSurfaceClass} id="editor-details">
           <EditorStepHeader step="details" />
           {collectionKey === "articles" ? (
             <div className="grid gap-4 md:grid-cols-2">
@@ -1022,8 +967,8 @@ export function ContentForm({
         </section>
       ) : null}
 
-      {visibleStep === "writing" ? (
-        <section className={sectionSurfaceClass}>
+      {editorSteps.includes("writing") ? (
+        <section className={sectionSurfaceClass} id="editor-writing">
           <EditorStepHeader step="writing" />
           {collectionKey === "leadership" ? (
             <div className="grid gap-4">
@@ -1091,8 +1036,8 @@ export function ContentForm({
         </section>
       ) : null}
 
-      {visibleStep === "image" && supportsImage ? (
-        <section className={sectionSurfaceClass}>
+      {editorSteps.includes("image") && supportsImage ? (
+        <section className={sectionSurfaceClass} id="editor-image">
           <EditorStepHeader step="image" />
           <p className="text-sm leading-6 text-[var(--ink-soft)]">
             {t("imageHelp")}
@@ -1100,7 +1045,7 @@ export function ContentForm({
           <div className="grid min-w-0 gap-5 lg:grid-cols-2">
             <div className="grid content-start gap-2">
               <span className="text-xs font-bold uppercase tracking-[0.14em] text-[var(--clay)]">
-                Preview
+                {t("preview")}
               </span>
               <div className="relative aspect-[4/3] w-full overflow-hidden border border-[rgba(184,112,81,0.42)] bg-[rgba(239,207,178,0.4)]">
                 {showImagePreview ? (
@@ -1115,12 +1060,12 @@ export function ContentForm({
                   />
                 ) : (
                   <div className="grid h-full place-items-center px-4 text-center text-sm text-[var(--ink-soft)]">
-                    Add an image to see it here.
+                    {t("addImagePrompt")}
                   </div>
                 )}
                 {imageFile ? (
                   <span className="absolute left-3 top-3 border border-[var(--gold)] bg-[var(--navy)] px-2 py-1 text-[0.62rem] font-black uppercase tracking-[0.14em] text-[var(--parchment)]">
-                    New image
+                    {t("newImage")}
                   </span>
                 ) : null}
               </div>
@@ -1155,11 +1100,11 @@ export function ContentForm({
               >
                 <span className="text-sm font-bold text-[var(--copper-dark)]">
                   {imageProcessing
-                    ? "Optimizing image…"
+                    ? t("optimizingImage")
                     : t("dragBrowse")}
                 </span>
                 <span className="text-xs text-[var(--ink-soft)]">
-                  Converted to WebP automatically · up to 12MB
+                  {t("conversionHint")}
                 </span>
                 {imageFileLabel ? (
                   <span className="mt-1 max-w-full truncate text-xs font-bold text-[var(--navy)]">
@@ -1199,7 +1144,7 @@ export function ContentForm({
                     }
                     type="checkbox"
                   />
-                  Remove the current image
+                  {t("removeCurrentImage")}
                 </label>
               ) : null}
             </div>
@@ -1207,8 +1152,8 @@ export function ContentForm({
         </section>
       ) : null}
 
-      {visibleStep === "danger" && effectiveItem ? (
-        <section className={sectionSurfaceClass}>
+      {editorSteps.includes("danger") && effectiveItem ? (
+        <section className={sectionSurfaceClass} id="editor-danger">
           <EditorStepHeader step="danger" />
           {confirmDelete ? (
             <div className="grid gap-3 border border-red-300 bg-red-500/10 p-4">
@@ -1235,41 +1180,105 @@ export function ContentForm({
               </div>
             </div>
           ) : (
-            <button
-              className="text-sm font-bold text-red-800 underline decoration-red-800/25 underline-offset-4"
+            <Button
               disabled={isBusy}
               onClick={() => setConfirmDelete(true)}
               type="button"
+              variant="destructive"
             >
+              <Trash aria-hidden data-icon="inline-start" />
               {t("removeItem", { item: itemName })}
-            </button>
+            </Button>
           )}
         </section>
       ) : null}
+        </div>
 
-      <div className="flex flex-col gap-3 border-t border-[rgba(184,112,81,0.28)] pt-4 sm:flex-row sm:items-center sm:justify-between">
-        <button
-          className="button-secondary min-w-28 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={isBusy || isFirstStep}
-          onClick={() => goToStep(-1)}
-          type="button"
-        >
-          {t("back")}
-        </button>
-        <span className="text-center text-xs font-bold uppercase tracking-[0.14em] text-[var(--ink-soft)]">
-          {t("stepProgress", {
-            current: visibleStepIndex + 1,
-            total: editorSteps.length,
-          })}
-        </span>
-        <button
-          className="button-secondary min-w-28 disabled:cursor-not-allowed disabled:opacity-50"
-          disabled={isBusy || isLastStep}
-          onClick={() => goToStep(1)}
-          type="button"
-        >
-          {t("next")}
-        </button>
+        <aside className="min-w-0 xl:sticky xl:top-32 xl:h-fit">
+          <div className="grid gap-5 rounded-xl border border-admin-rule bg-admin-panel p-4 shadow-sm">
+            <div>
+              <p className="script-label">{t("inspector.publishing")}</p>
+              <div className="mt-3">
+                <SelectField
+                  disabled={isBusy}
+                  error={fieldErrors.status}
+                  label={t("fields.visibility")}
+                  name="status"
+                  onChange={updateDraft}
+                  options={statusOptions.map((option) => ({
+                    label: t(`statuses.${option.value}`),
+                    value: option.value,
+                  }))}
+                  value={draft.status}
+                />
+              </div>
+            </div>
+
+            <Separator />
+
+            <div>
+              <p className="script-label">{t("inspector.translations")}</p>
+              <div className="mt-3 grid gap-2 text-sm">
+                {(["en", "vi"] as const).map((locale) => {
+                  const status =
+                    locale === contentLocale
+                      ? draft.status
+                      : effectiveItem?.localeStatuses[locale] ?? "draft";
+                  return (
+                    <div
+                      className="flex items-center justify-between gap-3"
+                      key={locale}
+                    >
+                      <span className="font-medium text-admin-ink">
+                        {locale === "en" ? "English" : "Tiếng Việt"}
+                      </span>
+                      <Badge variant="outline">{t(`statuses.${status}`)}</Badge>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {supportsImage ? (
+              <>
+                <Separator />
+                <div>
+                  <p className="script-label">{t("inspector.cover")}</p>
+                  <div className="mt-3">
+                    <EditorCoverSummary
+                      draft={draft}
+                      imageFileLabel={imageFileLabel}
+                      item={effectiveItem}
+                    />
+                  </div>
+                </div>
+              </>
+            ) : null}
+
+            <Separator />
+
+            <div>
+              <p className="script-label">{t("inspector.pageDetails")}</p>
+              <div className="mt-3">
+                <TextField
+                  disabled={isBusy}
+                  label={t("fields.websiteLink")}
+                  name="slug"
+                  onChange={(name, value) => {
+                    setSlugTouched(true);
+                    updateDraft(name, slugifyRichfieldContent(value));
+                  }}
+                  value={draft.slug}
+                />
+              </div>
+              {effectiveItem ? (
+                <p className="mt-3 break-all text-xs leading-5 text-admin-ink-soft">
+                  ID · {effectiveItem.id}
+                </p>
+              ) : null}
+            </div>
+          </div>
+        </aside>
       </div>
     </form>
   );

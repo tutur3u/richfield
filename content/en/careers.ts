@@ -36,6 +36,7 @@ export type OpenPosition = {
   deadline: string;
   employmentType?: string;
   href?: string;
+  imageUrl?: string | null;
   summary?: string;
   workMode?: string;
 };

@@ -2,7 +2,6 @@
 
 import {
   AddressBook,
-  ArrowSquareOut,
   Article,
   Briefcase,
   ChatCircleDots,
@@ -13,7 +12,6 @@ import {
   List,
   PhoneCall,
   Shapes,
-  SignOut,
   SlidersHorizontal,
   UserCircle,
   UsersThree,
@@ -27,8 +25,8 @@ import {
   ADMIN_SECTION_GROUPS,
   adminSectionsByGroup,
 } from "@/lib/admin/sections";
-import { AdminThemeToggle } from "./AdminTheme";
-import { AdminLocaleSelect } from "./AdminLocaleSelect";
+import { AdminUserMenu } from "./AdminUserMenu";
+import { cn } from "@/lib/utils";
 
 const SECTION_ICONS = {
   account: UserCircle,
@@ -67,7 +65,7 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 
         return (
           <div className="grid gap-0.5" key={group.id}>
-            <p className="mb-1.5 px-2.5 text-[10px] font-bold uppercase tracking-[0.2em] text-admin-gold/75">
+            <p className="mb-1.5 px-2.5 text-[10px] font-bold uppercase tracking-[0.2em] text-admin-sidebar-accent">
               {t(`groups.${group.id}`)}
             </p>
             {sections.map((section) => {
@@ -80,18 +78,23 @@ function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
               return (
                 <Link
                   aria-current={active ? "page" : undefined}
-                  className={`flex min-h-10 items-center gap-2.5 rounded-lg border px-2.5 py-2 text-[13px] font-medium transition-colors ${
+                  className={cn(
+                    "flex min-h-10 items-center gap-2.5 rounded-lg border px-2.5 py-2 text-[13px] font-medium transition-colors",
                     active
-                      ? "border-white/10 bg-[rgb(255_255_255_/_0.08)] text-white"
-                      : "border-transparent text-white/62 hover:bg-[rgb(255_255_255_/_0.05)] hover:text-white"
-                  }`}
+                      ? "border-admin-sidebar-rule bg-admin-sidebar-active text-admin-sidebar-ink"
+                      : "border-transparent text-admin-sidebar-ink-soft hover:bg-admin-sidebar-hover hover:text-admin-sidebar-ink",
+                  )}
                   href={href}
                   key={section.slug}
                   onClick={onNavigate}
                 >
                   <SectionIcon
                     aria-hidden
-                    className={active ? "text-admin-gold" : "text-white/45"}
+                    className={
+                      active
+                        ? "text-admin-sidebar-accent"
+                        : "text-admin-sidebar-ink-soft"
+                    }
                     size={16}
                   />
                   {t(
@@ -157,52 +160,32 @@ export function AdminShell({
               </span>
             </Link>
           </div>
-          <div className="flex min-w-0 items-center justify-end gap-2 px-3 sm:px-6 lg:px-8">
-            <AdminLocaleSelect
-              englishLabel={t("locale.english")}
-              label={t("locale.label")}
-              locale={locale}
-              nextPath={pathname ?? "/admin"}
-              vietnameseLabel={t("locale.vietnamese")}
-            />
+          <div className="flex min-w-0 items-center justify-end px-3 sm:px-6 lg:px-8">
             {userEmail ? (
-              <div className="hidden min-w-0 items-center gap-2 border-l border-admin-rule pl-3 xl:flex">
-                <span
-                  aria-hidden
-                  className="grid size-8 shrink-0 place-items-center rounded-full bg-admin-navy text-xs font-bold uppercase text-white"
-                >
-                  {userEmail.slice(0, 1)}
-                </span>
-                <span className="max-w-44 truncate text-xs text-admin-ink-soft">
-                  {userEmail}
-                </span>
-              </div>
+              <AdminUserMenu
+                accountLabel={t("sections.account.title")}
+                adminLanguageLabel={t("locale.label")}
+                darkLabel={t("theme.dark")}
+                englishLabel={t("locale.english")}
+                lightLabel={t("theme.light")}
+                locale={locale}
+                nextPath={pathname ?? "/admin"}
+                signOutLabel={t("account.signOut")}
+                signedInLabel={t("account.signedIn")}
+                systemLabel={t("theme.system")}
+                themeLabel={t("theme.label")}
+                userEmail={userEmail}
+                vietnameseLabel={t("locale.vietnamese")}
+                viewSiteLabel={t("account.viewSite")}
+              />
             ) : null}
-            <AdminThemeToggle />
-            <Link
-              className="hidden min-h-9 items-center gap-2 rounded-full border border-admin-rule px-3 text-xs font-semibold text-admin-ink transition hover:border-admin-gold sm:inline-flex"
-              href="/"
-            >
-              <ArrowSquareOut aria-hidden size={15} />
-              <span>{t("account.viewSite")}</span>
-            </Link>
-            <form action="/api/auth/logout" method="post">
-              <button
-                aria-label={t("account.signOut")}
-                className="grid size-9 place-items-center rounded-full border border-admin-rule text-admin-ink-soft transition hover:border-admin-gold hover:text-admin-ink"
-                title={t("account.signOut")}
-                type="submit"
-              >
-                <SignOut aria-hidden size={16} />
-              </button>
-            </form>
           </div>
         </div>
       </header>
 
       <div className="grid min-h-[calc(100vh-65px)] lg:grid-cols-[15rem_minmax(0,1fr)]">
         <aside
-          className={`${menuOpen ? "block" : "hidden"} fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto border-r border-white/8 bg-admin-navy px-3 py-5 lg:sticky lg:inset-auto lg:top-16 lg:block lg:h-[calc(100vh-64px)]`}
+          className={`${menuOpen ? "block" : "hidden"} fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto border-r border-admin-sidebar-rule bg-admin-sidebar px-3 py-5 lg:sticky lg:inset-auto lg:top-16 lg:block lg:h-[calc(100vh-64px)]`}
           id="admin-sidebar"
         >
           <SidebarNav onNavigate={() => setMenuOpen(false)} />
@@ -212,7 +195,7 @@ export function AdminShell({
           className="min-w-0 px-4 py-7 sm:px-7 lg:px-12 lg:py-10"
           id="admin-main"
         >
-          <div className="mx-auto max-w-[1200px]">{children}</div>
+          <div className="mx-auto max-w-[1320px]">{children}</div>
         </main>
       </div>
     </div>

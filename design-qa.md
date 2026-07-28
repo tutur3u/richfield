@@ -7,10 +7,15 @@
   - `/Users/skora/.codex/generated_images/019fa2ad-b2cd-7760-8d35-77a7dfa269db/call_RZHkjYGtzL8DcUyDXDJYZpOY.png` (right-inspector reference)
 - Initial implementation evidence:
   - `/private/tmp/richfield-prod-editor-before.png`
+- Final implementation evidence:
+  - `/private/tmp/richfield-editor-writing-sticky-final.png`
+  - `/private/tmp/richfield-editor-light-final.png`
+  - `/private/tmp/richfield-editor-dark-menu-final.png`
+  - `/private/tmp/richfield-news-upload-final.png`
 - Target route/state: authenticated Leadership editor, English content locale, dark theme, saved state.
 - CSS viewport: `1440 × 1024`.
-- Source pixels: `1488 × 1058`; implementation pixels: `1440 × 1024`.
-- Density normalization: both artifacts are 1× desktop captures; source is proportionally normalized to the implementation width in the combined comparison.
+- Source pixels: `1487 × 1058`; intended CSS comparison viewport: `1440 × 1024`.
+- Browser implementation pixels: `1280 × 720` at 1× density. The in-app browser uses a fixed desktop capture surface; the source was cropped to the equivalent 16:9 top viewport and both artifacts were normalized to `640 × 360` in the combined comparison.
 
 ## Findings
 
@@ -75,6 +80,24 @@
 - Fix made: add a compact theme-aware bottom action bar with saved/unsaved state, Preview, and Save controls while preserving the document and inspector layout.
 - Post-fix visual evidence: pending deployment of the persistent action bar.
 
+### Pass 4 — passed
+
+- Visual evidence:
+  - `/private/tmp/richfield-design-qa-final.png`
+  - `/private/tmp/richfield-editor-writing-sticky-final.png`
+  - `/private/tmp/richfield-news-upload-final.png`
+- Full-view comparison: the implementation retains the source’s persistent navy navigation, compact identity menu, editorial heading/body pairing, single-document form, icon toolbar, and distinct right inspector. The new bottom action bar preserves Preview and Save while long-form content is in view.
+- Focused comparison: `/private/tmp/richfield-design-qa-menu.png` confirms equivalent language/theme/account grouping with real Lucide icons, clear selected states, and a destructive sign-out treatment.
+- Fonts and typography: Fraunces remains the display face and Geist the UI/body face; field labels, helper text, toolbar controls, and title wrapping retain clear hierarchy in both themes.
+- Spacing and layout rhythm: the desktop document/inspector split, section rules, compact header, and fixed action bar preserve hierarchy without clipping. Tablet (`768 × 1024`) and mobile (`390 × 844`) checks produced no horizontal overflow.
+- Colors and visual tokens: light and dark sidebar, panel, border, overlay, focus, and secondary-text tokens invert together. Secondary text computes to `rgb(111, 101, 87)` in light mode and `rgb(196, 187, 173)` in dark mode.
+- Image quality and asset fidelity: the real Tuturuuu asset for the published News item completes through the Next image optimizer at `561 × 292` natural pixels; leadership cover previews retain their actual source crop and alt text.
+- Copy and content: English and Vietnamese admin catalogs both render across shell, editor sections, publishing inspector, image controls, and save state. The editor toolbar follows the active content locale.
+- Icons and interactions: user dropdown, theme radio choices, language radio choices, section anchors, mobile navigation, Preview, disabled Save, and editor tooltip contracts were verified without mutating CMS content.
+- Accessibility: semantic menu/menuitemradio roles, toolbar button labels, focus styling, translated labels, image alt text, reduced-motion-safe tooltips, and skip navigation are present.
+- Console: no browser console errors were recorded on the final editor or the public News article.
+- Residual P3: the implementation uses slightly rounder input/panel corners than the generated reference; this is consistent with the project’s shadcn/Base UI radius token and does not reduce clarity or task efficiency.
+
 ## Primary interactions to verify
 
 - Open and keyboard-navigate the user dropdown.
@@ -88,10 +111,10 @@
 
 ## Implementation checklist
 
-- Capture the deployed editor and list in light and dark themes.
-- Compare a combined source/implementation board at `1440 × 1024`.
-- Run focused comparisons for header/user menu, editor toolbar, inspector, and uploaded media.
-- Fix any remaining P0/P1/P2 mismatch.
-- Record console and responsive checks.
+- [x] Capture the deployed editor and list in light and dark themes.
+- [x] Compare normalized source/implementation boards.
+- [x] Run focused comparisons for header/user menu, editor toolbar, inspector, and uploaded media.
+- [x] Fix every P0/P1/P2 mismatch.
+- [x] Record console and responsive checks.
 
-final result: blocked
+final result: passed

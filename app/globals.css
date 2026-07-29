@@ -854,10 +854,10 @@ button:focus-visible {
 .richfield-tuturuuu-editor
   .tuturuuu-editor-mode-switch
   button[aria-pressed="true"] {
-  border-color: var(--color-admin-rule-strong);
-  background: var(--color-admin-panel);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
-  color: var(--color-admin-ink);
+  border-color: var(--color-admin-rule-strong) !important;
+  background-color: var(--color-admin-panel) !important;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%) !important;
+  color: var(--color-admin-ink) !important;
 }
 
 .richfield-tuturuuu-editor .tuturuuu-editor-mode-switch button:hover {

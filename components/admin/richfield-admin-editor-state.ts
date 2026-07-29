@@ -2,6 +2,10 @@ import type {
   RichfieldAdminCollectionKey,
   RichfieldContentStatus,
 } from "@/lib/richfield-admin-content-model";
+import {
+  parseRichfieldJSONContent,
+  richfieldContentFromStoredValue,
+} from "@/lib/richfield-rich-text";
 
 export type RichfieldAdminEditorDraft = {
   aboutOnly: boolean;
@@ -112,6 +116,52 @@ const draftKeys: Array<keyof RichfieldAdminEditorDraft> = [
   "workMode",
   "year",
 ];
+
+const derivedRichTextKeys = new Set<keyof RichfieldAdminEditorDraft>([
+  "body",
+  "bodyContent",
+  "summary",
+  "summaryContent",
+]);
+
+function isEmptyParagraph(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return false;
+  }
+
+  const node = value as { content?: unknown[]; type?: string };
+  return node.type === "paragraph" && (!node.content || node.content.length === 0);
+}
+
+function canonicalRichTextValue(structured: string, markdown: string) {
+  const parsed = parseRichfieldJSONContent(
+    richfieldContentFromStoredValue(structured, markdown),
+  );
+
+  if (!parsed) return "";
+
+  const content = [...(parsed.content ?? [])];
+  while (content.length > 0 && isEmptyParagraph(content.at(-1))) {
+    content.pop();
+  }
+
+  return JSON.stringify({ ...parsed, content });
+}
+
+function hasRichTextChanges(
+  draft: RichfieldAdminEditorDraft,
+  savedDraft: RichfieldAdminEditorDraft,
+) {
+  return (
+    canonicalRichTextValue(draft.bodyContent, draft.body) !==
+      canonicalRichTextValue(savedDraft.bodyContent, savedDraft.body) ||
+    canonicalRichTextValue(draft.summaryContent, draft.summary) !==
+      canonicalRichTextValue(
+        savedDraft.summaryContent,
+        savedDraft.summary,
+      )
+  );
+}
 
 const previewRouteByCollection: Partial<Record<RichfieldAdminCollectionKey, string>> =
   {
@@ -237,7 +287,11 @@ export function hasRichfieldEditorDirtyChanges({
   return (
     hasPendingImageFile ||
     sourceModeDirty ||
-    draftKeys.some((key) => draft[key] !== savedDraft[key])
+    hasRichTextChanges(draft, savedDraft) ||
+    draftKeys.some(
+      (key) =>
+        !derivedRichTextKeys.has(key) && draft[key] !== savedDraft[key],
+    )
   );
 }
 

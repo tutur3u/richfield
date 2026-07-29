@@ -101,6 +101,96 @@ describe("Richfield admin editor state", () => {
     ).toBe(true);
   });
 
+  test("ignores compatibility mirror and editor normalization differences", () => {
+    const bodyContent = JSON.stringify({
+      content: [
+        {
+          content: [{ text: "Saved story", type: "text" }],
+          type: "paragraph",
+        },
+        {
+          attrs: {
+            alt: "",
+            src: "https://example.com/story.png",
+          },
+          type: "image",
+        },
+      ],
+      type: "doc",
+    });
+    const normalizedEditorContent = JSON.stringify({
+      content: [
+        {
+          content: [{ text: "Saved story", type: "text" }],
+          type: "paragraph",
+        },
+        {
+          attrs: {
+            alt: "",
+            src: "https://example.com/story.png",
+            title: null,
+          },
+          type: "image",
+        },
+        { type: "paragraph" },
+      ],
+      type: "doc",
+    });
+
+    expect(
+      hasRichfieldEditorDirtyChanges({
+        draft: {
+          ...baseDraft,
+          body: "Saved story\n\n![](https://example.com/story.png)\n",
+          bodyContent: normalizedEditorContent,
+        },
+        hasPendingImageFile: false,
+        savedDraft: {
+          ...baseDraft,
+          body: "Saved story\n\n![](https://example.com/story.png)",
+          bodyContent,
+        },
+      }),
+    ).toBe(false);
+  });
+
+  test("still detects meaningful structured rich-text edits", () => {
+    const savedBodyContent = JSON.stringify({
+      content: [
+        {
+          content: [{ text: "Saved story", type: "text" }],
+          type: "paragraph",
+        },
+      ],
+      type: "doc",
+    });
+    const editedBodyContent = JSON.stringify({
+      content: [
+        {
+          content: [{ text: "Edited story", type: "text" }],
+          type: "paragraph",
+        },
+      ],
+      type: "doc",
+    });
+
+    expect(
+      hasRichfieldEditorDirtyChanges({
+        draft: {
+          ...baseDraft,
+          body: "Edited story",
+          bodyContent: editedBodyContent,
+        },
+        hasPendingImageFile: false,
+        savedDraft: {
+          ...baseDraft,
+          body: "Saved story",
+          bodyContent: savedBodyContent,
+        },
+      }),
+    ).toBe(true);
+  });
+
   test("only allows save when the editor is dirty and idle", () => {
     expect(canSaveRichfieldEditor({ isBusy: false, isDirty: true })).toBe(true);
     expect(canSaveRichfieldEditor({ isBusy: true, isDirty: true })).toBe(false);

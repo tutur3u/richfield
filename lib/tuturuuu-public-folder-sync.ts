@@ -46,6 +46,8 @@ export type PublicFolderSyncResult<Manifest extends PublicManifest> = {
 	uploaded: PublicFolderAssetUpload[];
 };
 
+const RICHFIELD_ASSET_UPLOAD_TIMEOUT_MS = 60_000;
+
 type SyncPublicFolderAssetsInput<Manifest extends PublicManifest> = {
 	accessToken: string;
 	apiBaseUrl: string;
@@ -251,25 +253,28 @@ export async function uploadExternalProjectAssetFile({
 	upsert = true,
 	workspaceId,
 }: UploadExternalProjectAssetFileInput) {
-	// Multipart direct upload: Supabase-backed workspaces reject the signed-URL
-	// flow ("Direct upload is required for Supabase-backed external assets").
-	const formData = new FormData();
-	formData.set("collectionType", collectionType);
-	formData.set("contentType", file.type || "application/octet-stream");
-	formData.set("entrySlug", entrySlug);
-	formData.set("file", file, filename);
-	formData.set("upsert", String(upsert));
-
+	// Request a small, authenticated upload payload first, then send the file
+	// directly to its storage provider. Sending the full multipart body through
+	// the Tuturuuu API proxy hits the proxy's 512 KB non-upload body limit
+	// before the storage route can apply its actual file policy.
 	const response = await fetchImpl(
 		`${apiBaseUrl.replace(/\/+$/, "")}/workspaces/${encodeURIComponent(
 			workspaceId,
 		)}/external-projects/assets/upload-url`,
 		withRichfieldTimeout({
-			body: formData,
+			body: JSON.stringify({
+				collectionType,
+				contentType: file.type || "application/octet-stream",
+				entrySlug,
+				filename,
+				size: file.size,
+				upsert,
+			}),
 			cache: "no-store",
 			headers: {
 				Accept: "application/json",
 				Authorization: `${tokenType} ${accessToken}`,
+				"Content-Type": "application/json",
 			},
 			method: "POST",
 		}),
@@ -289,12 +294,68 @@ export async function uploadExternalProjectAssetFile({
 	}
 
 	const payload = (await response.json()) as {
+		contentType?: unknown;
 		fullPath?: unknown;
+		headers?: unknown;
 		path?: unknown;
+		signedUrl?: unknown;
+		token?: unknown;
 	};
 
-	if (typeof payload.path !== "string" || !payload.path.trim()) {
-		throw new Error("Missing Tuturuuu asset upload path");
+	if (
+		typeof payload.signedUrl !== "string" ||
+		!payload.signedUrl.trim() ||
+		typeof payload.path !== "string" ||
+		!payload.path.trim()
+	) {
+		throw new Error("Missing Tuturuuu asset upload payload");
+	}
+
+	const uploadHeaders = new Headers(
+		payload.headers && typeof payload.headers === "object"
+			? (payload.headers as Record<string, string>)
+			: undefined,
+	);
+	if (!uploadHeaders.has("Content-Type")) {
+		uploadHeaders.set(
+			"Content-Type",
+			typeof payload.contentType === "string" && payload.contentType
+				? payload.contentType
+				: file.type || "application/octet-stream",
+		);
+	}
+	if (typeof payload.token === "string" && payload.token) {
+		uploadHeaders.set("Authorization", `Bearer ${payload.token}`);
+	}
+
+	const upload = (headers: Headers) =>
+		fetchImpl(
+			payload.signedUrl as string,
+			withRichfieldTimeout(
+				{
+					body: file,
+					cache: "no-store",
+					headers,
+					method: "PUT",
+				},
+				RICHFIELD_ASSET_UPLOAD_TIMEOUT_MS,
+			),
+		);
+
+	let uploadResponse = await upload(uploadHeaders);
+	if (!uploadResponse.ok && uploadHeaders.has("Content-Type")) {
+		const fallbackHeaders = new Headers(uploadHeaders);
+		fallbackHeaders.delete("Content-Type");
+		uploadResponse = await upload(fallbackHeaders);
+	}
+
+	if (!uploadResponse.ok) {
+		const message = await uploadResponse.text().catch(() => "");
+		throw new Error(
+			`Tuturuuu asset upload failed with status ${uploadResponse.status}${
+				message ? `: ${message}` : ""
+			}`,
+		);
 	}
 
 	return {

@@ -97,6 +97,98 @@ function findItemBySlug(
   return readRichfieldAdminContent(studio, collectionKey).find((item) => item.slug === slug) ?? null;
 }
 
+function readEntryId(record: Record<string, unknown>) {
+  return readString(record, "entry_id") ?? readString(record, "entryId");
+}
+
+function readEditorMediaAssetId(url: string) {
+  const match = /\/external-projects\/assets\/([^/?#]+)/u.exec(url);
+  if (!match?.[1]) return null;
+
+  try {
+    return decodeURIComponent(match[1]);
+  } catch {
+    return null;
+  }
+}
+
+function collectRichTextImageAssetIds(
+  node: unknown,
+  assetIds: Set<string>,
+) {
+  const record = readRecord(node);
+
+  if (record.type === "image") {
+    const assetId = readEditorMediaAssetId(
+      readString(readRecord(record.attrs), "src") ?? "",
+    );
+    if (assetId) assetIds.add(assetId);
+  }
+
+  const content = Array.isArray(record.content) ? record.content : [];
+  for (const child of content) {
+    collectRichTextImageAssetIds(child, assetIds);
+  }
+}
+
+export function findReferencedEditorMediaRecords(
+  studio: RichfieldAdminStudioPayload,
+  item: Pick<RichfieldAdminContentItem, "bodyContent" | "gallery" | "id">,
+) {
+  const referencedAssetIds = new Set<string>();
+  collectRichTextImageAssetIds(item.bodyContent, referencedAssetIds);
+
+  const entry = studio.entries.find(
+    (candidate) => readString(candidate, "id") === item.id,
+  );
+  const localization = readRecord(
+    readRecord(entry?.metadata).richfieldLocalization,
+  );
+  const locales = readRecord(localization.locales);
+  for (const variant of Object.values(locales)) {
+    collectRichTextImageAssetIds(
+      readRecord(variant).bodyContent,
+      referencedAssetIds,
+    );
+  }
+
+  for (const image of item.gallery) {
+    const assetId = readEditorMediaAssetId(image.url);
+    if (assetId) referencedAssetIds.add(assetId);
+  }
+
+  const editorMediaEntryIds = new Set(
+    studio.entries
+      .filter(
+        (entry) => readRecord(entry.metadata).editorMedia === true,
+      )
+      .map((entry) => readString(entry, "id"))
+      .filter((id): id is string => Boolean(id)),
+  );
+  const referencedEntryIds = new Set<string>();
+
+  for (const asset of studio.assets) {
+    const assetId = readString(asset, "id");
+    const entryId = readEntryId(asset);
+    if (
+      assetId &&
+      entryId &&
+      referencedAssetIds.has(assetId) &&
+      editorMediaEntryIds.has(entryId)
+    ) {
+      referencedEntryIds.add(entryId);
+    }
+  }
+
+  return [...referencedEntryIds].map((entryId) => ({
+    assetIds: studio.assets
+      .filter((asset) => readEntryId(asset) === entryId)
+      .map((asset) => readString(asset, "id"))
+      .filter((assetId): assetId is string => Boolean(assetId)),
+    entryId,
+  }));
+}
+
 async function ensureContentCollection(
   client: RichfieldCrudClient,
   workspaceId: string,
@@ -718,11 +810,31 @@ export async function deleteRichfieldContentItem(
     throw new Error("Item not found.");
   }
 
+  const referencedEditorMedia =
+    collectionKey === "articles"
+      ? findReferencedEditorMediaRecords(studio, current)
+      : [];
+
   if (current.imageAssetId) {
     await client.deleteAsset(workspaceId, current.imageAssetId);
   }
 
   await client.deleteEntry(workspaceId, entryId);
+
+  for (const media of referencedEditorMedia) {
+    try {
+      for (const assetId of media.assetIds) {
+        await client.deleteAsset(workspaceId, assetId);
+      }
+      await client.deleteEntry(workspaceId, media.entryId);
+    } catch (error) {
+      console.error("Failed to clean up article editor media", {
+        entryId: media.entryId,
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  }
+
   return finalizeMutation(client, workspaceId, collectionKey, null);
 }
 

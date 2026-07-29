@@ -25,7 +25,7 @@ export function SectionHeading({
   align?: "left" | "center";
 }) {
   const ledeColor =
-    tone === "on-cream" ? "text-muted" : "text-paper/70";
+    tone === "on-cream" ? "text-ink-soft" : "text-paper/70";
   return (
     <div
       className={`flex flex-col gap-6 ${align === "center" ? "items-center text-center" : ""}`}

@@ -189,7 +189,7 @@ function FieldShell({
   const errorId = `${name}-error`;
   return (
     <label className="flex flex-col gap-2" htmlFor={name}>
-      <span className="text-[11px] uppercase tracking-[0.32em] text-muted">
+      <span className="text-[11px] uppercase tracking-[0.32em] text-ink-soft">
         {label}
         {required ? <span aria-hidden> *</span> : null}
       </span>

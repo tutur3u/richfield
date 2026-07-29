@@ -590,6 +590,21 @@ function localizedText(
     : (translated ?? cmsValue ?? null);
 }
 
+// Structured-content counterpart to localizedText. For non-default locales the
+// CMS block is the untranslated default-locale copy (entries that haven't opted
+// into localization keep English rich text), so never fall back to it — return
+// the local translation or null, letting the caller render the localized string
+// instead of leaking English structured content.
+function localizedStructuredContent(
+  locale: Locale,
+  cmsContent: JSONContent | null,
+  translated: JSONContent | null | undefined,
+) {
+  return locale === DEFAULT_LOCALE
+    ? (cmsContent ?? translated ?? null)
+    : (translated ?? null);
+}
+
 function buildBrands(
   delivery: RichfieldDeliveryPayload,
   apiBaseUrl: string,
@@ -640,17 +655,32 @@ function buildLeaders(
   leaders: Leader[],
   locale: Locale,
 ) {
+  // The CMS entry slug/title is derived from the English name, so match against
+  // the English defaults to locate each leader; then read the display fields
+  // from the locale-selected copy at the same position. Matching on the
+  // localized `leaders` names would fail for non-default locales (e.g. VI
+  // "Ông Bill Chua" never matches the English CMS slug "bill-chua"), silently
+  // leaking English bios into the Vietnamese page.
+  const englishLeaders = getContent(DEFAULT_LOCALE).leaders;
+
   const mapped = getPublishedEntries(delivery, "leadership").map<Leader>((entry, index) => {
-    const matched = findByContentSlug(leaders, entry, (leader) => leader.name);
+    const englishMatch = findByContentSlug(englishLeaders, entry, (leader) => leader.name);
+    const matchedIndex = englishMatch ? englishLeaders.indexOf(englishMatch) : index;
+    const matched = leaders[matchedIndex] ?? leaders[index % leaders.length] ?? null;
     const fallback = matched ?? leaders[index % leaders.length] ?? leaders[0]!;
     const bio = getMarkdown(entry);
 
     return {
-      name: entry.title,
+      name: localizedText(locale, entry.title, matched?.name) ?? fallback.name,
       role: localizedText(locale, entry.subtitle, matched?.role) ?? fallback.role,
       photo: getImageUrl(entry, apiBaseUrl) ?? fallback.photo,
       bio: localizedText(locale, bio ?? entry.summary, matched?.bio) ?? fallback.bio,
-      bioContent: getStructuredContent(entry),
+      bioContent: localizedStructuredContent(
+        locale,
+        getStructuredContent(entry),
+        parseRichfieldJSONContent(getResolvedContent(entry).bodyContent) ??
+          matched?.bioContent,
+      ),
       quote: localizedText(locale, getQuoteBlock(entry), matched?.quote) ?? fallback.quote,
     };
   });

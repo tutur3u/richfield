@@ -3,6 +3,7 @@ import {
   canSaveRichfieldEditor,
   getRichfieldDateInputValue,
   getRichfieldDisplayDateFromInput,
+  getRichfieldEditorPageLinkPrefix,
   getRichfieldEditorPreviewHref,
   getRichfieldEditorSteps,
   getRichfieldEditorCloseIntent,
@@ -160,6 +161,11 @@ describe("Richfield admin editor state", () => {
   });
 
   test("builds preview links for collections with public pages", () => {
+    expect(getRichfieldEditorPageLinkPrefix("articles")).toBe("/insights/");
+    expect(getRichfieldEditorPageLinkPrefix("jobs")).toBe("/careers/");
+    expect(getRichfieldEditorPageLinkPrefix("brands")).toBeNull();
+    expect(getRichfieldEditorPageLinkPrefix("milestones")).toBeNull();
+
     expect(
       getRichfieldEditorPreviewHref({
         collectionKey: "brands",

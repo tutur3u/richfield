@@ -1,6 +1,9 @@
 "use client";
 
+import { ArrowClockwise } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
+import { useId } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -9,6 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type {
   RichfieldAdminEditorDraft,
   RichfieldEditorStepId,
@@ -88,6 +97,77 @@ export function TextField<TName extends keyof Draft>({
         <span className="text-xs text-red-600 dark:text-red-400">{error}</span>
       ) : null}
     </label>
+  );
+}
+
+export function PageLinkField<TName extends keyof Draft>({
+  disabled,
+  label,
+  matchTitleLabel,
+  name,
+  onChange,
+  onMatchTitle,
+  prefix,
+  showMatchTitle,
+  value,
+}: {
+  disabled?: boolean;
+  label: string;
+  matchTitleLabel: string;
+  name: TName;
+  onChange: (name: TName, value: string) => void;
+  onMatchTitle: () => void;
+  prefix: string;
+  showMatchTitle: boolean;
+  value: string;
+}) {
+  const inputId = useId();
+
+  return (
+    <div className="grid min-w-0 gap-2">
+      <label className={FIELD_LABEL} htmlFor={inputId}>
+        {label}
+      </label>
+      <div className="flex min-w-0 items-stretch overflow-hidden rounded-lg border border-line bg-paper transition focus-within:border-gold focus-within:ring-3 focus-within:ring-gold/15">
+        <span className="flex shrink-0 items-center border-r border-line bg-cream px-2.5 font-mono text-xs text-admin-ink-soft">
+          {prefix}
+        </span>
+        <input
+          autoCapitalize="none"
+          autoComplete="off"
+          className="h-11 min-w-0 flex-1 bg-transparent px-2.5 font-mono text-sm text-ink outline-none placeholder:text-admin-ink-soft/70 disabled:cursor-not-allowed disabled:text-admin-ink-soft"
+          disabled={disabled}
+          id={inputId}
+          inputMode="url"
+          name={name}
+          onChange={(event) => onChange(name, event.currentTarget.value)}
+          spellCheck={false}
+          value={value}
+        />
+        {showMatchTitle ? (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger
+                aria-label={matchTitleLabel}
+                render={
+                  <Button
+                    className="m-1 self-center text-admin-ink-soft hover:text-admin-ink"
+                    disabled={disabled}
+                    onClick={onMatchTitle}
+                    size="icon-sm"
+                    type="button"
+                    variant="ghost"
+                  />
+                }
+              >
+                <ArrowClockwise aria-hidden />
+              </TooltipTrigger>
+              <TooltipContent>{matchTitleLabel}</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ) : null}
+      </div>
+    </div>
   );
 }
 

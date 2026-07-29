@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ArrowClockwise,
-  Eye,
-  FloppyDisk,
-  LinkSimple,
-  Trash,
-} from "@phosphor-icons/react";
+import { Eye, FloppyDisk, Trash } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
@@ -33,6 +27,7 @@ import {
   CheckboxField,
   EditorStepHeader,
   NumberField,
+  PageLinkField,
   SelectField,
   TextAreaField,
   TextField,
@@ -55,6 +50,7 @@ import { ArticleGalleryEditor } from "./ArticleGalleryEditor";
 import { adminFetch } from "./richfield-admin-session-client";
 import {
   canSaveRichfieldEditor,
+  getRichfieldEditorPageLinkPrefix,
   getRichfieldEditorPreviewHref,
   getRichfieldEditorSteps,
   hasRichfieldEditorDirtyChanges,
@@ -169,11 +165,7 @@ export function ContentForm({
       ? draft.title
       : (effectiveItem?.englishTitle ?? "");
   const suggestedSlug = slugifyRichfieldContent(englishTitleForSlug, "");
-  const draftPreviewPath =
-    getRichfieldEditorPreviewHref({
-      collectionKey,
-      slug: draft.slug,
-    }) ?? (draft.slug ? `/${draft.slug}` : "/…");
+  const pageLinkPrefix = getRichfieldEditorPageLinkPrefix(collectionKey);
   useEffect(() => {
     onBusyChange(isBusy);
   }, [isBusy, onBusyChange]);
@@ -1430,61 +1422,35 @@ export function ContentForm({
               </>
             ) : null}
 
-            <Separator />
-
-            <div>
-              <p className="script-label">{t("inspector.pageDetails")}</p>
-              <div className="mt-3 grid gap-3">
-                <TextField
-                  disabled={isBusy}
-                  label={t("fields.websiteLink")}
-                  name="slug"
-                  onChange={(name, value) => {
-                    setSlugIsAutomatic(false);
-                    updateDraft(name, normalizeRichfieldSlugInput(value));
-                  }}
-                  value={draft.slug}
-                />
-                <div className="grid gap-2 rounded-lg border border-admin-rule bg-admin-surface p-3">
-                  <div className="flex min-w-0 items-start gap-2 text-xs text-admin-ink-soft">
-                    <LinkSimple
-                      aria-hidden
-                      className="mt-0.5 shrink-0 text-admin-accent"
-                      size={15}
+            {pageLinkPrefix ? (
+              <>
+                <Separator />
+                <div>
+                  <p className="script-label">{t("inspector.pageDetails")}</p>
+                  <div className="mt-3">
+                    <PageLinkField
+                      disabled={isBusy}
+                      label={t("fields.websiteLink")}
+                      matchTitleLabel={t("updateWebsiteLink")}
+                      name="slug"
+                      onChange={(name, value) => {
+                        setSlugIsAutomatic(false);
+                        updateDraft(name, normalizeRichfieldSlugInput(value));
+                      }}
+                      onMatchTitle={() => {
+                        setSlugIsAutomatic(true);
+                        updateDraft("slug", suggestedSlug);
+                      }}
+                      prefix={pageLinkPrefix}
+                      showMatchTitle={Boolean(
+                        suggestedSlug && draft.slug !== suggestedSlug,
+                      )}
+                      value={draft.slug}
                     />
-                    <span className="min-w-0 break-all font-mono leading-5">
-                      {draftPreviewPath}
-                    </span>
                   </div>
-                  <p className="text-xs leading-5 text-admin-ink-soft">
-                    {t("websiteLinkHelp")}
-                  </p>
-                  <Button
-                    className="justify-self-start"
-                    disabled={
-                      isBusy ||
-                      !suggestedSlug ||
-                      draft.slug === suggestedSlug
-                    }
-                    onClick={() => {
-                      setSlugIsAutomatic(true);
-                      updateDraft("slug", suggestedSlug);
-                    }}
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                  >
-                    <ArrowClockwise aria-hidden data-icon="inline-start" />
-                    {t("updateWebsiteLink")}
-                  </Button>
                 </div>
-              </div>
-              {effectiveItem ? (
-                <p className="mt-3 break-all text-xs leading-5 text-admin-ink-soft">
-                  ID · {effectiveItem.id}
-                </p>
-              ) : null}
-            </div>
+              </>
+            ) : null}
           </div>
         </aside>
       </div>

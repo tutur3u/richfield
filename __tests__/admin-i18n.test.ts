@@ -16,4 +16,11 @@ describe("admin message coverage", () => {
   it("keeps English and Vietnamese namespaces in lockstep", () => {
     expect(leafKeys(vi.admin).sort()).toEqual(leafKeys(en.admin).sort());
   });
+
+  it("keeps editor copy focused on customer actions", () => {
+    const englishFormCopy = JSON.stringify(en.admin.form).toLowerCase();
+
+    expect(englishFormCopy).not.toContain("shared by both languages");
+    expect(englishFormCopy).not.toContain("spaces become hyphens");
+  });
 });

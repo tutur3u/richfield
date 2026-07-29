@@ -125,6 +125,18 @@ const previewRouteByCollection: Partial<Record<RichfieldAdminCollectionKey, stri
     milestones: "/about/our-story",
   };
 
+export function getRichfieldEditorPageLinkPrefix(
+  collectionKey: RichfieldAdminCollectionKey,
+) {
+  const route = previewRouteByCollection[collectionKey];
+
+  if (!route?.includes(":slug")) {
+    return null;
+  }
+
+  return route.slice(0, route.indexOf(":slug"));
+}
+
 function formatDatePart(value: number) {
   return String(value).padStart(2, "0");
 }

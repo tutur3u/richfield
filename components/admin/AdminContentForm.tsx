@@ -1425,30 +1425,25 @@ export function ContentForm({
             {pageLinkPrefix ? (
               <>
                 <Separator />
-                <div>
-                  <p className="script-label">{t("inspector.pageDetails")}</p>
-                  <div className="mt-3">
-                    <PageLinkField
-                      disabled={isBusy}
-                      label={t("fields.websiteLink")}
-                      matchTitleLabel={t("updateWebsiteLink")}
-                      name="slug"
-                      onChange={(name, value) => {
-                        setSlugIsAutomatic(false);
-                        updateDraft(name, normalizeRichfieldSlugInput(value));
-                      }}
-                      onMatchTitle={() => {
-                        setSlugIsAutomatic(true);
-                        updateDraft("slug", suggestedSlug);
-                      }}
-                      prefix={pageLinkPrefix}
-                      showMatchTitle={Boolean(
-                        suggestedSlug && draft.slug !== suggestedSlug,
-                      )}
-                      value={draft.slug}
-                    />
-                  </div>
-                </div>
+                <PageLinkField
+                  disabled={isBusy}
+                  label={t("fields.websiteLink")}
+                  matchTitleLabel={t("updateWebsiteLink")}
+                  name="slug"
+                  onChange={(name, value) => {
+                    setSlugIsAutomatic(false);
+                    updateDraft(name, normalizeRichfieldSlugInput(value));
+                  }}
+                  onMatchTitle={() => {
+                    setSlugIsAutomatic(true);
+                    updateDraft("slug", suggestedSlug);
+                  }}
+                  prefix={pageLinkPrefix}
+                  showMatchTitle={Boolean(
+                    suggestedSlug && draft.slug !== suggestedSlug,
+                  )}
+                  value={draft.slug}
+                />
               </>
             ) : null}
           </div>

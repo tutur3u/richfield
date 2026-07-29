@@ -127,6 +127,7 @@ export function RichTextEditor({
         <TuturuuuRichTextEditor
           content={content}
           enableHTMLSource={enableHTMLSource && !readOnly}
+          enablePreview={!readOnly}
           featurePreset={featurePreset}
           locale={locale}
           onChange={handleChange}

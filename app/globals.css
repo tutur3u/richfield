@@ -805,6 +805,11 @@ button:focus-visible {
   --tuturuuu-editor-border: var(--color-admin-rule-strong);
   --tuturuuu-editor-muted: var(--color-admin-ink-soft);
   --tuturuuu-editor-toolbar-background: var(--color-admin-parchment);
+  --tuturuuu-editor-preview-background: color-mix(
+    in srgb,
+    var(--color-admin-parchment) 52%,
+    var(--color-admin-panel)
+  );
   --tuturuuu-editor-active-background: var(--color-admin-surface);
   --tuturuuu-editor-active-border: var(--color-admin-gold);
   --tuturuuu-editor-primary: var(--color-admin-navy);
@@ -824,6 +829,40 @@ button:focus-visible {
 
 .richfield-tuturuuu-editor .tuturuuu-editor {
   border-radius: inherit;
+}
+
+.richfield-tuturuuu-editor .tuturuuu-editor-mode-switch {
+  gap: 0.25rem;
+  margin: 0.625rem;
+  margin-bottom: 0;
+  padding: 0.25rem;
+  border-color: var(--color-admin-rule);
+  background: var(--color-admin-parchment);
+}
+
+.richfield-tuturuuu-editor .tuturuuu-editor-mode-switch button {
+  min-height: 2.25rem;
+  padding-inline: 0.875rem;
+  border: 1px solid transparent;
+  transition:
+    background-color 140ms ease,
+    border-color 140ms ease,
+    color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.richfield-tuturuuu-editor
+  .tuturuuu-editor-mode-switch
+  button[aria-pressed="true"] {
+  border-color: var(--color-admin-rule-strong);
+  background: var(--color-admin-panel);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 8%);
+  color: var(--color-admin-ink);
+}
+
+.richfield-tuturuuu-editor .tuturuuu-editor-mode-switch button:hover {
+  background: var(--color-admin-surface);
+  color: var(--color-admin-ink);
 }
 
 .richfield-tuturuuu-editor .tuturuuu-editor-toolbar {
@@ -847,13 +886,22 @@ button:focus-visible {
   outline: none;
 }
 
+.richfield-tuturuuu-editor
+  .tuturuuu-editor[data-mode="preview"]
+  .tiptap {
+  padding: 1.5rem;
+  background: var(--tuturuuu-editor-preview-background);
+  cursor: default;
+}
+
 .richfield-tuturuuu-editor .tiptap > * + * {
   margin-top: 0.75rem;
 }
 
 .richfield-tuturuuu-editor .tiptap h1,
 .richfield-tuturuuu-editor .tiptap h2,
-.richfield-tuturuuu-editor .tiptap h3 {
+.richfield-tuturuuu-editor .tiptap h3,
+.richfield-tuturuuu-editor .tiptap h4 {
   color: var(--color-admin-ink);
   font-family: var(--font-display);
   font-weight: 500;
@@ -876,6 +924,12 @@ button:focus-visible {
   margin-top: 1.25rem;
   font-size: 1.25rem;
   line-height: 1.25;
+}
+
+.richfield-tuturuuu-editor .tiptap h4 {
+  margin-top: 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.35;
 }
 
 .richfield-tuturuuu-editor .tiptap a {

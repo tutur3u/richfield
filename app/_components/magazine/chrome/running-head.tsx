@@ -443,7 +443,7 @@ function MobileNav({
         </nav>
 
         <div className="flex flex-col gap-4 border-t border-line bg-paper/60 px-5 py-6 sm:px-7">
-          <p className="text-[11px] uppercase tracking-[0.28em] text-muted">
+          <p className="text-[11px] uppercase tracking-[0.28em] text-ink-soft">
             {strings.countriesLine}
           </p>
         </div>
@@ -467,7 +467,7 @@ function MobileLeaf({
   const cls =
     "group flex items-baseline justify-between border-b border-line py-5 font-display text-[clamp(28px,6vw,40px)] tracking-[-0.01em] text-ink transition-colors hover:text-gold";
   const arrow = (
-    <span aria-hidden className="ml-4 text-[12px] tracking-[0.24em] text-muted transition-transform duration-200 group-hover:translate-x-1 group-hover:text-gold">
+    <span aria-hidden className="ml-4 text-[12px] tracking-[0.24em] text-ink-soft transition-transform duration-200 group-hover:translate-x-1 group-hover:text-gold">
       →
     </span>
   );

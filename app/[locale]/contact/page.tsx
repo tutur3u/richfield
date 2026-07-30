@@ -111,7 +111,7 @@ export default async function ContactPage({
             <DisplayHeading level={1} className="w-full text-[clamp(34px,4vw,56px)]!">
               {contactPage.headline}
             </DisplayHeading>
-            <div className="w-full text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-muted">
+            <div className="w-full text-[clamp(15px,1.3vw,17px)] leading-[1.55] text-ink-soft">
               <RichfieldProse
                 compact
                 content={contactPage.intro}
@@ -142,14 +142,14 @@ export default async function ContactPage({
                         <Icon className="h-5 w-5" />
                       </span>
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="text-[10px] uppercase tracking-[0.28em] text-muted">
+                        <span className="text-[10px] uppercase tracking-[0.28em] text-ink-soft">
                           {c.label}
                         </span>
                         <span className="truncate text-[15px] text-ink">
                           {c.primary}
                         </span>
                         {c.secondary ? (
-                          <span className="truncate text-[12px] text-muted">
+                          <span className="truncate text-[12px] text-ink-soft">
                             {c.secondary}
                           </span>
                         ) : null}

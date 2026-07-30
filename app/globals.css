@@ -15,6 +15,10 @@
   --color-paper: oklch(0.985 0.006 70);
   --color-cream: oklch(0.96 0.018 82);
   --color-muted: oklch(0.52 0.018 250);
+  /* Grey body/label text on the public magazine. Kept separate from `muted`,
+     which shadcn's @theme inline block below remaps to a near-white surface
+     token — sharing the name made `text-muted` labels render invisible. */
+  --color-ink-soft: oklch(0.52 0.018 250);
   --color-line: oklch(0.86 0.018 82);
 
   /* Admin editorial palette, registered so the /admin surface has real

@@ -2,7 +2,7 @@ type Tone = "gold" | "muted" | "ink-on-green" | "ink";
 
 const toneClass: Record<Tone, string> = {
   gold: "text-gold",
-  muted: "text-muted",
+  muted: "text-ink-soft",
   "ink-on-green": "text-gold",
   ink: "text-ink",
 };

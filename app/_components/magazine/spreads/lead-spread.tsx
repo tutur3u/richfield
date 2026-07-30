@@ -12,7 +12,7 @@ const MARS_WRIGLEY_LOGO = "/photos/logos/mars-wrigley.webp";
     "Mars Wrigley" where the intro names our first partner. */
 function MarsWrigleyMark() {
   return (
-    <span className="relative mx-1 inline-block h-[1.9em] w-[4em] align-middle">
+    <span className="relative mx-1 inline-block h-[2.7em] w-[5.6em] align-middle">
       <Image
         src={MARS_WRIGLEY_LOGO}
         alt="Mars · Wrigley"

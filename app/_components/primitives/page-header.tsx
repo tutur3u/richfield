@@ -50,7 +50,7 @@ export function PageHeader({
       : "pt-[clamp(120px,14vw,160px)] pb-[clamp(48px,6vw,80px)]";
 
   const onGreen = tone === "green";
-  const ledeColor = onGreen ? "text-paper/80" : "text-muted";
+  const ledeColor = onGreen ? "text-paper/80" : "text-ink-soft";
   const photos = Array.isArray(photo) ? photo : photo ? [photo] : null;
 
   return (

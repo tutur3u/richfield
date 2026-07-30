@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { brands, homepageBrands } from "@/content/en/brands";
 import { leaders } from "@/content/en/leadership";
+import { leaders as viLeaders } from "@/content/vi/leadership";
 import { homepageMilestones, milestones } from "@/content/en/milestones";
 import { buildRichfieldContent, DEFAULT_RICHFIELD_CONTENT } from "./richfield-content";
 
@@ -738,6 +739,72 @@ describe("delivery image resolution", () => {
       title: "English story",
     });
     expect(vietnamese.articles).toEqual([]);
+  });
+
+  test("localizes leadership from English CMS slugs without leaking English", () => {
+    // Prod scenario: the leadership entry carries the English name/slug and has
+    // NOT opted into localization. For VI the builder must recover the Vietnamese
+    // default copy by matching the English slug, not fall through to English.
+    const enLeader = leaders[0]!;
+    const viLeader = viLeaders[0]!;
+    const delivery = {
+      adapter: "richfield",
+      canonicalProjectId: "richfield",
+      generatedAt: new Date("2026-07-29").toISOString(),
+      loadingData: null,
+      profileData: {},
+      workspaceId: "workspace-1",
+      collections: [
+        {
+          collection_type: "leadership",
+          config: null,
+          description: null,
+          id: "collection-leadership",
+          slug: "leadership",
+          title: "Leadership",
+          entries: [
+            {
+              assets: [],
+              blocks: [
+                {
+                  block_type: "markdown",
+                  content: { markdown: enLeader.bio },
+                  entry_id: "leader-1",
+                  id: "block-leader-bio",
+                  sort_order: 0,
+                  title: "Bio",
+                },
+              ],
+              id: "leader-1",
+              metadata: {},
+              profile_data: {},
+              published_at: null,
+              // Slug derived from the English name — the VI default name would
+              // never slug-match this.
+              slug: "mr-bill-chua",
+              status: "published",
+              subtitle: enLeader.role,
+              summary: enLeader.bio,
+              title: enLeader.name,
+            },
+          ],
+        },
+      ],
+    };
+
+    const vietnamese = buildRichfieldContent(delivery, {
+      apiBaseUrl: "https://platform.example.com/api/v1",
+      locale: "vi",
+    });
+
+    expect(vietnamese.leaders[0]).toMatchObject({
+      name: viLeader.name,
+      role: viLeader.role,
+      bio: viLeader.bio,
+    });
+    // No English copy should survive into the Vietnamese page.
+    expect(vietnamese.leaders[0]?.bio).not.toBe(enLeader.bio);
+    expect(vietnamese.leaders[0]?.name).not.toBe(enLeader.name);
   });
 
   test("prefers localized structured article content and preserves its gallery", () => {

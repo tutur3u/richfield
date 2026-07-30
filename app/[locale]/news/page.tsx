@@ -96,7 +96,7 @@ export default async function NewsPage({
               <section aria-labelledby="lead-story-heading">
                 <article className="group border-b border-ink/15 pb-14 lg:pb-20">
                   <Link
-                    className="grid gap-7 focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-gold lg:grid-cols-[minmax(0,1.28fr)_minmax(22rem,0.72fr)] lg:items-stretch lg:gap-12"
+                    className="grid gap-7 focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-gold lg:grid-cols-[minmax(0,1.08fr)_minmax(25rem,0.92fr)] lg:items-stretch lg:gap-12"
                     href={`/news/${leadArticle.slug}`}
                   >
                     <div className="relative aspect-[16/10] overflow-hidden bg-ink/5 lg:aspect-[16/9]">
@@ -122,7 +122,7 @@ export default async function NewsPage({
                       </div>
                       <StoryMeta article={leadArticle} locale={locale} />
                       <h2
-                        className="font-display mt-5 text-[clamp(2.35rem,4.5vw,5rem)] leading-[0.98] tracking-[-0.03em] text-balance"
+                        className="font-display mt-5 text-[clamp(2.35rem,3.5vw,3.75rem)] leading-[1.02] tracking-[-0.025em] text-balance"
                         id="lead-story-heading"
                       >
                         {leadArticle.title}

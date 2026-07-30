@@ -165,7 +165,7 @@ function hasRichTextChanges(
 
 const previewRouteByCollection: Partial<Record<RichfieldAdminCollectionKey, string>> =
   {
-    articles: "/insights/:slug",
+    articles: "/news/:slug",
     brands: "/brands",
     "contact-channels": "/contact",
     "contact-form": "/contact",

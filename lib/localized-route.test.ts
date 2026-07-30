@@ -6,9 +6,9 @@ import {
 
 describe("localized public routes", () => {
   test("keeps English routes bare and prefixes Vietnamese routes", () => {
-    expect(localizedPath("en", "/insights/story")).toBe("/insights/story");
-    expect(localizedPath("vi", "/insights/story")).toBe(
-      "/vi/insights/story",
+    expect(localizedPath("en", "/news/story")).toBe("/news/story");
+    expect(localizedPath("vi", "/news/story")).toBe(
+      "/vi/news/story",
     );
     expect(localizedPath("vi", "/")).toBe("/vi");
   });
@@ -18,13 +18,13 @@ describe("localized public routes", () => {
       publishedLocaleAlternates({
         availableLocales: ["en"],
         canonicalLocale: "en",
-        path: "/insights/story",
+        path: "/news/story",
       }),
     ).toEqual({
-      canonical: "/insights/story",
+      canonical: "/news/story",
       languages: {
-        en: "/insights/story",
-        "x-default": "/insights/story",
+        en: "/news/story",
+        "x-default": "/news/story",
       },
     });
   });

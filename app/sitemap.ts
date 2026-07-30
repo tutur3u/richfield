@@ -1,5 +1,7 @@
 import type { MetadataRoute } from "next";
 import { site } from "@/content/en/site";
+import type { RichfieldArticle } from "@/lib/richfield-content";
+import { getRichfieldContent } from "@/lib/richfield-delivery";
 
 const ROUTES = [
   "/",
@@ -8,17 +10,28 @@ const ROUTES = [
   "/brands",
   "/logistics",
   "/distribution",
-  "/insights",
+  "/news",
   "/careers",
   "/contact",
 ];
 
-// English is served at bare paths; Vietnamese under /vi. Each entry carries
-// hreflang alternates pointing at its counterpart.
-export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
+function articleDate(article: RichfieldArticle, fallback: Date) {
+  if (!article.publishedAt) return fallback;
+  const date = new Date(article.publishedAt);
+  return Number.isNaN(date.getTime()) ? fallback : date;
+}
 
-  return ROUTES.flatMap((path) => {
+// English is served at bare paths; Vietnamese under /vi. Each entry carries
+// hreflang alternates pointing at its counterpart. Published news stories are
+// included individually so the new canonical URLs can be discovered directly.
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const now = new Date();
+  const [english, vietnamese] = await Promise.all([
+    getRichfieldContent("en"),
+    getRichfieldContent("vi"),
+  ]);
+
+  const staticEntries = ROUTES.flatMap((path) => {
     const enUrl = `${site.domainCanonical}${path === "/" ? "" : path}`;
     const viUrl = `${site.domainCanonical}${path === "/" ? "/vi" : `/vi${path}`}`;
     const languages = { en: enUrl, vi: viUrl, "x-default": enUrl };
@@ -40,4 +53,70 @@ export default function sitemap(): MetadataRoute.Sitemap {
       },
     ];
   });
+
+  const articlesBySlug = new Map<
+    string,
+    { en?: RichfieldArticle; vi?: RichfieldArticle }
+  >();
+
+  for (const article of english.articles) {
+    articlesBySlug.set(article.slug, {
+      ...articlesBySlug.get(article.slug),
+      en: article,
+    });
+  }
+  for (const article of vietnamese.articles) {
+    articlesBySlug.set(article.slug, {
+      ...articlesBySlug.get(article.slug),
+      vi: article,
+    });
+  }
+
+  const articleEntries = [...articlesBySlug.entries()].flatMap(
+    ([slug, localized]) => {
+      const enUrl = localized.en
+        ? `${site.domainCanonical}/news/${slug}`
+        : undefined;
+      const viUrl = localized.vi
+        ? `${site.domainCanonical}/vi/news/${slug}`
+        : undefined;
+      const languages = {
+        ...(enUrl ? { en: enUrl, "x-default": enUrl } : {}),
+        ...(viUrl ? { vi: viUrl } : {}),
+      };
+
+      return [
+        ...(localized.en && enUrl
+          ? [
+              {
+                alternates: { languages },
+                changeFrequency: "monthly" as const,
+                images: localized.en.imageUrl
+                  ? [localized.en.imageUrl]
+                  : undefined,
+                lastModified: articleDate(localized.en, now),
+                priority: 0.75,
+                url: enUrl,
+              },
+            ]
+          : []),
+        ...(localized.vi && viUrl
+          ? [
+              {
+                alternates: { languages },
+                changeFrequency: "monthly" as const,
+                images: localized.vi.imageUrl
+                  ? [localized.vi.imageUrl]
+                  : undefined,
+                lastModified: articleDate(localized.vi, now),
+                priority: 0.7,
+                url: viUrl,
+              },
+            ]
+          : []),
+      ];
+    },
+  );
+
+  return [...staticEntries, ...articleEntries];
 }

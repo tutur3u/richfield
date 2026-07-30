@@ -399,7 +399,7 @@
       },
       {
         "label": "Tin Tức",
-        "href": "/insights"
+        "href": "/news"
       },
       {
         "label": "Tuyển dụng",
@@ -440,8 +440,8 @@
         "href": "/distribution"
       },
       {
-        "label": "Góc nhìn",
-        "href": "/insights"
+        "label": "Tin tức",
+        "href": "/news"
       },
       {
         "label": "Tuyển dụng",
@@ -469,7 +469,7 @@
       "title": "Tuyển dụng",
       "description": "Richfield là nơi mọi người gắn bó lâu dài. Giá trị cốt lõi, lãnh đạo đặt con người lên trước, đóng góp cộng đồng và cuộc sống tại các văn phòng của chúng tôi."
     },
-    "insights": {
+    "news": {
       "title": "Tin Tức",
       "description": "Tin tức công ty, góc nhìn thị trường, câu chuyện hợp tác và cập nhật từ Richfield Group."
     },
@@ -541,15 +541,31 @@
     "readAlternative": "Đọc bản tiếng Anh",
     "browseCurrent": "Xem cơ hội tiếng Việt"
   },
-  "insightsPage": {
+  "newsPage": {
     "eyebrow": "Tin Tức",
     "heading": "Góc nhìn từ khắp các *thị trường* của chúng tôi.",
     "intro": "Tin tức công ty, câu chuyện hợp tác và những quan sát từ hơn ba thập kỷ xây dựng thương hiệu tại Đông Nam Á.",
     "emptyTitle": "Câu chuyện tiếp theo đang được chuẩn bị.",
     "emptyBody": "Các cập nhật mới từ Richfield sẽ xuất hiện tại đây khi được xuất bản.",
-    "readStory": "Đọc bài viết →",
-    "allInsights": "← Tất cả tin tức",
+    "leadStory": "Tin nổi bật",
+    "latestEyebrow": "Từ khắp tập đoàn",
+    "latestHeading": "Tin mới nhất",
+    "storyCount": "{count} bài viết",
+    "readStory": "Đọc bài viết",
+    "allNews": "Tất cả tin tức",
+    "readingTime": "{minutes} phút đọc",
+    "byline": "Bởi {author}",
+    "storyDetails": "Thông tin bài viết",
+    "published": "Ngày đăng",
+    "author": "Tác giả",
+    "reading": "Thời gian đọc",
     "gallery": "Bộ ảnh bài viết",
+    "galleryEyebrow": "Hình ảnh trong bài",
+    "galleryHeading": "Bộ sưu tập ảnh",
+    "photoCount": "{count} ảnh",
+    "relatedEyebrow": "Đọc tiếp",
+    "relatedHeading": "Thêm tin từ Richfield",
+    "viewAll": "Xem tất cả tin tức →",
     "translationEyebrow": "Ngôn ngữ bài viết",
     "translationTitle": "Bài viết này chưa có bản tiếng Việt.",
     "translationDescription": "Bài viết đã được xuất bản bằng tiếng Anh. Bạn có thể đọc bản đó ngay hoặc xem các tin tức hiện có bằng tiếng Việt.",

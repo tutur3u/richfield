@@ -251,7 +251,7 @@ describe("Richfield admin editor state", () => {
   });
 
   test("builds preview links for collections with public pages", () => {
-    expect(getRichfieldEditorPageLinkPrefix("articles")).toBe("/insights/");
+    expect(getRichfieldEditorPageLinkPrefix("articles")).toBe("/news/");
     expect(getRichfieldEditorPageLinkPrefix("jobs")).toBe("/careers/");
     expect(getRichfieldEditorPageLinkPrefix("brands")).toBeNull();
     expect(getRichfieldEditorPageLinkPrefix("milestones")).toBeNull();
@@ -279,7 +279,7 @@ describe("Richfield admin editor state", () => {
         collectionKey: "articles",
         slug: "market-access",
       }),
-    ).toBe("/insights/market-access");
+    ).toBe("/news/market-access");
     expect(
       getRichfieldEditorPreviewHref({
         collectionKey: "jobs",

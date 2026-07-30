@@ -399,7 +399,7 @@
       },
       {
         "label": "News",
-        "href": "/insights"
+        "href": "/news"
       },
       {
         "label": "Careers",
@@ -440,8 +440,8 @@
         "href": "/distribution"
       },
       {
-        "label": "Insights",
-        "href": "/insights"
+        "label": "News",
+        "href": "/news"
       },
       {
         "label": "Careers",
@@ -469,7 +469,7 @@
       "title": "Careers",
       "description": "Richfield is a place where people stay. Core values, people-first leadership, community impact, and life across our offices."
     },
-    "insights": {
+    "news": {
       "title": "News",
       "description": "Company news, market perspectives, partnership stories, and updates from Richfield Group."
     },
@@ -541,15 +541,31 @@
     "readAlternative": "Read in Vietnamese",
     "browseCurrent": "Browse English opportunities"
   },
-  "insightsPage": {
+  "newsPage": {
     "eyebrow": "News",
     "heading": "Perspective from across our *markets*.",
     "intro": "Company news, partnership stories, and observations from more than three decades of building brands in Southeast Asia.",
     "emptyTitle": "The next story is being prepared.",
     "emptyBody": "New Richfield updates will appear here as they are published.",
-    "readStory": "Read story →",
-    "allInsights": "← All news",
+    "leadStory": "Lead story",
+    "latestEyebrow": "From across the group",
+    "latestHeading": "Latest news",
+    "storyCount": "{count, plural, one {# story} other {# stories}}",
+    "readStory": "Read story",
+    "allNews": "All news",
+    "readingTime": "{minutes, plural, one {# min read} other {# min read}}",
+    "byline": "By {author}",
+    "storyDetails": "Story details",
+    "published": "Published",
+    "author": "Author",
+    "reading": "Reading time",
     "gallery": "Article gallery",
+    "galleryEyebrow": "From the story",
+    "galleryHeading": "Photo gallery",
+    "photoCount": "{count, plural, one {# photo} other {# photos}}",
+    "relatedEyebrow": "Keep reading",
+    "relatedHeading": "More from Richfield",
+    "viewAll": "View all news →",
     "translationEyebrow": "Language availability",
     "translationTitle": "This story isn’t available in English yet.",
     "translationDescription": "The story is published in Vietnamese. You can read that edition now or browse every story currently available in English.",

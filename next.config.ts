@@ -53,6 +53,21 @@ const nextConfig: NextConfig = {
       { source: "/v2/logistics", destination: "/logistics", permanent: true },
       { source: "/v2/careers", destination: "/careers", permanent: true },
       { source: "/v2/contact", destination: "/contact", permanent: true },
+      {
+        source: "/insights/:path*",
+        destination: "/news/:path*",
+        permanent: true,
+      },
+      {
+        source: "/vi/insights/:path*",
+        destination: "/vi/news/:path*",
+        permanent: true,
+      },
+      {
+        source: "/en/insights/:path*",
+        destination: "/news/:path*",
+        permanent: true,
+      },
       { source: "/about", destination: "/", permanent: true },
       { source: "/products", destination: "/brands", permanent: true },
       { source: "/what-we-do", destination: "/logistics", permanent: true },

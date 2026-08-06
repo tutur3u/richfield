@@ -99,7 +99,11 @@ export default async function NewsPage({
                     className="grid gap-7 focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-gold lg:grid-cols-[minmax(0,1.08fr)_minmax(25rem,0.92fr)] lg:items-stretch lg:gap-12"
                     href={`/news/${leadArticle.slug}`}
                   >
-                    <div className="relative aspect-[16/10] overflow-hidden bg-ink/5 lg:aspect-[16/9]">
+                    {/* w-full is load-bearing: without a definite inline size,
+                        grid stretch makes the height definite and the aspect
+                        ratio resolves backwards, widening the box past its
+                        track and over the story text. */}
+                    <div className="relative aspect-[16/10] w-full overflow-hidden bg-ink/5 lg:aspect-[16/9]">
                       {leadArticle.imageUrl ? (
                         <Image
                           alt=""

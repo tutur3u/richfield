@@ -28,6 +28,8 @@ Open items and deferred work. None block the May 31 launch; each has a scaffold 
 | 15 | `vite-tsconfig-paths` deprecation notice | Vitest console at startup | Vite resolves tsconfig paths natively now; switch `vitest.config.mts` to `resolve.tsconfigPaths: true` and drop the plugin. Cosmetic only. |
 | 16 | `RevealOnScroll` is a no-op wrapper today | `<WhatWeDo>`, `<Timeline>` cells | The on-scroll fade-up was disabled because arming after hydration created a flash of hidden content that broke crawlers, no-JS users, and screenshot tools (Phase 5.5 finding). The hook stays in place so a CSS-only `@starting-style` (or GSAP timeline) can drop in without touching consumers. |
 
+| 17 | Upstream delivery cache is unverified | `lib/richfield-delivery.ts` fetch to `/external-projects/delivery` | Publishing now expires our own cache immediately (tag + warm), but we have never checked whether the platform caches the delivery payload itself. If a publish still lags, run `curl -sSI "$TUTURUUU_API_BASE_URL/workspaces/$WORKSPACE_ID/external-projects/delivery"` and read `age`, `cache-control`, `x-vercel-cache` / `cf-cache-status`. A cached upstream body means the remaining delay is platform-side and cannot be fixed here. |
+
 ## After-launch follow-ups
 
 - Replace the typographic 3-node `<FootprintMap>` with a designer-cut SVG of Vietnam, Malaysia, and China when an asset is ready. The current diagram works; a cleaner illustrated map would deepen the editorial register.

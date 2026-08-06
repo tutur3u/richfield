@@ -1,4 +1,3 @@
-import { revalidatePath } from "next/cache";
 import { ExternalProjectsClient } from "tuturuuu/external-projects";
 import {
   uploadExternalProjectAssetFile,
@@ -143,24 +142,4 @@ export async function getRichfieldAdminCollectionStudio(
   }
 
   return studio;
-}
-
-export function revalidateRichfieldContent() {
-  revalidatePath("/", "layout");
-  revalidatePath("/");
-  revalidatePath("/news");
-  revalidatePath("/news/[slug]", "page");
-  revalidatePath("/brands");
-  revalidatePath("/careers");
-  revalidatePath("/careers/[slug]", "page");
-  revalidatePath("/contact");
-  revalidatePath("/about/our-story");
-  revalidatePath("/about/who-we-are");
-  revalidatePath("/vi", "layout");
-  revalidatePath("/vi/news");
-  revalidatePath("/vi/news/[slug]", "page");
-  revalidatePath("/vi/brands");
-  revalidatePath("/vi/careers");
-  revalidatePath("/vi/careers/[slug]", "page");
-  revalidatePath("/vi/contact");
 }

@@ -5,8 +5,8 @@ import {
   getRichfieldWorkspaceId,
 } from "@/lib/richfield-config";
 import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
+import { revalidateRichfieldContent } from "@/lib/richfield-revalidation";
 import { getRichfieldSessionFromCookies } from "@/lib/richfield-session";
-import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: await readApiError(response) }, { status: response.status });
     }
 
-    revalidatePath("/", "layout");
+    revalidateRichfieldContent();
     return NextResponse.json(await response.json());
   } catch {
     return NextResponse.json({ error: "Sync apply request timed out." }, { status: 502 });

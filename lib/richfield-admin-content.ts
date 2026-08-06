@@ -6,13 +6,12 @@ import {
   type RichfieldAdminCollectionKey,
   type RichfieldAdminContentItem,
   type RichfieldAdminStudioPayload,
+  type RichfieldContentLocale,
   type RichfieldContentStatus,
   type RichfieldContentMutationInput,
 } from "./richfield-admin-content-model";
-import {
-  getRichfieldAdminCollectionStudio,
-  revalidateRichfieldContent,
-} from "./richfield-admin-api";
+import { getRichfieldAdminCollectionStudio } from "./richfield-admin-api";
+import { revalidateRichfieldContent } from "./richfield-revalidation";
 import { getRichfieldManifestCollectionSchema } from "./richfield-external-project-manifest";
 
 type RichfieldCrudClient = Pick<
@@ -81,6 +80,15 @@ function readCreatedEntryId(response: unknown) {
   return readString(record, "id") ?? readString(readRecord(record.entry), "id");
 }
 
+/**
+ * Read the entry as it exists in English.
+ *
+ * Deliberate, and not the same choice as `finalizeMutation` makes: the write
+ * path uses this result to keep the English core of an entry intact while a
+ * Vietnamese variant is saved (see `preserveCore` in `buildEntryPayload` and
+ * `buildSharedProfileData`). Reading it in the editing locale would let a
+ * Vietnamese save overwrite the English title and summary.
+ */
 function findItemById(
   studio: RichfieldAdminStudioPayload,
   collectionKey: RichfieldAdminCollectionKey,
@@ -655,14 +663,27 @@ async function saveImageAsset({
   }
 }
 
+/**
+ * Re-read the collection and hand the saved entry back to the editor.
+ *
+ * The locale matters: this result is what the editor resets its form to after
+ * a save. Reading it in English while the editor is on the Vietnamese tab made
+ * the article visibly flip to English the moment it was saved — the save was
+ * correct, the echo was not.
+ */
 async function finalizeMutation(
   client: RichfieldCrudClient,
   workspaceId: string,
   collectionKey: RichfieldAdminCollectionKey,
   entryId: string | null,
+  locale: RichfieldContentLocale,
 ): Promise<MutationResult> {
   const studio = (await client.getStudio(workspaceId)) as RichfieldAdminStudioPayload;
-  const items = readRichfieldAdminContent(studio, collectionKey);
+  const items = readRichfieldAdminContent(studio, collectionKey, locale);
+  // The mutation routes also revalidate (and warm) through `after()`. Keeping
+  // the inline call means a save still invalidates the public site even if that
+  // post-response work is cut short — a redundant invalidation costs nothing,
+  // a missed one leaves the client looking at yesterday's page.
   revalidateRichfieldContent();
 
   return {
@@ -733,7 +754,7 @@ export async function createRichfieldContentItem(
     percent: 94,
     step: "refresh-dashboard",
   });
-  return finalizeMutation(client, workspaceId, collectionKey, entryId);
+  return finalizeMutation(client, workspaceId, collectionKey, entryId, input.locale);
 }
 
 export async function updateRichfieldContentItem(
@@ -794,7 +815,7 @@ export async function updateRichfieldContentItem(
     percent: 94,
     step: "refresh-dashboard",
   });
-  return finalizeMutation(client, workspaceId, collectionKey, entryId);
+  return finalizeMutation(client, workspaceId, collectionKey, entryId, input.locale);
 }
 
 export async function deleteRichfieldContentItem(
@@ -835,7 +856,9 @@ export async function deleteRichfieldContentItem(
     }
   }
 
-  return finalizeMutation(client, workspaceId, collectionKey, null);
+  // No entry survives the delete, so there is nothing to project: the `items`
+  // array is only used to refresh a list the client refetches anyway.
+  return finalizeMutation(client, workspaceId, collectionKey, null, "en");
 }
 
 export async function refreshRichfieldAdminContent(

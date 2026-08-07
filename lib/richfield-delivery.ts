@@ -6,6 +6,7 @@ import {
 } from "./richfield-content";
 import { getOptionalRichfieldWorkspaceId, getRichfieldApiBaseUrl } from "./richfield-config";
 import { fetchWithRichfieldTimeout } from "./richfield-fetch";
+import { RICHFIELD_CONTENT_TAG } from "./richfield-revalidation";
 import { DEFAULT_LOCALE, type Locale } from "./locale";
 
 const DELIVERY_REVALIDATE_SECONDS = 60;
@@ -25,7 +26,10 @@ async function fetchDeliveryPayload() {
     {
       cache: "force-cache",
       next: {
+        // The tag is what a publish invalidates; the interval is only the
+        // backstop for content changed outside the dashboard.
         revalidate: DELIVERY_REVALIDATE_SECONDS,
+        tags: [RICHFIELD_CONTENT_TAG],
       },
     },
   );

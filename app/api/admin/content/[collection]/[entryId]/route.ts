@@ -9,7 +9,9 @@ import {
   resolveRichfieldAdminCollectionKey,
 } from "@/lib/richfield-admin-content-model";
 import { getRichfieldWorkspaceId } from "@/lib/richfield-config";
-import { NextResponse } from "next/server";
+import { richfieldPublicPathsFor } from "@/lib/richfield-public-routes";
+import { revalidateAndWarmRichfieldContent } from "@/lib/richfield-revalidation";
+import { after, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
@@ -52,6 +54,15 @@ export async function PATCH(
     const client = createRichfieldExternalProjectsClient(session.accessToken);
     const workspaceId = getRichfieldWorkspaceId();
 
+    // Scheduled from the handler itself rather than from deep inside the
+    // mutation: `after` guarantees the invalidation runs in a request scope
+    // Next still owns, once the save response is done.
+    after(() =>
+      revalidateAndWarmRichfieldContent(
+        richfieldPublicPathsFor(collectionKey, input.slug),
+      ),
+    );
+
     return createRichfieldContentMutationStream({
       fallback: "Content request failed",
       run: (onProgress) =>
@@ -81,14 +92,19 @@ export async function DELETE(
   }
 
   try {
-    return NextResponse.json(
-      await deleteRichfieldContentItem(
-        createRichfieldExternalProjectsClient(session.accessToken),
-        getRichfieldWorkspaceId(),
-        collectionKey,
-        entryId,
-      ),
+    const result = await deleteRichfieldContentItem(
+      createRichfieldExternalProjectsClient(session.accessToken),
+      getRichfieldWorkspaceId(),
+      collectionKey,
+      entryId,
     );
+
+    // The entry's own page is gone, so only the index routes are warmed.
+    after(() =>
+      revalidateAndWarmRichfieldContent(richfieldPublicPathsFor(collectionKey)),
+    );
+
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json({ error: readErrorMessage(error) }, { status: 500 });
   }

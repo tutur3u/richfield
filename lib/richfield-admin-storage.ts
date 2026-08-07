@@ -1,9 +1,12 @@
-import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import type { StorageAnalytics } from "tuturuuu";
 import { getRichfieldAdminSession } from "./richfield-admin-api";
 import { getRichfieldApiBaseUrl, getRichfieldWorkspaceId } from "./richfield-config";
 import { fetchWithRichfieldTimeout } from "./richfield-fetch";
+// Shared with the content routes: this used to be a private copy that listed
+// neither /news nor any Vietnamese path, so replacing an image never refreshed
+// them.
+import { revalidateRichfieldContent } from "./richfield-revalidation";
 
 export type RichfieldStorageAnalyticsState =
   | { data: StorageAnalytics; status: "ready" }
@@ -89,16 +92,6 @@ export async function getRichfieldStorageAnalytics(
       status: "unavailable",
     };
   }
-}
-
-function revalidateRichfieldContent() {
-  revalidatePath("/", "layout");
-  revalidatePath("/");
-  revalidatePath("/brands");
-  revalidatePath("/careers");
-  revalidatePath("/contact");
-  revalidatePath("/about/our-story");
-  revalidatePath("/about/who-we-are");
 }
 
 function getPlatformStorageUrl(request: Request) {

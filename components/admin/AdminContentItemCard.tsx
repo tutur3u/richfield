@@ -2,11 +2,12 @@
 
 import { Image as ImageIcon } from "@phosphor-icons/react";
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import type {
   RichfieldAdminCollectionKey,
   RichfieldAdminContentItem,
 } from "@/lib/richfield-admin-content-model";
+import { AdminLocalDateTime } from "./AdminLocalDateTime";
 
 function statusTone(status: string) {
   if (status === "published") return "admin-status-published";
@@ -68,7 +69,6 @@ export function AdminContentItemCard({
   selected: boolean;
 }) {
   const t = useTranslations("admin.common");
-  const locale = useLocale() === "vi" ? "vi-VN" : "en-US";
   const statusLabel =
     item.status === "published"
       ? t("live")
@@ -83,12 +83,9 @@ export function AdminContentItemCard({
   const galleryMeta = [item.pageSection, item.placement, item.category]
     .filter(Boolean)
     .join(" · ");
-  const createdLabel = (isResponse ? item.receivedAt || item.createdAt : item.createdAt)
-    ? new Intl.DateTimeFormat(locale, {
-        dateStyle: "medium",
-        timeZone: "Asia/Ho_Chi_Minh",
-      }).format(new Date(isResponse ? item.receivedAt || item.createdAt : item.createdAt))
-    : null;
+  const createdAt = isResponse
+    ? item.receivedAt || item.createdAt
+    : item.createdAt;
 
   if (isResponse) {
     const sender = item.name || item.email || t("untitled");
@@ -108,7 +105,12 @@ export function AdminContentItemCard({
         <span className="flex flex-wrap items-start gap-2 sm:max-w-52 sm:justify-end">
           <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${responseTone(item.submissionStatus)}`}>{item.submissionStatus || t("responseNew")}</span>
           <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${responseTone(item.emailNotificationStatus)}`}>{item.emailNotificationStatus || t("deliveryPending")}</span>
-          {createdLabel ? <span className="basis-full text-right text-xs text-admin-ink-soft">{createdLabel}</span> : null}
+          {createdAt ? (
+            <AdminLocalDateTime
+              className="basis-full text-right text-xs text-admin-ink-soft"
+              value={createdAt}
+            />
+          ) : null}
         </span>
       </button>
     );
@@ -157,10 +159,12 @@ export function AdminContentItemCard({
         ) : item.slug ? (
           <span className="truncate text-xs text-admin-ink-soft">/{item.slug}</span>
         ) : null}
-        {collectionKey === "articles" && createdLabel ? (
-          <span className="text-xs text-admin-ink-soft">
-            {t("createdOn", { date: createdLabel })}
-          </span>
+        {createdAt ? (
+          <AdminLocalDateTime
+            className="text-xs text-admin-ink-soft"
+            prefix={`${t("createdLabel")}: `}
+            value={createdAt}
+          />
         ) : null}
         <span className="mt-1 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-admin-ink-soft">
           <span>

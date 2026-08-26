@@ -63,6 +63,7 @@ import {
   type SaveFlowError,
   type SaveProgressState,
 } from "./richfield-admin-save-progress";
+import { AdminLocalDateTime } from "./AdminLocalDateTime";
 
 /**
  * The content editor.
@@ -425,44 +426,57 @@ export function ContentForm({
 
   if (imageOnly) {
     return (
-      <form className="grid min-w-0 gap-5" onSubmit={submit}>
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[rgba(184,112,81,0.28)] pb-4">
+      <form className="grid min-w-0 gap-6 pb-10" onSubmit={submit}>
+        <div className="flex flex-col gap-4 border-b border-admin-rule pb-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
             <p className="script-label">
               {effectiveItem
                 ? t("editImage")
                 : t("createItem", { item: itemName })}
             </p>
-            <h2 className="break-words font-display text-3xl leading-none text-[var(--navy)] sm:text-4xl">
+            <h2 className="mt-2 break-words font-display text-3xl leading-[1.06] tracking-[-0.025em] text-admin-ink sm:text-4xl">
               {draft.title || t("untitledItem", { item: itemName })}
             </h2>
+            <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-admin-ink-soft">
+              <Badge variant="outline">{t(`statuses.${draft.status}`)}</Badge>
+              <span aria-hidden>·</span>
+              <span>{contentLocale === "vi" ? "Tiếng Việt" : "English"}</span>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {previewHref ? (
-              <Link
-                className="button-secondary"
-                href={previewHref}
-                rel="noreferrer"
-                target="_blank"
+              <Button
+                render={
+                  <Link
+                    href={previewHref}
+                    rel="noreferrer"
+                    target="_blank"
+                  />
+                }
+                size="lg"
+                variant="outline"
               >
+                <Eye aria-hidden data-icon="inline-start" />
                 {t("openPreview")}
-              </Link>
+              </Button>
             ) : null}
-            <button
-              className="button-secondary disabled:cursor-not-allowed disabled:opacity-50"
+            <Button
               disabled={isBusy}
               onClick={onCloseRequest}
+              size="lg"
               type="button"
+              variant="outline"
             >
               {t("close")}
-            </button>
-            <button
-              className="button-primary disabled:cursor-not-allowed disabled:opacity-50"
+            </Button>
+            <Button
               disabled={!canSave || imageProcessing}
+              size="lg"
               type="submit"
             >
+              <FloppyDisk aria-hidden data-icon="inline-start" />
               {submitting ? t("saving") : t("save")}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -470,118 +484,189 @@ export function ContentForm({
           <SaveProgressPanel state={saveProgress} />
         ) : null}
 
-        <div
-          aria-label={t("replaceImage")}
-          className={`group relative aspect-[16/10] w-full overflow-hidden border-2 border-dashed transition ${
-            imageDragActive
-              ? "border-[var(--gold)]"
-              : "border-[rgba(184,112,81,0.5)] hover:border-[var(--copper)]"
-          } ${
-            isBusy || imageProcessing
-              ? "cursor-not-allowed opacity-70"
-              : "cursor-pointer"
-          }`}
-          onClick={() => {
-            if (!isBusy && !imageProcessing) imageInputRef.current?.click();
-          }}
-          onDragLeave={() => setImageDragActive(false)}
-          onDragOver={(event) => {
-            event.preventDefault();
-            if (!isBusy && !imageProcessing) setImageDragActive(true);
-          }}
-          onDrop={handleImageDrop}
-          onKeyDown={(event) => {
-            if (event.key === "Enter" || event.key === " ") {
-              event.preventDefault();
-              if (!isBusy && !imageProcessing) imageInputRef.current?.click();
-            }
-          }}
-          role="button"
-          tabIndex={0}
-        >
-          {showImagePreview ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              alt={draft.imageAlt || effectiveItem?.title || t("image")}
-              className="h-full w-full object-cover"
-              src={previewImageSrc as string}
-              style={{ objectPosition: draft.objectPosition?.trim() || "center" }}
-            />
-          ) : (
-            <div className="grid h-full place-items-center px-4 text-center text-sm text-[var(--ink-soft)]">
-              {t("noImage")}
+        <div className="grid min-w-0 gap-5 xl:grid-cols-[minmax(17rem,0.62fr)_minmax(0,1.38fr)] xl:items-start">
+          <section className="grid gap-5 rounded-xl border border-admin-rule bg-admin-panel p-5 shadow-sm sm:p-6">
+            <div>
+              <p className="script-label">{t("imageDetails")}</p>
+              <p className="mt-2 text-sm leading-6 text-admin-ink-soft">
+                {t("imageDetailsHelp")}
+              </p>
             </div>
-          )}
-          {imageFile ? (
-            <span className="absolute left-3 top-3 border border-[var(--gold)] bg-[var(--navy)] px-2 py-1 text-[0.6rem] font-black uppercase tracking-[0.14em] text-[var(--parchment)]">
-              {t("new")}
-            </span>
-          ) : null}
-          <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 bg-[rgba(12,31,52,0.74)] px-3 py-2 text-xs text-[var(--parchment)]">
-            <span className="font-bold">
-              {imageProcessing
-                ? t("optimizing")
-                : showImagePreview
-                  ? t("dragReplace")
-                  : t("dragAdd")}
-            </span>
-            <span className="opacity-80">{t("imageLimit")}</span>
-          </div>
-        </div>
-        <input
-          accept="image/*"
-          className="hidden"
-          disabled={isBusy}
-          name="imageFile"
-          onChange={updateImageFile}
-          ref={imageInputRef}
-          type="file"
-        />
-        {imageFileLabel ? (
-          <span className="-mt-2 truncate text-xs font-bold text-[var(--navy)]">
-            {imageFileLabel}
-          </span>
-        ) : null}
-        {fieldErrors.imageFile ? (
-          <span className="-mt-2 text-xs text-red-700">
-            {fieldErrors.imageFile}
-          </span>
-        ) : null}
 
-        {effectiveItem ? (
-          confirmDelete ? (
-            <div className="flex flex-wrap items-center gap-3 border border-red-300 bg-red-500/10 px-3 py-2 text-sm text-red-800">
-              <span>{t("removeConfirm", { title: effectiveItem.title })}</span>
-              <div className="flex gap-2">
-                <button
-                  className="min-h-9 bg-red-800 px-3 text-sm font-bold text-white disabled:opacity-50"
-                  disabled={isBusy}
-                  onClick={() => void deleteItem()}
-                  type="button"
-                >
-                  {deleting ? t("removing") : t("delete")}
-                </button>
-                <button
-                  className="button-secondary min-h-9"
-                  disabled={isBusy}
-                  onClick={() => setConfirmDelete(false)}
-                  type="button"
-                >
-                  {t("keep")}
-                </button>
+            <TextField
+              disabled={isBusy}
+              error={fieldErrors.title}
+              label={t("fields.title")}
+              name="title"
+              onChange={updateDraft}
+              placeholder={t("placeholders.galleryTitle")}
+              required
+              value={draft.title}
+            />
+            <TextAreaField
+              disabled={isBusy}
+              label={t("fields.imageDescription")}
+              name="imageAlt"
+              onChange={updateDraft}
+              placeholder={t("placeholders.imageDescription")}
+              rows={3}
+              value={draft.imageAlt}
+            />
+
+            {effectiveItem ? (
+              <dl className="grid gap-3 border-t border-admin-rule pt-4 text-sm">
+                <div className="grid gap-1">
+                  <dt className="text-[10px] font-black uppercase tracking-[0.15em] text-admin-ink-soft">
+                    {t("created")}
+                  </dt>
+                  <dd className="font-medium text-admin-ink">
+                    <AdminLocalDateTime value={effectiveItem.createdAt} />
+                  </dd>
+                </div>
+                <div className="grid gap-1">
+                  <dt className="text-[10px] font-black uppercase tracking-[0.15em] text-admin-ink-soft">
+                    {t("updated")}
+                  </dt>
+                  <dd className="font-medium text-admin-ink">
+                    <AdminLocalDateTime value={effectiveItem.updatedAt} />
+                  </dd>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {[effectiveItem.pageSection, effectiveItem.placement, effectiveItem.category]
+                    .filter(Boolean)
+                    .map((value, index) => (
+                      <Badge key={`${value}-${index}`} variant="outline">
+                        {value}
+                      </Badge>
+                    ))}
+                </div>
+              </dl>
+            ) : null}
+          </section>
+
+          <section className="grid min-w-0 gap-4 rounded-xl border border-admin-rule bg-admin-panel p-4 shadow-sm sm:p-5">
+            <div>
+              <p className="script-label">{t("imageFile")}</p>
+              <p className="mt-2 text-sm leading-6 text-admin-ink-soft">
+                {t("imageHelp")}
+              </p>
+            </div>
+            <div
+              aria-label={t("replaceImage")}
+              className={`group relative grid aspect-[16/10] max-h-[62vh] min-h-64 w-full place-items-center overflow-hidden rounded-xl border-2 border-dashed bg-admin-parchment transition ${
+                imageDragActive
+                  ? "border-admin-gold ring-4 ring-admin-gold/10"
+                  : "border-admin-rule-strong hover:border-admin-gold"
+              } ${
+                isBusy || imageProcessing
+                  ? "cursor-not-allowed opacity-70"
+                  : "cursor-pointer"
+              }`}
+              onClick={() => {
+                if (!isBusy && !imageProcessing) imageInputRef.current?.click();
+              }}
+              onDragLeave={() => setImageDragActive(false)}
+              onDragOver={(event) => {
+                event.preventDefault();
+                if (!isBusy && !imageProcessing) setImageDragActive(true);
+              }}
+              onDrop={handleImageDrop}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  if (!isBusy && !imageProcessing) imageInputRef.current?.click();
+                }
+              }}
+              role="button"
+              tabIndex={0}
+            >
+              {showImagePreview ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  alt={draft.imageAlt || effectiveItem?.title || t("image")}
+                  className="h-full w-full object-contain"
+                  src={previewImageSrc as string}
+                  style={{ objectPosition: draft.objectPosition?.trim() || "center" }}
+                />
+              ) : (
+                <div className="grid h-full place-items-center px-4 text-center text-sm text-admin-ink-soft">
+                  {t("noImage")}
+                </div>
+              )}
+              {imageFile ? (
+                <span className="absolute left-3 top-3 rounded-full border border-admin-gold bg-admin-navy px-3 py-1 text-[0.6rem] font-black uppercase tracking-[0.14em] text-white shadow-sm">
+                  {t("new")}
+                </span>
+              ) : null}
+              <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 bg-admin-navy/85 px-4 py-3 text-xs text-white backdrop-blur-sm">
+                <span className="font-bold">
+                  {imageProcessing
+                    ? t("optimizing")
+                    : showImagePreview
+                      ? t("dragReplace")
+                      : t("dragAdd")}
+                </span>
+                <span className="text-white/75">{t("imageLimit")}</span>
               </div>
             </div>
-          ) : (
-            <button
-              className="justify-self-start text-sm font-bold text-red-800 underline decoration-red-800/25 underline-offset-4 disabled:opacity-50"
+            <input
+              accept="image/*"
+              className="hidden"
               disabled={isBusy}
-              onClick={() => setConfirmDelete(true)}
-              type="button"
-            >
-              {t("removeImage")}
-            </button>
-          )
-        ) : null}
+              name="imageFile"
+              onChange={updateImageFile}
+              ref={imageInputRef}
+              type="file"
+            />
+            {imageFileLabel ? (
+              <span className="truncate text-xs font-bold text-admin-ink">
+                {imageFileLabel}
+              </span>
+            ) : null}
+            {fieldErrors.imageFile ? (
+              <span className="text-xs text-red-600 dark:text-red-400">
+                {fieldErrors.imageFile}
+              </span>
+            ) : null}
+
+            {effectiveItem ? (
+              confirmDelete ? (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-700 dark:text-red-300">
+                  <span>{t("removeConfirm", { title: effectiveItem.title })}</span>
+                  <div className="flex gap-2">
+                    <Button
+                      disabled={isBusy}
+                      onClick={() => void deleteItem()}
+                      type="button"
+                      variant="destructive"
+                    >
+                      {deleting ? t("removing") : t("delete")}
+                    </Button>
+                    <Button
+                      disabled={isBusy}
+                      onClick={() => setConfirmDelete(false)}
+                      type="button"
+                      variant="outline"
+                    >
+                      {t("keep")}
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <Button
+                  className="justify-self-start"
+                  disabled={isBusy}
+                  onClick={() => setConfirmDelete(true)}
+                  type="button"
+                  variant="destructive"
+                >
+                  <Trash aria-hidden data-icon="inline-start" />
+                  {t("removeImage")}
+                </Button>
+              )
+            ) : null}
+          </section>
+        </div>
       </form>
     );
   }

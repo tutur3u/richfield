@@ -11,9 +11,9 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 import { contentKeys } from "@/lib/admin/content-queries";
 import type { RichfieldAdminContentItem } from "@/lib/richfield-admin-content-model";
@@ -28,6 +28,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { AdminLocalDateTime } from "./AdminLocalDateTime";
 import { adminFetch } from "./richfield-admin-session-client";
 
 function tone(status: string) {
@@ -48,7 +49,7 @@ function StatusBadge({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Detail({ label, value, href }: { href?: string; label: string; value: string }) {
+function Detail({ label, value, href }: { href?: string; label: string; value: ReactNode }) {
   return (
     <div className="grid gap-1 border-b border-admin-rule py-4 last:border-0 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-4">
       <dt className="text-[10px] font-black uppercase tracking-[0.16em] text-admin-ink-soft">{label}</dt>
@@ -62,19 +63,11 @@ function Detail({ label, value, href }: { href?: string; label: string; value: s
 export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdminContentItem; sectionHref: string }) {
   const t = useTranslations("admin.responses");
   const common = useTranslations("admin.common");
-  const locale = useLocale() === "vi" ? "vi-VN" : "en-US";
   const router = useRouter();
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const received = item.receivedAt || item.createdAt;
-  const receivedLabel = received
-    ? new Intl.DateTimeFormat(locale, {
-        dateStyle: "long",
-        timeStyle: "short",
-        timeZone: "Asia/Ho_Chi_Minh",
-      }).format(new Date(received))
-    : "—";
   const sender = item.name || item.email || t("unknownSender");
 
   async function remove() {
@@ -105,7 +98,11 @@ export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdmi
             <div className="min-w-0">
               <p className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-admin-clay">{item.inquiryType || t("enquiry")}</p>
               <h1 className="font-display text-3xl leading-tight text-admin-ink sm:text-4xl">{sender}</h1>
-              <p className="mt-2 flex items-center gap-2 text-sm text-admin-ink-soft"><CalendarBlank aria-hidden size={16} />{t("received", { date: receivedLabel })}</p>
+              <p className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-admin-ink-soft">
+                <CalendarBlank aria-hidden size={16} />
+                <span>{t("receivedAt")}:</span>
+                <AdminLocalDateTime value={received} />
+              </p>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -132,7 +129,10 @@ export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdmi
             <Detail href={item.email ? `mailto:${item.email}` : undefined} label={t("email")} value={item.email} />
             <Detail label={t("country")} value={item.country} />
             <Detail label={t("inquiryType")} value={item.inquiryType} />
-            <Detail label={t("receivedAt")} value={receivedLabel} />
+            <Detail
+              label={t("receivedAt")}
+              value={received ? <AdminLocalDateTime value={received} /> : "—"}
+            />
           </dl>
         </aside>
       </div>

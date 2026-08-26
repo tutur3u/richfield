@@ -22,6 +22,7 @@ import {
   summariseForwardingMetrics,
 } from "@/lib/richfield-response-metrics";
 import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
+import { AdminLocalDateTime } from "./AdminLocalDateTime";
 import { adminFetch } from "./richfield-admin-session-client";
 
 type ReadyStorageAnalytics = Extract<
@@ -46,16 +47,6 @@ function formatBytes(bytes: number) {
       : value.toFixed(1);
 
   return `${formatted} ${byteUnits[exponent]}`;
-}
-
-function formatFileDate(value: string) {
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return RICHFIELD_ADMIN_COPY.storage.unknownDate;
-  }
-
-  return new Intl.DateTimeFormat("en", { dateStyle: "medium" }).format(date);
 }
 
 /**
@@ -136,7 +127,12 @@ function StorageFileHighlight({
             {file.name}
           </strong>
           <span className="mt-1 block text-sm text-[var(--ink-soft)]">
-            {formatBytes(file.size)} - {formatFileDate(file.createdAt)}
+            {formatBytes(file.size)} ·{" "}
+            {file.createdAt ? (
+              <AdminLocalDateTime value={file.createdAt} />
+            ) : (
+              RICHFIELD_ADMIN_COPY.storage.unknownDate
+            )}
           </span>
         </div>
       ) : (
@@ -205,34 +201,38 @@ function StorageFileRow({
 }) {
   const isRenaming = renamingPath === item.path;
   const isConfirmingDelete = confirmDeletePath === item.path;
-  const dateLabel = formatFileDate(item.updatedAt ?? item.createdAt ?? "");
+  const timestamp = item.updatedAt ?? item.createdAt;
 
   return (
-    <div className="grid gap-4 border border-[rgba(184,112,81,0.34)] bg-white/68 p-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+    <div className="grid gap-4 rounded-xl border border-admin-rule bg-admin-panel p-4 shadow-sm md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
       <div className="min-w-0">
         {isRenaming ? (
           <input
-            className="min-h-11 w-full border border-[rgba(184,112,81,0.42)] bg-white px-3 text-sm font-bold text-[var(--ink)] outline-none focus:border-[var(--gold)]"
+            className="min-h-11 w-full rounded-lg border border-admin-rule-strong bg-admin-surface px-3 text-sm font-bold text-admin-ink outline-none focus:border-admin-gold focus:ring-3 focus:ring-admin-gold/10"
             onChange={(event) => setRenameValue(event.currentTarget.value)}
             placeholder={item.name}
             value={renameValue}
           />
         ) : item.kind === "folder" ? (
           <button
-            className="block max-w-full truncate text-left font-bold text-[var(--ink)] underline decoration-[rgba(184,112,81,0.28)] underline-offset-4"
+            className="block max-w-full truncate text-left font-bold text-admin-ink underline decoration-admin-gold/35 underline-offset-4 hover:decoration-admin-gold"
             onClick={() => onOpenFolder(item.path)}
             type="button"
           >
             {item.name}
           </button>
         ) : (
-          <strong className="block truncate text-[var(--ink)]">
+          <strong className="block truncate text-admin-ink">
             {item.name}
           </strong>
         )}
-        <span className="mt-1 block text-sm text-[var(--ink-soft)]">
+        <span className="mt-1 block text-sm text-admin-ink-soft">
           {item.kind === "folder" ? "Folder" : formatBytes(item.size)} -{" "}
-          {dateLabel}
+          {timestamp ? (
+            <AdminLocalDateTime value={timestamp} />
+          ) : (
+            RICHFIELD_ADMIN_COPY.storage.unknownDate
+          )}
         </span>
       </div>
 

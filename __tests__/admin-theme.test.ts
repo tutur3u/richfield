@@ -64,4 +64,9 @@ describe("theme bootstrap script", () => {
     // here prevents a flash without changing the magazine theme.
     expect(ADMIN_THEME_BOOTSTRAP).toContain("document.documentElement");
   });
+
+  test("sets the dark class for explicit and system dark preferences", () => {
+    expect(ADMIN_THEME_BOOTSTRAP).toContain("prefers-color-scheme: dark");
+    expect(ADMIN_THEME_BOOTSTRAP).toContain('classList.toggle("dark",d)');
+  });
 });

@@ -18,11 +18,37 @@ function isTheme(value: unknown): value is AdminTheme {
 // which React cannot see, and useSyncExternalStore is the supported way to read
 // an external source without a setState-in-effect cascade.
 const listeners = new Set<() => void>();
+let stopWatchingSystemTheme: (() => void) | null = null;
+
+function applyTheme(theme: AdminTheme) {
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const isDark = theme === "dark" || (theme === "system" && prefersDark);
+
+  document.documentElement.setAttribute("data-admin-theme", theme);
+  document.documentElement.classList.toggle("dark", isDark);
+}
 
 function subscribe(listener: () => void) {
   listeners.add(listener);
+
+  if (!stopWatchingSystemTheme) {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const syncSystemTheme = () => {
+      const theme = getSnapshot();
+      if (theme === "system") applyTheme(theme);
+      for (const currentListener of listeners) currentListener();
+    };
+
+    media.addEventListener("change", syncSystemTheme);
+    stopWatchingSystemTheme = () => {
+      media.removeEventListener("change", syncSystemTheme);
+      stopWatchingSystemTheme = null;
+    };
+  }
+
   return () => {
     listeners.delete(listener);
+    if (listeners.size === 0) stopWatchingSystemTheme?.();
   };
 }
 
@@ -53,7 +79,7 @@ export function useAdminTheme() {
       // Preference will not persist; the current session still applies.
     }
 
-    document.documentElement.setAttribute("data-admin-theme", next);
+    applyTheme(next);
 
     for (const listener of listeners) listener();
   }

@@ -6,6 +6,14 @@ const rootLoadingPath = join(
   process.cwd(),
   "app/(system)/admin/loading.tsx",
 );
+const sectionLoadingPath = join(
+  process.cwd(),
+  "app/(system)/admin/[section]/loading.tsx",
+);
+const loginLoadingPath = join(
+  process.cwd(),
+  "app/(system)/admin/login/loading.tsx",
+);
 const sectionScreenSource = readFileSync(
   join(process.cwd(), "components/admin/AdminSectionScreen.tsx"),
   "utf8",
@@ -22,6 +30,8 @@ const systemLayoutSource = readFileSync(
 describe("admin shell loading behavior", () => {
   it("does not replace the entire dashboard with a parent loading page", () => {
     expect(existsSync(rootLoadingPath)).toBe(false);
+    expect(existsSync(sectionLoadingPath)).toBe(true);
+    expect(existsSync(loginLoadingPath)).toBe(true);
   });
 
   it("suspends only the collection beneath the real section heading", () => {

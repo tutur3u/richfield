@@ -3,12 +3,13 @@
     "login": {
       "back": "Back to the site",
       "continue": "Continue with Tuturuuu",
-      "description": "Your Tuturuuu account carries your access. You will come straight back here once you have signed in.",
-      "eyebrow": "Sign in",
+      "description": "Use your Tuturuuu account to securely open the Richfield content workspace.",
+      "eyebrow": "Richfield Admin",
       "help": "Need access? Ask a Richfield administrator to add you to the workspace.",
       "masthead": "The desk behind the magazine.",
       "mastheadDescription": "Write company updates, open and close positions, and read what visitors send you — all from one place.",
-      "staffOnly": "Staff access only"
+      "staffOnly": "Staff access only",
+      "title": "Welcome back"
     },
     "session": {
       "checking": "Checking your Tuturuuu session before the dashboard opens.",
@@ -640,6 +641,18 @@
     "email": "Email",
     "inquiryType": "Inquiry type",
     "message": "Message",
+    "intro": "Tell us a little about what you need and the right team will follow up.",
+    "requiredNote": "* Required",
+    "messageHint": "Up to {max} characters.",
+    "verificationTitle": "Secure verification",
+    "verificationHint": "Complete the quick Cloudflare check before sending.",
+    "placeholders": {
+      "name": "Your full name",
+      "company": "Company or organization",
+      "country": "Country or market",
+      "email": "name@company.com",
+      "message": "Share your goals, timeline, and how we can help…"
+    },
     "sending": "Sending…",
     "send": "Send message",
     "inquiryTypeLabels": {

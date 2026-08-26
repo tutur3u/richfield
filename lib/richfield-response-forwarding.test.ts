@@ -157,7 +157,10 @@ describe("buildForwardEmail", () => {
     expect(email.replyTo).toBe("buyer@acme.test");
     // Carried so the platform's audit row points back at the response it sent.
     expect(email.entityId).toBe("entry-1");
-    expect(email.subject).toBe("[Richfield] Distribution from Acme Foods");
+    expect(email.subject).toBe(
+      "[Richfield enquiry] Distribution · Acme Foods",
+    );
+    expect(email.html).toContain("Open response in Richfield");
     expect(email.body).toContain("We would like to stock your range.");
     expect(email.body).toContain("Mai Nguyen");
   });

@@ -1,102 +1,69 @@
-import Image from "next/image";
+"use client";
+
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-
-const TUTURUUU_LOGO_URL = "/media/branding/tuturuuu.svg";
+import { ArrowRight, LockKey } from "@phosphor-icons/react";
+import { AdminThemeToggle } from "./AdminTheme";
 
 /**
  * Sign-in screen for the content dashboard.
  *
- * Editorial rather than a generic auth card: a navy masthead panel carrying the
- * Richfield voice sits beside the single action, so the door into the tool
- * still looks like the publication it edits. There is exactly one way in —
- * access is centralised in Tuturuuu — so the screen commits to that instead of
- * offering a form it cannot honour.
+ * A deliberately quiet single-action screen. There is exactly one way in —
+ * access is centralised in Tuturuuu — so the page gets out of the user's way
+ * while retaining Richfield's editorial typography and saved theme preference.
  */
 export function RichfieldAdminLoginPanel({ loginHref }: { loginHref: string }) {
   const t = useTranslations("admin.login");
 
   return (
-    <main className="section-band grid min-h-screen place-items-center px-4 py-10 sm:px-6">
-      <section className="parchment-card grid w-full max-w-[880px] overflow-hidden md:grid-cols-[1.05fr_1fr]">
-        {/* Masthead. Hidden below md: on a phone it would push the action
-            below the fold for no gain. */}
-        <div className="relative hidden flex-col justify-between bg-ink p-8 text-cream md:flex lg:p-10">
-          <div
-            aria-hidden
-            className="absolute inset-x-8 top-0 h-px bg-gold opacity-70 lg:inset-x-10"
-          />
-          <p className="text-[11px] font-black uppercase tracking-[0.24em] text-gold">
+    <main className="relative grid min-h-screen overflow-hidden bg-admin-parchment px-4 py-8 text-admin-ink sm:px-6">
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,color-mix(in_srgb,var(--color-admin-gold)_18%,transparent),transparent_42%)]" />
+      <div className="relative mx-auto flex w-full max-w-md flex-col">
+        <header className="flex items-center justify-between py-2">
+          <Link className="font-display text-2xl tracking-[-0.02em] text-admin-ink" href="/">
             Richfield
-          </p>
-          <div className="py-10">
-            <h1 className="font-display text-[clamp(2.5rem,4.6vw,3.6rem)] leading-[0.98] tracking-[-0.02em]">
-              {t("masthead")}
-            </h1>
-            <p className="mt-5 max-w-[34ch] text-sm leading-7 text-cream/70">
-              {t("mastheadDescription")}
+          </Link>
+          <AdminThemeToggle alwaysVisible />
+        </header>
+
+        <div className="grid flex-1 place-items-center py-8 sm:py-12">
+          <section className="w-full rounded-2xl border border-admin-rule bg-admin-panel p-6 shadow-[0_24px_70px_rgb(12_31_52_/_0.10)] sm:p-8">
+            <span className="grid size-11 place-items-center rounded-xl border border-admin-rule bg-admin-surface text-admin-copper">
+              <LockKey aria-hidden size={21} weight="bold" />
+            </span>
+            <p className="mt-6 text-[10px] font-black uppercase tracking-[0.22em] text-admin-copper">
+              {t("eyebrow")}
             </p>
-          </div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-cream/45">
-            {t("staffOnly")}
-          </p>
-        </div>
+            <h1 className="mt-2 font-display text-[clamp(2rem,8vw,2.7rem)] leading-[1.02] tracking-[-0.025em] text-admin-ink">
+              {t("title")}
+            </h1>
+            <p className="mt-3 text-sm leading-6 text-admin-ink-soft">
+              {t("description")}
+            </p>
 
-        <div className="flex flex-col justify-center p-7 sm:p-9 lg:p-10">
-          <Image
-            alt=""
-            className="mb-6"
-            height={44}
-            priority
-            src={TUTURUUU_LOGO_URL}
-            width={44}
-          />
-          <p className="script-label">{t("eyebrow")}</p>
-          <h2 className="mt-2 font-display text-[clamp(1.9rem,3.4vw,2.5rem)] leading-[1.02] tracking-[-0.015em] text-ink">
-            {t("continue")}
-          </h2>
-          <p className="mt-3 max-w-[36ch] text-sm leading-6 text-admin-ink-soft">
-            {t("description")}
-          </p>
-
-          <div className="mt-7 grid gap-2.5">
-            <a className="button-primary w-full" href={loginHref}>
+            <a className="mt-7 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-admin-navy px-5 text-sm font-bold text-white transition hover:bg-admin-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-gold" href={loginHref}>
               {t("continue")}
+              <ArrowRight aria-hidden size={16} weight="bold" />
             </a>
-            <Link className="button-secondary w-full" href="/">
-              {t("back")}
-            </Link>
-          </div>
-          <form
-            action="/api/admin/locale"
-            className="mt-4 flex justify-center gap-2 text-xs"
-            method="post"
-          >
-            <input name="next" type="hidden" value="/admin/news" />
-            <button
-              className="px-2 py-1 font-bold text-admin-ink-soft hover:text-ink"
-              name="locale"
-              type="submit"
-              value="en"
-            >
-              English
-            </button>
-            <span aria-hidden className="py-1 text-line">/</span>
-            <button
-              className="px-2 py-1 font-bold text-admin-ink-soft hover:text-ink"
-              name="locale"
-              type="submit"
-              value="vi"
-            >
-              Tiếng Việt
-            </button>
-          </form>
 
-          <p className="mt-6 border-t border-line pt-4 text-xs leading-5 text-admin-ink-soft">
-            {t("help")}
-          </p>
+            <div className="mt-5 flex items-center justify-between gap-4 border-t border-admin-rule pt-5">
+              <Link className="text-xs font-semibold text-admin-ink-soft transition hover:text-admin-ink" href="/">
+                ← {t("back")}
+              </Link>
+              <form action="/api/admin/locale" className="flex items-center gap-1 text-xs" method="post">
+                <input name="next" type="hidden" value="/admin/news" />
+                <button className="rounded-md px-2 py-1 font-bold text-admin-ink-soft hover:bg-admin-surface hover:text-admin-ink" name="locale" type="submit" value="en">EN</button>
+                <span aria-hidden className="text-admin-rule-strong">/</span>
+                <button className="rounded-md px-2 py-1 font-bold text-admin-ink-soft hover:bg-admin-surface hover:text-admin-ink" name="locale" type="submit" value="vi">VI</button>
+              </form>
+            </div>
+          </section>
         </div>
-      </section>
+
+        <p className="pb-3 text-center text-xs leading-5 text-admin-ink-soft">
+          {t("help")}
+        </p>
+      </div>
     </main>
   );
 }

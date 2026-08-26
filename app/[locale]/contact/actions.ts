@@ -13,6 +13,7 @@ import {
 import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
 import { sendRichfieldEmail } from "@/lib/richfield-response-forwarding";
+import { buildRichfieldContactEmail } from "@/lib/richfield-contact-email";
 import { resolveContactRecipients } from "@/lib/richfield-contact-recipients";
 
 export type ContactState =
@@ -221,23 +222,26 @@ async function deliverLead(input: {
   inboxes: string[];
   entryId?: string | null;
 }) {
+  const content = buildRichfieldContactEmail({
+    company: input.company,
+    country: input.country,
+    email: input.email,
+    entryId: input.entryId,
+    inquiryType: input.inquiryType,
+    message: input.message,
+    name: input.name,
+    receivedAt: new Date().toISOString(),
+  });
+
   // Sent through Tuturuuu's SES-backed mailer with the app credentials this
   // site already holds, so there is no third-party mail key here to rotate or
   // leak, and the send is rate limited, audited, and metered centrally.
   await sendRichfieldEmail({
-    body: [
-      `Name: ${input.name}`,
-      `Company: ${input.company}`,
-      `Country: ${input.country}`,
-      `Email: ${input.email}`,
-      `Inquiry type: ${input.inquiryType}`,
-      '',
-      'Message:',
-      input.message,
-    ].join('\n'),
+    body: content.text,
     entityId: input.entryId ?? undefined,
+    html: content.html,
     replyTo: input.email,
-    subject: `[Richfield] ${input.inquiryType} from ${input.company}`,
+    subject: content.subject,
     to: input.inboxes,
   });
 }

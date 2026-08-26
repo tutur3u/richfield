@@ -3,12 +3,13 @@
     "login": {
       "back": "Quay lại trang web",
       "continue": "Tiếp tục với Tuturuuu",
-      "description": "Tài khoản Tuturuuu của bạn xác nhận quyền truy cập. Sau khi đăng nhập, bạn sẽ quay lại đây.",
-      "eyebrow": "Đăng nhập",
+      "description": "Dùng tài khoản Tuturuuu để mở không gian quản trị nội dung Richfield một cách an toàn.",
+      "eyebrow": "Quản trị Richfield",
       "help": "Bạn cần quyền truy cập? Hãy nhờ quản trị viên Richfield thêm bạn vào workspace.",
       "masthead": "Bàn biên tập phía sau tạp chí.",
       "mastheadDescription": "Viết tin công ty, quản lý vị trí tuyển dụng và đọc phản hồi của khách truy cập — tất cả tại một nơi.",
-      "staffOnly": "Chỉ dành cho nhân viên"
+      "staffOnly": "Chỉ dành cho nhân viên",
+      "title": "Chào mừng trở lại"
     },
     "session": {
       "checking": "Đang kiểm tra phiên Tuturuuu trước khi mở trang quản trị.",
@@ -640,6 +641,18 @@
     "email": "Email",
     "inquiryType": "Loại yêu cầu",
     "message": "Nội dung",
+    "intro": "Hãy chia sẻ nhu cầu của bạn để đội ngũ phù hợp có thể phản hồi.",
+    "requiredNote": "* Bắt buộc",
+    "messageHint": "Tối đa {max} ký tự.",
+    "verificationTitle": "Xác minh bảo mật",
+    "verificationHint": "Hoàn tất bước kiểm tra nhanh của Cloudflare trước khi gửi.",
+    "placeholders": {
+      "name": "Họ và tên của bạn",
+      "company": "Công ty hoặc tổ chức",
+      "country": "Quốc gia hoặc thị trường",
+      "email": "ten@congty.com",
+      "message": "Chia sẻ mục tiêu, thời gian dự kiến và cách chúng tôi có thể hỗ trợ…"
+    },
     "sending": "Đang gửi…",
     "send": "Gửi tin nhắn",
     "inquiryTypeLabels": {

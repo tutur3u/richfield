@@ -6,6 +6,7 @@ import {
 } from "./richfield-config";
 import { fetchWithRichfieldTimeout } from "./richfield-fetch";
 import { parseContactRecipients } from "./richfield-contact-recipients";
+import { buildRichfieldContactEmail } from "./richfield-contact-email";
 
 /**
  * Every forwarded response costs this much to send. Metrics are derived from
@@ -48,6 +49,7 @@ export type RichfieldForwardingDeps = {
 
 export type RichfieldForwardEmail = {
   body: string;
+  html: string;
   /** The response this email carries, so the platform audit row points back at it. */
   entityId: string;
   replyTo: string | null;
@@ -73,22 +75,23 @@ export function buildForwardEmail(
   const name = readString(profile, "name") ?? "Unknown sender";
   const inquiryType = readString(profile, "inquiryType") ?? "Enquiry";
   const senderEmail = readString(profile, "email");
+  const content = buildRichfieldContactEmail({
+    company,
+    country: readString(profile, "country") ?? "—",
+    email: senderEmail ?? "",
+    entryId: submission.id,
+    inquiryType,
+    message: submission.summary ?? "(no message)",
+    name,
+    receivedAt: readString(profile, "receivedAt"),
+  });
 
   return {
     entityId: submission.id,
-    body: [
-      `Name: ${name}`,
-      `Company: ${company}`,
-      `Country: ${readString(profile, "country") ?? "—"}`,
-      `Email: ${senderEmail ?? "—"}`,
-      `Inquiry type: ${inquiryType}`,
-      `Received: ${readString(profile, "receivedAt") ?? "—"}`,
-      "",
-      "Message:",
-      submission.summary ?? "(no message)",
-    ].join("\n"),
+    body: content.text,
+    html: content.html,
     replyTo: senderEmail,
-    subject: `[Richfield] ${inquiryType} from ${company}`,
+    subject: content.subject,
     to: recipient,
   };
 }
@@ -240,6 +243,7 @@ function emailsEndpoint() {
 export async function sendRichfieldEmail(input: {
   body: string;
   entityId?: string;
+  html?: string;
   replyTo: string | null;
   subject: string;
   to: string | string[];
@@ -256,6 +260,7 @@ export async function sendRichfieldEmail(input: {
       ...(input.replyTo ? { replyTo: [input.replyTo] } : {}),
       subject: input.subject,
       text: input.body,
+      ...(input.html ? { html: input.html } : {}),
       to: recipients,
     }),
     cache: "no-store",

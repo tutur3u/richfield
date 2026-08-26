@@ -67,14 +67,14 @@ const ICONS = {
   system: Desktop,
 };
 
-export function AdminThemeToggle() {
+export function AdminThemeToggle({ alwaysVisible = false }: { alwaysVisible?: boolean }) {
   const { setTheme, theme } = useAdminTheme();
   const t = useTranslations("admin.theme");
 
   return (
     <div
       aria-label={t("label")}
-      className="hidden items-center rounded-full border border-admin-rule bg-admin-surface p-0.5 md:flex"
+      className={`${alwaysVisible ? "flex" : "hidden md:flex"} items-center rounded-full border border-admin-rule bg-admin-surface p-0.5`}
       role="group"
     >
       {THEMES.map((option) => {

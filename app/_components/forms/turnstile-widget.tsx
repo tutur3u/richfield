@@ -36,9 +36,11 @@ export function TurnstileWidget({
       <div
         className="cf-turnstile"
         data-action="turnstile-spin-v2"
-        data-appearance="interaction-only"
+        data-appearance="always"
+        data-language="auto"
+        data-size="flexible"
         data-sitekey={siteKey}
-        data-theme="light"
+        data-theme="auto"
         id={widgetId}
       />
     </div>

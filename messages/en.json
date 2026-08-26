@@ -325,6 +325,8 @@
       "cancel": "Cancel",
       "confirmRemove": "Remove",
       "description": "Invite colleagues and manage website access without leaving Richfield.",
+      "defaultAccess": "Default access level",
+      "defaultAccessHint": "Applied to everyone in this invitation. You can change each invitation before it is accepted.",
       "done": "Done",
       "emails": "Email addresses",
       "empty": "No workspace members were returned.",
@@ -333,10 +335,12 @@
     "invitePlaceholder": "name@example.com, teammate@example.com",
       "inviteRemoved": "Invitation removed.",
       "inviteSuccess": "Invitation sent.",
+      "invitationAccessUpdated": "Invitation access updated.",
       "inviteTitle": "Invite people",
       "invitedCaption": "Waiting for them to accept their invitation.",
     "invitedTitle": "Invited",
-    "invitedStatus": "Invited",
+      "invitedStatus": "Invited",
+      "pendingAccessDescription": "Choose the access {email} will receive after accepting the invitation.",
       "loading": "Loading workspace members",
       "filterRole": "Filter by access level",
       "nameAsc": "Name A–Z",
@@ -355,7 +359,9 @@
       "team": "Site team",
       "unavailable": "Team members are not available right now.",
       "updateFailed": "The team could not be updated.",
-      "validEmail": "Enter at least one valid email address."
+      "validEmail": "Enter at least one valid email address.",
+      "workspaceDefault": "Workspace default",
+      "workspaceDefaultHint": "Uses the standard member permissions configured for this workspace."
     },
     "responses": {
       "company": "Company",

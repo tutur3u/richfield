@@ -2,7 +2,9 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import {
+  inviteRichfieldAdminMembers,
   normalizeRichfieldAdminMembersPayload,
+  updateRichfieldAdminInvitationRoles,
   updateRichfieldAdminMemberRole,
 } from "@/lib/richfield-admin-members";
 
@@ -100,6 +102,53 @@ describe("the roster includes people who were invited", () => {
       expect.objectContaining({
         body: JSON.stringify({ memberIds: ["member-1"] }),
         method: "POST",
+      }),
+    );
+  });
+
+  test("assigns an access level while inviting members", async () => {
+    vi.stubEnv("TUTURUUU_API_BASE_URL", "https://api.example.test/v1");
+    vi.stubEnv("TUTURUUU_RICHFIELD_WORKSPACE_ID", "workspace-1");
+    const fetchMock = vi.fn(async () => Response.json({ message: "success" }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await inviteRichfieldAdminMembers(
+      "token",
+      ["new.hire@richfield.test"],
+      ["publisher"],
+    );
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.example.test/v1/workspaces/workspace-1/external-projects/members/invite",
+      expect.objectContaining({
+        body: JSON.stringify({
+          emails: ["new.hire@richfield.test"],
+          roleIds: ["publisher"],
+        }),
+        method: "POST",
+      }),
+    );
+  });
+
+  test("updates access levels on an outstanding invitation", async () => {
+    vi.stubEnv("TUTURUUU_API_BASE_URL", "https://api.example.test/v1");
+    vi.stubEnv("TUTURUUU_RICHFIELD_WORKSPACE_ID", "workspace-1");
+    const fetchMock = vi.fn(async () => Response.json({ message: "success" }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await updateRichfieldAdminInvitationRoles("token", {
+      email: "new.hire@richfield.test",
+      roleIds: ["publisher"],
+    });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://api.example.test/v1/workspaces/workspace-1/external-projects/members/invite",
+      expect.objectContaining({
+        body: JSON.stringify({
+          email: "new.hire@richfield.test",
+          roleIds: ["publisher"],
+        }),
+        method: "PATCH",
       }),
     );
   });

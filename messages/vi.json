@@ -325,6 +325,8 @@
       "cancel": "Hủy",
       "confirmRemove": "Xóa",
       "description": "Mời đồng nghiệp và quản lý quyền truy cập ngay trên Richfield.",
+      "defaultAccess": "Cấp quyền mặc định",
+      "defaultAccessHint": "Áp dụng cho tất cả người trong lời mời này. Bạn có thể thay đổi từng lời mời trước khi được chấp nhận.",
       "done": "Xong",
       "emails": "Địa chỉ email",
       "empty": "Không tìm thấy thành viên nào trong không gian làm việc.",
@@ -333,10 +335,12 @@
     "invitePlaceholder": "ten@vidu.com, dongnghiep@vidu.com",
       "inviteRemoved": "Đã hủy lời mời.",
       "inviteSuccess": "Đã gửi lời mời.",
+      "invitationAccessUpdated": "Đã cập nhật quyền cho lời mời.",
       "inviteTitle": "Mời thành viên",
       "invitedCaption": "Đang chờ chấp nhận lời mời.",
     "invitedTitle": "Đã mời",
     "invitedStatus": "Đã mời",
+      "pendingAccessDescription": "Chọn quyền {email} sẽ nhận sau khi chấp nhận lời mời.",
       "loading": "Đang tải thành viên",
       "filterRole": "Lọc theo cấp quyền",
       "nameAsc": "Tên A–Z",
@@ -355,7 +359,9 @@
       "team": "Nhóm quản trị website",
       "unavailable": "Hiện không thể tải danh sách thành viên.",
       "updateFailed": "Không thể cập nhật thành viên.",
-      "validEmail": "Nhập ít nhất một địa chỉ email hợp lệ."
+      "validEmail": "Nhập ít nhất một địa chỉ email hợp lệ.",
+      "workspaceDefault": "Mặc định của không gian làm việc",
+      "workspaceDefaultHint": "Sử dụng quyền thành viên tiêu chuẩn đã cấu hình cho không gian làm việc này."
     },
     "responses": {
       "company": "Công ty",

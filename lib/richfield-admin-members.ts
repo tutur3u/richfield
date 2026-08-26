@@ -162,8 +162,24 @@ function membersEndpoint(path = "") {
 export async function inviteRichfieldAdminMembers(
   accessToken: string,
   emails: string[],
+  roleIds: string[] = [],
 ) {
-  return mutateMembers(accessToken, membersEndpoint("/invite"), "POST", { emails });
+  return mutateMembers(accessToken, membersEndpoint("/invite"), "POST", {
+    emails,
+    roleIds,
+  });
+}
+
+export async function updateRichfieldAdminInvitationRoles(
+  accessToken: string,
+  input: { email: string; roleIds: string[] },
+) {
+  return mutateMembers(
+    accessToken,
+    membersEndpoint("/invite"),
+    "PATCH",
+    input,
+  );
 }
 
 export async function removeRichfieldAdminMember(
@@ -201,7 +217,7 @@ export async function updateRichfieldAdminMemberRole(
 async function mutateMembers(
   accessToken: string,
   endpoint: string,
-  method: "DELETE" | "POST",
+  method: "DELETE" | "PATCH" | "POST",
   body?: unknown,
 ) {
   const response = await fetchWithRichfieldTimeout(endpoint, {

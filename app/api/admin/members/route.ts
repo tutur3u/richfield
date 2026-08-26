@@ -3,6 +3,7 @@ import {
   getRichfieldAdminMembers,
   inviteRichfieldAdminMembers,
   removeRichfieldAdminMember,
+  updateRichfieldAdminInvitationRoles,
   updateRichfieldAdminMemberRole,
   RichfieldAdminMembersError,
 } from "@/lib/richfield-admin-members";
@@ -38,6 +39,7 @@ export async function GET() {
 
 const inviteSchema = z.object({
   emails: z.array(z.email()).min(1).max(50),
+  roleId: z.string().trim().min(1).nullable().optional(),
 });
 const removeSchema = z
   .object({ email: z.email().optional(), id: z.string().trim().min(1).optional() })
@@ -46,6 +48,10 @@ const roleSchema = z.object({
   enabled: z.boolean(),
   roleId: z.string().trim().min(1),
   userId: z.string().trim().min(1),
+});
+const invitationRoleSchema = z.object({
+  email: z.email(),
+  roleIds: z.array(z.string().trim().min(1)).max(50),
 });
 
 export async function POST(request: Request) {
@@ -59,7 +65,13 @@ export async function POST(request: Request) {
 
   try {
     const emails = [...new Set(parsed.data.emails.map((email) => email.toLowerCase()))];
-    return NextResponse.json(await inviteRichfieldAdminMembers(session.accessToken, emails));
+    return NextResponse.json(
+      await inviteRichfieldAdminMembers(
+        session.accessToken,
+        emails,
+        parsed.data.roleId ? [parsed.data.roleId] : [],
+      ),
+    );
   } catch (error) {
     return NextResponse.json(
       { error: readErrorMessage(error) },
@@ -104,7 +116,25 @@ export async function PATCH(request: Request) {
   const session = await getRichfieldAdminSession();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const parsed = roleSchema.safeParse(await request.json().catch(() => null));
+  const payload = await request.json().catch(() => null);
+  const invitationParsed = invitationRoleSchema.safeParse(payload);
+  if (invitationParsed.success) {
+    try {
+      return NextResponse.json(
+        await updateRichfieldAdminInvitationRoles(
+          session.accessToken,
+          invitationParsed.data,
+        ),
+      );
+    } catch (error) {
+      return NextResponse.json(
+        { error: readErrorMessage(error) },
+        { status: readErrorStatus(error) },
+      );
+    }
+  }
+
+  const parsed = roleSchema.safeParse(payload);
   if (!parsed.success) {
     return NextResponse.json({ error: "Choose a valid access level." }, { status: 400 });
   }

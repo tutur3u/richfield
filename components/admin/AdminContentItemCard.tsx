@@ -73,6 +73,11 @@ export function AdminContentItemCard({
   const galleryMeta = [item.pageSection, item.placement, item.category]
     .filter(Boolean)
     .join(" · ");
+  const createdLabel = item.createdAt
+    ? new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
+        new Date(item.createdAt),
+      )
+    : null;
 
   return (
     <button
@@ -116,6 +121,11 @@ export function AdminContentItemCard({
           </span>
         ) : item.slug ? (
           <span className="truncate text-xs text-admin-ink-soft">/{item.slug}</span>
+        ) : null}
+        {collectionKey === "articles" && createdLabel ? (
+          <span className="text-xs text-admin-ink-soft">
+            {t("createdOn", { date: createdLabel })}
+          </span>
         ) : null}
         <span className="mt-1 flex flex-wrap gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-admin-ink-soft">
           <span>

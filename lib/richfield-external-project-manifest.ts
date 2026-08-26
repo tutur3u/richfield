@@ -6,6 +6,7 @@ import { peoplePhotos, partnerLogos } from "@/content/en/photography";
 import { shelfCategories } from "@/content/en/shelf";
 import { site } from "@/content/en/site";
 import { RICHFIELD_CONTACT_CHANNELS } from "./richfield-contact-channels";
+import { DEFAULT_RICHFIELD_CONTACT_RECIPIENTS } from "./richfield-contact-recipients";
 
 export type RichfieldSyncField = {
   description?: string | null;
@@ -465,7 +466,7 @@ function contactFormEntry() {
         "Other",
       ],
       maxMessageLength: 1_200,
-      recipientEmail: site.email,
+      recipientEmail: DEFAULT_RICHFIELD_CONTACT_RECIPIENTS[0],
       submitLabel: "Send message",
       successMessage,
     },

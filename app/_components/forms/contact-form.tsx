@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useId, useState } from "react";
+import { useActionState, useId } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { submitContact, type ContactState } from "@/app/[locale]/contact/actions";
 import { CTA_BOX } from "@/app/_components/magazine/primitives/cta-link";
@@ -15,9 +15,6 @@ export function ContactForm({ config }: { config: RichfieldContactForm }) {
   const formId = useId();
   const locale = useLocale();
   const t = useTranslations("contactForm");
-  // Capture mount-time once. Posted as a hidden field; the action rejects
-  // submissions faster than 3s as automated.
-  const [submittedAtMs] = useState(() => String(Date.now()));
 
   if (state.status === "ok") {
     return (
@@ -42,7 +39,6 @@ export function ContactForm({ config }: { config: RichfieldContactForm }) {
 
   return (
     <form action={formAction} id={formId} className="flex flex-col gap-6" noValidate>
-      <input type="hidden" name="submittedAtMs" value={submittedAtMs} />
       <input type="hidden" name="locale" value={locale} />
       {/* Honeypot. Visually hidden but tab-skipped. */}
       <label className="sr-only" aria-hidden="true">

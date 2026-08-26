@@ -33,7 +33,10 @@ function isAuthorized(request: Request) {
 async function resolveRecipient() {
   try {
     const content = await getRichfieldContent();
-    const recipient = content.contactForm?.recipientEmail ?? null;
+    const recipient =
+      content.contactForm?.recipientEmails?.join(",") ??
+      content.contactForm?.recipientEmail ??
+      null;
 
     return isUsableEmail(recipient) ? recipient : null;
   } catch (error) {

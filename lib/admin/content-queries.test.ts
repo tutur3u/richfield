@@ -27,7 +27,14 @@ describe("contentKeys", () => {
     // collection after a mutation would silently miss the searched lists.
     const listKey = contentKeys.list("articles", "vietnam");
     expect(listKey.slice(0, 3)).toEqual(contentKeys.collection("articles"));
-    expect(listKey.at(-1)).toEqual({ locale: "en", search: "vietnam" });
+    expect(listKey.at(-1)).toEqual({
+      completeness: "all",
+      featured: "all",
+      locale: "en",
+      search: "vietnam",
+      sort: "created-desc",
+      status: "all",
+    });
   });
 
   test("separates searches so one does not serve another's cache", () => {
@@ -46,6 +53,8 @@ describe("fetchContentPage", () => {
     const url = String(fetchMock.mock.calls[0]?.[0]);
     expect(url).toContain("/api/admin/content/articles");
     expect(url).toContain("page=2");
+    expect(url).toContain("sort=created-desc");
+    expect(url).toContain("status=all");
     expect(url).not.toContain("search=");
   });
 
@@ -59,6 +68,26 @@ describe("fetchContentPage", () => {
     });
 
     expect(String(fetchMock.mock.calls[0]?.[0])).toContain("search=logistics");
+  });
+
+  test("passes sorting and filters through for server-side pagination", async () => {
+    const fetchMock = stubFetch({ items: [], nextPage: null, page: 1, total: 0 });
+
+    await fetchContentPage({
+      collectionKey: "articles",
+      completeness: "missing",
+      featured: "featured",
+      page: 1,
+      search: "",
+      sort: "published-asc",
+      status: "scheduled",
+    });
+
+    const url = String(fetchMock.mock.calls[0]?.[0]);
+    expect(url).toContain("sort=published-asc");
+    expect(url).toContain("status=scheduled");
+    expect(url).toContain("featured=featured");
+    expect(url).toContain("completeness=missing");
   });
 
   test("fills in a partial payload rather than yielding undefined pages", async () => {

@@ -12,6 +12,7 @@ import { DEFAULT_LOCALE, type Locale } from "@/lib/locale";
 import messagesEn from "@/messages/en.json";
 import messagesVi from "@/messages/vi.json";
 import { getRichfieldContactChannels } from "./richfield-contact-channels";
+import { resolveContactRecipients } from "./richfield-contact-recipients";
 import type { JSONContent } from "@tuturuuu/editor";
 import { parseRichfieldJSONContent } from "./richfield-rich-text";
 
@@ -129,6 +130,7 @@ export type RichfieldContactForm = {
   inquiryTypes: string[];
   maxMessageLength: number;
   recipientEmail: string;
+  recipientEmails: string[];
   submitLabel: string;
   successMessage: string;
   successMessageContent?: JSONContent | null;
@@ -198,7 +200,7 @@ function buildDefaultContactChannels(locale: Locale): RichfieldContactChannel[] 
   return getRichfieldContactChannels(locale).map(({ slug: _slug, ...channel }) => channel);
 }
 
-function buildDefaultContactForm(locale: Locale, content: LocaleContent): RichfieldContactForm {
+function buildDefaultContactForm(locale: Locale, _content: LocaleContent): RichfieldContactForm {
   const labels = locale === "vi" ? messagesVi.contactForm : messagesEn.contactForm;
 
   return {
@@ -210,7 +212,8 @@ function buildDefaultContactForm(locale: Locale, content: LocaleContent): Richfi
       "Other",
     ],
     maxMessageLength: 1_200,
-    recipientEmail: content.site.email,
+    recipientEmail: resolveContactRecipients()[0],
+    recipientEmails: resolveContactRecipients(),
     submitLabel: labels.send,
     successMessage: labels.success,
   };
@@ -921,6 +924,11 @@ function buildContactForm(
       )
     : [];
   const maxMessageLength = asNumber(profileData.maxMessageLength);
+  const recipientEmails = resolveContactRecipients(
+    profileData.recipientEmails,
+    profileData.recipientEmail,
+    defaultContactForm.recipientEmails,
+  );
 
   return {
     inquiryTypes:
@@ -929,8 +937,8 @@ function buildContactForm(
       maxMessageLength && maxMessageLength >= 100 && maxMessageLength <= 5_000
         ? Math.floor(maxMessageLength)
         : defaultContactForm.maxMessageLength,
-    recipientEmail:
-      asString(profileData.recipientEmail) ?? defaultContactForm.recipientEmail,
+    recipientEmail: recipientEmails[0],
+    recipientEmails,
     submitLabel: asString(profileData.submitLabel) ?? defaultContactForm.submitLabel,
     successMessage:
       getMarkdown(entry) ??

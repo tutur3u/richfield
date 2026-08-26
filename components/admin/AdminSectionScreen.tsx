@@ -60,7 +60,6 @@ function AdminCollectionContent({
 export function AdminSectionScreen({
   driveHref,
   initialPagePromise,
-  membersHref,
   section,
   storageAnalytics,
   storageFiles,
@@ -68,7 +67,6 @@ export function AdminSectionScreen({
 }: {
   driveHref?: string;
   initialPagePromise?: Promise<RichfieldContentPage | undefined>;
-  membersHref?: string;
   section: AdminSection;
   storageAnalytics?: RichfieldStorageAnalyticsState;
   storageFiles?: RichfieldStorageFilesState;
@@ -111,8 +109,8 @@ export function AdminSectionScreen({
             title={title}
           />
         </Suspense>
-      ) : section.slug === "people" && membersHref ? (
-        <MembersPanel membersHref={membersHref} />
+      ) : section.slug === "people" ? (
+        <MembersPanel />
       ) : section.slug === "account" ? (
         <AdminAccountPanel userEmail={userEmail ?? null} />
       ) : section.slug === "files" &&

@@ -2,6 +2,13 @@ import type {
   RichfieldAdminCollectionKey,
   RichfieldAdminContentItem,
 } from "@/lib/richfield-admin-content-model";
+import type {
+  ContentCompletenessFilter,
+  ContentFeatureFilter,
+  ContentSort,
+  ContentStatusFilter,
+} from "./content-list-options";
+import { defaultContentSort } from "./content-list-options";
 
 export type RichfieldContentPage = {
   items: RichfieldAdminContentItem[];
@@ -26,7 +33,14 @@ export const contentKeys = {
     collectionKey: RichfieldAdminCollectionKey,
     search: string,
     locale: "en" | "vi" = "en",
-  ) => [...contentKeys.collection(collectionKey), { locale, search }] as const,
+    sort: ContentSort = defaultContentSort(collectionKey),
+    status: ContentStatusFilter = "all",
+    featured: ContentFeatureFilter = "all",
+    completeness: ContentCompletenessFilter = "all",
+  ) => [
+    ...contentKeys.collection(collectionKey),
+    { completeness, featured, locale, search, sort, status },
+  ] as const,
 };
 
 export async function fetchContentPage({
@@ -35,6 +49,10 @@ export async function fetchContentPage({
   locale = "en",
   page,
   search,
+  sort = defaultContentSort(collectionKey),
+  status = "all",
+  featured = "all",
+  completeness = "all",
   signal,
 }: {
   collectionKey: RichfieldAdminCollectionKey;
@@ -42,12 +60,20 @@ export async function fetchContentPage({
   locale?: "en" | "vi";
   page: number;
   search: string;
+  sort?: ContentSort;
+  status?: ContentStatusFilter;
+  featured?: ContentFeatureFilter;
+  completeness?: ContentCompletenessFilter;
   signal?: AbortSignal;
 }): Promise<RichfieldContentPage> {
   const params = new URLSearchParams({
     limit: String(limit),
     locale,
     page: String(page),
+    sort,
+    status,
+    featured,
+    completeness,
   });
 
   if (search) {

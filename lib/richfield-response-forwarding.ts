@@ -5,6 +5,7 @@ import {
   getRichfieldAppSecret,
 } from "./richfield-config";
 import { fetchWithRichfieldTimeout } from "./richfield-fetch";
+import { parseContactRecipients } from "./richfield-contact-recipients";
 
 /**
  * Every forwarded response costs this much to send. Metrics are derived from
@@ -60,11 +61,7 @@ function readString(source: Record<string, unknown> | null, key: string) {
 }
 
 export function isUsableEmail(value: string | null | undefined) {
-  if (!value) return false;
-  const trimmed = value.trim();
-  // Deliberately permissive: the CMS field is free text, and the transport is
-  // the real validator. This only rejects what can never be an address.
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
+  return parseContactRecipients(value).length > 0;
 }
 
 export function buildForwardEmail(
@@ -245,8 +242,13 @@ export async function sendRichfieldEmail(input: {
   entityId?: string;
   replyTo: string | null;
   subject: string;
-  to: string;
+  to: string | string[];
 }) {
+  const recipients = parseContactRecipients(input.to);
+  if (recipients.length === 0) {
+    throw new Error("No valid Richfield email recipients configured");
+  }
+
   const response = await fetchWithRichfieldTimeout(emailsEndpoint(), {
     body: JSON.stringify({
       entityId: input.entityId,
@@ -254,7 +256,7 @@ export async function sendRichfieldEmail(input: {
       ...(input.replyTo ? { replyTo: [input.replyTo] } : {}),
       subject: input.subject,
       text: input.body,
-      to: [input.to],
+      to: recipients,
     }),
     cache: "no-store",
     headers: { ...appCredentialHeaders(), "Content-Type": "application/json" },

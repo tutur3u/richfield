@@ -9,6 +9,10 @@ import {
   resolveRichfieldAdminCollectionKey,
 } from "@/lib/richfield-admin-content-model";
 import { getRichfieldWorkspaceId } from "@/lib/richfield-config";
+import {
+  applyContentListOptions,
+  readContentListOptions,
+} from "@/lib/admin/content-list-options";
 import { richfieldPublicPathsFor } from "@/lib/richfield-public-routes";
 import { revalidateAndWarmRichfieldContent } from "@/lib/richfield-revalidation";
 import { after, NextResponse } from "next/server";
@@ -39,7 +43,6 @@ function readPageParams(request: Request) {
   const url = new URL(request.url);
   const page = Number.parseInt(url.searchParams.get("page") ?? "", 10);
   const limit = Number.parseInt(url.searchParams.get("limit") ?? "", 10);
-  const search = (url.searchParams.get("search") ?? "").trim().toLowerCase();
 
   return {
     limit: Number.isFinite(limit)
@@ -47,17 +50,8 @@ function readPageParams(request: Request) {
       : DEFAULT_PAGE_SIZE,
     page: Number.isFinite(page) && page > 0 ? page : 1,
     locale: url.searchParams.get("locale") === "vi" ? "vi" as const : "en" as const,
-    search,
+    searchParams: url.searchParams,
   };
-}
-
-function matchesSearch(
-  item: { slug?: string | null; title?: string | null },
-  search: string,
-) {
-  if (!search) return true;
-
-  return `${item.title ?? ""} ${item.slug ?? ""}`.toLowerCase().includes(search);
 }
 
 export async function GET(
@@ -78,15 +72,16 @@ export async function GET(
 
   try {
     const startedAt = performance.now();
-    const { limit, locale, page, search } = readPageParams(request);
+    const { limit, locale, page, searchParams } = readPageParams(request);
     const allItems = await refreshRichfieldAdminContent(
       session.accessToken,
       collectionKey,
       locale,
     );
-    const filtered = search
-      ? allItems.filter((item) => matchesSearch(item, search))
-      : allItems;
+    const filtered = applyContentListOptions(
+      allItems,
+      readContentListOptions(searchParams, collectionKey),
+    );
     const offset = (page - 1) * limit;
     const items = filtered.slice(offset, offset + limit);
     const payload = {

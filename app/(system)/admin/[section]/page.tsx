@@ -8,13 +8,14 @@ import {
   findAdminSection,
 } from "@/lib/admin/sections";
 import { ADMIN_CONTENT_PAGE_SIZE } from "@/lib/admin/content-queries";
+import {
+  applyContentListOptions,
+  defaultContentSort,
+} from "@/lib/admin/content-list-options";
 import { ADMIN_LOCALE_COOKIE, toAdminLocale } from "@/lib/admin/locales";
 import { getRichfieldAdminSession } from "@/lib/richfield-admin-api";
 import { refreshRichfieldAdminContent } from "@/lib/richfield-admin-content";
-import {
-  buildRichfieldAdminLinks,
-  buildRichfieldDriveUrl,
-} from "@/lib/richfield-config";
+import { buildRichfieldDriveUrl } from "@/lib/richfield-config";
 import { getRichfieldStorageAnalytics } from "@/lib/richfield-admin-storage";
 import { getRichfieldStorageFiles } from "@/lib/richfield-storage-files";
 
@@ -36,13 +37,20 @@ async function loadInitialContentPage(
     collectionKey,
     locale,
   );
-  const firstItems = items.slice(0, ADMIN_CONTENT_PAGE_SIZE);
+  const sortedItems = applyContentListOptions(items, {
+    completeness: "all",
+    featured: "all",
+    search: "",
+    sort: defaultContentSort(collectionKey),
+    status: "all",
+  });
+  const firstItems = sortedItems.slice(0, ADMIN_CONTENT_PAGE_SIZE);
 
   return {
     items: firstItems,
-    nextPage: firstItems.length < items.length ? 2 : null,
+    nextPage: firstItems.length < sortedItems.length ? 2 : null,
     page: 1,
-    total: items.length,
+    total: sortedItems.length,
   };
 }
 
@@ -98,10 +106,6 @@ export default async function AdminSectionPage({
     ? loadInitialContentPage(section.collectionKey)
     : undefined;
   const session = section.collectionKey ? null : await getRichfieldAdminSession();
-  const membersHref =
-    section.slug === "people"
-      ? buildRichfieldAdminLinks().find((link) => link.key === "members")?.cmsHref
-      : undefined;
   const driveHref =
     section.slug === "files" ? buildRichfieldDriveUrl() : undefined;
   const [storageAnalytics, storageFiles] =
@@ -116,7 +120,6 @@ export default async function AdminSectionPage({
     <AdminSectionScreen
       driveHref={driveHref}
       initialPagePromise={initialPagePromise}
-      membersHref={membersHref}
       section={section}
       storageAnalytics={storageAnalytics}
       storageFiles={storageFiles}

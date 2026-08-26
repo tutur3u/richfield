@@ -1,6 +1,14 @@
 "use client";
 
-import { ImagesSquare, MagnifyingGlass, NewspaperClipping, Plus } from "@phosphor-icons/react";
+import {
+  FunnelSimple,
+  ImagesSquare,
+  MagnifyingGlass,
+  NewspaperClipping,
+  Plus,
+  SortAscending,
+  X,
+} from "@phosphor-icons/react";
 import { type InfiniteData, useInfiniteQuery } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -9,6 +17,13 @@ import {
   fetchContentPage,
   type RichfieldContentPage,
 } from "@/lib/admin/content-queries";
+import {
+  defaultContentSort,
+  type ContentCompletenessFilter,
+  type ContentFeatureFilter,
+  type ContentSort,
+  type ContentStatusFilter,
+} from "@/lib/admin/content-list-options";
 import type { RichfieldAdminCollectionKey } from "@/lib/richfield-admin-content-model";
 import { SkeletonBlock, SkeletonLine } from "./RichfieldAdminSkeleton";
 import { AdminContentItemCard } from "./AdminContentItemCard";
@@ -95,6 +110,11 @@ export function AdminContentList({
   title: string;
 }) {
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState<ContentSort>(() => defaultContentSort(collectionKey));
+  const [statusFilter, setStatusFilter] = useState<ContentStatusFilter>("all");
+  const [featureFilter, setFeatureFilter] = useState<ContentFeatureFilter>("all");
+  const [completenessFilter, setCompletenessFilter] =
+    useState<ContentCompletenessFilter>("all");
   const locale = useLocale() === "vi" ? "vi" : "en";
   const t = useTranslations("admin.common");
   const debouncedSearch = useDebounced(search);
@@ -120,9 +140,21 @@ export function AdminContentList({
         locale,
         page: pageParam,
         search: debouncedSearch,
+        sort,
+        status: statusFilter,
+        featured: featureFilter,
+        completeness: completenessFilter,
         signal,
       }),
-    queryKey: contentKeys.list(collectionKey, debouncedSearch, locale),
+    queryKey: contentKeys.list(
+      collectionKey,
+      debouncedSearch,
+      locale,
+      sort,
+      statusFilter,
+      featureFilter,
+      completenessFilter,
+    ),
   });
 
   const items = useMemo(
@@ -131,6 +163,11 @@ export function AdminContentList({
   );
   const total = query.data?.pages[0]?.total ?? 0;
   const isGallery = collectionKey === "image-library";
+  const isNews = collectionKey === "articles";
+  const hasFilters =
+    statusFilter !== "all" ||
+    featureFilter !== "all" ||
+    completenessFilter !== "all";
 
   const sentinelRef = useInfiniteScroll(
     () => {
@@ -179,6 +216,73 @@ export function AdminContentList({
           value={search}
         />
       </div>
+
+      {isNews ? (
+        <div className="grid gap-3 rounded-2xl border border-admin-rule bg-admin-panel p-3 shadow-[0_1px_0_rgb(12_31_52_/_0.03)] lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,0.8fr))_auto] lg:items-end">
+          <ListSelect
+            icon={<SortAscending aria-hidden size={17} />}
+            label={t("sortBy")}
+            onChange={(value) => setSort(value as ContentSort)}
+            options={[
+              ["created-desc", t("sortCreatedNewest")],
+              ["created-asc", t("sortCreatedOldest")],
+              ["published-desc", t("sortPublishedNewest")],
+              ["published-asc", t("sortPublishedOldest")],
+              ["title-asc", t("sortTitleAsc")],
+              ["title-desc", t("sortTitleDesc")],
+            ]}
+            value={sort}
+          />
+          <ListSelect
+            icon={<FunnelSimple aria-hidden size={17} />}
+            label={t("filterStatus")}
+            onChange={(value) => setStatusFilter(value as ContentStatusFilter)}
+            options={[
+              ["all", t("allStatuses")],
+              ["published", t("live")],
+              ["draft", t("draft")],
+              ["scheduled", t("scheduled")],
+              ["archived", t("hidden")],
+            ]}
+            value={statusFilter}
+          />
+          <ListSelect
+            label={t("filterFeature")}
+            onChange={(value) => setFeatureFilter(value as ContentFeatureFilter)}
+            options={[
+              ["all", t("allStories")],
+              ["featured", t("featuredOnly")],
+              ["standard", t("standardOnly")],
+            ]}
+            value={featureFilter}
+          />
+          <ListSelect
+            label={t("filterTranslation")}
+            onChange={(value) =>
+              setCompletenessFilter(value as ContentCompletenessFilter)
+            }
+            options={[
+              ["all", t("allTranslations")],
+              ["complete", t("translationComplete")],
+              ["missing", t("translationMissing")],
+            ]}
+            value={completenessFilter}
+          />
+          <button
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-admin-rule px-3 text-xs font-bold text-admin-ink transition hover:border-admin-gold disabled:cursor-not-allowed disabled:opacity-40"
+            disabled={!hasFilters}
+            onClick={() => {
+              setStatusFilter("all");
+              setFeatureFilter("all");
+              setCompletenessFilter("all");
+            }}
+            type="button"
+          >
+            <X aria-hidden size={14} weight="bold" />
+            {t("clearFilters")}
+          </button>
+        </div>
+      ) : null}
 
       {query.isError ? (
         <div className="rounded-xl border border-red-300/60 bg-red-50/60 p-4" role="alert">
@@ -292,5 +396,48 @@ export function AdminContentList({
         {query.isFetchingNextPage ? t("loadingMore") : ""}
       </p>
     </section>
+  );
+}
+
+function ListSelect({
+  icon,
+  label,
+  onChange,
+  options,
+  value,
+}: {
+  icon?: React.ReactNode;
+  label: string;
+  onChange: (value: string) => void;
+  options: Array<readonly [string, string]>;
+  value: string;
+}) {
+  const id = useId();
+
+  return (
+    <label className="grid min-w-0 gap-1.5" htmlFor={id}>
+      <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-admin-ink-soft">
+        {label}
+      </span>
+      <span className="relative flex items-center">
+        {icon ? (
+          <span className="pointer-events-none absolute left-3 text-admin-clay">
+            {icon}
+          </span>
+        ) : null}
+        <select
+          className={`min-h-11 w-full appearance-none rounded-xl border border-admin-rule bg-admin-surface py-2 pr-8 text-sm font-medium text-admin-ink outline-none transition focus:border-admin-gold focus:ring-3 focus:ring-admin-gold/10 ${icon ? "pl-9" : "pl-3"}`}
+          id={id}
+          onChange={(event) => onChange(event.currentTarget.value)}
+          value={value}
+        >
+          {options.map(([optionValue, optionLabel]) => (
+            <option key={optionValue} value={optionValue}>
+              {optionLabel}
+            </option>
+          ))}
+        </select>
+      </span>
+    </label>
   );
 }

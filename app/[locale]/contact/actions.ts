@@ -13,13 +13,12 @@ import {
 import { fetchWithRichfieldTimeout } from "@/lib/richfield-fetch";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
 import { sendRichfieldEmail } from "@/lib/richfield-response-forwarding";
+import { resolveContactRecipients } from "@/lib/richfield-contact-recipients";
 
 export type ContactState =
   | { status: "idle" }
   | { status: "ok" }
   | { status: "error"; errors: Record<string, string[]>; values: Record<string, string> };
-
-const FALLBACK_INBOX = "cskh@richfieldvn.com.vn";
 
 export async function submitContact(
   _prev: ContactState,
@@ -38,23 +37,7 @@ export async function submitContact(
     messageRequired: te("messageRequired"),
     messageTooLong: te("messageTooLong", { max: 5_000 }),
     tooFast: te("tooFast"),
-    deliveryFailed: te("deliveryFailed"),
   };
-
-  // Anti-spam: 3-second submission delay (spec §6.4). Reject if the form
-  // posts within 3s of mount, which catches automated fillers.
-  const submittedAt = Number(raw.submittedAtMs);
-  if (!Number.isFinite(submittedAt) || Date.now() - submittedAt < 3000) {
-    return {
-      status: "error",
-      errors: { _form: [t("errors.tooFast")] },
-      values: Object.fromEntries(
-        Object.entries(raw).filter(
-          ([k]) => k !== "website" && k !== "submittedAtMs" && k !== "locale",
-        ),
-      ) as Record<string, string>,
-    };
-  }
 
   const parsed = contactSchemaFor(errorMessages).safeParse(raw);
 
@@ -95,10 +78,11 @@ export async function submitContact(
     };
   }
 
-  const inbox =
-    process.env.RICHFIELD_LEAD_INBOX ??
-    contactForm?.recipientEmail ??
-    FALLBACK_INBOX;
+  const inboxes = resolveContactRecipients(
+    process.env.RICHFIELD_LEAD_INBOX,
+    contactForm?.recipientEmails,
+    contactForm?.recipientEmail,
+  );
 
   let savedSubmissionId: string | null = null;
   let persistenceFailed = false;
@@ -127,7 +111,7 @@ export async function submitContact(
       country,
       email,
       entryId: savedSubmissionId,
-      inbox,
+      inboxes,
       inquiryType,
       message,
       name,
@@ -234,7 +218,7 @@ async function deliverLead(input: {
   email: string;
   inquiryType: string;
   message: string;
-  inbox: string;
+  inboxes: string[];
   entryId?: string | null;
 }) {
   // Sent through Tuturuuu's SES-backed mailer with the app credentials this
@@ -254,6 +238,6 @@ async function deliverLead(input: {
     entityId: input.entryId ?? undefined,
     replyTo: input.email,
     subject: `[Richfield] ${input.inquiryType} from ${input.company}`,
-    to: input.inbox,
+    to: input.inboxes,
   });
 }

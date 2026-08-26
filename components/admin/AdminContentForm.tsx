@@ -823,11 +823,13 @@ export function ContentForm({
           ) : null}
           {collectionKey === "contact-form" ? (
             <div className="grid gap-4 md:grid-cols-2">
-              <TextField
+              <TextAreaField
                 disabled={isBusy}
                 label={t("fields.recipientEmail")}
                 name="email"
                 onChange={updateDraft}
+                placeholder={t("placeholders.recipientEmails")}
+                rows={3}
                 value={draft.email}
               />
               <TextField

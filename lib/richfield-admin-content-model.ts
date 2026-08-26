@@ -44,6 +44,7 @@ export type RichfieldAdminContentItem = {
   category: string;
   collectionKey: RichfieldAdminCollectionKey;
   country: string;
+  createdAt: string;
   credit: string;
   cta: string;
   deadline: string;
@@ -90,6 +91,7 @@ export type RichfieldAdminContentItem = {
   shelfWeight: string;
   title: string;
   usageTags: string;
+  updatedAt: string;
   workMode: string;
   year: string;
 };
@@ -488,6 +490,8 @@ export function readRichfieldAdminContent(
         category: readString(profileData, "category") ?? readString(entry, "subtitle") ?? "",
         collectionKey,
         country: readString(profileData, "country") ?? readString(entry, "subtitle") ?? "",
+        createdAt:
+          readString(entry, "created_at") ?? readString(entry, "createdAt") ?? "",
         credit: readString(profileData, "credit") ?? readString(profileData, "country") ?? "",
         cta: readString(profileData, "cta") ?? "",
         deadline: readString(profileData, "deadline") ?? "",
@@ -557,6 +561,8 @@ export function readRichfieldAdminContent(
               .filter((item: unknown): item is string => typeof item === "string")
               .join(", ")
           : "",
+        updatedAt:
+          readString(entry, "updated_at") ?? readString(entry, "updatedAt") ?? "",
         workMode: readString(profileData, "workMode") ?? "",
         year: yearValue !== null ? String(yearValue) : "",
       };

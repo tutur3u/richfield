@@ -35,6 +35,7 @@ export function TurnstileWidget({
       <Script src={TURNSTILE_SCRIPT} strategy="lazyOnload" />
       <div
         className="cf-turnstile"
+        data-action="turnstile-spin-v2"
         data-appearance="interaction-only"
         data-sitekey={siteKey}
         data-theme="light"

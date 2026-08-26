@@ -18,7 +18,6 @@ export type ContactFormErrors = {
   messageRequired: string;
   messageTooLong: string;
   tooFast: string;
-  deliveryFailed: string;
 };
 
 // Validation messages come from the locale's contactForm.errors. Inquiry

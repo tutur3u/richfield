@@ -7,9 +7,16 @@ export type RichfieldAdminMember = {
   email: string | null;
   id: string;
   initials: string;
+  isCurrentUser: boolean;
   name: string;
   role: string;
+  roles: RichfieldAdminRole[];
   status: string;
+};
+
+export type RichfieldAdminRole = {
+  id: string;
+  name: string;
 };
 
 export type RichfieldAdminMembersContext = {
@@ -23,6 +30,7 @@ export type RichfieldAdminMembersContext = {
 export type RichfieldAdminMembersPayload = {
   context: RichfieldAdminMembersContext | null;
   members: RichfieldAdminMember[];
+  roles: RichfieldAdminRole[];
 };
 
 export class RichfieldAdminMembersError extends Error {
@@ -52,14 +60,14 @@ function readBoolean(record: Record<string, unknown>, key: string) {
 
 function readRoles(record: Record<string, unknown>) {
   const roles = record.roles;
-  if (!Array.isArray(roles) || roles.length === 0) return null;
+  if (!Array.isArray(roles) || roles.length === 0) return [];
 
-  const roleNames = roles
-    .map((role) => readString(readRecord(role), "name"))
-    .filter((role): role is string => Boolean(role))
-    .join(", ");
-
-  return roleNames || null;
+  return roles.flatMap((role) => {
+    const record = readRecord(role);
+    const id = readString(record, "id");
+    const name = readString(record, "name");
+    return id && name ? [{ id, name }] : [];
+  });
 }
 
 function initialsFor(name: string, email: string | null) {
@@ -78,9 +86,11 @@ function initialsFor(name: string, email: string | null) {
 export function normalizeRichfieldAdminMembersPayload({
   context,
   members,
+  roles = [],
 }: {
   context: unknown;
   members: unknown;
+  roles?: unknown;
 }): RichfieldAdminMembersPayload {
   const rawContext = readRecord(context);
   const normalizedContext: RichfieldAdminMembersContext | null = rawContext.workspaceId
@@ -99,7 +109,20 @@ export function normalizeRichfieldAdminMembersPayload({
 
   return {
     context: normalizedContext,
-    members: normalizedMembers,
+    members: normalizedMembers.map((member) => ({
+      ...member,
+      isCurrentUser:
+        Boolean(normalizedContext?.currentUserEmail) &&
+        member.email?.toLowerCase() === normalizedContext?.currentUserEmail?.toLowerCase(),
+    })),
+    roles: Array.isArray(roles)
+      ? roles.flatMap((role) => {
+          const record = readRecord(role);
+          const id = readString(record, "id");
+          const name = readString(record, "name");
+          return id && name ? [{ id, name }] : [];
+        })
+      : [],
   };
 }
 
@@ -116,15 +139,94 @@ function normalizeMember(member: RawMember, index: number): RichfieldAdminMember
     readString(member, "workspace_member_type") ??
     readString(member, "type") ??
     "Member";
+  const roles = readRoles(member);
 
   return {
     email,
     id: readString(member, "id") ?? email ?? `member-${index}`,
     initials: initialsFor(name, email),
+    isCurrentUser: false,
     name,
-    role: readRoles(member) ?? memberType,
+    role: roles.map((role) => role.name).join(", ") || memberType,
+    roles,
     status: pending ? "Invited" : "Active",
   };
+}
+
+function membersEndpoint(path = "") {
+  const apiBaseUrl = getRichfieldApiBaseUrl().replace(/\/+$/, "");
+  const workspaceId = getRichfieldWorkspaceId();
+  return `${apiBaseUrl}/workspaces/${encodeURIComponent(workspaceId)}/external-projects/members${path}`;
+}
+
+export async function inviteRichfieldAdminMembers(
+  accessToken: string,
+  emails: string[],
+) {
+  return mutateMembers(accessToken, membersEndpoint("/invite"), "POST", { emails });
+}
+
+export async function removeRichfieldAdminMember(
+  accessToken: string,
+  identity: { email?: string; id?: string },
+) {
+  const params = new URLSearchParams();
+  if (identity.email) params.set("email", identity.email);
+  if (identity.id) params.set("id", identity.id);
+  return mutateMembers(
+    accessToken,
+    `${membersEndpoint("/access")}?${params}`,
+    "DELETE",
+  );
+}
+
+export async function updateRichfieldAdminMemberRole(
+  accessToken: string,
+  input: { enabled: boolean; roleId: string; userId: string },
+) {
+  const roleMembersEndpoint = `${membersEndpoint(
+    `/roles/${encodeURIComponent(input.roleId)}/members`,
+  )}`;
+
+  return mutateMembers(
+    accessToken,
+    input.enabled
+      ? roleMembersEndpoint
+      : `${roleMembersEndpoint}/${encodeURIComponent(input.userId)}`,
+    input.enabled ? "POST" : "DELETE",
+    input.enabled ? { memberIds: [input.userId] } : undefined,
+  );
+}
+
+async function mutateMembers(
+  accessToken: string,
+  endpoint: string,
+  method: "DELETE" | "POST",
+  body?: unknown,
+) {
+  const response = await fetchWithRichfieldTimeout(endpoint, {
+    ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    cache: "no-store",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${accessToken}`,
+      ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+    },
+    method,
+  });
+  const payload = await readJson(response);
+
+  if (!response.ok) {
+    const record = readRecord(payload);
+    throw new RichfieldAdminMembersError(
+      readString(record, "error") ??
+        readString(record, "message") ??
+        "Team member request failed.",
+      response.status,
+    );
+  }
+
+  return payload;
 }
 
 async function readJson(response: Response) {
@@ -143,12 +245,16 @@ export async function getRichfieldAdminMembers(
     Accept: "application/json",
     Authorization: `Bearer ${accessToken}`,
   };
-  const [contextResponse, membersResponse] = await Promise.all([
+  const [contextResponse, membersResponse, rolesResponse] = await Promise.all([
     fetchWithRichfieldTimeout(baseEndpoint, { cache: "no-store", headers }),
     // status=all, not joined: pending invitations are members-in-waiting and the
     // roster is the only place anyone would notice an invite that was never
     // accepted. normalizeMember already labels them "Invited".
     fetchWithRichfieldTimeout(`${baseEndpoint}/enhanced?status=all`, {
+      cache: "no-store",
+      headers,
+    }),
+    fetchWithRichfieldTimeout(`${baseEndpoint}/roles`, {
       cache: "no-store",
       headers,
     }),
@@ -164,5 +270,6 @@ export async function getRichfieldAdminMembers(
   return normalizeRichfieldAdminMembersPayload({
     context: await readJson(contextResponse),
     members: await readJson(membersResponse),
+    roles: rolesResponse.ok ? await readJson(rolesResponse) : [],
   });
 }

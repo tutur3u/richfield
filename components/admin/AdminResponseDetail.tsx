@@ -11,7 +11,7 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { contentKeys } from "@/lib/admin/content-queries";
@@ -61,6 +61,7 @@ function Detail({ label, value, href }: { href?: string; label: string; value: s
 export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdminContentItem; sectionHref: string }) {
   const t = useTranslations("admin.responses");
   const common = useTranslations("admin.common");
+  const locale = useLocale() === "vi" ? "vi-VN" : "en-US";
   const router = useRouter();
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -68,7 +69,11 @@ export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdmi
   const [error, setError] = useState("");
   const received = item.receivedAt || item.createdAt;
   const receivedLabel = received
-    ? new Intl.DateTimeFormat(undefined, { dateStyle: "long", timeStyle: "short" }).format(new Date(received))
+    ? new Intl.DateTimeFormat(locale, {
+        dateStyle: "long",
+        timeStyle: "short",
+        timeZone: "Asia/Ho_Chi_Minh",
+      }).format(new Date(received))
     : "—";
   const sender = item.name || item.email || t("unknownSender");
 

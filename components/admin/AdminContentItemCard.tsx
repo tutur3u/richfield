@@ -2,7 +2,7 @@
 
 import { Image as ImageIcon } from "@phosphor-icons/react";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import type {
   RichfieldAdminCollectionKey,
   RichfieldAdminContentItem,
@@ -68,6 +68,7 @@ export function AdminContentItemCard({
   selected: boolean;
 }) {
   const t = useTranslations("admin.common");
+  const locale = useLocale() === "vi" ? "vi-VN" : "en-US";
   const statusLabel =
     item.status === "published"
       ? t("live")
@@ -83,9 +84,10 @@ export function AdminContentItemCard({
     .filter(Boolean)
     .join(" · ");
   const createdLabel = (isResponse ? item.receivedAt || item.createdAt : item.createdAt)
-    ? new Intl.DateTimeFormat(undefined, { dateStyle: "medium" }).format(
-        new Date(isResponse ? item.receivedAt || item.createdAt : item.createdAt),
-      )
+    ? new Intl.DateTimeFormat(locale, {
+        dateStyle: "medium",
+        timeZone: "Asia/Ho_Chi_Minh",
+      }).format(new Date(isResponse ? item.receivedAt || item.createdAt : item.createdAt))
     : null;
 
   if (isResponse) {

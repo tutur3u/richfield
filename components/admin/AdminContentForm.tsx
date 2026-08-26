@@ -823,15 +823,20 @@ export function ContentForm({
           ) : null}
           {collectionKey === "contact-form" ? (
             <div className="grid gap-4 md:grid-cols-2">
-              <TextAreaField
-                disabled={isBusy}
-                label={t("fields.recipientEmail")}
-                name="email"
-                onChange={updateDraft}
-                placeholder={t("placeholders.recipientEmails")}
-                rows={3}
-                value={draft.email}
-              />
+              <div className="grid gap-2 rounded-xl border border-admin-gold/40 bg-admin-gold/[0.07] p-4 md:col-span-2">
+                <TextAreaField
+                  disabled={isBusy}
+                  label={t("fields.recipientEmail")}
+                  name="email"
+                  onChange={updateDraft}
+                  placeholder={t("placeholders.recipientEmails")}
+                  rows={3}
+                  value={draft.email}
+                />
+                <p className="text-xs leading-5 text-admin-ink-soft">
+                  {t("hints.recipientEmails")}
+                </p>
+              </div>
               <TextField
                 disabled={isBusy}
                 label={t("fields.submitLabel")}

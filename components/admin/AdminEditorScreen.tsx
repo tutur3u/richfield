@@ -11,6 +11,7 @@ import type {
   RichfieldAdminContentItem,
 } from "@/lib/richfield-admin-content-model";
 import { ContentForm } from "./AdminContentForm";
+import { AdminResponseDetail } from "./AdminResponseDetail";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -26,6 +27,28 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export function AdminEditorScreen({
+  collectionKey,
+  initialItem,
+  sectionHref,
+}: {
+  collectionKey: RichfieldAdminCollectionKey;
+  initialItem: RichfieldAdminContentItem | null;
+  sectionHref: string;
+}) {
+  if (collectionKey === "contact-submissions" && initialItem) {
+    return <AdminResponseDetail item={initialItem} sectionHref={sectionHref} />;
+  }
+
+  return (
+    <AdminContentEditorScreen
+      collectionKey={collectionKey}
+      initialItem={initialItem}
+      sectionHref={sectionHref}
+    />
+  );
+}
+
+function AdminContentEditorScreen({
   collectionKey,
   initialItem,
   sectionHref,

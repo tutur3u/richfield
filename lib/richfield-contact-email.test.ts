@@ -23,6 +23,8 @@ describe("buildRichfieldContactEmail", () => {
     expect(email.html).toContain("Open response in Richfield");
     expect(email.html).toContain("/admin/responses/entry-1");
     expect(email.html).toContain("mailto:mai@acme.test");
+    expect(email.html).not.toContain("<title>");
+    expect(email.html).not.toContain(`<title>${email.subject}</title>`);
   });
 
   it("escapes visitor-controlled markup in every html surface", () => {

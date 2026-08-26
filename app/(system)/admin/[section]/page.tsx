@@ -39,10 +39,12 @@ async function loadInitialContentPage(
   );
   const sortedItems = applyContentListOptions(items, {
     completeness: "all",
+    delivery: "all",
     featured: "all",
     search: "",
     sort: defaultContentSort(collectionKey),
     status: "all",
+    submission: "all",
   });
   const firstItems = sortedItems.slice(0, ADMIN_CONTENT_PAGE_SIZE);
 
@@ -74,6 +76,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { section: slug } = await params;
   const section = findAdminSection(slug);
+
+  if (slug === "contact-form") redirect("/admin/settings");
   const locale = toAdminLocale(
     (await cookies()).get(ADMIN_LOCALE_COOKIE)?.value,
   );

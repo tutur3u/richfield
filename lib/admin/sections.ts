@@ -104,12 +104,12 @@ export const ADMIN_SECTIONS: AdminSection[] = [
   },
   {
     collectionKey: "contact-form",
-    description: "Form fields, enquiry types, and where responses are sent.",
-    emptyHint: "Configure the contact form here.",
+    description: "Contact form delivery, recipients, fields, and response messaging.",
+    emptyHint: "Configure contact form delivery and recipients here.",
     group: "contact",
     tab: "contact-form",
-    slug: "contact-form",
-    title: "Form settings",
+    slug: "settings",
+    title: "Settings",
   },
   {
     collectionKey: "contact-channels",
@@ -156,7 +156,8 @@ export const ADMIN_SECTIONS: AdminSection[] = [
 ];
 
 export function findAdminSection(slug: string) {
-  return ADMIN_SECTIONS.find((section) => section.slug === slug) ?? null;
+  const normalizedSlug = slug === "contact-form" ? "settings" : slug;
+  return ADMIN_SECTIONS.find((section) => section.slug === normalizedSlug) ?? null;
 }
 
 export function adminSectionsByGroup(group: AdminSectionGroup) {

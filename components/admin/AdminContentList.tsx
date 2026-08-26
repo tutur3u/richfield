@@ -24,6 +24,8 @@ import {
   type ContentFeatureFilter,
   type ContentSort,
   type ContentStatusFilter,
+  type ResponseDeliveryFilter,
+  type ResponseStatusFilter,
 } from "@/lib/admin/content-list-options";
 import type { RichfieldAdminCollectionKey } from "@/lib/richfield-admin-content-model";
 import { SkeletonBlock, SkeletonLine } from "./RichfieldAdminSkeleton";
@@ -116,6 +118,10 @@ export function AdminContentList({
   const [featureFilter, setFeatureFilter] = useState<ContentFeatureFilter>("all");
   const [completenessFilter, setCompletenessFilter] =
     useState<ContentCompletenessFilter>("all");
+  const [deliveryFilter, setDeliveryFilter] =
+    useState<ResponseDeliveryFilter>("all");
+  const [submissionFilter, setSubmissionFilter] =
+    useState<ResponseStatusFilter>("all");
   const locale = useLocale() === "vi" ? "vi" : "en";
   const t = useTranslations("admin.common");
   const debouncedSearch = useDebounced(search);
@@ -123,10 +129,12 @@ export function AdminContentList({
   const isInitialQuery = isDefaultContentListOptions(
     {
       completeness: completenessFilter,
+      delivery: deliveryFilter,
       featured: featureFilter,
       search: debouncedSearch,
       sort,
       status: statusFilter,
+      submission: submissionFilter,
     },
     collectionKey,
   );
@@ -159,6 +167,8 @@ export function AdminContentList({
         status: statusFilter,
         featured: featureFilter,
         completeness: completenessFilter,
+        delivery: deliveryFilter,
+        submission: submissionFilter,
         signal,
       }),
     queryKey: contentKeys.list(
@@ -169,6 +179,8 @@ export function AdminContentList({
       statusFilter,
       featureFilter,
       completenessFilter,
+      deliveryFilter,
+      submissionFilter,
     ),
   });
 
@@ -179,10 +191,14 @@ export function AdminContentList({
   const total = query.data?.pages[0]?.total ?? 0;
   const isGallery = collectionKey === "image-library";
   const isNews = collectionKey === "articles";
+  const isResponse = collectionKey === "contact-submissions";
+  const canCreate = !isResponse;
   const hasFilters =
     statusFilter !== "all" ||
     featureFilter !== "all" ||
-    completenessFilter !== "all";
+    completenessFilter !== "all" ||
+    deliveryFilter !== "all" ||
+    submissionFilter !== "all";
 
   const sentinelRef = useInfiniteScroll(
     () => {
@@ -203,14 +219,14 @@ export function AdminContentList({
               : t(debouncedSearch ? "itemsFound" : "items", { count: total })}
           </p>
         </div>
-        <button
+        {canCreate ? <button
           className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-full bg-admin-navy px-4 text-xs font-bold text-white transition hover:bg-admin-copper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-gold"
           onClick={() => onOpen(null)}
           type="button"
         >
           <Plus aria-hidden size={15} weight="bold" />
           <span>{t("addNew")}</span>
-        </button>
+        </button> : null}
       </header>
 
       <div className="relative">
@@ -232,8 +248,7 @@ export function AdminContentList({
         />
       </div>
 
-      {isNews ? (
-        <div className="grid gap-3 rounded-2xl border border-admin-rule bg-admin-panel p-3 shadow-[0_1px_0_rgb(12_31_52_/_0.03)] lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,0.8fr))_auto] lg:items-end">
+      <div className={`grid gap-3 rounded-2xl border border-admin-rule bg-admin-panel p-3 shadow-[0_1px_0_rgb(12_31_52_/_0.03)] lg:items-end ${isNews ? "lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,0.8fr))_auto]" : isResponse ? "lg:grid-cols-[minmax(0,1.2fr)_repeat(2,minmax(0,0.9fr))_auto]" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"}`}>
           <ListSelect
             icon={<SortAscending aria-hidden size={17} />}
             label={t("sortBy")}
@@ -241,14 +256,30 @@ export function AdminContentList({
             options={[
               ["created-desc", t("sortCreatedNewest")],
               ["created-asc", t("sortCreatedOldest")],
-              ["published-desc", t("sortPublishedNewest")],
-              ["published-asc", t("sortPublishedOldest")],
+              ...(!isResponse ? [
+                ["published-desc", t("sortPublishedNewest")],
+                ["published-asc", t("sortPublishedOldest")],
+              ] as Array<readonly [string, string]> : []),
               ["title-asc", t("sortTitleAsc")],
               ["title-desc", t("sortTitleDesc")],
             ]}
             value={sort}
           />
-          <ListSelect
+          {isResponse ? <>
+            <ListSelect
+              icon={<FunnelSimple aria-hidden size={17} />}
+              label={t("filterSubmission")}
+              onChange={(value) => setSubmissionFilter(value as ResponseStatusFilter)}
+              options={[["all", t("allSubmissions")], ["new", t("responseNew")], ["read", t("responseRead")], ["closed", t("responseClosed")]]}
+              value={submissionFilter}
+            />
+            <ListSelect
+              label={t("filterDelivery")}
+              onChange={(value) => setDeliveryFilter(value as ResponseDeliveryFilter)}
+              options={[["all", t("allDeliveries")], ["sent", t("deliverySent")], ["pending", t("deliveryPending")], ["failed", t("deliveryFailed")]]}
+              value={deliveryFilter}
+            />
+          </> : <ListSelect
             icon={<FunnelSimple aria-hidden size={17} />}
             label={t("filterStatus")}
             onChange={(value) => setStatusFilter(value as ContentStatusFilter)}
@@ -260,8 +291,8 @@ export function AdminContentList({
               ["archived", t("hidden")],
             ]}
             value={statusFilter}
-          />
-          <ListSelect
+          />}
+          {isNews ? <ListSelect
             label={t("filterFeature")}
             onChange={(value) => setFeatureFilter(value as ContentFeatureFilter)}
             options={[
@@ -270,8 +301,8 @@ export function AdminContentList({
               ["standard", t("standardOnly")],
             ]}
             value={featureFilter}
-          />
-          <ListSelect
+          /> : null}
+          {isNews ? <ListSelect
             label={t("filterTranslation")}
             onChange={(value) =>
               setCompletenessFilter(value as ContentCompletenessFilter)
@@ -282,7 +313,7 @@ export function AdminContentList({
               ["missing", t("translationMissing")],
             ]}
             value={completenessFilter}
-          />
+          /> : null}
           <button
             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-admin-rule px-3 text-xs font-bold text-admin-ink transition hover:border-admin-gold disabled:cursor-not-allowed disabled:opacity-40"
             disabled={!hasFilters}
@@ -290,6 +321,8 @@ export function AdminContentList({
               setStatusFilter("all");
               setFeatureFilter("all");
               setCompletenessFilter("all");
+              setDeliveryFilter("all");
+              setSubmissionFilter("all");
             }}
             type="button"
           >
@@ -297,7 +330,6 @@ export function AdminContentList({
             {t("clearFilters")}
           </button>
         </div>
-      ) : null}
 
       {query.isError ? (
         <div className="rounded-xl border border-red-300/60 bg-red-50/60 p-4" role="alert">
@@ -360,7 +392,7 @@ export function AdminContentList({
             >
               {t("clearSearch")}
             </button>
-          ) : (
+          ) : canCreate ? (
             <button
               className="mt-6 inline-flex min-h-10 items-center gap-2 rounded-full bg-admin-navy px-4 text-xs font-bold text-white transition hover:bg-admin-copper"
               onClick={() => onOpen(null)}
@@ -369,7 +401,7 @@ export function AdminContentList({
               <Plus aria-hidden size={15} weight="bold" />
               <span>{t("addFirst")}</span>
             </button>
-          )}
+          ) : null}
           </div>
         </div>
       ) : null}

@@ -22,7 +22,15 @@ export default async function AdminEntryPage({
     (await searchParams).contentLocale === "vi" ? "vi" : "en";
   const section = findAdminSection(sectionSlug);
 
+  if (sectionSlug === "contact-form") {
+    redirect(`/admin/settings/${encodeURIComponent(entryId)}`);
+  }
+
   if (!section?.collectionKey) notFound();
+
+  if (section.collectionKey === "contact-submissions" && entryId === "new") {
+    redirect(`/admin/${section.slug}`);
+  }
 
   const session = await getRichfieldAdminSession();
   if (!session) redirect(`/admin/${sectionSlug}`);

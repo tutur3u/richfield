@@ -38,6 +38,8 @@
       "addNew": "Add new",
       "cancel": "Cancel",
       "allStatuses": "All statuses",
+      "allDeliveries": "All delivery states",
+      "allSubmissions": "All responses",
       "allStories": "All stories",
       "allTranslations": "All translations",
       "clearFilters": "Clear filters",
@@ -48,8 +50,13 @@
       "featuredOnly": "Featured only",
       "filterFeature": "Story type",
       "filterStatus": "Status",
+      "filterDelivery": "Email delivery",
+      "filterSubmission": "Response status",
       "filterTranslation": "Translation",
       "hidden": "Hidden",
+      "deliveryFailed": "Failed",
+      "deliveryPending": "Pending",
+      "deliverySent": "Sent",
       "items": "{count, plural, one {# item} other {# items}}",
       "itemsFound": "{count, plural, one {# item found} other {# items found}}",
       "live": "Live",
@@ -60,6 +67,9 @@
       "nothingHere": "Nothing here yet",
       "nothingMatches": "Nothing matches that search",
       "scheduled": "Scheduled",
+      "responseClosed": "Closed",
+      "responseNew": "New",
+      "responseRead": "Read",
       "sortBy": "Sort by",
       "sortCreatedNewest": "Newest created",
       "sortCreatedOldest": "Oldest created",
@@ -234,6 +244,9 @@
         "workMode": "Work mode",
         "year": "Year"
       },
+      "hints": {
+        "recipientEmails": "Every contact response is sent to these addresses. Separate multiple recipients with commas or new lines. If left empty, contact@tuturuuu.com is used."
+      },
       "itemNames": {
         "articles": "story",
         "brands": "brand",
@@ -299,12 +312,14 @@
     "accessLevelAdded": "Access level added.",
     "accessLevelRemoved": "Access level removed.",
     "accessLevels": "Access levels",
+    "allAccessLevels": "All access levels",
     "activeStatus": "Active",
       "activeCaption": "Can sign in and edit the website now.",
       "activeTitle": "Active",
       "cancel": "Cancel",
       "confirmRemove": "Remove",
       "description": "Invite colleagues and manage website access without leaving Richfield.",
+      "done": "Done",
       "emails": "Email addresses",
       "empty": "No workspace members were returned.",
       "invite": "Send invitation",
@@ -317,17 +332,47 @@
     "invitedTitle": "Invited",
     "invitedStatus": "Invited",
       "loading": "Loading workspace members",
+      "filterRole": "Filter by access level",
+      "nameAsc": "Name A–Z",
+      "nameDesc": "Name Z–A",
+      "noMatches": "No people match these filters.",
       "manage": "Manage people",
       "refresh": "Refresh",
       "removeAccessTitle": "Remove website access?",
     "removeInviteTitle": "Cancel this invitation?",
     "removeMemberLabel": "Remove",
     "saving": "Saving…",
+    "search": "Search people",
+    "searchPlaceholder": "Search by name, email, or access…",
     "selfRemovalLabel": "You cannot remove your own access",
+    "sort": "Sort people",
       "team": "Site team",
       "unavailable": "Team members are not available right now.",
       "updateFailed": "The team could not be updated.",
       "validEmail": "Enter at least one valid email address."
+    },
+    "responses": {
+      "company": "Company",
+      "contactDetails": "Contact details",
+      "country": "Country",
+      "delete": "Delete response",
+      "deleteDescription": "This permanently removes the response from {name}.",
+      "deleteFailed": "The response could not be deleted.",
+      "deleteTitle": "Delete this response?",
+      "deleting": "Deleting…",
+      "email": "Email",
+      "emailDelivery": "Email",
+      "enquiry": "Website enquiry",
+      "inquiryType": "Enquiry type",
+      "messageLabel": "Original message",
+      "messageTitle": "What they wrote",
+      "name": "Name",
+      "noMessage": "No message was provided.",
+      "received": "Received {date}",
+      "receivedAt": "Received",
+      "reply": "Reply by email",
+      "submissionStatus": "Status",
+      "unknownSender": "Unknown sender"
     },
     "metadata": {
       "dashboard": "Dashboard",
@@ -356,9 +401,9 @@
         "title": "Channels"
       },
       "contact-form": {
-        "description": "Form fields, enquiry types, and where responses are sent.",
-        "empty": "Configure the contact form here.",
-        "title": "Form settings"
+        "description": "Contact form delivery, recipients, fields, and response messaging.",
+        "empty": "Configure contact form delivery and recipients here.",
+        "title": "Settings"
       },
       "contact-page": {
         "description": "Contact page heading, map, and imagery.",
@@ -399,6 +444,11 @@
         "description": "Messages sent through the contact form.",
         "empty": "Messages from the website will land here.",
         "title": "Responses"
+      },
+      "settings": {
+        "description": "Contact form delivery, recipients, fields, and response messaging.",
+        "empty": "Configure contact form delivery and recipients here.",
+        "title": "Settings"
       }
     },
     "shell": {

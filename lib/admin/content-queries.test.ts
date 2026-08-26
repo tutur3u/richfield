@@ -29,11 +29,13 @@ describe("contentKeys", () => {
     expect(listKey.slice(0, 3)).toEqual(contentKeys.collection("articles"));
     expect(listKey.at(-1)).toEqual({
       completeness: "all",
+      delivery: "all",
       featured: "all",
       locale: "en",
       search: "vietnam",
       sort: "created-desc",
       status: "all",
+      submission: "all",
     });
   });
 

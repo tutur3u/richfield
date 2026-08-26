@@ -111,7 +111,6 @@ export function buildRichfieldContactEmail(
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="color-scheme" content="light dark">
   <meta name="supported-color-schemes" content="light dark">
-  <title>${escapeHtml(subject)}</title>
   <style>
     @media only screen and (max-width:620px){.email-shell{padding:16px!important}.email-card{border-radius:12px!important}.email-header,.email-content,.email-footer{padding-left:22px!important;padding-right:22px!important}.detail-label{display:block!important;width:auto!important;padding:12px 0 2px!important;border-bottom:0!important}.detail-label+td{display:block!important;padding:0 0 12px!important}.message-card{padding:18px!important}}
     @media (prefers-color-scheme:dark){body,.email-shell{background:#101820!important}.email-card,.email-content{background:#18222c!important}.email-content h1,.email-content td,.message-card{color:#f6efe1!important}.email-content p,.email-footer,.detail-label{color:#c4bbad!important}.email-content td{border-color:#34414d!important}.message-card{background:#111a23!important;border-color:#3e4b57!important}}

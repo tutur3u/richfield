@@ -38,6 +38,8 @@
       "addNew": "Thêm mới",
       "cancel": "Hủy",
       "allStatuses": "Mọi trạng thái",
+      "allDeliveries": "Mọi trạng thái gửi",
+      "allSubmissions": "Tất cả phản hồi",
       "allStories": "Tất cả bài viết",
       "allTranslations": "Mọi bản dịch",
       "clearFilters": "Xóa bộ lọc",
@@ -48,8 +50,13 @@
       "featuredOnly": "Chỉ bài nổi bật",
       "filterFeature": "Loại bài viết",
       "filterStatus": "Trạng thái",
+      "filterDelivery": "Gửi email",
+      "filterSubmission": "Trạng thái phản hồi",
       "filterTranslation": "Bản dịch",
       "hidden": "Đã ẩn",
+      "deliveryFailed": "Thất bại",
+      "deliveryPending": "Đang chờ",
+      "deliverySent": "Đã gửi",
       "items": "{count} mục",
       "itemsFound": "Tìm thấy {count} mục",
       "live": "Đang hiển thị",
@@ -60,6 +67,9 @@
       "nothingHere": "Chưa có nội dung",
       "nothingMatches": "Không có kết quả phù hợp",
       "scheduled": "Đã lên lịch",
+      "responseClosed": "Đã đóng",
+      "responseNew": "Mới",
+      "responseRead": "Đã đọc",
       "sortBy": "Sắp xếp theo",
       "sortCreatedNewest": "Tạo gần đây nhất",
       "sortCreatedOldest": "Tạo lâu nhất",
@@ -234,6 +244,9 @@
         "workMode": "Chế độ làm việc",
         "year": "Năm"
       },
+      "hints": {
+        "recipientEmails": "Mọi phản hồi liên hệ sẽ được gửi đến các địa chỉ này. Phân cách nhiều người nhận bằng dấu phẩy hoặc xuống dòng. Nếu để trống, hệ thống dùng contact@tuturuuu.com."
+      },
       "itemNames": {
         "articles": "bài viết",
         "brands": "thương hiệu",
@@ -299,12 +312,14 @@
     "accessLevelAdded": "Đã thêm cấp quyền.",
     "accessLevelRemoved": "Đã gỡ cấp quyền.",
     "accessLevels": "Cấp quyền",
+    "allAccessLevels": "Tất cả cấp quyền",
     "activeStatus": "Đang hoạt động",
       "activeCaption": "Có thể đăng nhập và chỉnh sửa trang web.",
       "activeTitle": "Đang hoạt động",
       "cancel": "Hủy",
       "confirmRemove": "Xóa",
       "description": "Mời đồng nghiệp và quản lý quyền truy cập ngay trên Richfield.",
+      "done": "Xong",
       "emails": "Địa chỉ email",
       "empty": "Không tìm thấy thành viên nào trong không gian làm việc.",
       "invite": "Gửi lời mời",
@@ -317,17 +332,47 @@
     "invitedTitle": "Đã mời",
     "invitedStatus": "Đã mời",
       "loading": "Đang tải thành viên",
+      "filterRole": "Lọc theo cấp quyền",
+      "nameAsc": "Tên A–Z",
+      "nameDesc": "Tên Z–A",
+      "noMatches": "Không có thành viên phù hợp với bộ lọc.",
       "manage": "Quản lý thành viên",
       "refresh": "Làm mới",
       "removeAccessTitle": "Thu hồi quyền truy cập?",
     "removeInviteTitle": "Hủy lời mời này?",
     "removeMemberLabel": "Xóa",
     "saving": "Đang lưu…",
+    "search": "Tìm thành viên",
+    "searchPlaceholder": "Tìm theo tên, email hoặc quyền…",
     "selfRemovalLabel": "Bạn không thể tự thu hồi quyền truy cập của mình",
+    "sort": "Sắp xếp thành viên",
       "team": "Nhóm quản trị website",
       "unavailable": "Hiện không thể tải danh sách thành viên.",
       "updateFailed": "Không thể cập nhật thành viên.",
       "validEmail": "Nhập ít nhất một địa chỉ email hợp lệ."
+    },
+    "responses": {
+      "company": "Công ty",
+      "contactDetails": "Thông tin liên hệ",
+      "country": "Quốc gia",
+      "delete": "Xóa phản hồi",
+      "deleteDescription": "Thao tác này sẽ xóa vĩnh viễn phản hồi từ {name}.",
+      "deleteFailed": "Không thể xóa phản hồi.",
+      "deleteTitle": "Xóa phản hồi này?",
+      "deleting": "Đang xóa…",
+      "email": "Email",
+      "emailDelivery": "Email",
+      "enquiry": "Yêu cầu từ website",
+      "inquiryType": "Loại yêu cầu",
+      "messageLabel": "Tin nhắn gốc",
+      "messageTitle": "Nội dung gửi đến",
+      "name": "Tên",
+      "noMessage": "Không có nội dung tin nhắn.",
+      "received": "Nhận lúc {date}",
+      "receivedAt": "Thời gian nhận",
+      "reply": "Trả lời qua email",
+      "submissionStatus": "Trạng thái",
+      "unknownSender": "Người gửi không xác định"
     },
     "metadata": {
       "dashboard": "Trang quản trị",
@@ -356,9 +401,9 @@
         "title": "Kênh liên hệ"
       },
       "contact-form": {
-        "description": "Trường biểu mẫu, loại yêu cầu và nơi nhận phản hồi.",
-        "empty": "Thiết lập biểu mẫu liên hệ tại đây.",
-        "title": "Cài đặt biểu mẫu"
+        "description": "Cấu hình gửi biểu mẫu liên hệ, người nhận, trường dữ liệu và nội dung phản hồi.",
+        "empty": "Thiết lập cách gửi và người nhận biểu mẫu liên hệ tại đây.",
+        "title": "Cài đặt"
       },
       "contact-page": {
         "description": "Tiêu đề, bản đồ và hình ảnh của trang Liên hệ.",
@@ -399,6 +444,11 @@
         "description": "Tin nhắn được gửi từ biểu mẫu liên hệ.",
         "empty": "Tin nhắn từ trang web sẽ xuất hiện tại đây.",
         "title": "Phản hồi"
+      },
+      "settings": {
+        "description": "Cấu hình gửi biểu mẫu liên hệ, người nhận, trường dữ liệu và nội dung phản hồi.",
+        "empty": "Thiết lập cách gửi và người nhận biểu mẫu liên hệ tại đây.",
+        "title": "Cài đặt"
       }
     },
     "shell": {

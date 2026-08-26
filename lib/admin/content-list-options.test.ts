@@ -68,14 +68,31 @@ describe("admin content list options", () => {
       ],
       {
         completeness: "missing",
+        delivery: "all",
         featured: "featured",
         search: "mai",
         sort: "title-asc",
         status: "published",
+        submission: "all",
       },
     );
 
     expect(result.map(({ id }) => id)).toEqual(["match"]);
+  });
+
+  test("responses default to newest received and support response filters", () => {
+    const options = readContentListOptions(
+      new URLSearchParams("submission=new&delivery=sent&search=acme"),
+      "contact-submissions",
+    );
+    const result = applyContentListOptions([
+      item("older", { collectionKey: "contact-submissions", brand: "Acme", receivedAt: "2026-01-01T00:00:00Z", submissionStatus: "new", emailNotificationStatus: "sent" }),
+      item("newer", { collectionKey: "contact-submissions", email: "hello@acme.test", receivedAt: "2026-02-01T00:00:00Z", submissionStatus: "new", emailNotificationStatus: "sent" }),
+      item("closed", { collectionKey: "contact-submissions", brand: "Acme", receivedAt: "2026-03-01T00:00:00Z", submissionStatus: "closed", emailNotificationStatus: "sent" }),
+    ], options);
+
+    expect(options.sort).toBe("created-desc");
+    expect(result.map(({ id }) => id)).toEqual(["newer", "older"]);
   });
 
   test("falls back safely for unsupported query values", () => {

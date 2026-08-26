@@ -5,6 +5,8 @@ import type {
 import type {
   ContentCompletenessFilter,
   ContentFeatureFilter,
+  ResponseDeliveryFilter,
+  ResponseStatusFilter,
   ContentSort,
   ContentStatusFilter,
 } from "./content-list-options";
@@ -37,9 +39,11 @@ export const contentKeys = {
     status: ContentStatusFilter = "all",
     featured: ContentFeatureFilter = "all",
     completeness: ContentCompletenessFilter = "all",
+    delivery: ResponseDeliveryFilter = "all",
+    submission: ResponseStatusFilter = "all",
   ) => [
     ...contentKeys.collection(collectionKey),
-    { completeness, featured, locale, search, sort, status },
+    { completeness, delivery, featured, locale, search, sort, status, submission },
   ] as const,
 };
 
@@ -53,6 +57,8 @@ export async function fetchContentPage({
   status = "all",
   featured = "all",
   completeness = "all",
+  delivery = "all",
+  submission = "all",
   signal,
 }: {
   collectionKey: RichfieldAdminCollectionKey;
@@ -64,6 +70,8 @@ export async function fetchContentPage({
   status?: ContentStatusFilter;
   featured?: ContentFeatureFilter;
   completeness?: ContentCompletenessFilter;
+  delivery?: ResponseDeliveryFilter;
+  submission?: ResponseStatusFilter;
   signal?: AbortSignal;
 }): Promise<RichfieldContentPage> {
   const params = new URLSearchParams({
@@ -74,6 +82,8 @@ export async function fetchContentPage({
     status,
     featured,
     completeness,
+    delivery,
+    submission,
   });
 
   if (search) {

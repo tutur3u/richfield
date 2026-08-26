@@ -34,7 +34,6 @@ const SECTION_ICONS = {
   brands: Shapes,
   careers: Briefcase,
   channels: PhoneCall,
-  "contact-form": SlidersHorizontal,
   "contact-page": AddressBook,
   files: Folder,
   leadership: UsersThree,
@@ -43,6 +42,7 @@ const SECTION_ICONS = {
   people: Gear,
   photos: Image,
   responses: ChatCircleDots,
+  settings: SlidersHorizontal,
 } as const;
 
 /**

@@ -245,8 +245,9 @@
         "year": "Year"
       },
       "hints": {
-        "recipientEmails": "Every contact response is sent to these addresses. Separate multiple recipients with commas or new lines. If left empty, contact@tuturuuu.com is used."
+        "recipientEmails": "Every contact response is sent to these addresses. Add each recipient as a separate address. If left empty, contact@tuturuuu.com is used."
       },
+      "invalidRecipientEmail": "Enter a valid email address before adding it.",
       "itemNames": {
         "articles": "story",
         "brands": "brand",
@@ -260,13 +261,18 @@
         "milestones": "milestone"
       },
       "placeholders": {
+        "addRecipientEmail": "Add another email address",
         "category": "Choose a category",
+        "contactFormName": "Contact form settings",
         "employmentType": "Full-time",
         "inquiryTypes": "Brand partnership, Careers, Press",
         "kind": "Choose a kind",
+        "maximumMessageLength": "1200",
         "recipientEmails": "contact@tuturuuu.com, another@example.com",
+        "submitLabel": "Send message",
         "workMode": "On-site, hybrid, or remote"
       },
+      "removeRecipientEmail": "Remove {email}",
       "statuses": {
         "archived": "Archived",
         "draft": "Draft",

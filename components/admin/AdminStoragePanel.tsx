@@ -10,6 +10,7 @@
  */
 import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import type { RichfieldAdminContentItem } from "@/lib/richfield-admin-content-model";
 import type { RichfieldStorageAnalyticsState } from "@/lib/richfield-admin-storage";
 import type {
@@ -213,6 +214,7 @@ function StorageFileRow({
           <input
             className="min-h-11 w-full border border-[rgba(184,112,81,0.42)] bg-white px-3 text-sm font-bold text-[var(--ink)] outline-none focus:border-[var(--gold)]"
             onChange={(event) => setRenameValue(event.currentTarget.value)}
+            placeholder={item.name}
             value={renameValue}
           />
         ) : item.kind === "folder" ? (
@@ -339,12 +341,10 @@ export function StoragePanel({
   const [confirmDeletePath, setConfirmDeletePath] = useState<string | null>(
     null,
   );
-  const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   const refreshStorage = async (path = currentPath) => {
     setBusy(true);
-    setMessage(null);
     setCurrentPath(path);
 
     try {
@@ -406,7 +406,6 @@ export function StoragePanel({
     refreshPath = currentPath,
   ) => {
     setBusy(true);
-    setMessage(null);
 
     try {
       const response = await request;
@@ -416,7 +415,7 @@ export function StoragePanel({
       } | null;
 
       if (!response.ok) {
-        setMessage(payload?.error ?? "Storage request failed.");
+        toast.error(payload?.error ?? "Storage request failed.");
         return;
       }
 
@@ -430,10 +429,10 @@ export function StoragePanel({
       setConfirmDeletePath(null);
       setRenamingPath(null);
       await refreshStorage(refreshPath);
-      setMessage(successText);
+      toast.success(successText);
       await onResourcesChanged();
     } catch {
-      setMessage("Storage request failed.");
+      toast.error("Storage request failed.");
     } finally {
       setBusy(false);
     }
@@ -442,7 +441,7 @@ export function StoragePanel({
   const uploadSelectedFile = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!uploadFile) {
-      setMessage(RICHFIELD_ADMIN_COPY.storage.chooseFile);
+      toast.error(RICHFIELD_ADMIN_COPY.storage.chooseFile);
       return;
     }
 
@@ -507,7 +506,6 @@ export function StoragePanel({
 
   const openFile = async (item: RichfieldStorageFileItem) => {
     setBusy(true);
-    setMessage(null);
 
     try {
       const url = new URL("/api/admin/storage", window.location.origin);
@@ -519,13 +517,13 @@ export function StoragePanel({
       } | null;
 
       if (!response.ok || !payload?.data?.signedUrl) {
-        setMessage(payload?.error ?? "File could not be opened.");
+        toast.error(payload?.error ?? "File could not be opened.");
         return;
       }
 
       window.open(payload.data.signedUrl, "_blank", "noopener,noreferrer");
     } catch {
-      setMessage("File could not be opened.");
+      toast.error("File could not be opened.");
     } finally {
       setBusy(false);
     }
@@ -666,12 +664,6 @@ export function StoragePanel({
           </div>
         </div>
 
-        {message ? (
-          <div className="border border-[rgba(184,112,81,0.34)] bg-white/68 px-4 py-3 text-sm text-[var(--ink-soft)]">
-            {message}
-          </div>
-        ) : null}
-
         <div className="grid gap-4 lg:grid-cols-2">
           <form
             className="grid min-w-0 gap-3 border border-[rgba(184,112,81,0.34)] bg-white/58 p-4"
@@ -709,6 +701,7 @@ export function StoragePanel({
               <input
                 className="min-h-11 w-full min-w-0 border border-[rgba(184,112,81,0.42)] bg-white/78 px-3 text-sm text-[var(--ink)] outline-none focus:border-[var(--gold)]"
                 onChange={(event) => setFolderName(event.currentTarget.value)}
+                placeholder={RICHFIELD_ADMIN_COPY.storage.folderName}
                 value={folderName}
               />
             </label>
@@ -755,4 +748,3 @@ export function StoragePanel({
     </section>
   );
 }
-

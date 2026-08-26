@@ -245,8 +245,9 @@
         "year": "Năm"
       },
       "hints": {
-        "recipientEmails": "Mọi phản hồi liên hệ sẽ được gửi đến các địa chỉ này. Phân cách nhiều người nhận bằng dấu phẩy hoặc xuống dòng. Nếu để trống, hệ thống dùng contact@tuturuuu.com."
+        "recipientEmails": "Mọi phản hồi liên hệ sẽ được gửi đến các địa chỉ này. Thêm từng địa chỉ người nhận riêng biệt. Nếu để trống, hệ thống dùng contact@tuturuuu.com."
       },
+      "invalidRecipientEmail": "Nhập địa chỉ email hợp lệ trước khi thêm.",
       "itemNames": {
         "articles": "bài viết",
         "brands": "thương hiệu",
@@ -260,13 +261,18 @@
         "milestones": "cột mốc"
       },
       "placeholders": {
+        "addRecipientEmail": "Thêm địa chỉ email khác",
         "category": "Chọn danh mục",
+        "contactFormName": "Cài đặt biểu mẫu liên hệ",
         "employmentType": "Toàn thời gian",
         "inquiryTypes": "Hợp tác thương hiệu, Tuyển dụng, Báo chí",
         "kind": "Chọn loại",
+        "maximumMessageLength": "1200",
         "recipientEmails": "contact@tuturuuu.com, another@example.com",
+        "submitLabel": "Gửi tin nhắn",
         "workMode": "Tại văn phòng, kết hợp hoặc từ xa"
       },
+      "removeRecipientEmail": "Xóa {email}",
       "statuses": {
         "archived": "Đã lưu trữ",
         "draft": "Bản nháp",

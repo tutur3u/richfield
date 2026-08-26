@@ -1,12 +1,12 @@
 "use client";
 
-import { ArrowClockwise, FunnelSimple, MagnifyingGlass, SlidersHorizontal, Trash, UserPlus, UsersThree } from "@phosphor-icons/react";
+import { ArrowClockwise, CaretDown, FunnelSimple, MagnifyingGlass, SlidersHorizontal, Trash, UserPlus, UsersThree } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import type { RichfieldAdminMember, RichfieldAdminMembersContext, RichfieldAdminRole } from "@/lib/richfield-admin-members";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -27,8 +27,7 @@ export function MembersPanel({ membersHref: _membersHref }: { membersHref?: stri
   const [roles, setRoles] = useState<RichfieldAdminRole[]>([]);
   const [context, setContext] = useState<RichfieldAdminMembersContext | null>(null);
   const [status, setStatus] = useState<"error" | "loading" | "ready">("loading");
-  const [message, setMessage] = useState("");
-  const [messageIsError, setMessageIsError] = useState(false);
+  const [loadError, setLoadError] = useState("");
   const [emails, setEmails] = useState("");
   const [busy, setBusy] = useState(false);
   const [inviteOpen, setInviteOpen] = useState(false);
@@ -38,14 +37,19 @@ export function MembersPanel({ membersHref: _membersHref }: { membersHref?: stri
   const [sort, setSort] = useState<Sort>("name-asc");
   const [roleFilter, setRoleFilter] = useState("all");
 
-  const loadMembers = useCallback(async () => {
-    setStatus("loading"); setMessage("");
+  const loadMembers = useCallback(async (background = false) => {
+    if (!background) setStatus("loading");
+    setLoadError("");
     try {
       const response = await adminFetch("/api/admin/members", { cache: "no-store" });
       const payload = (await response.json().catch(() => ({}))) as MembersResponse;
       if (!response.ok || !payload.members) throw new Error(payload.error ?? t("unavailable"));
       setMembers(payload.members); setRoles(payload.roles ?? []); setContext(payload.context ?? null); setStatus("ready");
-    } catch (error) { setStatus("error"); setMessageIsError(true); setMessage(error instanceof Error ? error.message : t("unavailable")); }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : t("unavailable");
+      if (background) toast.error(errorMessage);
+      else { setStatus("error"); setLoadError(errorMessage); }
+    }
   }, [t]);
 
   useEffect(() => { const timer = window.setTimeout(() => void loadMembers(), 0); return () => window.clearTimeout(timer); }, [loadMembers]);
@@ -61,19 +65,19 @@ export function MembersPanel({ membersHref: _membersHref }: { membersHref?: stri
   const accessMember = members.find((member) => member.id === accessMemberId) ?? null;
 
   async function mutate(method: "DELETE" | "PATCH" | "POST", body: unknown, success: string) {
-    setBusy(true); setMessage(""); setMessageIsError(false);
+    setBusy(true);
     try {
       const response = await adminFetch("/api/admin/members", { body: JSON.stringify(body), headers: { "Content-Type": "application/json" }, method });
       const payload = (await response.json().catch(() => ({}))) as MembersResponse;
       if (!response.ok) throw new Error(payload.error ?? payload.message ?? t("updateFailed"));
-      await loadMembers(); setMessage(success); return true;
-    } catch (error) { setMessageIsError(true); setMessage(error instanceof Error ? error.message : t("updateFailed")); return false; }
+      await loadMembers(true); toast.success(success); return true;
+    } catch (error) { toast.error(error instanceof Error ? error.message : t("updateFailed")); return false; }
     finally { setBusy(false); }
   }
 
   async function invite() {
     const parsed = parseEmails(emails);
-    if (parsed.length === 0) { setMessageIsError(true); setMessage(t("validEmail")); return; }
+    if (parsed.length === 0) { toast.error(t("validEmail")); return; }
     if (await mutate("POST", { emails: parsed }, t("inviteSuccess"))) { setEmails(""); setInviteOpen(false); }
   }
   async function remove(member: RichfieldAdminMember) { await mutate("DELETE", member.status === "Invited" && member.email ? { email: member.email } : { id: member.id }, t(member.status === "Invited" ? "inviteRemoved" : "accessRemoved")); setRemoveTarget(null); }
@@ -84,7 +88,7 @@ export function MembersPanel({ membersHref: _membersHref }: { membersHref?: stri
 
     <div className="grid gap-3 rounded-2xl border border-admin-rule bg-admin-panel p-3 md:grid-cols-[minmax(0,1fr)_minmax(10rem,.35fr)_minmax(10rem,.35fr)]"><label className="relative"><span className="sr-only">{t("search")}</span><MagnifyingGlass aria-hidden className="absolute left-3 top-1/2 -translate-y-1/2 text-admin-ink-soft" /><input className="min-h-11 w-full rounded-xl border border-admin-rule bg-admin-surface pl-10 pr-3 text-sm text-admin-ink outline-none focus:border-admin-gold" onChange={(event) => setSearch(event.currentTarget.value)} placeholder={t("searchPlaceholder")} type="search" value={search} /></label><label className="relative"><span className="sr-only">{t("sort")}</span><SlidersHorizontal aria-hidden className="absolute left-3 top-1/2 -translate-y-1/2 text-admin-clay" /><select className="min-h-11 w-full appearance-none rounded-xl border border-admin-rule bg-admin-surface pl-10 pr-3 text-sm text-admin-ink" onChange={(event) => setSort(event.currentTarget.value as Sort)} value={sort}><option value="name-asc">{t("nameAsc")}</option><option value="name-desc">{t("nameDesc")}</option></select></label><label className="relative"><span className="sr-only">{t("filterRole")}</span><FunnelSimple aria-hidden className="absolute left-3 top-1/2 -translate-y-1/2 text-admin-clay" /><select className="min-h-11 w-full appearance-none rounded-xl border border-admin-rule bg-admin-surface pl-10 pr-3 text-sm text-admin-ink" onChange={(event) => setRoleFilter(event.currentTarget.value)} value={roleFilter}><option value="all">{t("allAccessLevels")}</option>{roles.map((role) => <option key={role.id} value={role.id}>{role.name}</option>)}</select></label></div>
 
-    {message ? <p className={`rounded-xl border px-4 py-3 text-sm ${messageIsError ? "border-red-500/25 bg-red-500/8 text-red-700 dark:text-red-300" : "border-emerald-500/25 bg-emerald-500/8 text-emerald-700 dark:text-emerald-300"}`} role={messageIsError ? "alert" : "status"}>{message}</p> : null}
+    {loadError ? <p className="rounded-xl border border-red-500/25 bg-red-500/8 px-4 py-3 text-sm text-red-700 dark:text-red-300" role="alert">{loadError}</p> : null}
     {status === "loading" ? <MembersSkeleton label={t("loading")} /> : null}
     {status === "ready" && members.length === 0 ? <p className="rounded-xl border border-dashed border-admin-rule bg-admin-panel p-6 text-sm text-admin-ink-soft">{t("empty")}</p> : null}
     {status === "ready" && members.length > 0 && filtered.length === 0 ? <p className="rounded-xl border border-dashed border-admin-rule bg-admin-panel p-6 text-sm text-admin-ink-soft">{t("noMatches")}</p> : null}
@@ -99,7 +103,7 @@ export function MembersPanel({ membersHref: _membersHref }: { membersHref?: stri
 
 function MemberGroup({ accessLevelsLabel, caption, canManage, canManageRoles = false, members, onAccess, onRemove, removeLabel, selfRemovalLabel, title }: { accessLevelsLabel?: string; caption: string; canManage: boolean; canManageRoles?: boolean; members: RichfieldAdminMember[]; onAccess: (id: string) => void; onRemove: (member: RichfieldAdminMember) => void; removeLabel: string; selfRemovalLabel: string; title: string }) {
   if (members.length === 0) return null;
-  return <div className="grid gap-3"><div className="flex flex-wrap items-baseline gap-x-3 gap-y-1"><h3 className="font-display text-2xl leading-none text-admin-ink">{title}<span className="ml-2 text-base text-admin-ink-soft">{members.length}</span></h3><p className="text-sm text-admin-ink-soft">{caption}</p></div><div className="grid gap-3 lg:grid-cols-2">{members.map((member) => <Card className="border border-admin-rule bg-admin-panel py-4 shadow-none ring-0" key={member.id}><CardContent className="grid gap-3 px-4"><div className="flex min-w-0 items-center gap-3"><Avatar className="size-11" size="lg"><AvatarFallback className="bg-admin-navy font-display text-white">{member.initials}</AvatarFallback></Avatar><div className="min-w-0 flex-1"><strong className="block truncate text-admin-ink">{member.name}</strong>{member.email && member.email !== member.name ? <span className="block truncate text-sm text-admin-ink-soft">{member.email}</span> : null}</div><Button aria-label={`${removeLabel} ${member.name}`} className="text-red-600" disabled={!canManage || member.isCurrentUser} onClick={() => onRemove(member)} size="icon-sm" title={member.isCurrentUser ? selfRemovalLabel : undefined} variant="ghost"><Trash aria-hidden /></Button></div><div className="flex flex-wrap items-center gap-2">{member.roles.length > 0 ? member.roles.map((role) => <Badge key={role.id} variant="outline">{role.name}</Badge>) : member.status !== "Invited" ? <Badge variant="outline">{member.role}</Badge> : null}{accessLevelsLabel && canManageRoles ? <Button className="h-7 rounded-full px-2.5 text-xs" disabled={member.isCurrentUser} onClick={() => onAccess(member.id)} title={member.isCurrentUser ? selfRemovalLabel : undefined} variant="outline">{accessLevelsLabel}</Button> : null}</div></CardContent></Card>)}</div></div>;
+  return <div className="grid gap-3"><div className="flex flex-wrap items-baseline gap-x-3 gap-y-1"><h3 className="font-display text-2xl leading-none text-admin-ink">{title}<span className="ml-2 text-base text-admin-ink-soft">{members.length}</span></h3><p className="text-sm text-admin-ink-soft">{caption}</p></div><div className="grid gap-3 lg:grid-cols-2">{members.map((member) => { const roleLabel = member.roles.map((role) => role.name).join(", ") || member.role; return <Card className="border border-admin-rule bg-admin-panel py-4 shadow-none ring-0" key={member.id}><CardContent className="grid gap-3 px-4"><div className="flex min-w-0 items-center gap-3"><Avatar className="size-11" size="lg"><AvatarFallback className="bg-admin-navy font-display text-white">{member.initials}</AvatarFallback></Avatar><div className="min-w-0 flex-1"><strong className="block truncate text-admin-ink">{member.name}</strong>{member.email && member.email !== member.name ? <span className="block truncate text-sm text-admin-ink-soft">{member.email}</span> : null}</div><Button aria-label={`${removeLabel} ${member.name}`} className="text-red-600" disabled={!canManage || member.isCurrentUser} onClick={() => onRemove(member)} size="icon-sm" title={member.isCurrentUser ? selfRemovalLabel : undefined} variant="ghost"><Trash aria-hidden /></Button></div>{accessLevelsLabel && member.status !== "Invited" ? canManageRoles ? <Button aria-label={`${accessLevelsLabel}: ${member.name}`} className="h-9 w-fit max-w-full rounded-full border-admin-gold/35 bg-admin-gold/8 px-3 text-xs text-admin-ink hover:bg-admin-gold/15" disabled={member.isCurrentUser} onClick={() => onAccess(member.id)} title={member.isCurrentUser ? selfRemovalLabel : undefined} variant="outline"><SlidersHorizontal aria-hidden data-icon="inline-start" /><span className="truncate">{roleLabel}</span><CaretDown aria-hidden data-icon="inline-end" /></Button> : <span className="inline-flex h-8 w-fit max-w-full items-center rounded-full border border-admin-gold/35 bg-admin-gold/8 px-3 text-xs font-semibold text-admin-ink"><span className="truncate">{roleLabel}</span></span> : null}</CardContent></Card>; })}</div></div>;
 }
 
 function MembersSkeleton({ label }: { label: string }) { return <div aria-label={label} className="grid gap-3 sm:grid-cols-2">{[0, 1].map((item) => <div className="h-28 animate-pulse rounded-xl border border-admin-rule bg-admin-panel" key={item} />)}</div>; }

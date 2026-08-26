@@ -1,9 +1,10 @@
 "use client";
 
-import { ArrowClockwise } from "@phosphor-icons/react";
+import { ArrowClockwise, Plus, X } from "@phosphor-icons/react";
 import { useTranslations } from "next-intl";
-import { useId } from "react";
+import { useId, useState, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { parseContactRecipients } from "@/lib/richfield-contact-recipients";
 import {
   Select,
   SelectContent,
@@ -89,7 +90,7 @@ export function TextField<TName extends keyof Draft>({
         disabled={disabled}
         name={name}
         onChange={(event) => onChange(name, event.currentTarget.value)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? label}
         required={required}
         value={value}
       />
@@ -107,6 +108,7 @@ export function PageLinkField<TName extends keyof Draft>({
   name,
   onChange,
   onMatchTitle,
+  placeholder,
   prefix,
   showMatchTitle,
   value,
@@ -117,6 +119,7 @@ export function PageLinkField<TName extends keyof Draft>({
   name: TName;
   onChange: (name: TName, value: string) => void;
   onMatchTitle: () => void;
+  placeholder?: string;
   prefix: string;
   showMatchTitle: boolean;
   value: string;
@@ -141,6 +144,7 @@ export function PageLinkField<TName extends keyof Draft>({
           inputMode="url"
           name={name}
           onChange={(event) => onChange(name, event.currentTarget.value)}
+          placeholder={placeholder ?? label}
           spellCheck={false}
           value={value}
         />
@@ -197,7 +201,7 @@ export function NumberField<TName extends keyof Draft>({
         onChange={(event) =>
           onChange(name, event.currentTarget.value.replace(/[^\d]/g, ""))
         }
-        placeholder={placeholder}
+        placeholder={placeholder ?? label}
         type="text"
         value={value}
       />
@@ -294,11 +298,129 @@ export function TextAreaField<TName extends keyof Draft>({
         disabled={disabled}
         name={name}
         onChange={(event) => onChange(name, event.currentTarget.value)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? label}
         rows={rows}
         value={value}
       />
     </label>
+  );
+}
+
+export function EmailMultiSelectField<TName extends keyof Draft>({
+  addPlaceholder,
+  disabled,
+  invalidEmailMessage,
+  label,
+  name,
+  onChange,
+  removeRecipientLabel,
+  value,
+}: {
+  addPlaceholder: string;
+  disabled?: boolean;
+  invalidEmailMessage: string;
+  label: string;
+  name: TName;
+  onChange: (name: TName, value: string) => void;
+  removeRecipientLabel: (email: string) => string;
+  value: string;
+}) {
+  const inputId = useId();
+  const [pendingEmail, setPendingEmail] = useState("");
+  const [error, setError] = useState("");
+  const recipients = parseContactRecipients(value);
+
+  function addPendingRecipients() {
+    const rawCandidates = pendingEmail
+      .split(/[,;\n]+/)
+      .map((email) => email.trim().toLowerCase())
+      .filter(Boolean);
+
+    if (rawCandidates.length === 0) return true;
+    const validCandidates = parseContactRecipients(rawCandidates);
+    if (validCandidates.length !== rawCandidates.length) {
+      setError(invalidEmailMessage);
+      return false;
+    }
+
+    onChange(name, [...new Set([...recipients, ...validCandidates])].join(", "));
+    setPendingEmail("");
+    setError("");
+    return true;
+  }
+
+  function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
+    if (["Enter", ",", ";"].includes(event.key)) {
+      event.preventDefault();
+      addPendingRecipients();
+    }
+
+    if (event.key === "Backspace" && !pendingEmail && recipients.length > 0) {
+      onChange(name, recipients.slice(0, -1).join(", "));
+    }
+  }
+
+  return (
+    <div className="grid min-w-0 gap-2">
+      <label className={FIELD_LABEL} htmlFor={inputId}>
+        {label}
+      </label>
+      <div
+        className={`flex min-h-12 flex-wrap items-center gap-2 rounded-lg border bg-paper p-2 transition focus-within:ring-3 ${
+          error
+            ? "border-red-500 focus-within:ring-red-500/10"
+            : "border-line focus-within:border-gold focus-within:ring-gold/15"
+        }`}
+      >
+        {recipients.map((email) => (
+          <span
+            className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-admin-gold/35 bg-admin-gold/10 py-1 pl-2.5 pr-1 text-xs font-semibold text-admin-ink"
+            key={email}
+          >
+            <span className="truncate">{email}</span>
+            <button
+              aria-label={removeRecipientLabel(email)}
+              className="grid size-6 shrink-0 place-items-center rounded-full text-admin-ink-soft transition hover:bg-admin-gold/20 hover:text-admin-ink disabled:cursor-not-allowed disabled:opacity-50"
+              disabled={disabled}
+              onClick={() =>
+                onChange(
+                  name,
+                  recipients.filter((recipient) => recipient !== email).join(", "),
+                )
+              }
+              type="button"
+            >
+              <X aria-hidden size={13} />
+            </button>
+          </span>
+        ))}
+        <div className="flex min-w-48 flex-1 items-center gap-2 px-1">
+          <Plus aria-hidden className="shrink-0 text-admin-clay" size={16} />
+          <input
+            autoCapitalize="none"
+            autoComplete="email"
+            className="h-8 min-w-32 flex-1 bg-transparent text-sm text-ink outline-none placeholder:text-admin-ink-soft/70"
+            disabled={disabled}
+            id={inputId}
+            inputMode="email"
+            onBlur={addPendingRecipients}
+            onChange={(event) => {
+              setPendingEmail(event.currentTarget.value);
+              if (error) setError("");
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder={addPlaceholder}
+            type="email"
+            value={pendingEmail}
+          />
+        </div>
+      </div>
+      {error ? (
+        <span className="text-xs text-red-600 dark:text-red-400" role="alert">
+          {error}
+        </span>
+      ) : null}
+    </div>
   );
 }
 

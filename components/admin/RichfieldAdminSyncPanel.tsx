@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import { adminFetch } from "./richfield-admin-session-client";
 import { RICHFIELD_ADMIN_COPY } from "./richfield-admin-copy";
 
@@ -43,7 +44,6 @@ type SyncDiffResponse = {
 
 export function RichfieldAdminSyncPanel() {
   const [diff, setDiff] = useState<SyncDiffResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<"apply" | "diff" | null>(null);
   const [publicAssetSync, setPublicAssetSync] = useState<{
     skipped?: unknown[];
@@ -58,12 +58,11 @@ export function RichfieldAdminSyncPanel() {
 
   const runDiff = async () => {
     setPendingAction("diff");
-    setError(null);
     setPublicAssetSync(null);
     try {
       setDiff(await postAdminJson<SyncDiffResponse>("/api/admin/sync/diff"));
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "Sync request failed.");
+      toast.error(nextError instanceof Error ? nextError.message : "Sync request failed.");
     } finally {
       setPendingAction(null);
     }
@@ -71,7 +70,6 @@ export function RichfieldAdminSyncPanel() {
 
   const runApply = async (force: boolean) => {
     setPendingAction("apply");
-    setError(null);
     setPublicAssetSync(null);
     try {
       const result = await postAdminJson<{
@@ -83,8 +81,9 @@ export function RichfieldAdminSyncPanel() {
       }>("/api/admin/sync/apply", { force });
       setPublicAssetSync(result.publicAssetSync ?? null);
       setDiff(result.diff ?? (await postAdminJson<SyncDiffResponse>("/api/admin/sync/diff")));
+      toast.success("The latest website changes were shared.");
     } catch (nextError) {
-      setError(nextError instanceof Error ? nextError.message : "Sync request failed.");
+      toast.error(nextError instanceof Error ? nextError.message : "Sync request failed.");
     } finally {
       setPendingAction(null);
     }
@@ -170,12 +169,6 @@ export function RichfieldAdminSyncPanel() {
         </p>
       ) : null}
 
-      {error ? (
-        <div className="border border-red-300 bg-red-500/12 px-3 py-2 text-sm text-red-800">
-          <p>We could not share the latest version. Please try again.</p>
-          <p className="mt-1 text-xs opacity-75 font-mono">{error}</p>
-        </div>
-      ) : null}
     </section>
   );
 }

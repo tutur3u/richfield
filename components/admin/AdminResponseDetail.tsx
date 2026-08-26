@@ -14,6 +14,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { contentKeys } from "@/lib/admin/content-queries";
 import type { RichfieldAdminContentItem } from "@/lib/richfield-admin-content-model";
 import {
@@ -66,7 +67,6 @@ export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdmi
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState("");
   const received = item.receivedAt || item.createdAt;
   const receivedLabel = received
     ? new Intl.DateTimeFormat(locale, {
@@ -79,7 +79,6 @@ export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdmi
 
   async function remove() {
     setDeleting(true);
-    setError("");
     try {
       const response = await adminFetch(`/api/admin/content/contact-submissions/${encodeURIComponent(item.id)}`, { method: "DELETE" });
       if (!response.ok) {
@@ -90,7 +89,7 @@ export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdmi
       router.push(sectionHref);
       router.refresh();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : t("deleteFailed"));
+      toast.error(caught instanceof Error ? caught.message : t("deleteFailed"));
       setConfirmDelete(false);
     } finally {
       setDeleting(false);
@@ -119,8 +118,6 @@ export function AdminResponseDetail({ item, sectionHref }: { item: RichfieldAdmi
           <StatusBadge label={t("emailDelivery")} value={item.emailNotificationStatus || "pending"} />
         </div>
       </header>
-
-      {error ? <p className="rounded-xl border border-red-500/25 bg-red-500/8 px-4 py-3 text-sm text-red-700 dark:text-red-300" role="alert">{error}</p> : null}
 
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(18rem,0.8fr)] lg:items-start">
         <section className="rounded-2xl border border-admin-rule bg-admin-panel p-5 sm:p-7">

@@ -25,6 +25,7 @@ import {
 } from "@/lib/richfield-admin-content-model";
 import {
   CheckboxField,
+  EmailMultiSelectField,
   EditorStepHeader,
   NumberField,
   PageLinkField,
@@ -117,7 +118,6 @@ export function ContentForm({
   const [sourceModeDirty, setSourceModeDirty] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [message, setMessage] = useState<string | null>(null);
   const [saveProgress, setSaveProgress] = useState<SaveProgressState>({
     label: "",
     percent: 0,
@@ -262,7 +262,7 @@ export function ContentForm({
     }
 
     if (file.size > MAX_ADMIN_IMAGE_UPLOAD_BYTES) {
-      setMessage(t("imageTooLarge"));
+      toast.error(t("imageTooLarge"));
       return;
     }
 
@@ -307,7 +307,6 @@ export function ContentForm({
 
     setSubmitting(true);
     setFieldErrors({});
-    setMessage(null);
     setSaveProgress({
       label: t("checkingContent"),
       percent: 2,
@@ -398,7 +397,6 @@ export function ContentForm({
     if (!effectiveItem) return;
 
     setDeleting(true);
-    setMessage(null);
 
     try {
       const response = await adminFetch(
@@ -412,14 +410,14 @@ export function ContentForm({
         .catch(() => ({}))) as MutationResponse;
 
       if (!response.ok) {
-        setMessage(t("deleteError"));
+        toast.error(t("deleteError"));
         return;
       }
 
       onDeleted(payload.items ?? []);
       onClose();
     } catch {
-      setMessage(t("deleteError"));
+      toast.error(t("deleteError"));
     } finally {
       setDeleting(false);
     }
@@ -470,12 +468,6 @@ export function ContentForm({
 
         {saveProgress.status === "running" || saveProgress.status === "error" ? (
           <SaveProgressPanel state={saveProgress} />
-        ) : null}
-
-        {message ? (
-          <div className="border border-[rgba(184,112,81,0.34)] bg-white/68 px-4 py-3 text-sm text-[var(--ink-soft)]">
-            {message}
-          </div>
         ) : null}
 
         <div
@@ -644,12 +636,6 @@ export function ContentForm({
         <SaveProgressPanel state={saveProgress} />
       ) : null}
 
-      {message ? (
-        <div className="border border-[rgba(184,112,81,0.34)] bg-white/68 px-4 py-3 text-sm text-[var(--ink-soft)]">
-          {message}
-        </div>
-      ) : null}
-
       <nav
         aria-label={t("editorSections")}
         className="sticky top-[8.15rem] z-10 -mx-1 flex gap-2 overflow-x-auto rounded-xl border border-admin-rule bg-admin-parchment/95 p-2 shadow-sm backdrop-blur-xl"
@@ -694,6 +680,11 @@ export function ContentForm({
               label={collectionKey === "milestones" ? t("fields.brand") : t("fields.name")}
               name="title"
               onChange={updateDraft}
+              placeholder={
+                collectionKey === "contact-form"
+                  ? t("placeholders.contactFormName")
+                  : undefined
+              }
               required
               value={draft.title}
             />
@@ -824,13 +815,16 @@ export function ContentForm({
           {collectionKey === "contact-form" ? (
             <div className="grid gap-4 md:grid-cols-2">
               <div className="grid gap-2 rounded-xl border border-admin-gold/40 bg-admin-gold/[0.07] p-4 md:col-span-2">
-                <TextAreaField
+                <EmailMultiSelectField
+                  addPlaceholder={t("placeholders.addRecipientEmail")}
                   disabled={isBusy}
+                  invalidEmailMessage={t("invalidRecipientEmail")}
                   label={t("fields.recipientEmail")}
                   name="email"
                   onChange={updateDraft}
-                  placeholder={t("placeholders.recipientEmails")}
-                  rows={3}
+                  removeRecipientLabel={(email) =>
+                    t("removeRecipientEmail", { email })
+                  }
                   value={draft.email}
                 />
                 <p className="text-xs leading-5 text-admin-ink-soft">
@@ -842,6 +836,7 @@ export function ContentForm({
                 label={t("fields.submitLabel")}
                 name="cta"
                 onChange={updateDraft}
+                placeholder={t("placeholders.submitLabel")}
                 value={draft.cta}
               />
               <NumberField
@@ -849,6 +844,7 @@ export function ContentForm({
                 label={t("fields.maximumMessageLength")}
                 name="positions"
                 onChange={updateDraft}
+                placeholder={t("placeholders.maximumMessageLength")}
                 value={draft.positions}
               />
               <TextField

@@ -40,6 +40,19 @@ export function defaultContentSort(collectionKey: RichfieldAdminCollectionKey): 
   return collectionKey === "articles" ? "created-desc" : "title-asc";
 }
 
+export function isDefaultContentListOptions(
+  options: ContentListOptions,
+  collectionKey: RichfieldAdminCollectionKey,
+) {
+  return (
+    options.search === "" &&
+    options.sort === defaultContentSort(collectionKey) &&
+    options.status === "all" &&
+    options.featured === "all" &&
+    options.completeness === "all"
+  );
+}
+
 export function readContentListOptions(
   searchParams: URLSearchParams,
   collectionKey: RichfieldAdminCollectionKey,

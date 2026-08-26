@@ -1,6 +1,10 @@
 import { describe, expect, test } from "vitest";
 import type { RichfieldAdminContentItem } from "@/lib/richfield-admin-content-model";
-import { applyContentListOptions, readContentListOptions } from "./content-list-options";
+import {
+  applyContentListOptions,
+  isDefaultContentListOptions,
+  readContentListOptions,
+} from "./content-list-options";
 
 function item(
   id: string,
@@ -23,6 +27,18 @@ function item(
 }
 
 describe("admin content list options", () => {
+  test("only identifies the server-seeded query as the default", () => {
+    const defaults = readContentListOptions(new URLSearchParams(), "articles");
+
+    expect(isDefaultContentListOptions(defaults, "articles")).toBe(true);
+    expect(
+      isDefaultContentListOptions({ ...defaults, status: "draft" }, "articles"),
+    ).toBe(false);
+    expect(
+      isDefaultContentListOptions({ ...defaults, sort: "title-asc" }, "articles"),
+    ).toBe(false);
+  });
+
   test("news defaults to newest creation date", () => {
     const options = readContentListOptions(new URLSearchParams(), "articles");
     const result = applyContentListOptions(

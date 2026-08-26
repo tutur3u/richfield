@@ -19,6 +19,7 @@ import {
 } from "@/lib/admin/content-queries";
 import {
   defaultContentSort,
+  isDefaultContentListOptions,
   type ContentCompletenessFilter,
   type ContentFeatureFilter,
   type ContentSort,
@@ -119,6 +120,16 @@ export function AdminContentList({
   const t = useTranslations("admin.common");
   const debouncedSearch = useDebounced(search);
   const searchId = useId();
+  const isInitialQuery = isDefaultContentListOptions(
+    {
+      completeness: completenessFilter,
+      featured: featureFilter,
+      search: debouncedSearch,
+      sort,
+      status: statusFilter,
+    },
+    collectionKey,
+  );
 
   // Generics are spelled out: the query key is a readonly tuple, which stops
   // TanStack inferring the page shape and leaves `lastPage` as unknown.
@@ -131,7 +142,11 @@ export function AdminContentList({
   >({
     getNextPageParam: (lastPage) => lastPage.nextPage,
     initialPageParam: 1,
-    initialData: initialPage
+    // The server-rendered page only belongs to the default query. Reusing it
+    // for a newly selected filter or sort makes that new cache entry look
+    // fresh and can leave the old rows visible until the global stale window
+    // expires.
+    initialData: initialPage && isInitialQuery
       ? { pageParams: [1], pages: [initialPage] }
       : undefined,
     queryFn: ({ pageParam, signal }) =>

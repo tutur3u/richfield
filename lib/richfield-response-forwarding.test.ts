@@ -175,4 +175,20 @@ describe("buildForwardEmail", () => {
     expect(email.subject).toContain("Unknown company");
     expect(email.body).toContain("(no message)");
   });
+
+  test("prefers the full stored message over the bounded summary preview", () => {
+    const email = buildForwardEmail(
+      submission({
+        profile_data: {
+          ...submission().profile_data,
+          message: "The full long-form enquiry remains available.",
+        },
+        summary: "The bounded preview.",
+      }),
+      "inbox@richfield.test",
+    );
+
+    expect(email.body).toContain("The full long-form enquiry remains available.");
+    expect(email.body).not.toContain("The bounded preview.");
+  });
 });

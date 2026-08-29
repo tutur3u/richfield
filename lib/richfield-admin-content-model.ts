@@ -452,6 +452,9 @@ export function readRichfieldAdminContent(
         "";
       const body =
         readString(requestedVariant, "body") ??
+        (collectionKey === "contact-submissions"
+          ? readString(profileData, "message")
+          : null) ??
         (mayUseLegacy ? getBlockMarkdown(markdownBlock) : "");
       const bodyContent =
         parseRichfieldJSONContent(requestedVariant.bodyContent) ??

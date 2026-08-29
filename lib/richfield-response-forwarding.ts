@@ -74,6 +74,7 @@ export function buildForwardEmail(
   const company = readString(profile, "company") ?? "Unknown company";
   const name = readString(profile, "name") ?? "Unknown sender";
   const inquiryType = readString(profile, "inquiryType") ?? "Enquiry";
+  const message = readString(profile, "message") ?? submission.summary ?? "(no message)";
   const senderEmail = readString(profile, "email");
   const content = buildRichfieldContactEmail({
     company,
@@ -81,7 +82,7 @@ export function buildForwardEmail(
     email: senderEmail ?? "",
     entryId: submission.id,
     inquiryType,
-    message: submission.summary ?? "(no message)",
+    message,
     name,
     receivedAt: readString(profile, "receivedAt"),
   });

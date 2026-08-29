@@ -489,7 +489,13 @@ export function readRichfieldAdminContent(
         blockId: markdownBlock ? String(markdownBlock.id) : null,
         body,
         bodyContent,
-        brand: readString(profileData, "brand") ?? readString(entry, "title") ?? "",
+        brand:
+          (collectionKey === "contact-submissions"
+            ? readString(profileData, "company")
+            : null) ??
+          readString(profileData, "brand") ??
+          readString(entry, "title") ??
+          "",
         category: readString(profileData, "category") ?? readString(entry, "subtitle") ?? "",
         collectionKey,
         country: readString(profileData, "country") ?? readString(entry, "subtitle") ?? "",

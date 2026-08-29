@@ -42,6 +42,7 @@ describe("Richfield contact submissions", () => {
             collection_id: "collection-1",
             id: "entry-1",
             profile_data: {
+              company: "Acme",
               message: "The complete enquiry body.",
             },
             slug: "entry-1",
@@ -56,5 +57,6 @@ describe("Richfield contact submissions", () => {
 
     expect(item?.summary).toBe("The bounded preview.");
     expect(item?.body).toBe("The complete enquiry body.");
+    expect(item?.brand).toBe("Acme");
   });
 });

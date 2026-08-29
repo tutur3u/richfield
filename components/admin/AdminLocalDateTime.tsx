@@ -1,6 +1,11 @@
 "use client";
 
 import { useLocale } from "next-intl";
+import { useSyncExternalStore } from "react";
+
+const subscribeToHydration = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
 
 export function formatAdminLocalDateTime(
   value: string,
@@ -32,10 +37,19 @@ export function AdminLocalDateTime({
   value: string | null | undefined;
 }) {
   const locale = useLocale() === "vi" ? "vi-VN" : "en-US";
+  const isHydrated = useSyncExternalStore(
+    subscribeToHydration,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
 
   if (!value) return null;
 
-  const label = formatAdminLocalDateTime(value, locale);
+  const label = formatAdminLocalDateTime(
+    value,
+    locale,
+    isHydrated ? undefined : "UTC",
+  );
   if (!label) return null;
 
   return (

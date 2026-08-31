@@ -10,7 +10,12 @@ import { getRichfieldContent } from "@/lib/richfield-delivery";
 import type { Locale } from "@/lib/locale";
 import { toLocale } from "@/lib/locale";
 import { publishedLocaleAlternates } from "@/lib/localized-route";
-import { breadcrumbJsonLd, pageOpenGraph } from "@/lib/seo";
+import {
+  breadcrumbJsonLd,
+  pageOpenGraph,
+  seoDescription,
+  seoTitle,
+} from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 type CareerPageProps = {
@@ -54,6 +59,7 @@ export async function generateMetadata({
     ...(alternatePosition ? [alternateLocale] : []),
   ];
   const path = `/careers/${slug}`;
+  const meta = await getTranslations({ locale, namespace: "meta" });
 
   if (!position && alternatePosition) {
     const t = await getTranslations({ locale, namespace: "careerDetailPage" });
@@ -69,20 +75,26 @@ export async function generateMetadata({
     };
   }
 
+  const title = position?.title ?? meta("careers.title");
+  const description = seoDescription(
+    position?.summary ?? "",
+    meta("careers.description"),
+  );
+
   return {
     alternates: publishedLocaleAlternates({
       availableLocales,
       canonicalLocale: locale,
       path,
     }),
-    description: position?.summary,
+    description,
     openGraph: pageOpenGraph({
-      description: position?.summary ?? position?.title ?? "Richfield Group career opportunity",
+      description,
       locale,
       path,
-      title: position?.title ?? "Richfield Group career opportunity",
+      title,
     }),
-    title: position?.title,
+    title: seoTitle(title, meta("careers.title")),
   };
 }
 

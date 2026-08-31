@@ -25,8 +25,31 @@ const staticPaths = [
   "/contact",
 ];
 
+function decodeHtmlEntities(value) {
+  const named = {
+    amp: "&",
+    apos: "'",
+    gt: ">",
+    lt: "<",
+    nbsp: " ",
+    quot: '"',
+  };
+
+  return value.replace(/&(#(?:x[\da-f]+|\d+)|[a-z]+);/giu, (match, entity) => {
+    if (!entity.startsWith("#")) return named[entity.toLowerCase()] ?? match;
+
+    const hexadecimal = entity[1]?.toLowerCase() === "x";
+    const codePoint = Number.parseInt(entity.slice(hexadecimal ? 2 : 1), hexadecimal ? 16 : 10);
+    try {
+      return String.fromCodePoint(codePoint);
+    } catch {
+      return match;
+    }
+  });
+}
+
 function content(html, pattern) {
-  return html.match(pattern)?.[1]?.trim() ?? "";
+  return decodeHtmlEntities(html.match(pattern)?.[1]?.trim() ?? "");
 }
 
 function metaContent(html, attribute, value) {

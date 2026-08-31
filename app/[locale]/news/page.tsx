@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import type { RichfieldArticle } from "@/lib/richfield-content";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
 import { localeAlternates, toLocale } from "@/lib/locale";
+import { pageOpenGraph } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 export async function generateMetadata({
@@ -19,8 +20,14 @@ export async function generateMetadata({
   const meta = await getTranslations({ locale, namespace: "meta" });
 
   return {
-    alternates: localeAlternates("/news"),
+    alternates: localeAlternates(locale, "/news"),
     description: meta("news.description"),
+    openGraph: pageOpenGraph({
+      description: meta("news.description"),
+      locale,
+      path: "/news",
+      title: meta("news.title"),
+    }),
     title: meta("news.title"),
   };
 }

@@ -6,12 +6,21 @@ import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { Eyebrow } from "@/app/_components/magazine/primitives/spread";
 import { TranslationUnavailable } from "@/app/_components/magazine/translation-unavailable";
+import { JsonLd } from "@/app/_components/seo/json-ld";
 import { Link } from "@/i18n/navigation";
 import type { RichfieldArticle } from "@/lib/richfield-content";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
 import type { Locale } from "@/lib/locale";
 import { toLocale } from "@/lib/locale";
 import { publishedLocaleAlternates } from "@/lib/localized-route";
+import {
+  absoluteUrl,
+  articleJsonLd,
+  breadcrumbJsonLd,
+  localizedUrl,
+  seoDescription,
+  seoTitle,
+} from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 type NewsArticlePageProps = {
@@ -34,6 +43,7 @@ export async function generateMetadata({
   );
 
   if (!article && !alternateArticle) return {};
+  const meta = await getTranslations({ locale, namespace: "meta" });
   const availableLocales = [
     ...(article ? [locale] : []),
     ...(alternateArticle ? [alternateLocale] : []),
@@ -60,22 +70,47 @@ export async function generateMetadata({
       canonicalLocale: locale,
       path,
     }),
-    description: article?.summary,
+    description: article
+      ? seoDescription(
+          article.summary ||
+            (article.bodyContent
+              ? extractPlainText(article.bodyContent)
+              : article.body),
+          meta("news.description"),
+        )
+      : meta("news.description"),
     openGraph: article
       ? {
           authors: article.author ? [article.author] : undefined,
-          description: article.summary,
-          images: article.imageUrl ? [{ url: article.imageUrl }] : undefined,
+          description: seoDescription(
+            article.summary ||
+              (article.bodyContent
+                ? extractPlainText(article.bodyContent)
+                : article.body),
+            meta("news.description"),
+          ),
+          images: [
+            { url: absoluteUrl(article.imageUrl ?? "/opengraph-image.jpg") },
+          ],
           publishedTime: article.publishedAt ?? undefined,
           title: article.title,
           type: "article",
+          url: localizedUrl(locale, path),
         }
       : undefined,
-    title: article?.title,
+    title: article
+      ? seoTitle(article.title, meta("news.title"))
+      : meta("news.title"),
     twitter: article
       ? {
           card: article.imageUrl ? "summary_large_image" : "summary",
-          description: article.summary,
+          description: seoDescription(
+            article.summary ||
+              (article.bodyContent
+                ? extractPlainText(article.bodyContent)
+                : article.body),
+            meta("news.description"),
+          ),
           images: article.imageUrl ? [article.imageUrl] : undefined,
           title: article.title,
         }
@@ -105,6 +140,7 @@ export default async function NewsArticlePage({
   const locale = toLocale(localeParam);
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "newsPage" });
+  const meta = await getTranslations({ locale, namespace: "meta" });
   const alternateLocale: Locale = locale === "en" ? "vi" : "en";
   const [{ articles }, alternateContent] = await Promise.all([
     getRichfieldContent(locale),
@@ -154,6 +190,33 @@ export default async function NewsArticlePage({
 
   return (
     <>
+      <JsonLd
+        data={[
+          articleJsonLd({
+            author: article.author,
+            description: seoDescription(
+              article.summary ||
+                (article.bodyContent
+                  ? extractPlainText(article.bodyContent)
+                  : article.body),
+              meta("news.description"),
+            ),
+            image: article.imageUrl,
+            locale,
+            path: `/news/${article.slug}`,
+            publishedAt: article.publishedAt,
+            title: article.title,
+          }),
+          breadcrumbJsonLd({
+            items: [
+              { name: "Richfield Group", path: "/" },
+              { name: meta("news.title"), path: "/news" },
+              { name: article.title, path: `/news/${article.slug}` },
+            ],
+            locale,
+          }),
+        ]}
+      />
       <RunningHead
         locale={locale}
         languageAvailability={languageAvailability}

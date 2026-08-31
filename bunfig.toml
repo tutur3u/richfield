@@ -1,4 +1,3 @@
 [install]
-linker = "isolated"
-globalStore = true
-publicHoistPattern = ["*"]
+linker = "hoisted"
+globalStore = false

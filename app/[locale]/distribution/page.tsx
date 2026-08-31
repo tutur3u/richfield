@@ -6,6 +6,7 @@ import { RevealOnScroll } from "@/app/_components/reveal-on-scroll";
 import { ItalicText } from "@/app/_components/primitives/italic-text";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeAlternates, toLocale } from "@/lib/locale";
+import { pageOpenGraph } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
@@ -20,7 +21,13 @@ export async function generateMetadata({
   return {
     title: meta("distribution.title"),
     description: meta("distribution.description"),
-    alternates: localeAlternates("/distribution"),
+    alternates: localeAlternates(locale, "/distribution"),
+    openGraph: pageOpenGraph({
+      description: meta("distribution.description"),
+      locale,
+      path: "/distribution",
+      title: meta("distribution.title"),
+    }),
   };
 }
 
@@ -49,9 +56,9 @@ export default async function DistributionPage({
             {/* Left column: copy, then a plate filling the remaining height. */}
             <div className="flex flex-col gap-[var(--v2-flow)] lg:w-[47%] lg:min-h-0">
               <RevealOnScroll className="flex flex-col gap-[var(--v2-rhythm)]">
-                <h2 className="font-display v2-size-standfirst">
+                <h1 className="font-display v2-size-standfirst">
                   <ItalicText text={t("gtHeading")} />
-                </h2>
+                </h1>
                 <p className="v2-size-body opacity-90">
                   {t("gtBody")}
                 </p>

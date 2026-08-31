@@ -8,6 +8,7 @@ import { ItalicText } from "@/app/_components/primitives/italic-text";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeAlternates, toLocale } from "@/lib/locale";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
+import { pageOpenGraph } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
@@ -22,7 +23,13 @@ export async function generateMetadata({
   return {
     title: meta("brands.title"),
     description: meta("brands.description"),
-    alternates: localeAlternates("/brands"),
+    alternates: localeAlternates(locale, "/brands"),
+    openGraph: pageOpenGraph({
+      description: meta("brands.description"),
+      locale,
+      path: "/brands",
+      title: meta("brands.title"),
+    }),
   };
 }
 

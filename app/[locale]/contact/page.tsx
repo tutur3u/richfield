@@ -15,6 +15,8 @@ import { getRichfieldContent } from "@/lib/richfield-delivery";
 import { site } from "@/content/en/site";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeAlternates, toLocale } from "@/lib/locale";
+import { JsonLd } from "@/app/_components/seo/json-ld";
+import { pageOpenGraph } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -27,7 +29,13 @@ export async function generateMetadata({
   return {
     title: meta("contact.title"),
     description: meta("contact.description"),
-    alternates: localeAlternates("/contact"),
+    alternates: localeAlternates(locale, "/contact"),
+    openGraph: pageOpenGraph({
+      description: meta("contact.description"),
+      locale,
+      path: "/contact",
+      title: meta("contact.title"),
+    }),
   };
 }
 
@@ -91,12 +99,7 @@ export default async function ContactPage({
   const mapQuery = encodeURIComponent(contactPage.mapQuery);
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(localBusinessJsonLd).replace(/</g, "\\u003c"),
-        }}
-      />
+      <JsonLd data={localBusinessJsonLd} />
 
       <RunningHead locale={locale} />
 

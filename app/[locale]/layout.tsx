@@ -4,8 +4,15 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BodyChrome, fontVariables } from "@/app/_components/root-chrome";
 import { SiteFooter } from "@/app/_components/magazine/chrome/site-footer";
+import { JsonLd } from "@/app/_components/seo/json-ld";
 import { routing } from "@/i18n/routing";
 import { localeAlternates, openGraphLocale, toLocale } from "@/lib/locale";
+import {
+  absoluteUrl,
+  localizedUrl,
+  organizationJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo";
 
 // Root layout for the public site. English is served at bare paths (proxy.ts
 // rewrites them to /en internally via next-intl); Vietnamese lives under /vi.
@@ -31,14 +38,46 @@ export async function generateMetadata({
       template: "%s | Richfield Group",
     },
     description: meta("site.description"),
-    alternates: localeAlternates("/"),
+    applicationName: "Richfield Group",
+    alternates: localeAlternates(locale, "/"),
+    category: "FMCG distribution and logistics",
+    creator: "Richfield Group",
     openGraph: {
       type: "website",
       locale: openGraphLocale(locale),
-      url: "https://richfieldgroup.com.vn",
+      url: localizedUrl(locale, "/"),
       siteName: "Richfield Group",
+      images: [
+        {
+          url: absoluteUrl("/opengraph-image.jpg"),
+          width: 1200,
+          height: 630,
+          alt: "Richfield Group — market entry and nationwide distribution",
+        },
+      ],
     },
-    robots: { index: true, follow: true },
+    publisher: "Richfield Group",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    twitter: {
+      card: "summary_large_image",
+      images: [absoluteUrl("/opengraph-image.jpg")],
+    },
+    verification: {
+      google: process.env.GOOGLE_SITE_VERIFICATION,
+      other: process.env.BING_SITE_VERIFICATION
+        ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+        : undefined,
+    },
   };
 }
 
@@ -61,6 +100,7 @@ export default async function LocaleLayout({
       data-scroll-behavior="smooth"
     >
       <NextIntlClientProvider>
+        <JsonLd data={[organizationJsonLd(), websiteJsonLd(locale)]} />
         <BodyChrome footer={<SiteFooter locale={locale} />}>{children}</BodyChrome>
       </NextIntlClientProvider>
     </html>

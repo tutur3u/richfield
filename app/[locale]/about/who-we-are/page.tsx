@@ -3,6 +3,7 @@ import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
 import { OrganizationsSpread } from "@/app/_components/magazine/spreads/organizations-spread";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeAlternates, toLocale } from "@/lib/locale";
+import { pageOpenGraph } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
@@ -17,7 +18,13 @@ export async function generateMetadata({
   return {
     title: meta("whoWeAre.title"),
     description: meta("whoWeAre.description"),
-    alternates: localeAlternates("/about/who-we-are"),
+    alternates: localeAlternates(locale, "/about/who-we-are"),
+    openGraph: pageOpenGraph({
+      description: meta("whoWeAre.description"),
+      locale,
+      path: "/about/who-we-are",
+      title: meta("whoWeAre.title"),
+    }),
   };
 }
 

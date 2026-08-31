@@ -14,6 +14,7 @@ import { getContent } from "@/content";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeAlternates, toLocale } from "@/lib/locale";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
+import { pageOpenGraph } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
@@ -28,7 +29,13 @@ export async function generateMetadata({
   return {
     title: meta("careers.title"),
     description: meta("careers.description"),
-    alternates: localeAlternates("/careers"),
+    alternates: localeAlternates(locale, "/careers"),
+    openGraph: pageOpenGraph({
+      description: meta("careers.description"),
+      locale,
+      path: "/careers",
+      title: meta("careers.title"),
+    }),
   };
 }
 

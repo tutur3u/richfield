@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   description:
     "Vietnam's largest FMCG distribution network. Bringing the world's most loved brands to over 180,000 retail outlets nationwide.",
-  robots: { index: true, follow: true },
+  robots: { index: false, follow: false, nocache: true },
 };
 
 export default async function SystemLayout({

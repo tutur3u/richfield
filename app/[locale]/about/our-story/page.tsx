@@ -5,6 +5,7 @@ import { TimelineSpread } from "@/app/_components/magazine/spreads/timeline-spre
 import { getRichfieldContent } from "@/lib/richfield-delivery";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeAlternates, toLocale } from "@/lib/locale";
+import { pageOpenGraph } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
@@ -19,7 +20,13 @@ export async function generateMetadata({
   return {
     title: meta("ourStory.title"),
     description: meta("ourStory.description"),
-    alternates: localeAlternates("/about/our-story"),
+    alternates: localeAlternates(locale, "/about/our-story"),
+    openGraph: pageOpenGraph({
+      description: meta("ourStory.description"),
+      locale,
+      path: "/about/our-story",
+      title: meta("ourStory.title"),
+    }),
   };
 }
 

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { site } from "@/content/en/site";
 import type { RichfieldArticle } from "@/lib/richfield-content";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
+import { absoluteUrl } from "@/lib/seo";
 
 const ROUTES = [
   "/",
@@ -15,17 +16,16 @@ const ROUTES = [
   "/contact",
 ];
 
-function articleDate(article: RichfieldArticle, fallback: Date) {
-  if (!article.publishedAt) return fallback;
+function articleDate(article: RichfieldArticle) {
+  if (!article.publishedAt) return undefined;
   const date = new Date(article.publishedAt);
-  return Number.isNaN(date.getTime()) ? fallback : date;
+  return Number.isNaN(date.getTime()) ? undefined : date;
 }
 
 // English is served at bare paths; Vietnamese under /vi. Each entry carries
 // hreflang alternates pointing at its counterpart. Published news stories are
 // included individually so the new canonical URLs can be discovered directly.
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
   const [english, vietnamese] = await Promise.all([
     getRichfieldContent("en"),
     getRichfieldContent("vi"),
@@ -39,14 +39,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return [
       {
         url: enUrl,
-        lastModified: now,
         changeFrequency: "monthly" as const,
         priority: path === "/" ? 1.0 : 0.7,
         alternates: { languages },
       },
       {
         url: viUrl,
-        lastModified: now,
         changeFrequency: "monthly" as const,
         priority: path === "/" ? 0.9 : 0.6,
         alternates: { languages },
@@ -92,9 +90,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 alternates: { languages },
                 changeFrequency: "monthly" as const,
                 images: localized.en.imageUrl
-                  ? [localized.en.imageUrl]
+                  ? [absoluteUrl(localized.en.imageUrl)]
                   : undefined,
-                lastModified: articleDate(localized.en, now),
+                lastModified: articleDate(localized.en),
                 priority: 0.75,
                 url: enUrl,
               },
@@ -106,9 +104,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
                 alternates: { languages },
                 changeFrequency: "monthly" as const,
                 images: localized.vi.imageUrl
-                  ? [localized.vi.imageUrl]
+                  ? [absoluteUrl(localized.vi.imageUrl)]
                   : undefined,
-                lastModified: articleDate(localized.vi, now),
+                lastModified: articleDate(localized.vi),
                 priority: 0.7,
                 url: viUrl,
               },
@@ -118,5 +116,64 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   );
 
-  return [...staticEntries, ...articleEntries];
+  const positionsBySlug = new Map<
+    string,
+    {
+      en?: (typeof english.openPositions)[number];
+      vi?: (typeof vietnamese.openPositions)[number];
+    }
+  >();
+
+  for (const position of english.openPositions) {
+    positionsBySlug.set(position.slug, {
+      ...positionsBySlug.get(position.slug),
+      en: position,
+    });
+  }
+  for (const position of vietnamese.openPositions) {
+    positionsBySlug.set(position.slug, {
+      ...positionsBySlug.get(position.slug),
+      vi: position,
+    });
+  }
+
+  const careerEntries = [...positionsBySlug.entries()].flatMap(
+    ([slug, localized]) => {
+      const enUrl = localized.en
+        ? `${site.domainCanonical}/careers/${slug}`
+        : undefined;
+      const viUrl = localized.vi
+        ? `${site.domainCanonical}/vi/careers/${slug}`
+        : undefined;
+      const languages = {
+        ...(enUrl ? { en: enUrl, "x-default": enUrl } : {}),
+        ...(viUrl ? { vi: viUrl } : {}),
+      };
+
+      return [
+        ...(enUrl
+          ? [
+              {
+                alternates: { languages },
+                changeFrequency: "weekly" as const,
+                priority: 0.8,
+                url: enUrl,
+              },
+            ]
+          : []),
+        ...(viUrl
+          ? [
+              {
+                alternates: { languages },
+                changeFrequency: "weekly" as const,
+                priority: 0.75,
+                url: viUrl,
+              },
+            ]
+          : []),
+      ];
+    },
+  );
+
+  return [...staticEntries, ...articleEntries, ...careerEntries];
 }

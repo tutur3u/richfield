@@ -3,12 +3,14 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { RichfieldProse } from "@/app/_components/content/richfield-prose";
 import { RunningHead } from "@/app/_components/magazine/chrome/running-head";
+import { JsonLd } from "@/app/_components/seo/json-ld";
 import { TranslationUnavailable } from "@/app/_components/magazine/translation-unavailable";
 import { Link } from "@/i18n/navigation";
 import { getRichfieldContent } from "@/lib/richfield-delivery";
 import type { Locale } from "@/lib/locale";
 import { toLocale } from "@/lib/locale";
 import { publishedLocaleAlternates } from "@/lib/localized-route";
+import { breadcrumbJsonLd, pageOpenGraph } from "@/lib/seo";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 type CareerPageProps = {
@@ -74,6 +76,12 @@ export async function generateMetadata({
       path,
     }),
     description: position?.summary,
+    openGraph: pageOpenGraph({
+      description: position?.summary ?? position?.title ?? "Richfield Group career opportunity",
+      locale,
+      path,
+      title: position?.title ?? "Richfield Group career opportunity",
+    }),
     title: position?.title,
   };
 }
@@ -134,6 +142,16 @@ export default async function CareerPage({ params }: CareerPageProps) {
 
   return (
     <>
+      <JsonLd
+        data={breadcrumbJsonLd({
+          items: [
+            { name: "Richfield Group", path: "/" },
+            { name: t("allOpportunities"), path: "/careers" },
+            { name: position.title, path: `/careers/${position.slug}` },
+          ],
+          locale,
+        })}
+      />
       <RunningHead
         locale={locale}
         languageAvailability={languageAvailability}

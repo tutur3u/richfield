@@ -19,14 +19,17 @@ export function toLocale(value: string): Locale {
   return isLocale(value) ? value : DEFAULT_LOCALE;
 }
 
-/** hreflang alternates for a bare-path page route (e.g. "/brands"). */
-export function localeAlternates(path: string) {
+/** Canonical and hreflang URLs for a localized public route. */
+export function localeAlternates(locale: Locale, path: string) {
+  const english = path;
+  const vietnamese = path === "/" ? "/vi" : `/vi${path}`;
+
   return {
-    canonical: path,
+    canonical: locale === "vi" ? vietnamese : english,
     languages: {
-      en: path,
-      vi: path === "/" ? "/vi" : `/vi${path}`,
-      "x-default": path,
+      en: english,
+      vi: vietnamese,
+      "x-default": english,
     },
   };
 }

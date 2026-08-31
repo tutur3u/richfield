@@ -7,6 +7,7 @@ import { YouTubeEmbed } from "@/app/_components/primitives/youtube-embed";
 import { ItalicText } from "@/app/_components/primitives/italic-text";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { localeAlternates, toLocale } from "@/lib/locale";
+import { pageOpenGraph } from "@/lib/seo";
 
 export const dynamic = "force-static";
 
@@ -21,7 +22,13 @@ export async function generateMetadata({
   return {
     title: meta("logistics.title"),
     description: meta("logistics.description"),
-    alternates: localeAlternates("/logistics"),
+    alternates: localeAlternates(locale, "/logistics"),
+    openGraph: pageOpenGraph({
+      description: meta("logistics.description"),
+      locale,
+      path: "/logistics",
+      title: meta("logistics.title"),
+    }),
   };
 }
 

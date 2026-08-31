@@ -15,6 +15,10 @@ const tuturuuuRemoteBase = {
 const tuturuuuApiPath = tuturuuuApiUrl.pathname.replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // TypeScript 7 exposes a CLI rather than the legacy compiler API.
+    useTypeScriptCli: true,
+  },
   // Pin the workspace root: a stray lockfile in the parent directory makes
   // Next infer the wrong root otherwise.
   turbopack: { root: __dirname },

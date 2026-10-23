@@ -2,6 +2,7 @@
   "name": "theguyser",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "bun@1.4.4",
   "scripts": {
     "dev": "NODE_EXTRA_CA_CERTS=$HOME/.portless/ca.pem next dev",
     "build": "next build",

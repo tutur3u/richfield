@@ -5,5 +5,7 @@
       "path": "/api/cron/forward-responses",
       "schedule": "0 */4 * * *"
     }
-  ]
+  ],
+  "installCommand": "bunx bun@1.4.4 install --frozen-lockfile",
+  "buildCommand": "bunx bun@1.4.4 run build"
 }
